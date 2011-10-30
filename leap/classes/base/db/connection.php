@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-06-20
+ * @version 2011-10-28
  *
  * @abstract
  */
@@ -63,7 +63,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * This function initializes the class with the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource &$data_source	the connection's configurations
+	 * @param DB_DataSource $data_source	the connection's configurations
 	 */
 	public function __construct(DB_DataSource $data_source) {
 		$this->data_source = $data_source;

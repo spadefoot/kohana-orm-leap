@@ -21,28 +21,28 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-06-09
+ * @version 2011-10-28
  *
  * @abstract
  */
 abstract class Base_DB_DataSource extends Kohana_Object {
 
     /**
-    * This variable stores the settings for the data source.
-    *
-    * @access protected
-    * @var array
-    */
+     * This variable stores the settings for the data source.
+     *
+     * @access protected
+     * @var array
+     */
     protected $settings;
 
     /**
-    * This function loads the configurations.
-    *
-    * @access public
-    * @param mixed $config                          the data source configurations
-    * @throws Kohana_InvalidProperty_Exception      indicates that the connection string is invalid
-    * @throws Kohana_InvalidArgumentException       indicates that there is a data type mismatch
-    */
+     * This function loads the configurations.
+     *
+     * @access public
+     * @param mixed $config                          the data source configurations
+     * @throws Kohana_InvalidProperty_Exception      indicates that the connection string is invalid
+     * @throws Kohana_InvalidArgument_Exception      indicates that there is a data type mismatch
+     */
 	public function __construct($config) {
 		if (is_null($config) || empty($config)) {
 			$name = 'database.default';
