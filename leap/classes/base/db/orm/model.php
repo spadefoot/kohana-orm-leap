@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-09
+ * @version 2011-11-03
  *
  * @abstract
  */
@@ -180,7 +180,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     *
     * @access public
     */
-    public function save() {
+    public function save($reload = FALSE) {
         $self = get_class($this);
         $is_savable = call_user_func(array($self, 'is_savable'));
         if (!$is_savable) {
@@ -255,6 +255,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
                 }
                 $this->metadata['saved'] = $this->hash_code();
             }
+        }
+        if ($reload) {
+            $this->load();
         }
     }
 
