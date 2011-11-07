@@ -21,14 +21,14 @@
  *
  * @package Leap
  * @category PDO
- * @version 2011-06-20
+ * @version 2011-11-05
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
  *
  * @abstract
  */
-abstract class Base_DB_Connection_PDO extends DB_Connection {
+abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 
 	/**
 	 * This function stores the number of total connections made.
