@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-10
+ * @version 2011-11-07
  *
  * @abstract
  */
@@ -167,7 +167,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
      * @param boolean $descending               whether to sort in descending order
      * @return DB_SQL_Update_Builder            a reference to the current instance
      */
-	public function order_by($column, $descending = FALSE) {
+	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
 	    $column = $this->helper->prepare_identifier($column);
 	    $descending = $this->helper->prepare_boolean($descending);
 		$this->data['order_by'][] = "{$column} " . (($descending) ? 'DESC' : 'ASC');

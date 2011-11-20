@@ -192,27 +192,33 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
         }
         $data_source = call_user_func(array($self, 'data_source'));
         $table = call_user_func(array($self, 'table'));
-        $columns = call_user_func(array($self, 'columns'));
+        $columns = array_keys($this->fields);
         $hash_code = $this->hash_code();
         $do_insert = is_null($hash_code);
         if (!$do_insert) {
-            $do_insert = (is_null($this->metadata['saved']) || ($hash_code == $this->metadata['saved']));
+            $do_insert = (is_null($this->metadata['saved']) || ($hash_code != $this->metadata['saved']));
             if ($do_insert) {
-                $sql = DB_SQL::select($data_source)->from($table)->column(DB::expr(1), 'IsFound');
+                $sql = DB_SQL::select($data_source)
+                        ->column(DB::expr(1), 'IsFound')
+                        ->from($table);
                 foreach ($primary_key as $column) {
                     $sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
                 }
-                $do_insert = $sql->query(1)->is_loaded();
+                $do_insert = !($sql->limit(1)->query()->is_loaded());
             }
             if (!$do_insert) {
                 foreach ($primary_key as $column) {
-                    unset($columns[$column]);
+                    $index = array_search($column, $columns);
+                    if ($index !== FALSE) {
+                        unset($columns[$index]);
+                    }
                 }
                 if (!empty($columns)) {
-                    $sql = DB_SQL::update($data_source)->table($table);
+                    $sql = DB_SQL::update($data_source)
+                        ->table($table);
                     $count = 0;
                     foreach ($columns as $column) {
-                        if (!$this->fields[$column]->savable && $this->fields[$column]->modified) {
+                        if ($this->fields[$column]->savable && $this->fields[$column]->modified) {
                             $sql->set($column, $this->fields[$column]->value);
                             $this->fields[$column]->modified = FALSE;
                             $count++;
@@ -230,16 +236,20 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
         }
         if ($do_insert) {
             $is_auto_incremented = call_user_func(array($self, 'is_auto_incremented'));
-            if ($is_auto_incremented && is_null($hash_code)) {
+            if ($is_auto_incremented || is_null($hash_code)) {
                 foreach ($primary_key as $column) {
-                    unset($columns[$column]);
+                    $index = array_search($column, $columns);
+                    if ($index !== FALSE) {
+                        unset($columns[$index]);
+                    }
                 }
             }
             if (!empty($columns)) {
-                $sql = DB_SQL::insert($data_source)->into($table);
+                $sql = DB_SQL::insert($data_source)
+                    ->into($table);
                 $count = 0;
                 foreach ($columns as $column) {
-                    if (!$this->fields[$column]->savable) {
+                    if ($this->fields[$column]->savable) {
                         $sql->column($column, $this->fields[$column]->value);
                         $this->fields[$column]->modified = FALSE;
                         $count++;
@@ -279,11 +289,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      */
     public function as_array() {
         $buffer = array();
-		foreach ($this->relations as $relation) {
-            $buffer[$relation] = $relation->result;
+		foreach ($this->relations as $key => $relation) {
+            $buffer[$key] = $relation->result;
 		}
-        foreach ($this->fields as $column) {
-            $buffer[$column] = $column->value;
+        foreach ($this->fields as $key => $field) {
+            $buffer[$key] = $field->value;
         }
         return $buffer;
     }

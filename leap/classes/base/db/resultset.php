@@ -21,34 +21,34 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-09-12
+ * @version 2011-11-17
  *
  * @abstract
  */
-abstract class Base_DB_ResultSet extends Kohana_Object implements Countable, Iterator {
+abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, Countable, Iterator {
 
     /**
-    * This variable stores the records.
-    *
-    * @access protected
-    * @var array
-    */
+     * This variable stores the records.
+     *
+     * @access protected
+     * @var array
+     */
     protected $records;
 
 	/**
-	* This variable stores the current position in the records array.
-	*
-	* @access protected
-	* @var integer
-	*/
+	 * This variable stores the current position in the records array.
+	 *
+	 * @access protected
+	 * @var integer
+	 */
     protected $position;
 
 	/**
-	* This variable stores the length of the records array.
-	*
-	* @access protected
-	* @var integer
-	*/
+	 * This variable stores the length of the records array.
+	 *
+	 * @access protected
+	 * @var integer
+	 */
     protected $size;
 
     /**
@@ -66,11 +66,11 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements Countable, Ite
 	}
 
     /**
-    * This function returns the total number of records contained in result set.
-    *
-	* @access public
-	* @return integer                           the total number of records
-    */
+     * This function returns the total number of records contained in result set.
+     *
+	 * @access public
+	 * @return integer                          the total number of records
+     */
     public function count() {
         return $this->size;
     }
@@ -79,20 +79,20 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements Countable, Ite
 	 * This function returns the current record.
 	 *
 	 * @access public
-	 * @return mixed						      the current record
+	 * @return mixed						    the current record
 	 */
 	public function current() {
 		return $this->records[$this->position];
 	}
 
     /**
-    * This function returns a record of the desired object type.
-    *
-    * @access public
-    * @abstract
-    * @param integer $index                     the record's index
-    * @return mixed                             the record
-    */
+     * This function returns a record of the desired object type.
+     *
+     * @access public
+     * @abstract
+     * @param integer $index                    the record's index
+     * @return mixed                            the record
+     */
     public function fetch($index = -1) {
     	settype($index, 'integer');
     	if ($index < 0) {
@@ -108,20 +108,20 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements Countable, Ite
 	}
 
     /**
-    * This function returns an array of records of the desired object type.
-    *
-    * @access public
-    * @return array                             an array of records
-    */
+     * This function returns an array of records of the desired object type.
+     *
+     * @access public
+     * @return array                            an array of records
+     */
 	public function fetch_all() {
 		return $this->records;
 	}
 
     /**
-    * This function frees all data stored in the result set.
-    *
-    * @access public
-    */
+     * This function frees all data stored in the result set.
+     *
+     * @access public
+     */
     public function free() {
 		$this->records = array();
 		$this->position = 0;
@@ -129,60 +129,108 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements Countable, Ite
     }
 
     /**
-    * This function returns whether any records were loaded.
-    *
-    * @access public
-    * @return boolean                           whether any records were loaded
-    */
+     * This function returns whether any records were loaded.
+     *
+     * @access public
+     * @return boolean                          whether any records were loaded
+     */
     public function is_loaded() {
         return ($this->size > 0);
     }
 
 	/**
-	* This function returns the position to the current record.
-	*
-	* @access public
-	* @return integer					        the position of the current record
-	*/
+	 * This function returns the position to the current record.
+	 *
+	 * @access public
+	 * @return integer					        the position of the current record
+	 */
 	public function key() {
 		return $this->position;
 	}
 
 	/**
-	* This function moves forward the position to the next record, lazy loading only
-	* when necessary.
-	*
-	* @access public
-	*/
+	 * This function moves forward the position to the next record, lazy loading only
+	 * when necessary.
+	 *
+	 * @access public
+	 */
 	public function next() {
         $this->position++;
 	}
 
+    /**
+     * This function determines whether a offset exists.
+     *
+     * @access public
+     * @param integer $offset                   the offset to be evaluated
+     * @return boolean                          whether the requested index exists
+     */
+    public function offsetExists($offset) {
+        return isset($this->records[$offset]);
+    }
+
+    /**
+     * This functions gets value at the specified offset.
+     *
+     * @access public
+     * @param integer $offset                   the offset to be fetched
+     * @return mixed                            the value at the specified index
+     */
+    public function offsetGet($offset) {
+        return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
+    }
+
+    /**
+     * This functions sets the specified value at the specified offset.
+     *
+     * @access public
+     * @param integer $offset                   the offset to be set
+     * @param mixed $value                      the value to be set
+     */
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->records[] = $value;
+        }
+        else {
+            $this->records[$offset] = $value;
+        }
+    }
+
+    /**
+     * This functions allows for the specified offset to be unset.
+     *
+     * @access public
+     * @param integer $offset               the offset to be unset
+     */
+    public function offsetUnset($offset) {
+        unset($this->records[$offset]);
+    }
+
 	/**
-	* This function returns the current iterator position.
-	*
-	* @access public
-	* @return integer					        the current iterator position
-	*/
+	 * This function returns the current iterator position.
+	 *
+	 * @access public
+	 * @return integer					        the current iterator position
+	 */
 	public function position() {
 		return $this->position;
 	}
 
 	/**
-	* This function rewinds the iterator back to starting position.
-	*
-	* @access public
-	*/
+	 * This function rewinds the iterator back to starting position.
+	 *
+	 * @access public
+	 */
 	public function rewind() {
 		$this->position = 0;
 	}
 
 	/**
-	* This function checks if the current iterator position is valid.
-	*
-	* @access public
-	* @return boolean					        whether the current iterator position is valid
-	*/
+	 * This function checks if the current iterator position is valid.
+	 *
+	 * @access public
+	 * @return boolean					        whether the current iterator position is valid
+	 */
 	public function valid() {
 	    return isset($this->records[$this->position]);
 	}

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-15
+ * @version 2011-11-18
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-insert.html
  *
@@ -49,7 +49,7 @@ abstract class Base_DB_Firebird_Insert_Builder extends DB_SQL_Insert_Builder {
 	public function statement($terminated = TRUE) {
 	    $sql = "INSERT INTO {$this->data['into']}";
 
-        if (!empty($data['column'])) {
+        if (!empty($this->data['column'])) {
             $columns = implode(', ', array_keys($this->data['column']));
             $values = implode(', ', array_values($this->data['column']));
 	        $sql .= " ({$columns}) VALUES ({$values})";

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-15
+ * @version 2011-11-07
  *
  * @abstract
  */
@@ -94,8 +94,8 @@ abstract class Base_DB_ORM_Delete_Proxy extends Kohana_Object implements DB_SQL_
     * @param boolean $descending            whether to sort in descending order
     * @return DB_SQL_Delete_Builder       a reference to the current instance
     */
-	public function order_by($column, $descending = FALSE) {
-		$this->builder->order_by($column, $descending);
+	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
+		$this->builder->order_by($column, $descending, $nulls);
 		return $this;
 	}
 

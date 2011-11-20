@@ -21,7 +21,7 @@
  *
  * @package System-Ext
  * @category Object
- * @version 2011-10-27
+ * @version 2011-11-18
  *
  * @abstract
  */
@@ -48,32 +48,37 @@ abstract class Kohana_Object {
             $backtrace = debug_backtrace();
         }
         if (!isset($backtrace[$level])) {
-            throw new Kohana_Exception('Cannot find called class -> stack level too deep.', array(':backtrace' => $backtrace, ':level' => $level));
+            throw new Kohana_Exception('Message: Cannot find called class. Reason: Stack level too deep.', array(':backtrace' => $backtrace, ':level' => $level));
         }
         if (!isset($backtrace[$level]['type'])) {
-            throw new Kohana_Exception('type not set', array(':backtrace' => $backtrace, ':level' => $level));
+            throw new Kohana_Exception('Message: Cannot find called class. Reason: Type not set.', array(':backtrace' => $backtrace, ':level' => $level));
         }
         else {
             switch ($backtrace[$level]['type']) {
                 case '::':
-                    $lines = file($backtrace[$level]['file']);
-                    $i = 0;
-                    $callerLine = '';
-                    do {
-                        $i++;
-                        $callerLine = $lines[$backtrace[$level]['line'] - $i] . $callerLine;
-                    } while (stripos($callerLine, $backtrace[$level]['function']) === FALSE);
-                    preg_match('/([a-zA-Z0-9\_]+)::' . $backtrace[$level]['function'] . '/', $callerLine, $matches);
-                    if (!isset($matches[1])) {
-                        // must be an edge case.
-                        throw new Kohana_Exception('Could not find caller class: originating method call is obscured.', array(':backtrace' => $backtrace, ':level' => $level));
+                    try {
+                        $lines = file($backtrace[$level]['file']);
+                        $i = 0;
+                        $callerLine = '';
+                        do {
+                            $i++;
+                            $callerLine = $lines[$backtrace[$level]['line'] - $i] . $callerLine;
+                        } while (stripos($callerLine, $backtrace[$level]['function']) === FALSE);
+                        preg_match('/([a-zA-Z0-9\_]+)::' . $backtrace[$level]['function'] . '/', $callerLine, $matches);
+                        if (!isset($matches[1])) {
+                            // must be an edge case.
+                            throw new Kohana_Exception('Message: Cannot find called class.  Reason: Originating method call is obscured.', array(':backtrace' => $backtrace, ':level' => $level));
+                        }
+                        switch ($matches[1]) {
+                            case 'self':
+                            case 'parent':
+                                return self::get_called_class($backtrace, $level + 1);
+                            default:
+                                return $matches[1];
+                        }
                     }
-                    switch ($matches[1]) {
-                        case 'self':
-                        case 'parent':
-                            return self::get_called_class($backtrace, $level + 1);
-                        default:
-                            return $matches[1];
+                    catch (ErrorException $ex) {
+                        throw new Kohana_Exception('Message: Cannot find called class.  Reason: :exception', array(':exception' => $ex->getMessage(), ':backtrace' => $backtrace, ':level' => $level));
                     }
                 break;
                 case '->':
@@ -81,7 +86,7 @@ abstract class Kohana_Object {
                         case '__get':
                             // edge case -> get class of calling object
                             if (!is_object($backtrace[$level]['object'])) {
-                                throw new Kohana_Exception('Edge case fail. __get called on non object.', array(':backtrace' => $backtrace, ':level' => $level));
+                                throw new Kohana_Exception('Message: Cannot find called class.  Reason: Edge case fail. __get called on non object.', array(':backtrace' => $backtrace, ':level' => $level));
                             }
                             return get_class($backtrace[$level]['object']);
                         break;
@@ -90,7 +95,7 @@ abstract class Kohana_Object {
                         break;
                     }
                 default:
-                    throw new Kohana_Exception('Unknown backtrace method type', array(':backtrace' => $backtrace, ':level' => $level));
+                    throw new Kohana_Exception('Message: Cannot find called class. Reason: Unknown backtrace method type.', array(':backtrace' => $backtrace, ':level' => $level));
                 break;
             }
         }

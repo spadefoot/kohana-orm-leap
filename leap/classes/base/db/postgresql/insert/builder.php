@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-17
+ * @version 2011-11-18
  *
  * @see http://www.postgresql.org/docs/8.3/interactive/sql-insert.html
  *
@@ -49,7 +49,7 @@ abstract class Base_DB_PostgreSQL_Insert_Builder extends DB_SQL_Insert_Builder {
 	public function statement($terminated = TRUE) {
 	    $sql = "INSERT INTO {$this->data['into']}";
 
-        if (!empty($data['column'])) {
+        if (!empty($this->data['column'])) {
             $columns = implode(', ', array_keys($this->data['column']));
             $values = implode(', ', array_values($this->data['column']));
 	        $sql .= " ({$columns}) VALUES ({$values})";
