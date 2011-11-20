@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Config
- * @version 2011-06-20
+ * @version 2011-11-20
  */
 $config = array();
 
@@ -30,6 +30,8 @@ $config['driver'] = array(
     'db2' => 'std',
     //'firebird' => 'pdo',
     'firebird' => 'std',
+    //'mariadb' => 'pdo',
+    'mariadb' => 'std',
     //'mssql' => 'pdo',
     'mssql' => 'std',
     //'mysql' => 'pdo',
