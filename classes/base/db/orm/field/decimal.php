@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-07-12
+ * @version 2011-11-27
  *
  * @abstract
  */
@@ -36,6 +36,8 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
      */
     public function __construct(DB_ORM_Model $active_record, Array $metadata = array()) {
         parent::__construct($active_record, 'double');
+
+        // Fixed precision and scale numeric data from -10^38 -1 through 10^38 -1.
 
         $this->metadata['scale'] = (integer)$metadata['scale']; // the scale (i.e. the number of digits that can be stored following the decimal point)
         if ($this->metadata['scale'] == 0) {
@@ -119,7 +121,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
     /**
      * This function validates the specified value against any constraints.
      *
-     * @access public
+     * @access protected
      * @param mixed $value                          the value to be validated
      * @return boolean                              whether the specified value validates
      */

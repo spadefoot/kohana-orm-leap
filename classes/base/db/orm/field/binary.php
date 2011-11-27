@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-07
+ * @version 2011-11-27
  *
  * @abstract
  */
@@ -74,7 +74,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
     /**
      * This function validates the specified value against any constraints.
      *
-     * @access public
+     * @access protected
      * @param mixed $value                          the value to be validated
      * @return boolean                              whether the specified value validates
      */

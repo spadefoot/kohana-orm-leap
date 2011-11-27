@@ -21,34 +21,34 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-15
+ * @version 2011-11-27
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_Statement {
 
     /**
-    * This variable stores a reference to the data source.
-    *
-    * @access protected
-    * @var DB_DataSource
-    */
+     * This variable stores a reference to the data source.
+     *
+     * @access protected
+     * @var DB_DataSource
+     */
     protected $source = NULL;
 
     /**
-    * This variable stores an instance of the SQL builder class.
-    *
-    * @access protected
-    * @var DB_SQL_Insert_Builder
-    */
+     * This variable stores an instance of the SQL builder class.
+     *
+     * @access protected
+     * @var DB_SQL_Insert_Builder
+     */
     protected $builder = NULL;
 
     /**
-    * This constructor instantiates this class using the specified model's name.
-    *
-    * @access public
-    * @param string $model                          the model's name
-    */
+     * This constructor instantiates this class using the specified model's name.
+     *
+     * @access public
+     * @param string $model                 the model's name
+     */
     public function __construct($model) {
         $model = DB_ORM_Model::model_name($model);
         $this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
@@ -59,13 +59,13 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
     }
 
     /**
-    * This function sets the associated value with the specified column.
-    *
-    * @access public
-    * @param string $column                 the column to be set
-    * @param string $value                  the value to be set
-    * @return DB_SQL_Insert_Builder       a reference to the current instance
-    */
+     * This function sets the associated value with the specified column.
+     *
+     * @access public
+     * @param string $column                the column to be set
+     * @param string $value                 the value to be set
+     * @return DB_SQL_Insert_Builder        a reference to the current instance
+     */
     public function column($column, $value) {
         $this->builder->column($column, $value);
         return $this;
@@ -93,10 +93,8 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
     public function execute() {
         $is_auto_incremented = call_user_func(array($this->model, 'is_auto_incremented'));
         $connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		//$connection->begin_transaction();
 		$connection->execute($this->statement());
 		$primary_key = ($is_auto_incremented) ? $connection->get_last_insert_id() : 0;
-		//$connection->commit();
         return $primary_key;
     }
 

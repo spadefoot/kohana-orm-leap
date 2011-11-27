@@ -21,26 +21,26 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-03
+ * @version 2011-11-27
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Model extends Kohana_Object {
 
     /**
-    * This variable stores the record's metadata.
-    *
-    * @access protected
-    * @var array
-    */
+     * This variable stores the record's metadata.
+     *
+     * @access protected
+     * @var array
+     */
     protected $metadata = array();
 
     /**
-    * This variable stores the record's fields.
-    *
-    * @access protected
-    * @var array
-    */
+     * This variable stores the record's fields.
+     *
+     * @access protected
+     * @var array
+     */
     protected $fields = array();
 
 	/**
@@ -60,10 +60,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	protected $relations = array();
 
     /**
-    * This constructor instantiates this class.
-    *
-    * @access public
-    */
+     * This constructor instantiates this class.
+     *
+     * @access public
+     */
     public function __construct() {
         $this->metadata['loaded'] = FALSE;
         $this->metadata['saved'] = NULL;
@@ -80,9 +80,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      */
     public function __get($key) {
         if (isset($this->aliases[$key])) {
-			return $this->aliases[$key]->value;
+			$key = $this->aliases[$key]->field;
 		}
-		else if (isset($this->fields[$key])) {
+		if (isset($this->fields[$key])) {
        		return $this->fields[$key]->value;
         }
 		else if (isset($this->relations[$key])) {
@@ -176,10 +176,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
-    * This function saves the record matching using the primary key.
-    *
-    * @access public
-    */
+     * This function saves the record matching using the primary key.
+     *
+     * @access public
+     */
     public function save($reload = FALSE) {
         $self = get_class($this);
         $is_savable = call_user_func(array($self, 'is_savable'));
@@ -393,23 +393,23 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
-    * This function returns the primary key for the database table.
-    *
-    * @access public
-    * @static
-    * @return array                         the primary key
-    */
+     * This function returns the primary key for the database table.
+     *
+     * @access public
+     * @static
+     * @return array                        the primary key
+     */
     public static function primary_key() {
         return array('ID');
     }
 
     /**
-    * This function returns whether the primary key auto increments.
-    *
-    * @access public
-    * @static
-    * @return boolean                       whether the primary key auto increments
-    */
+     * This function returns whether the primary key auto increments.
+     *
+     * @access public
+     * @static
+     * @return boolean                      whether the primary key auto increments
+     */
     public static function is_auto_incremented() {
         if (count(self::primary_key()) > 1) {
             return FALSE;
@@ -418,13 +418,13 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
-    * This function returns whether the active record can be saved in the database.
-    *
-    * @access public
-    * @static
-    * @return boolean                       whether the active record can be saved
-    *                                       in the database
-    */
+     * This function returns whether the active record can be saved in the database.
+     *
+     * @access public
+     * @static
+     * @return boolean                      whether the active record can be saved
+     *                                      in the database
+     */
     public static function is_savable() {
         return TRUE;
     }

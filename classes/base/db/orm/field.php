@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-07
+ * @version 2011-11-27
  *
  * @abstract
  *
@@ -107,6 +107,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
      */
     public function __set($key, $value) {
         switch ($key) {
+            case 'data':
             case 'value':
                 if (!is_null($value)) {
                     settype($value, $this->metadata['type']);
@@ -127,16 +128,24 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
         }
     }
 
+    /**
+     * This function will trigger a filter on the specified value.
+     *
+     * @access protected
+     * @param mixed $value                          the value to be filtered
+     * @return boolean                              whether the value was filtered
+     */
     protected function filter($value) {
         if (isset($this->metadata['filter']) && call_user_func(array($this->active_record, $this->metadata['filter']), $value)) {
             return FALSE;
         }
+        return TRUE;
     }
 
     /**
      * This function validates the specified value against any constraints.
      *
-     * @access public
+     * @access protected
      * @param mixed $value                          the value to be validated
      * @return boolean                              whether the specified value validates
      */
