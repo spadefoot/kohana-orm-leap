@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2011-11-05
+ * @version 2011-11-27
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -131,7 +131,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			return $insert_id;
 		}
 		catch (Exception $ex) {
-            $this->error = 'Message: Failed to fetch the last insert id. Reason: ' . mysql_error($this->link_id);
+            $this->error = 'Message: Failed to fetch the last insert id. Reason: ' . $ex->getMessage();
             throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
         }
     }
