@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-10
+ * @version 2011-11-27
  *
  * @abstract
  */
@@ -36,8 +36,8 @@ abstract class Base_DB_ORM extends Kohana_Object {
     * @return DB_ORM_Delete_Proxy           an instance of the class
     */
 	public static function delete($model) {
-	    $statement = new DB_ORM_Delete_Proxy($model);
-	    return $statement;
+	    $proxy = new DB_ORM_Delete_Proxy($model);
+	    return $proxy;
 	}
 
     /**
@@ -49,9 +49,22 @@ abstract class Base_DB_ORM extends Kohana_Object {
     * @return DB_ORM_Insert_Proxy           an instance of the class
     */
 	public static function insert($model) {
-		$statement = new DB_ORM_Insert_Proxy($model);
-	    return $statement;
+		$proxy = new DB_ORM_Insert_Proxy($model);
+	    return $proxy;
 	}
+
+    /**
+     * This function returns an instance of the specified model.
+     *
+     * @access public
+     * @static
+     * @param string $model                 the model's name
+     * @return mixed                        an instance of the specified model
+     */
+    public static function model($model) {
+        $model = DB_ORM_Model::factory($model);
+        return $model;
+    }
 
     /**
     * This function returns an instance of the DB_ORM_Select_Proxy.
@@ -63,8 +76,8 @@ abstract class Base_DB_ORM extends Kohana_Object {
     * @return DB_ORM_Select_Proxy           an instance of the class
     */
 	public static function select($model, Array $columns = array()) {
-		$statement = new DB_ORM_Select_Proxy($model, $columns);
-	    return $statement;
+		$proxy = new DB_ORM_Select_Proxy($model, $columns);
+	    return $proxy;
 	}
 
     /**
@@ -76,8 +89,8 @@ abstract class Base_DB_ORM extends Kohana_Object {
     * @return DB_ORM_Update_Proxy           an instance of the class
     */
 	public static function update($model) {
-		$statement = new DB_ORM_Update_Proxy($model);
-	    return $statement;
+		$proxy = new DB_ORM_Update_Proxy($model);
+	    return $proxy;
 	}
 
 }

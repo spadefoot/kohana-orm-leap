@@ -338,6 +338,19 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
+     * This function returns an instance of the specified model.
+     *
+     * @access public
+     * @static
+     * @param string $model                 the model's name
+     * @return mixed                        an instance of the specified model
+     */
+    public static function factory($model) {
+        $model = DB_ORM_Model::model_name($model);
+        return new $model();
+    }
+
+    /**
      * This function returns the model's class name.
      *
      * @access public

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-10
+ * @version 2011-11-27
  *
  * @abstract
  */
@@ -36,8 +36,8 @@ abstract class Base_DB_SQL extends Kohana_Object {
     * @return DB_SQL_Delete_Proxy           an instance of the class
     */
 	public static function delete($config = 'default') {
-		$statement = new DB_SQL_Delete_Proxy($config);
-	    return $statement;
+		$proxy = new DB_SQL_Delete_Proxy($config);
+	    return $proxy;
 	}
 
     /**
@@ -49,8 +49,8 @@ abstract class Base_DB_SQL extends Kohana_Object {
     * @return DB_SQL_Insert_Proxy           an instance of the class
     */
 	public static function insert($config = 'default') {
-		$statement = new DB_SQL_Insert_Proxy($config);
-	    return $statement;
+		$proxy = new DB_SQL_Insert_Proxy($config);
+	    return $proxy;
 	}
 
     /**
@@ -63,8 +63,8 @@ abstract class Base_DB_SQL extends Kohana_Object {
     * @return DB_SQL_Select_Proxy           an instance of the class
     */
 	public static function select($config = 'default', Array $columns = array()) {
-		$statement = new DB_SQL_Select_Proxy($config, $columns);
-	    return $statement;
+		$proxy = new DB_SQL_Select_Proxy($config, $columns);
+	    return $proxy;
 	}
 
     /**
@@ -76,8 +76,8 @@ abstract class Base_DB_SQL extends Kohana_Object {
     * @return DB_SQL_Update_Proxy           an instance of the class
     */
 	public static function update($config = 'default') {
-		$statement = new DB_SQL_Update_Proxy($config);
-	    return $statement;
+		$proxy = new DB_SQL_Update_Proxy($config);
+	    return $proxy;
 	}
 
 }
