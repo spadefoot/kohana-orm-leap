@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-27
+ * @version 2011-12-02
  *
  * @abstract
  *
@@ -32,12 +32,12 @@
 abstract class Base_DB_ORM_Field extends Kohana_Object {
 
     /**
-     * This variable stores a reference to the implementing active record.
+     * This variable stores a reference to the implementing model.
      *
      * @access protected
      * @var DB_ORM_Model
      */
-    protected $active_record;
+    protected $model;
 
     /**
      * This variable stores the field's metadata.
@@ -59,13 +59,13 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
      * This constructor initializes the class.
      *
      * @access public
-     * @param DB_ORM_Model $active_record           a reference to the implementing active record
+     * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param string $type                          the equivalent PHP data type
      * 
      * @see http://php.net/manual/en/function.gettype.php
      */
-    public function __construct(DB_ORM_Model $active_record, $type) {
-        $this->active_record = $active_record;
+    public function __construct(DB_ORM_Model $model, $type) {
+        $this->model = $model;
         $this->metadata = array();
         $this->metadata['type'] = $type;
 		$this->metadata['savable'] = TRUE;
@@ -136,7 +136,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
      * @return boolean                              whether the value was filtered
      */
     protected function filter($value) {
-        if (isset($this->metadata['filter']) && call_user_func(array($this->active_record, $this->metadata['filter']), $value)) {
+        if (isset($this->metadata['filter']) && call_user_func(array($this->model, $this->metadata['filter']), $value)) {
             return FALSE;
         }
         return TRUE;
@@ -153,7 +153,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
         if (isset($this->metadata['enum']) && !in_array($value, $this->metadata['enum'])) {
             return FALSE;
         }
-        if (isset($this->metadata['callback']) && call_user_func(array($this->active_record, $this->metadata['callback']), $value)) {
+        if (isset($this->metadata['callback']) && call_user_func(array($this->model, $this->metadata['callback']), $value)) {
             return FALSE;
         }
         return TRUE;

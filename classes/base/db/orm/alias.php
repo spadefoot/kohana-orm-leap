@@ -21,11 +21,19 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-26
+ * @version 2011-12-02
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Alias extends Kohana_Object {
+
+    /**
+     * This variable stores a reference to the implementing model.
+     *
+     * @access protected
+     * @var DB_ORM_Model
+     */
+    protected $model;
 
     /**
      * This variable stores the name of the field in the database table.
@@ -39,10 +47,15 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
      * This constructor initializes the class.
      *
      * @access public
-     * @param DB_ORM_Model $active_record           a reference to the implementing active record
+     * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param string $field                         the name of field in the database table
+     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name was specified
      */
-    public function __construct(DB_ORM_Model $active_record, $field) {
+    public function __construct(DB_ORM_Model $model, $field) {
+        if (!is_string($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
+            throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
+        }
+        $this->model = $model;
         $this->field = $field;
     }
 

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-18
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
      * @access public
      * @param string $expr                      the expression string to be prepared
      * @return string                           the prepared expression
-     * @throws Kohana_InvalidArgumentException  indicates that there is a data type mismatch
+     * @throws Kohana_InvalidArgument_Exception indicates that there is a data type mismatch
      *
      * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
      * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers

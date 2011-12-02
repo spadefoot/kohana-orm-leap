@@ -17,7 +17,8 @@
  */
 
 /**
- * This class represents a "decimal" field in a database table.
+ * This class represents an "array" field (i.e. a delimitated string) in
+ * a database table.
  *
  * @package Leap
  * @category ORM
@@ -25,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
+abstract class Base_DB_ORM_Field_Array extends DB_ORM_Field {
 
     /**
      * This constructor initializes the class.
@@ -35,19 +36,9 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
      * @param array $metadata                       the field's metadata
      */
     public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-        parent::__construct($model, 'double');
+        parent::__construct($model, 'array');
 
-        // Fixed precision and scale numeric data from -10^38 -1 through 10^38 -1.
-
-        $this->metadata['scale'] = (integer)$metadata['scale']; // the scale (i.e. the number of digits that can be stored following the decimal point)
-        if ($this->metadata['scale'] == 0) {
-            $this->metadata['type'] = 'integer';
-        }
-        
-        $this->metadata['precision'] = (integer)$metadata['precision']; // the precision (i.e. the number of significant digits that are stored for values)
-        if ($this->metadata['type'] == 'double') {
-            $this->metadata['precision'] += 1;
-        }
+        $this->metadata['max_length'] = (integer)$metadata['max_length'];
 
 		if (isset($metadata['savable'])) {
             $this->metadata['savable'] = (boolean)$metadata['savable'];
@@ -64,14 +55,18 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
         if (isset($metadata['callback'])) {
             $this->metadata['callback'] = (string)$metadata['callback'];
         }
-
-        if (isset($metadata['enum'])) {
-            $this->metadata['enum'] = (array)$metadata['enum'];
-        }
+        
+        $this->metadata['delimiter'] = (isset($metadata['delimiter']))
+            ? (string)$metadata['delimiter']
+            : ',';
 
         if (isset($metadata['default'])) {
             $default = $metadata['default'];
             if (!is_null($default)) {
+                if (is_string($value)) {
+                    $regex = '/' . preg_quote($this->metadata['delimiter']) . '/';
+                    $default = preg_split($regex, $default);
+                }
                 settype($default, $this->metadata['type']);
                 $this->validate($default);
             }
@@ -79,11 +74,35 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
             $this->value = $default;
         }
         else if (!$this->metadata['nullable']) {
-            $default = 0.0;
-            settype($default, $this->metadata['type']);
+            $default = '';
             $this->metadata['default'] = $default;
             $this->value = $default;
         }
+    }
+
+    /**
+     * This function returns the value associated with the specified property.
+     *
+     * @access public
+     * @param string $key                           the name of the property
+     * @return mixed                                the value of the property
+     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+     *                                              either inaccessible or undefined
+     */
+    public function __get($key) {
+        switch ($key) {
+            case 'data':
+                if (is_array($this->value)) {
+                    return implode($this->metadata['delimiter'], $this->value);
+                }
+            case 'value':
+                return $this->value;
+            break;
+            default:
+                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+            break;
+        }
+        throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
     }
 
     /**
@@ -99,7 +118,10 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
         switch ($key) {
             case 'value':
                 if (!is_null($value)) {
-                    $value = number_format((float)$this->value, $this->metadata['scale']);
+                    if (is_string($value)) {
+                        $regex = '/' . preg_quote($this->metadata['delimiter']) . '/';
+                        $value = preg_split($regex, $value);
+                    }
                     settype($value, $this->metadata['type']);
                     $this->validate($value);
                     $this->value = $value;
@@ -127,7 +149,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
      */
     protected function validate($value) {
         if (!is_null($value)) {
-            if (strlen("{$value}") > $this->metadata['precision']) {
+            if (strlen($value) > $this->metadata['max_length']) {
                 return FALSE;
             }
         }

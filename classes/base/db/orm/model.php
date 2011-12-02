@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-27
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -35,14 +35,6 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      */
     protected $metadata = array();
 
-    /**
-     * This variable stores the record's fields.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $fields = array();
-
 	/**
 	 * This variable stores the aliases for certain fields.
 	 *
@@ -50,6 +42,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @var array
 	 */
 	protected $aliases = array();
+
+    /**
+     * This variable stores the record's fields.
+     *
+     * @access protected
+     * @var array
+     */
+    protected $fields = array();
 
 	/**
 	 * This variable stores the record's relations.
@@ -73,39 +73,81 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      * This function returns the value associated with the specified property.
      *
      * @access public
-     * @param string $key                           the name of the property
+     * @param string $name                          the name of the property
      * @return mixed                                the value of the property
      * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
      *                                              either inaccessible or undefined
      */
-    public function __get($key) {
-        if (isset($this->aliases[$key])) {
-			$key = $this->aliases[$key]->field;
+    public function __get($name) {
+        if ($this->is_alias($name)) {
+			$name = $this->aliases[$name]->field;
 		}
-		if (isset($this->fields[$key])) {
-       		return $this->fields[$key]->value;
+		if ($this->is_field($name)) {
+       		return $this->fields[$name]->value;
         }
-		else if (isset($this->relations[$key])) {
-			return $this->relations[$key]->result;
+		if ($this->is_relation($name)) {
+			return $this->relations[$name]->result;
 		}
-		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
 	}
 
     /**
      * This function sets the value for the specified key.
      *
      * @access public
-     * @param string $key                           the name of the property
+     * @param string $name                          the name of the property
      * @return mixed                                the value of the property
      * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
      *                                              either inaccessible or undefined
      */
-    public function __set($key, $value) {
-        if (!isset($this->fields[$key])) {
-            throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+    public function __set($name, $value) {
+        if ($this->is_alias($name)) {
+			$name = $this->aliases[$name]->field;
+		}
+        if (!$this->is_field($name)) {
+            throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name, ':value' => $value));
         }
-        $this->fields[$key]->value = $value;
+        $this->fields[$name]->value = $value;
         $this->metadata['loaded'] = TRUE;
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * an alias.
+     *
+     * @access public
+     * @param string $name                          the name of the alias
+     * @return boolean                              whether this model defines the specified
+     *                                              name as an alias
+     */
+    public function is_alias($name) {
+        return isset($this->aliases[$name]);
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * a field.
+     *
+     * @access public
+     * @param string $name                          the name of the field
+     * @return boolean                              whether this model defines the specified
+     *                                              name as a field
+     */
+    public function is_field($name) {
+        return isset($this->fields[$name]);
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * a relation.
+     *
+     * @access public
+     * @param string $name                          the name of the relation
+     * @return boolean                              whether this model defines the specified
+     *                                              name as a relation
+     */
+    public function is_relation($name) {
+        return isset($this->relations[$name]);
     }
 
     /**

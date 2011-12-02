@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-27
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -31,11 +31,11 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
      * This constructor initializes the class.
      *
      * @access public
-     * @param DB_ORM_Model $active_record           a reference to the implementing active record
+     * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param array $metadata                       the field's metadata
      */
-    public function __construct(DB_ORM_Model $active_record, Array $metadata = array()) {
-        parent::__construct($active_record, 'string');
+    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+        parent::__construct($model, 'string');
 
         $this->metadata['max_length'] = (integer)$metadata['max_length'];
 

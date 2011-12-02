@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-17
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -31,11 +31,11 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
      * This constructor initializes the class.
      *
      * @access public
-     * @param DB_ORM_Model $active_record           a reference to the implementing active record
+     * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param array $metadata                       the relation's metadata
      */
-    public function __construct(DB_ORM_Model $active_record, Array $metadata = array()) {
-        parent::__construct($active_record, 'belongs_to');
+    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+        parent::__construct($model, 'belongs_to');
 
         // the parent model is the referenced table
         $this->metadata['parent_model'] = DB_ORM_Model::model_name($metadata['parent_model']);
@@ -52,7 +52,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
         }
 
         // the child model is the referencing table
-        $this->metadata['child_model'] = get_class($active_record);
+        $this->metadata['child_model'] = get_class($model);
 
         // the foreign key is an ordered list of field names in the child model
         $this->metadata['foreign_key'] = (isset($metadata['foreign_key']))
@@ -61,10 +61,10 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
     }
 
 	/**
-	 * This function loads the corresponding active record(s).
+	 * This function loads the corresponding model(s).
 	 *
 	 * @access protected
-	 * @return mixed								the corresponding active record(s)
+	 * @return mixed								the corresponding model(s)
 	 */
 	protected function load() {
 		$parent_model = $this->metadata['parent_model'];
@@ -76,7 +76,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 
 		$sql = DB_ORM::select($parent_model);
         for ($i = 0; $i < $field_count; $i++) {
-            $sql->where($candidate_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->active_record->{$foreign_key[$i]});
+            $sql->where($candidate_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$foreign_key[$i]});
         }
 
         $result = $sql->limit(1)->query();
@@ -84,7 +84,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
         if (!$result->is_loaded()) {
             $record = new $parent_model();
             for ($i = 0; $i < $field_count; $i++) {
-                $record->{$candidate_key[$i]} = $this->active_record->{$foreign_key[$i]};
+                $record->{$candidate_key[$i]} = $this->model->{$foreign_key[$i]};
             }
             return $record;
         }

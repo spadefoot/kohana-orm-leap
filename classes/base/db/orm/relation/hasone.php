@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-17
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -31,14 +31,14 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
      * This constructor initializes the class.
      *
      * @access public
-     * @param DB_ORM_Model $active_record           a reference to the implementing active record
+     * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param array $metadata                       the relation's metadata
      */
-    public function __construct(DB_ORM_Model $active_record, Array $metadata = array()) {
-        parent::__construct($active_record, 'has_one');
+    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+        parent::__construct($model, 'has_one');
 
         // the parent model is the referenced table
-        $this->metadata['parent_model'] = get_class($active_record);
+        $this->metadata['parent_model'] = get_class($model);
 
         // the candidate key is an ordered list of field names in the parent model
         if (isset($metadata['candidate_key'])) {
@@ -61,10 +61,10 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
     }
 
 	/**
-	 * This function loads the corresponding active record(s).
+	 * This function loads the corresponding model(s).
 	 *
 	 * @access protected
-	 * @return mixed								the corresponding active record(s)
+	 * @return mixed								the corresponding model(s)
 	 */
 	protected function load() {
 		$child_model = $this->metadata['child_model'];
@@ -76,14 +76,14 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 
 		$sql = DB_ORM::select($child_model);
         for ($i = 0; $i < $field_count; $i++) {
-            $sql->where($foreign_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->active_record->{$candidate_key[$i]});
+            $sql->where($foreign_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$candidate_key[$i]});
         }
         $result = $sql->limit(1)->query();
 
         if (!$result->is_loaded()) {
             $record = new $child_model();
             for ($i = 0; $i < $field_count; $i++) {
-                $record->{$foreign_key[$i]} = $this->active_record->{$candidate_key[$i]};
+                $record->{$foreign_key[$i]} = $this->model->{$candidate_key[$i]};
             }
             return $record;
         }

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-16
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
     * @access public
     * @param string $expr                       the expression string to be prepared
     * @return string                            the prepared expression
-    * @throws Kohana_InvalidArgumentException   indicates that there is a data type mismatch
+    * @throws Kohana_InvalidArgument_Exception  indicates that there is a data type mismatch
     */
     public function prepare_alias($expr) {
         if (!is_string($expr)) {

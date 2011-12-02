@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-05
+ * @version 2011-12-02
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
      * @access protected
      * @var DB_ORM_Model
      */
-    protected $active_record;
+    protected $model;
 
     /**
      * This variable stores the relation's metadata.
@@ -44,7 +44,7 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
     protected $metadata;
 
     /**
-     * This variable stores the relation's corresponding active records.
+     * This variable stores the relation's corresponding model(s).
      *
      * @access protected
      * @var mixed
@@ -55,11 +55,11 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
      * This constructor initializes the class.
      *
      * @access public
-     * @param DB_ORM_Model $active_record           a reference to the implementing active record
+     * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param string $type                          the type of relationship
      */
-    public function __construct(DB_ORM_Model $active_record, $type) {
-        $this->active_record = $active_record;
+    public function __construct(DB_ORM_Model $model, $type) {
+        $this->model = $model;
         $this->metadata = array();
         $this->metadata['type'] = $type;
         $this->cache = NULL;
@@ -90,11 +90,11 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
 	}
 
 	/**
-	 * This function loads the corresponding active record(s).
+	 * This function loads the corresponding model(s).
 	 *
 	 * @access protected
 	 * @abstract
-	 * @return mixed								the corresponding active record(s)
+	 * @return mixed								the corresponding model(s)
 	 */
 	protected abstract function load();
 
