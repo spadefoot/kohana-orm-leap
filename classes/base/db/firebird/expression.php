@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-02
+ * @version 2011-12-03
  *
  * @abstract
  */
@@ -230,13 +230,17 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
     public function prepare_value($expr) {
         if ($expr === NULL) {
 			return 'NULL';
-		} else if ($expr === TRUE) {
+		}
+		else if ($expr === TRUE) {
 			return "'1'";
-		} else if ($expr === FALSE) {
+		}
+		else if ($expr === FALSE) {
 			return "'0'";
-		} else if (is_array($expr)) {
+		}
+		else if (is_array($expr)) {
 			return '(' . implode(', ', array_map(array($this, __FUNCTION__), $expr)) . ')';
-		} else if (is_object($expr)) {
+		}
+		else if (is_object($expr)) {
             if ($expr instanceof DB_Firebird_Select_Builder) {
                 return '(' . $expr->statement(FALSE) . ')';
         	}
@@ -246,13 +250,20 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 			else {
 				return self::prepare_value((string)$expr); // Convert the object to a string
 			}
-		} else if (is_integer($expr)) {
+		}
+		else if (is_integer($expr)) {
 			return (int)$expr;
-		} else if (is_double($expr)) {
+		}
+		else if (is_double($expr)) {
 			return sprintf('%F', $expr);
-		} else if (is_string($expr) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
+		}
+		else if (is_string($expr) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
 		    return "'{$expr}'";
-        } else {
+        }
+		else if (empty($expr)) {
+		    return "''";
+		}
+        else {
 		    $unpacked = unpack('H*hex', $expr);
             $expr = 'x\'' . $unpacked['hex'] . '\'';
             return $expr;

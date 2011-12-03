@@ -26,58 +26,25 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Array extends DB_ORM_Field {
+abstract class Base_DB_ORM_Alias_Array extends DB_ORM_Alias {
 
     /**
      * This constructor initializes the class.
      *
      * @access public
      * @param DB_ORM_Model $model                   a reference to the implementing model
+     * @param string $field                         the name of field in the database table
      * @param array $metadata                       the field's metadata
+     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name was specified
      */
-    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-        parent::__construct($model, 'array');
+    public function __construct(DB_ORM_Model $model, $field, Array $metadata = array()) {
+        parent::__construct($model, $field);
 
-        $this->metadata['max_length'] = (integer)$metadata['max_length'];
-
-		if (isset($metadata['savable'])) {
-            $this->metadata['savable'] = (boolean)$metadata['savable'];
-        }
-
-        if (isset($metadata['nullable'])) {
-            $this->metadata['nullable'] = (boolean)$metadata['nullable'];
-        }
-
-        if (isset($metadata['filter'])) {
-            $this->metadata['filter'] = (string)$metadata['filter'];
-        }
-
-        if (isset($metadata['callback'])) {
-            $this->metadata['callback'] = (string)$metadata['callback'];
-        }
-        
         $this->metadata['delimiter'] = (isset($metadata['delimiter']))
             ? (string)$metadata['delimiter']
             : ',';
 
-        if (isset($metadata['default'])) {
-            $default = $metadata['default'];
-            if (!is_null($default)) {
-                if (is_string($value)) {
-                    $regex = '/' . preg_quote($this->metadata['delimiter']) . '/';
-                    $default = preg_split($regex, $default);
-                }
-                settype($default, $this->metadata['type']);
-                $this->validate($default);
-            }
-            $this->metadata['default'] = $default;
-            $this->value = $default;
-        }
-        else if (!$this->metadata['nullable']) {
-            $default = '';
-            $this->metadata['default'] = $default;
-            $this->value = $default;
-        }
+        $this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';
     }
 
     /**
@@ -91,12 +58,8 @@ abstract class Base_DB_ORM_Field_Array extends DB_ORM_Field {
      */
     public function __get($key) {
         switch ($key) {
-            case 'data':
-                if (is_array($this->value)) {
-                    return implode($this->metadata['delimiter'], $this->value);
-                }
             case 'value':
-                return $this->value;
+                return preg_split($this->metadata['regex'], $this->model->{$this->metadata['field']});
             break;
             default:
                 if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
@@ -117,43 +80,15 @@ abstract class Base_DB_ORM_Field_Array extends DB_ORM_Field {
     public function __set($key, $value) {
         switch ($key) {
             case 'value':
-                if (!is_null($value)) {
-                    if (is_string($value)) {
-                        $regex = '/' . preg_quote($this->metadata['delimiter']) . '/';
-                        $value = preg_split($regex, $value);
-                    }
-                    settype($value, $this->metadata['type']);
-                    $this->validate($value);
-                    $this->value = $value;
+                if (is_array($value)) {
+                    $value = implode($this->metadata['delimiter'], $value);
                 }
-                else {
-                    $this->value = $this->metadata['default'];
-                }
-                $this->metadata['modified'] = TRUE;
-            break;
-            case 'modified':
-                $this->metadata['modified'] = (bool)$value;
+                $this->model->{$this->metadata['field']} = $value;
             break;
             default:
                 throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
             break;
         }
-    }
-
-    /**
-     * This function validates the specified value against any constraints.
-     *
-     * @access protected
-     * @param mixed $value                          the value to be validated
-     * @return boolean                              whether the specified value validates
-     */
-    protected function validate($value) {
-        if (!is_null($value)) {
-            if (strlen($value) > $this->metadata['max_length']) {
-                return FALSE;
-            }
-        }
-        return parent::validate($value);
     }
 
 }

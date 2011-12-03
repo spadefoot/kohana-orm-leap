@@ -36,12 +36,12 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
     protected $model;
 
     /**
-     * This variable stores the name of the field in the database table.
+     * This variable stores the alias's metadata.
      *
      * @access protected
-     * @var string
+     * @var array
      */
-    protected $field = NULL;
+    protected $metadata;
 
     /**
      * This constructor initializes the class.
@@ -56,7 +56,7 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
             throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
         }
         $this->model = $model;
-        $this->field = $field;
+        $this->metadata['field'] = $field;
     }
 
     /**
@@ -70,8 +70,11 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
      */
     public function __get($key) {
         switch ($key) {
-            case 'field':
-                return $this->field;
+            case 'value':
+                return $this->model->{$this->metadata['field']};
+            break;
+            default:
+                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
             break;
         }
         throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));

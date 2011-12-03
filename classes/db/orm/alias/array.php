@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-26
+ * @version 2011-12-02
  */
-class DB_ORM_Field_Array extends Base_DB_ORM_Field_Array { }
+class DB_ORM_Alias_Array extends Base_DB_ORM_Alias_Array { }
 ?>

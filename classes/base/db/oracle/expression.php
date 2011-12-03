@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-02
+ * @version 2011-12-03
  *
  * @abstract
  */
@@ -267,6 +267,9 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 		}
 		else if (is_string($expr) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
 		    return "'{$expr}'";
+		}
+		else if (empty($expr)) {
+		    return "''";
 		}
 		else {
 		    $unpacked = unpack('H*hex', $expr);

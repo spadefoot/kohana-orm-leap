@@ -80,12 +80,12 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      */
     public function __get($name) {
         if ($this->is_alias($name)) {
-			$name = $this->aliases[$name]->field;
+			return $this->aliases[$name]->value;
 		}
-		if ($this->is_field($name)) {
+		else if ($this->is_field($name)) {
        		return $this->fields[$name]->value;
         }
-		if ($this->is_relation($name)) {
+		else if ($this->is_relation($name)) {
 			return $this->relations[$name]->result;
 		}
 		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
@@ -102,12 +102,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      */
     public function __set($name, $value) {
         if ($this->is_alias($name)) {
-			$name = $this->aliases[$name]->field;
+			$this->aliases[$name]->value = $value;
 		}
-        if (!$this->is_field($name)) {
+        else if ($this->is_field($name)) {
+            $this->fields[$name]->value = $value;
+        }
+        else {
             throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name, ':value' => $value));
         }
-        $this->fields[$name]->value = $value;
         $this->metadata['loaded'] = TRUE;
     }
 

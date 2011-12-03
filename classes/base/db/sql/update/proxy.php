@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-11-07
+ * @version 2011-12-03
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_DataSource
     */
-    protected $data_source = NULL;
+    protected $source = NULL;
 
     /**
     * This variable stores an instance of the SQL statement builder of the preferred SQL
@@ -51,8 +51,8 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
     * @param mixed $config                  the data source configurations
     */
     public function __construct($config) {
-        $this->data_source = new DB_DataSource($config);
-        $builder = 'DB_' . $this->data_source->get_resource_type() . '_Update_Builder';
+        $this->source = new DB_DataSource($config);
+        $builder = 'DB_' . $this->source->get_resource_type() . '_Update_Builder';
         $this->builder = new $builder();
     }
 
@@ -164,10 +164,8 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
     * @access public
     */
     public function execute() {
-        $connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		//$connection->begin_transaction();
+        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
-		//$connection->commit();
     }
 
 }
