@@ -17,13 +17,12 @@
  */
 
 /**
- * This class represents a field in a database table.
+ * This class represents a "string" adaptor for handling a GZ compressed string
+ * field in a database table.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-04
- *
- * @abstract
  */
-abstract class DB_ORM_Field extends Base_DB_ORM_Field { }
+class DB_ORM_Field_Adaptor_GZ extends Base_DB_ORM_Field_Adaptor_GZ { }
 ?>

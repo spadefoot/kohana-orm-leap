@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-03
+ * @version 2011-12-04
  *
  * @abstract
  */
@@ -39,7 +39,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
         if (!is_string($expr)) {
             throw new Kohana_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
         }
-        return '[' . trim(preg_replace("/([[\"'`]|])/", '', $expr)) . ']';
+        return '[' . trim(preg_replace('/[^a-z0-9_ ]/i', '', $expr)) . ']';
     }
 
     /**
@@ -50,7 +50,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
     * @return string                            the prepared expression
     */
     public function prepare_boolean($expr) {
-        return (bool)$expr;
+        return (boolean)$expr;
     }
 
     /**
@@ -101,7 +101,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
         }
         $parts = explode('.', $expr);
         foreach ($parts as &$part) {
-			$part = '[' . trim(preg_replace("/([[\"'`]|])/", '', $part)) . ']';
+			$part = '[' . trim(preg_replace('/[^a-z0-9_ ]/i', '', $part)) . ']';
 		}
 		$expr = implode('.', $parts);
         return $expr;
@@ -264,7 +264,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			}
 		}
 		else if (is_integer($expr)) {
-			return (int)$expr;
+			return (integer)$expr;
 		}
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);

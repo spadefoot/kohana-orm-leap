@@ -17,16 +17,18 @@
  */
 
 /**
- * This class represents an "array" adaptor for a delimitated string field
- * in a database table.
+ * This class represents a "string" adaptor for handling an encrypted string
+ * field in a database table.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-04
  *
+ * @see http://www.iitechs.com/kohana/userguide/api/kohana/Encrypt
+ *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor {
 
     /**
      * This constructor initializes the class.
@@ -40,11 +42,9 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
     public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
         parent::__construct($model, $metadata['field']);
 
-        $this->metadata['delimiter'] = (isset($metadata['delimiter']))
-            ? (string)$metadata['delimiter']
-            : ',';
-
-        $this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';
+        $this->metadata['config'] = (isset($metadata['config'])) ?
+            ? (array)$metadata['config']
+            : NULL;
     }
 
     /**
@@ -61,12 +61,12 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
             case 'value':
                 $value = $this->model->{$this->metadata['field']};
                 if (is_string($value)) {
-                    $value = preg_split($this->metadata['regex'], $value);
+                    $value = Encrypt::instance($this->metadata['config'])->decode($value);
                 }
                 return $value;
             break;
             default:
-                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+                if (array_key_exists($key, $this->metadata)) { return $this->metadata[$key]; }
             break;
         }
         throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
@@ -84,8 +84,8 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
     public function __set($key, $value) {
         switch ($key) {
             case 'value':
-                if (is_array($value)) {
-                    $value = implode($this->metadata['delimiter'], $value);
+                if (is_string($value)) {
+                    $value = Encrypt::instance($this->metadata['config'])->encode($value);
                 }
                 $this->model->{$this->metadata['field']} = $value;
             break;

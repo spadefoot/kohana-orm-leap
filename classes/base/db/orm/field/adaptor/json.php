@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-03
+ * @version 2011-12-04
  *
  * @abstract
  */
@@ -61,14 +61,16 @@ abstract class Base_DB_ORM_Field_Adaptor_JSON extends DB_ORM_Field_Adaptor {
     public function __get($key) {
         switch ($key) {
             case 'value':
-                $string = $this->model->{$this->metadata['field']};
-                $start = strlen($this->metadata['prefix']);
-                $length = strlen($string) - ($start + strlen($this->metadata['suffix']));
-                if ($length >= 0) {
-                    $string = substr($string, $start, $length);
+                $value = $this->model->{$this->metadata['field']};
+                if (is_string($value)) {
+                    $start = strlen($this->metadata['prefix']);
+                    $length = strlen($value) - ($start + strlen($this->metadata['suffix']));
+                    if ($length >= 0) {
+                        $value = substr($value, $start, $length);
+                    }
+                    $value = json_decode($value, TRUE);
                 }
-                $array = json_decode($string, TRUE);
-                return $array;
+                return $value;
             break;
             default:
                 if (isset($this->metadata[$key])) { return $this->metadata[$key]; }

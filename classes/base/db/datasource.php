@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-10-28
+ * @version 2011-12-04
  *
  * @abstract
  */
@@ -150,7 +150,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
      */
     public function is_persistent() {
         if (isset($this->settings['persistent'])) {
-            return (bool)$this->settings['persistent'];
+            return (boolean)$this->settings['persistent'];
         }
         return FALSE;
     }

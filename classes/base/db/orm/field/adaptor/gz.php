@@ -17,16 +17,19 @@
  */
 
 /**
- * This class represents an "array" adaptor for a delimitated string field
- * in a database table.
+ * This class represents a "string" adaptor for handling a GZ compressed string
+ * field in a database table.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-04
  *
+ * @see http://www.php.net/manual/en/function.gzcompress.php
+ * @see http://php.net/manual/en/function.gzuncompress.php
+ *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_GZ extends DB_ORM_Field_Adaptor {
 
     /**
      * This constructor initializes the class.
@@ -39,12 +42,10 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
      */
     public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
         parent::__construct($model, $metadata['field']);
-
-        $this->metadata['delimiter'] = (isset($metadata['delimiter']))
-            ? (string)$metadata['delimiter']
-            : ',';
-
-        $this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';
+        
+        $this->metadata['level'] = (isset($metadata['level']))
+            ? min(0, max(9, (integer)$metadata['level']))
+            : 9;
     }
 
     /**
@@ -61,7 +62,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
             case 'value':
                 $value = $this->model->{$this->metadata['field']};
                 if (is_string($value)) {
-                    $value = preg_split($this->metadata['regex'], $value);
+                    $value = gzuncompress($value);
                 }
                 return $value;
             break;
@@ -84,8 +85,8 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
     public function __set($key, $value) {
         switch ($key) {
             case 'value':
-                if (is_array($value)) {
-                    $value = implode($this->metadata['delimiter'], $value);
+                if (is_string($value)) {
+                    $value = gzcompress($value, $this->metadata['level']);
                 }
                 $this->model->{$this->metadata['field']} = $value;
             break;

@@ -17,13 +17,12 @@
  */
 
 /**
- * This class represents a field in a database table.
+ * This class provides a set of helper functions that are often used when
+ * data is stored in a database.
  *
  * @package Leap
- * @category ORM
+ * @category Connection
  * @version 2011-12-04
- *
- * @abstract
  */
-abstract class DB_ORM_Field extends Base_DB_ORM_Field { }
+class DB_ToolKit extends Base_DB_ToolKit { }
 ?>
