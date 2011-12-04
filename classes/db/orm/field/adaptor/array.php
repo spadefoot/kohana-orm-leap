@@ -17,12 +17,12 @@
  */
 
 /**
- * This class represents an "array" field (i.e. an JSON encoded string) in
- * a database table.
+ * This class represents an "array" adaptor for a delimitated string field
+ * in a database table.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-03
  */
-class DB_ORM_Alias_JSON extends Base_DB_ORM_Alias_JSON { }
+class DB_ORM_Field_Adaptor_Array extends Base_DB_ORM_Field_Adaptor_Array { }
 ?>

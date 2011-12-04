@@ -17,16 +17,31 @@
  */
 
 /**
- * This class represents an "array" field (i.e. a delimitated string) in
- * a database table.
+ * This class represents an adaptor for a field in a database table.
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2011-12-03
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Alias_Array extends DB_ORM_Alias {
+abstract class Base_DB_ORM_Field_Adaptor extends Kohana_Object {
+
+    /**
+     * This variable stores a reference to the implementing model.
+     *
+     * @access protected
+     * @var DB_ORM_Model
+     */
+    protected $model;
+
+    /**
+     * This variable stores the adaptor's metadata.
+     *
+     * @access protected
+     * @var array
+     */
+    protected $metadata;
 
     /**
      * This constructor initializes the class.
@@ -34,17 +49,14 @@ abstract class Base_DB_ORM_Alias_Array extends DB_ORM_Alias {
      * @access public
      * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param string $field                         the name of field in the database table
-     * @param array $metadata                       the field's metadata
      * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name was specified
      */
-    public function __construct(DB_ORM_Model $model, $field, Array $metadata = array()) {
-        parent::__construct($model, $field);
-
-        $this->metadata['delimiter'] = (isset($metadata['delimiter']))
-            ? (string)$metadata['delimiter']
-            : ',';
-
-        $this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';
+    public function __construct(DB_ORM_Model $model, $field) {
+        if (!is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
+            throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
+        }
+        $this->model = $model;
+        $this->metadata['field'] = $field;
     }
 
     /**
@@ -56,17 +68,7 @@ abstract class Base_DB_ORM_Alias_Array extends DB_ORM_Alias {
      * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
      *                                              either inaccessible or undefined
      */
-    public function __get($key) {
-        switch ($key) {
-            case 'value':
-                return preg_split($this->metadata['regex'], $this->model->{$this->metadata['field']});
-            break;
-            default:
-                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
-            break;
-        }
-        throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
-    }
+    public abstract function __get($key);
 
     /**
      * This function sets the value for the specified key.
@@ -77,19 +79,7 @@ abstract class Base_DB_ORM_Alias_Array extends DB_ORM_Alias {
      * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
      *                                              either inaccessible or undefined
      */
-    public function __set($key, $value) {
-        switch ($key) {
-            case 'value':
-                if (is_array($value)) {
-                    $value = implode($this->metadata['delimiter'], $value);
-                }
-                $this->model->{$this->metadata['field']} = $value;
-            break;
-            default:
-                throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
-            break;
-        }
-    }
+    public abstract function __set($key, $value);
 
 }
 ?>

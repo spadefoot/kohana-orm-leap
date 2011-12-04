@@ -17,8 +17,8 @@
  */
 
 /**
- * This class represents an "array" field (i.e. an JSON encoded string) in
- * a database table.
+ * This class represents an "array" adaptor for a JSON encoded string field
+ * in a database table.
  *
  * @package Leap
  * @category ORM
@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Alias_JSON extends DB_ORM_Alias {
+abstract class Base_DB_ORM_Field_Adaptor_JSON extends DB_ORM_Field_Adaptor {
 
     /**
      * This constructor initializes the class.
@@ -37,8 +37,8 @@ abstract class Base_DB_ORM_Alias_JSON extends DB_ORM_Alias {
      * @param array $metadata                       the field's metadata
      * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name was specified
      */
-    public function __construct(DB_ORM_Model $model, $field, Array $metadata = array()) {
-        parent::__construct($model, $field);
+    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+        parent::__construct($model, $metadata['field']);
 
         $this->metadata['prefix'] = (isset($metadata['prefix']))
             ? (string)$metadata['prefix']

@@ -21,19 +21,19 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2011-12-03
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Model extends Kohana_Object {
 
     /**
-     * This variable stores the record's metadata.
+     * This variable stores the record's adaptors.
      *
      * @access protected
      * @var array
      */
-    protected $metadata = array();
+    protected $adaptors = array();
 
 	/**
 	 * This variable stores the aliases for certain fields.
@@ -50,6 +50,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      * @var array
      */
     protected $fields = array();
+
+    /**
+     * This variable stores the record's metadata.
+     *
+     * @access protected
+     * @var array
+     */
+    protected $metadata = array();
 
 	/**
 	 * This variable stores the record's relations.
@@ -79,7 +87,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      *                                              either inaccessible or undefined
      */
     public function __get($name) {
-        if ($this->is_alias($name)) {
+        if ($this->is_adaptor($name)) {
+			return $this->adaptors[$name]->value;
+		}
+        else if ($this->is_alias($name)) {
 			return $this->aliases[$name]->value;
 		}
 		else if ($this->is_field($name)) {
@@ -88,7 +99,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		else if ($this->is_relation($name)) {
 			return $this->relations[$name]->result;
 		}
-		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+		else {
+		    throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+        }
 	}
 
     /**
@@ -101,55 +114,36 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      *                                              either inaccessible or undefined
      */
     public function __set($name, $value) {
-        if ($this->is_alias($name)) {
+        if ($this->is_adaptor($name)) {
+			$this->adaptors[$name]->value = $value;
+		}
+        else if ($this->is_alias($name)) {
 			$this->aliases[$name]->value = $value;
 		}
         else if ($this->is_field($name)) {
             $this->fields[$name]->value = $value;
+            $this->metadata['loaded'] = TRUE;
         }
         else {
             throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name, ':value' => $value));
         }
-        $this->metadata['loaded'] = TRUE;
     }
 
     /**
-     * This function checks whether this model defines the specified name as
-     * an alias.
+     * This function will return an array of column/value mappings.
      *
      * @access public
-     * @param string $name                          the name of the alias
-     * @return boolean                              whether this model defines the specified
-     *                                              name as an alias
+     * @return array                                an array of column/value mappings
      */
-    public function is_alias($name) {
-        return isset($this->aliases[$name]);
-    }
-
-    /**
-     * This function checks whether this model defines the specified name as
-     * a field.
-     *
-     * @access public
-     * @param string $name                          the name of the field
-     * @return boolean                              whether this model defines the specified
-     *                                              name as a field
-     */
-    public function is_field($name) {
-        return isset($this->fields[$name]);
-    }
-
-    /**
-     * This function checks whether this model defines the specified name as
-     * a relation.
-     *
-     * @access public
-     * @param string $name                          the name of the relation
-     * @return boolean                              whether this model defines the specified
-     *                                              name as a relation
-     */
-    public function is_relation($name) {
-        return isset($this->relations[$name]);
+    public function as_array() {
+        $buffer = array();
+		foreach ($this->relations as $key => $relation) {
+            $buffer[$key] = $relation->result;
+		}
+        foreach ($this->fields as $key => $field) {
+            $buffer[$key] = $field->value;
+        }
+        return $buffer;
     }
 
     /**
@@ -183,6 +177,91 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
         else {
             $this->metadata['saved'] = NULL;
         }
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * an adaptor.
+     *
+     * @access public
+     * @param string $name                          the name of the adaptor
+     * @return boolean                              whether this model defines the specified
+     *                                              name as an adaptor
+     */
+    public function is_adaptor($name) {
+        return isset($this->adaptors[$name]);
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * an alias.
+     *
+     * @access public
+     * @param string $name                          the name of the alias
+     * @return boolean                              whether this model defines the specified
+     *                                              name as an alias
+     */
+    public function is_alias($name) {
+        return isset($this->aliases[$name]);
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * a field.
+     *
+     * @access public
+     * @param string $name                          the name of the field
+     * @return boolean                              whether this model defines the specified
+     *                                              name as a field
+     */
+    public function is_field($name) {
+        return isset($this->fields[$name]);
+    }
+
+    /**
+     * This function returns whether the record contains any data.
+     *
+     * @access public
+     * @return boolean                              whether the record contains any data
+     */
+    public function is_loaded() {
+        return $this->metadata['loaded'];
+    }
+
+    /**
+     * This function checks whether this model defines the specified name as
+     * a relation.
+     *
+     * @access public
+     * @param string $name                          the name of the relation
+     * @return boolean                              whether this model defines the specified
+     *                                              name as a relation
+     */
+    public function is_relation($name) {
+        return isset($this->relations[$name]);
+    }
+
+    /**
+     * This function generates a hash code that will be used to indicate whether the
+     * record is saved in the database.
+     *
+     * @access protected
+     * @return string                               the generated hash code
+     */
+    protected function hash_code() {
+        $self = get_class($this);
+        $primary_key = call_user_func(array($self, 'primary_key'));
+        if (is_array($primary_key) && !empty($primary_key)) {
+            $buffer = '';
+            foreach ($primary_key as $column) {
+                if (!isset($this->fields[$column])) {
+                    throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
+                }
+                $buffer .= "{$column}={$this->fields[$column]->value}";
+            }
+            return sha1($buffer);
+        }
+        throw new Kohana_EmptyCollection_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
     }
 
     /**
@@ -220,9 +299,27 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
+     * This function resets each column's value back to its original value.
+     *
+     * @access public
+     */
+    public function reset() {
+        foreach ($this->fields as $field) {
+            $field->reset();
+        }
+		foreach ($this->relations as $relation) {
+			$relation->reset();
+		}
+        $this->metadata['loaded'] = FALSE;
+        $this->metadata['saved'] = NULL;
+    }
+
+    /**
      * This function saves the record matching using the primary key.
      *
      * @access public
+     * @param boolean $reload                       whether the model should be reloaded
+     *                                              after the save is done
      */
     public function save($reload = FALSE) {
         $self = get_class($this);
@@ -315,129 +412,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
         }
     }
 
-    /**
-     * This function returns whether the record contains any data.
-     *
-     * @access public
-     * @return boolean                      whether the record contains any data
-     */
-    public function is_loaded() {
-        return $this->metadata['loaded'];
-    }
-
-    /**
-     * This function will return an array of column/value mappings.
-     *
-     * @access public
-     * @return array                        an array of column/value mappings
-     */
-    public function as_array() {
-        $buffer = array();
-		foreach ($this->relations as $key => $relation) {
-            $buffer[$key] = $relation->result;
-		}
-        foreach ($this->fields as $key => $field) {
-            $buffer[$key] = $field->value;
-        }
-        return $buffer;
-    }
-
-    /**
-     * This function resets each column's value back to its original value.
-     *
-     * @access public
-     */
-    public function reset() {
-        foreach ($this->fields as $field) {
-            $field->reset();
-        }
-		foreach ($this->relations as $relation) {
-			$relation->reset();
-		}
-        $this->metadata['loaded'] = FALSE;
-        $this->metadata['saved'] = NULL;
-    }
-
-    /**
-     * This function generates a hash code that will be used to indicate whether the
-     * record is saved in the database.
-     *
-     * @access protected
-     * @return string                       the generated hash code
-     */
-    protected function hash_code() {
-        $self = get_class($this);
-        $primary_key = call_user_func(array($self, 'primary_key'));
-        if (is_array($primary_key) && !empty($primary_key)) {
-            $buffer = '';
-            foreach ($primary_key as $column) {
-                if (!isset($this->fields[$column])) {
-                    throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
-                }
-                $buffer .= "{$column}={$this->fields[$column]->value}";
-            }
-            return sha1($buffer);
-        }
-        throw new Kohana_EmptyCollection_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
-    }
-
-    /**
-     * This function returns an instance of the specified model.
-     *
-     * @access public
-     * @static
-     * @param string $model                 the model's name
-     * @return mixed                        an instance of the specified model
-     */
-    public static function factory($model) {
-        $model = DB_ORM_Model::model_name($model);
-        return new $model();
-    }
-
-    /**
-     * This function returns the model's class name.
-     *
-     * @access public
-     * @static
-     * @return string                       the model's class name
-     */
-    public static function model_name($model) {
-        $prefix = 'Model_Leap_';
-        if (preg_match('/^' . $prefix . '.*$/i', $model)) {
-            return $model;
-        }
-        return $prefix . $model;
-    }
-
-    /**
-     * This function returns the data source.
-     *
-     * @access public
-     * @static
-     * @return string                       the data source
-     */
-    public static function data_source() {
-        return 'default'; // the key used in config/database.php
-    }
-
-    /**
-     * This function returns the database table's name.
-     *
-     * @access public
-     * @static
-     * @return string                       the database table's name
-     */
-    public static function table() {
-        $segments = preg_split('/_/', self::get_called_class());
-        return $segments[count($segments) - 1];
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * This function returns a list of column names.
      *
      * @access public
      * @static
-     * @return array                        a list of column names
+     * @return array                                a list of column names
      */
     public static function columns() {
         static $columns = NULL;
@@ -450,14 +432,27 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
-     * This function returns the primary key for the database table.
+     * This function returns the data source.
      *
      * @access public
      * @static
-     * @return array                        the primary key
+     * @return string                               the data source
      */
-    public static function primary_key() {
-        return array('ID');
+    public static function data_source() {
+        return 'default'; // the key used in config/database.php
+    }
+
+    /**
+     * This function returns an instance of the specified model.
+     *
+     * @access public
+     * @static
+     * @param string $model                         the model's name
+     * @return mixed                                an instance of the specified model
+     */
+    public static function factory($model) {
+        $model = DB_ORM_Model::model_name($model);
+        return new $model();
     }
 
     /**
@@ -465,7 +460,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      *
      * @access public
      * @static
-     * @return boolean                      whether the primary key auto increments
+     * @return boolean                              whether the primary key auto increments
      */
     public static function is_auto_incremented() {
         if (count(self::primary_key()) > 1) {
@@ -479,11 +474,49 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
      *
      * @access public
      * @static
-     * @return boolean                      whether the active record can be saved
-     *                                      in the database
+     * @return boolean                              whether the active record can be saved
+     *                                              in the database
      */
     public static function is_savable() {
         return TRUE;
+    }
+
+    /**
+     * This function returns the model's class name.
+     *
+     * @access public
+     * @static
+     * @return string                               the model's class name
+     */
+    public static function model_name($model) {
+        $prefix = 'Model_Leap_';
+        if (preg_match('/^' . $prefix . '.*$/i', $model)) {
+            return $model;
+        }
+        return $prefix . $model;
+    }
+
+    /**
+     * This function returns the primary key for the database table.
+     *
+     * @access public
+     * @static
+     * @return array                                the primary key
+     */
+    public static function primary_key() {
+        return array('ID');
+    }
+
+    /**
+     * This function returns the database table's name.
+     *
+     * @access public
+     * @static
+     * @return string                               the database table's name
+     */
+    public static function table() {
+        $segments = preg_split('/_/', self::get_called_class());
+        return $segments[count($segments) - 1];
     }
 
 }

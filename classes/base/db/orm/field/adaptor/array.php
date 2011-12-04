@@ -17,7 +17,8 @@
  */
 
 /**
- * This class represents an alias for a field in a database table.
+ * This class represents an "array" adaptor for a delimitated string field
+ * in a database table.
  *
  * @package Leap
  * @category ORM
@@ -25,38 +26,24 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Alias extends Kohana_Object {
-
-    /**
-     * This variable stores a reference to the implementing model.
-     *
-     * @access protected
-     * @var DB_ORM_Model
-     */
-    protected $model;
-
-    /**
-     * This variable stores the alias's metadata.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $metadata;
+abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
 
     /**
      * This constructor initializes the class.
      *
      * @access public
      * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param string $field                         the name of field in the database table
+     * @param array $metadata                       the field's metadata
      * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name was specified
      */
-    public function __construct(DB_ORM_Model $model, $field) {
-        if (!is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
-            throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
-        }
-        $this->model = $model;
-        $this->metadata['field'] = $field;
+    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+        parent::__construct($model, $metadata['field']);
+
+        $this->metadata['delimiter'] = (isset($metadata['delimiter']))
+            ? (string)$metadata['delimiter']
+            : ',';
+
+        $this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';
     }
 
     /**
@@ -71,7 +58,7 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
     public function __get($key) {
         switch ($key) {
             case 'value':
-                return $this->model->{$this->metadata['field']};
+                return preg_split($this->metadata['regex'], $this->model->{$this->metadata['field']});
             break;
             default:
                 if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
@@ -92,6 +79,9 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
     public function __set($key, $value) {
         switch ($key) {
             case 'value':
+                if (is_array($value)) {
+                    $value = implode($this->metadata['delimiter'], $value);
+                }
                 $this->model->{$this->metadata['field']} = $value;
             break;
             default:
