@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-11-07
+ * @version 2011-12-03
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_DataSource
     */
-    protected $data_source = NULL;
+    protected $source;
 
     /**
     * This variable stores an instance of the SQL statement builder of the preferred SQL
@@ -42,7 +42,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_SQL_Builder
     */
-    protected $builder = NULL;
+    protected $builder;
 
     /**
     * This constructor instantiates this class using the specified data source.
@@ -52,8 +52,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
     * @param array $columns                 the columns to be selected
     */
     public function __construct($config, Array $columns = array()) {
-        $this->data_source = new DB_DataSource($config);
-        $builder = 'DB_' . $this->data_source->get_resource_type() . '_Select_Builder';
+        $this->source = new DB_DataSource($config);
+        $builder = 'DB_' . $this->source->get_resource_type() . '_Select_Builder';
         $this->builder = new $builder($columns);
     }
 
@@ -279,7 +279,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
         if (!is_null($limit)) {
             $this->limit($limit);
         }
-        $connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
         $result_set = $connection->query($this->statement());
 		return $result_set;
     }

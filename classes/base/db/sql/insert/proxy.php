@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-15
+ * @version 2011-12-03
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_DataSource
     */
-    protected $data_source = NULL;
+    protected $source;
 
     /**
     * This variable stores an instance of the SQL statement builder of the preferred SQL
@@ -42,7 +42,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_SQL_Builder
     */
-    protected $builder = NULL;
+    protected $builder;
 
     /**
     * This constructor instantiates this class using the specified data source.
@@ -51,8 +51,8 @@ abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_
     * @param mixed $config                  the data source configurations
     */
     public function __construct($config) {
-        $this->data_source = new DB_DataSource($config);
-        $builder = 'DB_' . $this->data_source->get_resource_type() . '_Insert_Builder';
+        $this->source = new DB_DataSource($config);
+        $builder = 'DB_' . $this->source->get_resource_type() . '_Insert_Builder';
         $this->builder = new $builder();
     }
 
@@ -102,11 +102,9 @@ abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_
      */
     public function execute() {
         $is_auto_incremented = ((func_num_args() > 0) && (func_get_arg(0) === TRUE));
-        $connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		//$connection->begin_transaction();
+        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
 		$primary_key = ($is_auto_incremented) ? $connection->get_last_insert_id() : 0;
-		//$connection->commit();
         return $primary_key;
     }
 

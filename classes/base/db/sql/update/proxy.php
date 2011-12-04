@@ -33,7 +33,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_DataSource
     */
-    protected $source = NULL;
+    protected $source;
 
     /**
     * This variable stores an instance of the SQL statement builder of the preferred SQL
@@ -42,7 +42,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
     * @access protected
     * @var DB_SQL_Builder
     */
-    protected $builder = NULL;
+    protected $builder;
 
     /**
     * This constructor instantiates this class using the specified data source.
