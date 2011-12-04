@@ -49,7 +49,8 @@ abstract class Base_DB_ORM_Alias extends Kohana_Object {
      * @access public
      * @param DB_ORM_Model $model                   a reference to the implementing model
      * @param string $field                         the name of field in the database table
-     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name was specified
+     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
+     *                                              was specified
      */
     public function __construct(DB_ORM_Model $model, $field) {
         if (!is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
