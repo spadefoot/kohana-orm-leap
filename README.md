@@ -16,32 +16,38 @@ Another goal of this project was to make the LEAP ORM a true Kohana module so th
 work.  Even though ORMs like Doctrine could be adapted for Kohana, doing so requires a lot of work to work correctly.  Besides, Doctrine is now
 so blotted and old that it really needs to be refactored.
 
-A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. Kohana's
-official ORM, Jelly, and Sprig) cannot handle.  LEAP, on the other hand, is able to load models using composite keys.
+A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. [Kohana's
+official ORM](https://github.com/kohana/orm), [Jelly](https://github.com/creatoro/jelly), and [Sprig](https://github.com/sittercity/sprig/)) cannot
+handle.  LEAP, on the other hand, is able to load models using composite keys.
 
 ## Features
 
 LEAP provides a number of features, such as:
 
 * Plugins for DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
+* Designed to work in conjunction with other database tools for Kohana.
 * Config files for designating the database driver (e.g. PDO) and connection strings.
-* Classes that are easily extendible.
+* Classes are easily extendible.
 * A database connection pool for managing resources.
 * A powerful query builder for creating SQL statements.
 * Sanitizes data to help prevent SQL injection attacks.
 * Supports composite primary keys and composite foreign keys.
+* Enforces strong data types on database fields.
+* Allows aliases to be declared.
+* Makes working with certain database fields easy with field adaptors.
 * A toolkit of useful functions.
 * A [Web site](http://orm.spadefootcode.com) documenting its API and with examples.
 
 ## Getting Started
 
-To start using LEAP, following these steps:
+To start using LEAP, follow these steps:
 
 1. Just download the module from github.
 2. Unzip the download to the modules folder in Kohana.
 3. Rename the uncompressed folder to "leap".
-4. Modify the two config files: leap/config/database.php and leap/config/leap.php
-5. Navigate to your application folder and add leap as a module to the bootstrap
+4. Modify the two config files: leap/config/database.php and leap/config/leap.php.
+5. Navigate to your application folder and add "leap" as a module to the bootstrap.
+6. Begin creating your models in the application/classes/model/leap/ folder.
 
 ## Required Files
 
