@@ -4,17 +4,17 @@ LEAP is an ORM for the [Kohana PHP Framework](http://kohanaframework.org).  It a
 works with the following databases: DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  This ORM has been completely built
 from the ground up and therefore is NOT a hack implemetation.
 
-The Leap ORM is based on the active record design pattern.
+The Leap ORM is based on the active record design pattern.  It provides a way to model database tables using PHP objects.
 
 ## Motivation
 
-The Kohana PHP framework is one of the cleaniest frameworks.  However, Kohana's official ORM is written only for MySQL.  Although some developers
+The Kohana PHP framework is one of the cleanest frameworks.  However, Kohana's official ORM is written only for MySQL.  Although some developers
 have attempted to make it work with other databases, it really doesn't work well with any database other than MySQL.  Therefore, the primary goal
 of this project was to create an ORM for Kohana that works with any major database.
 
 Another goal of this project was to make the LEAP ORM a true Kohana module so that it could be just dropped into the Kohana's modules folder and
-work.  Even though ORMs like Doctrine could be adapted for Kohana, doing so requires a lot of work to work correctly.  Besides, Doctrine is now
-so blotted and old that it really needs to be refactored.
+work.  Even though ORMs like [Doctrine](http://www.doctrine-project.org/projects/orm) could be adapted for Kohana, doing so requires a lot of work
+to work correctly.  Besides, Doctrine is now so blotted and old that it really needs to be refactored.
 
 A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. [Kohana's
 official ORM](https://github.com/kohana/orm), [Jelly](https://github.com/creatoro/jelly), and [Sprig](https://github.com/sittercity/sprig/)) cannot
