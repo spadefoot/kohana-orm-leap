@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-06-20
+ * @version 2011-12-04
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -139,7 +139,7 @@ abstract class Base_DB_MsSQL_Connection_Std extends DB_SQL_Connection_Std {
                 $table = Arr::get($matches, 2);
                 $query = (!empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS insert_id" : 'SELECT SCOPE_IDENTITY() AS insert_id';
                 $result_set = $this->query($query);
-                $insert_id = ($result_set->is_loaded()) ? ((int)Arr::get($result_set->fetch(0), 'insert_id')) : 0;
+                $insert_id = ($result_set->is_loaded()) ? ((integer)Arr::get($result_set->fetch(0), 'insert_id')) : 0;
                 $this->sql = $sql;
                 return $insert_id;
             }

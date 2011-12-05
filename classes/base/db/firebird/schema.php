@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-27
+ * @version 2011-12-04
  *
  * @abstract
  */
@@ -232,7 +232,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 
 			$fields[$field]['attributes'] = $type[3];
 
-			$fields[$field]['nullable'] = (bool)$record['nullable'];
+			$fields[$field]['nullable'] = (boolean)$record['nullable'];
 			
 			$default_value = $record['default_value'];
 			if ($default_value != 'null') {

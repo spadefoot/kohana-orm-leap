@@ -25,7 +25,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-07
+ * @version 2011-12-04
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -180,7 +180,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements Iterator {
         $this->tuples = array();
         $this->index = 0;
         $this->size = 0;
-        $this->cleanse = (bool)$cleanse;
+        $this->cleanse = (boolean)$cleanse;
         $this->evaluate();
     }
 

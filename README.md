@@ -1,13 +1,88 @@
 # LEAP ORM for Kohana PHP Framework
 
-Finally, an ORM for the Kohana PHP Framework that works with all major databases!
+LEAP is an ORM for the [Kohana PHP Framework](http://kohanaframework.org).  It also provides a powerful query builder.  More importantly, it
+works with the following databases: DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  This ORM has been completely built
+from the ground up and therefore is NOT a hack implemetation.
 
-The Leap ORM is designed on the active record paradigm.  It provides a set of query builders that
-make writing SQL statements easy.  Leap also provides a set of powerful database connection classes,
-and utilizes a database connection pool to manage its resources.  Leap will also allow you to choose
-which set of connection functions or classes you want to use...so...if your server is configured to use
-PDO classes, you can configure Leap to use them...or....if you prefer to use PHP's standard functions,
-you can choose them instead.
+The Leap ORM is based on the active record design pattern.
 
-The classes in this library are well documented and are simple to use.  Visit [Spadefoot's Web site](http://orm.spadefootcode.com)
-for information, examples, and tutorials on how to use these classes.
+## Motivation
+
+The Kohana PHP framework is one of the cleaniest frameworks.  However, Kohana's official ORM is written only for MySQL.  Although some developers
+have attempted to make it work with other databases, it really doesn't work well with any database other than MySQL.  Therefore, the primary goal
+of this project was to create an ORM for Kohana that works with any major database.
+
+Another goal of this project was to make the LEAP ORM a true Kohana module so that it could be just dropped into the Kohana's modules folder and
+work.  Even though ORMs like Doctrine could be adapted for Kohana, doing so requires a lot of work to work correctly.  Besides, Doctrine is now
+so blotted and old that it really needs to be refactored.
+
+A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. Kohana's
+official ORM, Jelly, and Sprig) cannot handle.  LEAP, on the other hand, is able to load models using composite keys.
+
+## Features
+
+LEAP provides a number of features, such as:
+
+* Plugins for DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
+* Config files for designating the database driver (e.g. PDO) and connection strings.
+* Classes that are easily extendible.
+* A database connection pool for managing resources.
+* A powerful query builder for creating SQL statements.
+* Sanitizes data to help prevent SQL injection attacks.
+* Supports composite primary keys and composite foreign keys.
+* A toolkit of useful functions.
+* A [Web site](http://orm.spadefootcode.com) documenting its API and with examples.
+
+## Getting Started
+
+To start using LEAP, following these steps:
+
+1. Just download the module from github.
+2. Unzip the download to the modules folder in Kohana.
+3. Rename the uncompressed folder to "leap".
+4. Modify the two config files: leap/config/database.php and leap/config/leap.php
+5. Navigate to your application folder and add leap as a module to the bootstrap
+
+## Required Files
+
+The LEAP ORM module is meant to be completely independent of other Kohana modules.  However, it is recommended that Kohana's database is installed
+as well so that you can utilize the Database_Expression class.  As for the files within LEAP, you can remove any database plugins that you are not
+using.  This is possible because each database plugin in LEAP is considered independent of the others.
+
+## Documentation
+
+This project is well-documented.  The API has been posted on [Spadefoot's LEAP ORM for Kohana](http://orm.spadefootcode.com) Web site.  Likewise,
+this Web site also has numerous examples and tutorials.  You can also find other tutorials and examples online (please let us know if you find one
+that we should highlight here).
+
+## Further Assistance
+
+Although LEAP is simple to use with the Kohana PHP Framework, you can get further assistance by asking questions on [Stack Overflow](http://stackoverlow.com).
+You can also send an email to spadefoot.oss@gmail.com.
+
+## Reporting Bugs & Making Recommendations
+
+If you find a bug in the code or if you would like to make a recommendation, we would be happy to hear from you.  Here are three methods you can
+use to submit bugs:
+
+* Log an issue in this project's issue tracker.
+* Create a fork of this project and submit a [pull request](http://help.github.com/send-pull-requests/).
+* Send an email to spadefoot.oss@gmail.com.
+
+## Known Issues
+
+Please see this project's issue tracker on github for any known issues.
+
+## Updates
+
+Make sure that you add yourself as a watcher of this project so that you can watch for updates.  If you would like to be notified directly via
+email please send an email to spadefoot.oss@gmail.com.
+
+## Future Development
+
+This project is constantly being improved and extended.  Here is a list of some of the features to come:
+
+* Plugins for MongoDB and CouchDB.
+* Unit tests.
+
+If you would like to take on some of these features, please fork this project and then send a pull request when your done.

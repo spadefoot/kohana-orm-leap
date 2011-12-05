@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2011-12-04
  *
  * @abstract
  */
@@ -110,7 +110,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
                 $this->metadata['modified'] = TRUE;
             break;
             case 'modified':
-                $this->metadata['modified'] = (bool)$value;
+                $this->metadata['modified'] = (boolean)$value;
             break;
             default:
                 throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));

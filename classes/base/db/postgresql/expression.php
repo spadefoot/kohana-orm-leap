@@ -28,6 +28,24 @@
 abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interface {
 
     /**
+     * This constant represents an opening identifier quote character.
+     *
+     * @access public
+     * @static
+     * @const string
+     */
+    const _OPENING_QUOTE_CHARACTER_ = '"';
+
+    /**
+     * This constant represents a closing identifier quote character.
+     *
+     * @access public
+     * @static
+     * @const string
+     */
+    const _CLOSING_QUOTE_CHARACTER_ = '"';
+
+    /**
     * This function prepares the specified expression as an alias.
     *
     * @access public
@@ -39,7 +57,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
         if (!is_string($expr)) {
             throw new Kohana_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
         }
-        return '"' . trim(preg_replace('/[^a-z0-9_ ]/i', '', $expr)) . '"';
+        return self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $expr)) . self::_CLOSING_QUOTE_CHARACTER_;
     }
 
     /**
@@ -100,7 +118,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
         }
         $parts = explode('.', $expr);
         foreach ($parts as &$part) {
-			$part = '"' . trim(preg_replace('/[^a-z0-9_ ]/i', '', $part)) . '"';
+			$part = self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $part)) . self::_CLOSING_QUOTE_CHARACTER_;
 		}
 		$expr = implode('.', $parts);
         return $expr;

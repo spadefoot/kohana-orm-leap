@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-06-20
+ * @version 2011-12-04
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -160,7 +160,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
                 $table = Arr::get($matches, 1);
                 $query = "SELECT MAX(ID) FROM {$table};";
                 $result = $this->query($query);
-                $insert_id = ($result->is_loaded()) ? ((int)Arr::get($result->fetch(0), 'ID')) : 0;
+                $insert_id = ($result->is_loaded()) ? ((integer)Arr::get($result->fetch(0), 'ID')) : 0;
                 $this->sql = $sql;
                 return $insert_id;
             }

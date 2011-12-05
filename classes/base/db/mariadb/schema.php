@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-11-20
+ * @version 2011-12-04
  *
  * @abstract
  */
@@ -172,7 +172,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 			$buffer[$i]['table_name'] = $record['Table'];
 			$buffer[$i]['field_name'] = $record['Column_name'];
 			$buffer[$i]['index_name'] = $record['Key_name'];
-			$buffer[$i]['sequence'] = (int)$record['Seq_in_index'];
+			$buffer[$i]['sequence'] = (integer)$record['Seq_in_index'];
 			$buffer[$i]['is_primary_key'] = ($record['Key_name'] == 'PRIMARY');
 			$buffer[$i]['is_unique'] = ($record['Non_unique'] == '0');
 			$i++;

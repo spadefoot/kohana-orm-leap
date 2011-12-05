@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-10-06
+ * @version 2011-12-04
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -154,9 +154,8 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
             $sql = $this->sql;
             if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
                 $table = Arr::get($matches, 1);
-                $query = "SELECT ID FROM {$table} ORDER BY ID DESC ROWS 1;";
-                $result = $this->query($query);
-                $insert_id = ($result->is_loaded()) ? ((int)Arr::get($result->fetch(0), 'ID')) : 0;
+                $result = $this->query("SELECT ID FROM {$table} ORDER BY ID DESC ROWS 1;");
+                $insert_id = ($result->is_loaded()) ? ((integer)Arr::get($result->fetch(0), 'ID')) : 0;
                 $this->sql = $sql;
                 return $insert_id;
             }
