@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-06-10
- *
- * @see http://www.sqlite.org/lang_update.html
+ * @version 2011-12-06
  */
 class DB_SQLite_Update_Builder extends Base_DB_SQLite_Update_Builder { }
 ?>

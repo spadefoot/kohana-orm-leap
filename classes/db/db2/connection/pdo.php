@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-20
- *
- * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
+ * @version 2011-12-06
  */
 class DB_DB2_Connection_PDO extends Base_DB_DB2_Connection_PDO { }
 ?>

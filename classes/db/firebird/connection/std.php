@@ -19,23 +19,9 @@
 /**
  * This class handles a standard Firebird connection.
  *
- * Firebird installation instruction:
- *
- *     	To install interbase (aka ibase) copy C:\Program Files\FishBowl\Client\bin\fbclient.dll
- *		into "C:\WINDOWS\system32\" and rename file to gds32.dll.
- *
- *     	Edit C:\WINDOWS\system32\drivers\etc\services by appending to the end the following:
- *     	gds_db           3050/tcp    fb                     #Firebird
- *
- *     	Restart either Apache or the computer
- *
  * @package Leap
  * @category Firebird
- * @version 2011-06-20
- *
- * @see http://us3.php.net/manual/en/book.ibase.php
- * @see http://us2.php.net/manual/en/ibase.installation.php
- * @see http://www.firebirdfaq.org/faq227/
+ * @version 2011-12-06
  */
 class DB_Firebird_Connection_Std extends Base_DB_Firebird_Connection_Std { }
 ?>

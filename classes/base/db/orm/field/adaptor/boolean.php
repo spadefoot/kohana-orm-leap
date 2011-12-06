@@ -17,16 +17,18 @@
  */
 
 /**
- * This class represents an "array" adaptor for a delimitated string field
- * in a database table.
+ * This class represents a "boolean" adaptor for handling non-standard boolean
+ * values, such as "yes/no" decisions.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-05
  *
+ * @see http://www.php.net/manual/en/language.types.boolean.php
+ *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 
     /**
      * This constructor initializes the class.
@@ -40,11 +42,9 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
     public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
         parent::__construct($model, $metadata['field']);
 
-        $this->metadata['delimiter'] = (isset($metadata['delimiter']))
-            ? (string)$metadata['delimiter']
-            : ',';
-
-        $this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';
+        $this->metadata['values'] = (isset($metadata['values']))
+            ? (array)$metadata['values']
+            : array('yes', 'no');
     }
 
     /**
@@ -60,8 +60,8 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
         switch ($key) {
             case 'value':
                 $value = $this->model->{$this->metadata['field']};
-                if (is_string($value)) {
-                    $value = preg_split($this->metadata['regex'], $value);
+                if (is_bool($value)) {
+                    $value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
                 }
                 return $value;
             break;
@@ -84,8 +84,11 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
     public function __set($key, $value) {
         switch ($key) {
             case 'value':
-                if (is_array($value)) {
-                    $value = implode($this->metadata['delimiter'], $value);
+                if (!is_null($value)) {
+                    $true = $this->metadata['values'][0];
+                    $value = (is_string($true) && is_string($value))
+                        ? (strcasecmp($true, $value) == 0)
+                        : ($true == $value);
                 }
                 $this->model->{$this->metadata['field']} = $value;
             break;

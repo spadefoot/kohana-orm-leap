@@ -17,13 +17,12 @@
  */
 
 /**
- * This class allows an application to translate a MariaDB statement into another SQL dialect.
+ * This class allows an application to translate a MariaDB statement into another
+ * SQL dialect.
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-11-20
- *
- * @abstract
+ * @version 2011-12-06
  */
-abstract class DB_MariaDB_Translator extends Base_DB_MariaDB_Translator { }
+class DB_MariaDB_Translator extends Base_DB_MariaDB_Translator { }
 ?>

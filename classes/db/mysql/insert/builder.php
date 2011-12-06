@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-10
- *
- * @see http://dev.mysql.com/doc/refman/5.5/en/insert.html
+ * @version 2011-12-06
  */
 class DB_MySQL_Insert_Builder extends Base_DB_MySQL_Insert_Builder { }
 ?>

@@ -17,11 +17,11 @@
  */
 
 /**
-* This class contains a set of predefined join types.
-*
-* @package Leap
-* @category SQL
-* @version 2011-06-07
-*/
+ * This class contains a set of predefined join types.
+ *
+ * @package Leap
+ * @category SQL
+ * @version 2011-12-06
+ */
 class DB_SQL_JoinType extends Base_DB_SQL_JoinType { }
 ?>

@@ -17,11 +17,11 @@
  */
 
 /**
-* This class represents an SQL expression.
-*
-* @package Leap
-* @category SQL
-* @version 2011-06-07
-*/
+ * This class represents an SQL expression.
+ *
+ * @package Leap
+ * @category SQL
+ * @version 2011-12-06
+ */
 class DB_SQL_Expression extends Base_DB_SQL_Expression { }
 ?>

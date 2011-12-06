@@ -21,11 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-06-20
- *
- * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
- * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
- * @see http://sourcemaking.com/design_patterns/object_pool
+ * @version 2011-12-05
  *
  * @abstract
  */

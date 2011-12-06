@@ -17,11 +17,12 @@
  */
 
 /**
- * This class builds a MySQL select statement.
+ * This class represents an "array" adaptor for a JSON encoded string field
+ * in a database table.
  *
  * @package Leap
- * @category MySQL
- * @version 2011-12-06
+ * @category ORM
+ * @version 2011-12-05
  */
-class DB_MySQL_Select_Builder extends Base_DB_MySQL_Select_Builder { }
+class DB_ORM_Field_Adaptor_Boolean extends Base_DB_ORM_Field_Adaptor_Boolean { }
 ?>

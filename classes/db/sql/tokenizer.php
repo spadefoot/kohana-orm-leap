@@ -19,16 +19,9 @@
 /**
  * This class allows an application to tokenize an SQL statement.
  *
- * -- Dependencies:
- *      collection
- *      exception
- *
  * @package Leap
  * @category SQL
- * @version 2011-06-07
- *
- * @see http://www.sqlite.org/c3ref/complete.html
- * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
+ * @version 2011-12-06
  */
 class DB_SQL_Tokenizer extends Base_DB_SQL_Tokenizer { }
 ?>

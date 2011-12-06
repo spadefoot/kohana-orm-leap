@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-06-20
- *
- * @see http://www.php.net/manual/en/ref.pdo-dblib.php
+ * @version 2011-12-06
  */
 class DB_MsSQL_Connection_PDO extends Base_DB_MsSQL_Connection_PDO { }
 ?>

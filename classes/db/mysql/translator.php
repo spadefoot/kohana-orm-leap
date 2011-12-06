@@ -17,13 +17,12 @@
  */
 
 /**
- * This class allows an application to translate a MySQL statement into another SQL dialect.
+ * This class allows an application to translate a MySQL statement into another
+ * SQL dialect.
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-09
- *
- * @abstract
+ * @version 2011-12-06
  */
-abstract class DB_MySQL_Translator extends Base_DB_MySQL_Translator { }
+class DB_MySQL_Translator extends Base_DB_MySQL_Translator { }
 ?>

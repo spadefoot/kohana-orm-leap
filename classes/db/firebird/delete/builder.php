@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-10
- *
- * @see http://www.firebirdsql.org/refdocs/langrefupd21-delete.html
+ * @version 2011-12-06
  */
 class DB_Firebird_Delete_Builder extends Base_DB_Firebird_Delete_Builder { }
 ?>

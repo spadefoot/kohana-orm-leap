@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-20
- *
- * @see http://php.net/manual/en/ref.pgsql.php
+ * @version 2011-12-06
  */
 class DB_PostgreSQL_Connection_Std extends Base_DB_PostgreSQL_Connection_Std { }
 ?>

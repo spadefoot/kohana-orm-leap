@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-20
- *
- * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
+ * @version 2011-12-06
  */
 class DB_MySQL_Connection_PDO extends Base_DB_MySQL_Connection_PDO { }
 ?>

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-04
+ * @version 2011-12-05
  *
  * @abstract
  */
@@ -38,14 +38,14 @@ abstract class Base_DB_ToolKit extends Kohana_Object {
 	 * @see http://snipplr.com/view/2809/convert-string-to-slug/
 	 */
     public static function slug($value) {
-		if (!empty($value)) {
-		    $value = strtolower($value);
-    		$value = preg_replace('/[^a-z0-9-]/', '-', $value);
-    		$value = preg_replace('/-+/', '-', $value);
-    		$value = trim($value, '-');
-    		return $value;
-		}
-		return NULL;
+        if (!empty($value)) {
+            $value = strtolower($value);
+            $value = preg_replace('/[^a-z0-9-]/', '-', $value);
+            $value = preg_replace('/-+/', '-', $value);
+            $value = trim($value, '-');
+            return $value;
+        }
+        return '';
     }
 
 }

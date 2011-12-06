@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-20
- *
- * @see http://www.php.net/manual/en/ref.pdo-firebird.php
+ * @version 2011-12-06
  */
 class DB_Firebird_Connection_PDO extends Base_DB_Firebird_Connection_PDO { }
 ?>

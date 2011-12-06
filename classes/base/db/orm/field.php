@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-04
+ * @version 2011-12-05
  *
  * @abstract
  *
@@ -101,7 +101,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
      *
      * @access public
      * @param string $key                           the name of the property
-     * @return mixed                                the value of the property
+     * @param mixed $value                          the value of the property
      * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
      *                                              either inaccessible or undefined
      */

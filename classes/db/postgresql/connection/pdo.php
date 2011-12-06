@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-20
- *
- * @see http://www.php.net/manual/en/ref.pdo-pgsql.connection.php
+ * @version 2011-12-06
  */
 class DB_PostgreSQL_Connection_PDO extends Base_DB_PostgreSQL_Connection_PDO { }
 ?>

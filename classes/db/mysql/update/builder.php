@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-10
- *
- * @see http://dev.mysql.com/doc/refman/5.0/en/update.html
+ * @version 2011-12-06
  */
 class DB_MySQL_Update_Builder extends Base_DB_MySQL_Update_Builder { }
 ?>

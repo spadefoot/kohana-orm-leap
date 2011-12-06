@@ -21,9 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-10
- *
- * @see http://www.firebirdsql.org/refdocs/langrefupd20-select.html
+ * @version 2011-12-06
  */
 class DB_Firebird_Select_Builder extends Base_DB_Firebird_Select_Builder { }
 ?>
