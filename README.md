@@ -88,7 +88,8 @@ email please send an email to spadefoot.oss@gmail.com.
 
 This project is constantly being improved and extended.  Here is a list of some of the features to come:
 
-* Plugins for MongoDB and CouchDB.
+* Plugins for CouchDB, Drizzle, MongoDB, and XML RDB.
+* Master / Slave support.
 * Unit tests.
 
 If you would like to take on some of these features, please fork this project and then send a pull request when your done.
