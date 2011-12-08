@@ -1,0 +1,9 @@
+Changelog for LEAP ORM
+
+2011-12-08
+* Added a field adaptor for XML data.
+* Fixed "_GREATER_THAN_OR_EQUAL_TO_" constant.
+* Added an extra parameter to DB_ORM::model.
+* Improved algorithm in DB_ORM_Model::load.
+* Added DB_ResultSet::get.
+* Expanded the functionality of DB_SQL_Select_Builder::group_by.

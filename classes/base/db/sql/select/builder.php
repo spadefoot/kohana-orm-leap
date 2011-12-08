@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-11-07
+ * @version 2011-12-08
  *
  * @abstract
  */
@@ -269,12 +269,15 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
      * This function adds a "group by" clause.
      *
      * @access public
-     * @param string $column                    the column to be grouped
+     * @param string $column                    the column(s) to be grouped
      * @return DB_SQL_Select_Builder            a reference to the current instance
      */
 	public function group_by($column) {
-	    $column = $this->helper->prepare_identifier($column);
-	    $this->data['group_by'][] = $column;
+	    $fields = (is_array($column)) ? $column : array($column);
+	    foreach ($fields as $field) {
+	        $identifier = $this->helper->prepare_identifier($field);
+	        $this->data['group_by'][] = $identifier;
+        }
 	    return $this;
 	}
 

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-11-17
+ * @version 2011-12-08
  *
  * @abstract
  */
@@ -127,6 +127,36 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		$this->position = 0;
 		$this->size = 0;
     }
+
+	/**
+	 * This function returns the named column from the current row.
+	 *
+     *     // Gets the value of "id" from the current row
+	 *     $id = $results->get('id');
+	 *
+	 * @param string $name                      the column to get
+	 * @param mixed $default                    the default value should the column
+	 *                                          does not exist
+	 * @return mixed                            the value for the column
+	 */
+	public function get($name, $default = NULL) {
+		$record = $this->current();
+
+        if (is_object($record)) {
+            try {
+                $value = $record->{$name};
+                if (!is_null($value)) {
+                    return $value;
+                }
+            }
+            catch (Exception $ex) { }
+        }
+    	else if (is_array($record) && isset($record[$name])) {
+    		return $record[$name];
+    	}
+
+		return $default;
+	}
 
     /**
      * This function returns whether any records were loaded.

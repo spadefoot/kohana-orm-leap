@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-05
+ * @version 2011-12-08
  *
  * @abstract
  */
@@ -265,10 +265,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
     }
 
     /**
-     * This function loads the record matching the primary key from the database.
+     * This function either loads the record matching the primary key from the database
+     * or sets an array of values to their associated fields.
      *
      * @access public
-     * @param array $columns                        an array of column/value mapping
+     * @param array $columns                        an array of column/value mappings
      */
     public function load(Array $columns = array()) {
         if (empty($columns)) {
@@ -290,9 +291,16 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
             $columns = $record->fetch(0);
         }
         foreach ($columns as $column => $value) {
-            if (isset($this->fields[$column])) {
+            if ($this->is_field($column)) {
                 $this->fields[$column]->value = $value;
+                $this->metadata['loaded'] = TRUE;
             }
+            else if ($this->is_alias($column)) {
+    			$this->aliases[$column]->value = $value;
+    		}
+            else if ($this->is_adaptor($column)) {
+    			$this->adaptors[$column]->value = $value;
+    		}
         }
         $this->metadata['loaded'] = TRUE;
         $this->metadata['saved'] = $this->hash_code();

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-27
+ * @version 2011-12-08
  *
  * @abstract
  */
@@ -59,10 +59,21 @@ abstract class Base_DB_ORM extends Kohana_Object {
      * @access public
      * @static
      * @param string $model                 the model's name
+     * @param array $primary_key            the column values of the primary key
+     *                                      that will be used to load the model
      * @return mixed                        an instance of the specified model
      */
-    public static function model($model) {
+    public static function model($model, Array $primary_key = array()) {
         $model = DB_ORM_Model::factory($model);
+        if (!empty($primary_key)) {
+            $model_key = call_user_func(array(get_class($model), 'primary_key'));
+            $count = count($model_key);
+            for ($i = 0; $i < $count; $i++) {
+                $column = $model_key[$i];
+                $model->{$column} = $primary_key[$i];
+            }
+            $model->load();
+        }
         return $model;
     }
 
