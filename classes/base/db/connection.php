@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-10-28
+ * @version 2011-12-09
  *
  * @abstract
  */
@@ -204,11 +204,11 @@ abstract class Base_DB_Connection extends Kohana_Object {
     * @return DB_Connection                     the database connection
     */
 	public static function factory($config = array()) {
-		$source = new DB_DataSource($config);
-		$dialect = $source->get_resource_type();
-		$driver = 'DB_' . $dialect . '_Connection_' . Kohana::$config->load("leap.driver.{$dialect}");
+        $source = new DB_DataSource($config);
+        $dialect = $source->get_resource_type();
+        $driver = 'DB_' . $dialect . '_Connection_' . $source->get_driver();
         $connection = new $driver($source);
-	    return $connection;
+        return $connection;
 	}
 
 	/**

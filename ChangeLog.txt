@@ -1,5 +1,15 @@
 Changelog for LEAP ORM
 
+2011-12-09
+* Alphabetized some class functions.
+* Redefined Base_DB_Connection_Pool::get_connection() to allow for all config types.
+* Renamed $name to $id in Base_DB_Connection_Pool.
+* Renamed get_name() to get_id() in Base_DB_DataSource.
+* Removed config/leap.php and added driver declaration in config/database.php.
+* Added Base_DB_DataSource::get_driver().
+* Removed translator files.
+* Updated inline documentation.
+
 2011-12-08
 * Added a field adaptor for XML data.
 * Fixed "_GREATER_THAN_OR_EQUAL_TO_" constant.

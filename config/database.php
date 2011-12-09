@@ -3,25 +3,20 @@
 $config = array();
 
 $config['default'] = array(
-	'type'       => 'mysql',
-	'connection' => array(
-		/**
-		 * The following options are available:
-		 *
-		 * string   hostname     server hostname, or socket
-		 * string   port         port number
-		 * string   database     database name
-		 * string   username     database username
-		 * string   password     database password
-		 * boolean  persistent   use persistent connections?
-		 */
-		'hostname'      => 'localhost',
-		//'port'          => '',
-		'database'      => 'kohana',
-		'username'      => FALSE,
-		'password'      => FALSE,
-		'persistent'    => FALSE,
-	),
+    'type'          => 'mysql',     // string (e.g. db2, firebird, mariadb, mssql, mysql, oracle, postgresql, or sqlite)
+    'driver'        => 'std',       // string (e.g. std or pdo)
+    'connection'    => array(
+        'persistent'    => FALSE,       // boolean
+        'hostname'      => 'localhost', // string
+        'port'          => '',          // string
+        'database'      => '',          // string
+        'username'      => 'root',      // string
+        'password'      => 'root',      // string
+    ),
+    'caching'       => FALSE,       // boolean
+    'charset'       => 'utf8',      // string
+    'profiling'     => TRUE,        // boolean
+    'table_prefix'  => '',          // string
 ),
 
 return $config;
