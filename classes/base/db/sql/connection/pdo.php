@@ -59,7 +59,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->connection->beginTransaction();
 		}
 		catch (Exception $ex) {
-		    $this->error = 'Message: Failed to begin SQL transaction. Reason: ' . $ex->getMessage();
+			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . $ex->getMessage();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
 	}
@@ -70,30 +70,30 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-     * @param string $type						the return type to be used
+	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-        if (!$this->is_connected()) {
-            $this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-        }
-        $result = @$this->connection->query($sql);
-        if ($result === FALSE) {
-            $this->error = 'Message: Failed to query SQL statement. Reason: ' . $this->connection->errorInfo();
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-        }
+		if (!$this->is_connected()) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+		}
+		$result = @$this->connection->query($sql);
+		if ($result === FALSE) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . $this->connection->errorInfo();
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+		}
 		$records = array();
 		$size = 0;
 		while ($record = $result->fetch(PDO::FETCH_ASSOC)) {
-            $records[] = DB_Connection::type_cast($type, $record);
+			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
-    	}
+		}
 		$result_set = new DB_ResultSet($records, $size);
-        $this->sql = $sql;
+		$this->sql = $sql;
 		return $result_set;
-    }
+	}
 
 	/**
 	 * This function allows for the ability to process a query that will not return
@@ -105,36 +105,36 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 */
 	public function execute($sql) {
 		if (!$this->is_connected()) {
-		    $this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
+			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
 		$result = @$this->connection->exec($sql);
 		if ($result === FALSE) {
-		    $this->error = 'Message: Failed to execute SQL statement. Reason: ' . $this->connection->errorInfo();
+			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . $this->connection->errorInfo();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-        $this->sql = $sql;
+		$this->sql = $sql;
 	}
 
-    /**
-     * This function returns the last insert id.
-     *
-     * @access public
-     * @return integer                          the last insert id
+	/**
+	 * This function returns the last insert id.
+	 *
+	 * @access public
+	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.lastinsertid.php
-     */
-    public function get_last_insert_id() {
+	 */
+	public function get_last_insert_id() {
 		try {
 			$insert_id = $this->connection->lastInsertId();
 			return $insert_id;
 		}
 		catch (Exception $ex) {
-            $this->error = 'Message: Failed to fetch the last insert id. Reason: ' . $ex->getMessage();
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
-        }
-    }
+			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . $ex->getMessage();
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+		}
+	}
 
 	/**
 	 * This function is for determining whether a connection is established.
@@ -159,7 +159,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->connection->rollBack();
 		}
 		catch (Exception $ex) {
-		    $this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . $ex->getMessage();
+			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . $ex->getMessage();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
 	}
@@ -177,7 +177,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->connection->commit();
 		}
 		catch (Exception $ex) {
-		    $this->error = 'Message: Failed to commit SQL transaction. Reason: ' . $ex->getMessage();
+			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . $ex->getMessage();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
 	}
@@ -196,16 +196,16 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 		return TRUE;
 	}
 
-    /**
-     * This destructor will ensure that the connection is closed.
-     *
-     * @access public
-     */
-    public function __destruct() {
-        if (!is_null($this->connection)) {
-           unset($this->connection);
-        }
-    }
+	/**
+	 * This destructor will ensure that the connection is closed.
+	 *
+	 * @access public
+	 */
+	public function __destruct() {
+		if (!is_null($this->connection)) {
+		   unset($this->connection);
+		}
+	}
 
 }
 ?>

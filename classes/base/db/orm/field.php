@@ -31,143 +31,143 @@
  */
 abstract class Base_DB_ORM_Field extends Kohana_Object {
 
-    /**
-     * This variable stores a reference to the implementing model.
-     *
-     * @access protected
-     * @var DB_ORM_Model
-     */
-    protected $model;
+	/**
+	 * This variable stores a reference to the implementing model.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Model
+	 */
+	protected $model;
 
-    /**
-     * This variable stores the field's metadata.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $metadata;
+	/**
+	 * This variable stores the field's metadata.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $metadata;
 
-    /**
-     * This variable stores the field's value.
-     *
-     * @access protected
-     * @var mixed
-     */
-    protected $value;
+	/**
+	 * This variable stores the field's value.
+	 *
+	 * @access protected
+	 * @var mixed
+	 */
+	protected $value;
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param string $type                          the equivalent PHP data type
-     * 
-     * @see http://php.net/manual/en/function.gettype.php
-     */
-    public function __construct(DB_ORM_Model $model, $type) {
-        $this->model = $model;
-        $this->metadata = array();
-        $this->metadata['type'] = $type;
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param string $type                          the equivalent PHP data type
+	 *
+	 * @see http://php.net/manual/en/function.gettype.php
+	 */
+	public function __construct(DB_ORM_Model $model, $type) {
+		$this->model = $model;
+		$this->metadata = array();
+		$this->metadata['type'] = $type;
 		$this->metadata['savable'] = TRUE;
-        $this->metadata['modified'] = FALSE;
-        $this->metadata['nullable'] = TRUE;
-        $this->metadata['default'] = NULL;
-        $this->value = NULL;
-    }
+		$this->metadata['modified'] = FALSE;
+		$this->metadata['nullable'] = TRUE;
+		$this->metadata['default'] = NULL;
+		$this->value = NULL;
+	}
 
-    /**
-     * This function returns the value associated with the specified property.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @return mixed                                the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public function __get($key) {
-        switch ($key) {
-            case 'value':
-                return $this->value;
-            break;
-            default:
-                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
-            break;
-        }
-        throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
-    }
+	/**
+	 * This function returns the value associated with the specified property.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __get($key) {
+		switch ($key) {
+			case 'value':
+				return $this->value;
+			break;
+			default:
+				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+			break;
+		}
+		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+	}
 
-    /**
-     * This function sets the value for the specified key.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @param mixed $value                          the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public function __set($key, $value) {
-        switch ($key) {
-            case 'data':
-            case 'value':
-                if (!is_null($value)) {
-                    settype($value, $this->metadata['type']);
-                    $this->validate($value);
-                    $this->value = $value;
-                }
-                else {
-                    $this->value = $this->metadata['default'];
-                }
-                $this->metadata['modified'] = TRUE;
-            break;
-            case 'modified':
-                $this->metadata['modified'] = (boolean)$value;
-            break;
-            default:
-                throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
-            break;
-        }
-    }
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'data':
+			case 'value':
+				if (!is_null($value)) {
+					settype($value, $this->metadata['type']);
+					$this->validate($value);
+					$this->value = $value;
+				}
+				else {
+					$this->value = $this->metadata['default'];
+				}
+				$this->metadata['modified'] = TRUE;
+			break;
+			case 'modified':
+				$this->metadata['modified'] = (boolean)$value;
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+			break;
+		}
+	}
 
-    /**
-     * This function will trigger a filter on the specified value.
-     *
-     * @access protected
-     * @param mixed $value                          the value to be filtered
-     * @return boolean                              whether the value was filtered
-     */
-    protected function filter($value) {
-        if (isset($this->metadata['filter']) && call_user_func(array($this->model, $this->metadata['filter']), $value)) {
-            return FALSE;
-        }
-        return TRUE;
-    }
+	/**
+	 * This function will trigger a filter on the specified value.
+	 *
+	 * @access protected
+	 * @param mixed $value                          the value to be filtered
+	 * @return boolean                              whether the value was filtered
+	 */
+	protected function filter($value) {
+		if (isset($this->metadata['filter']) && call_user_func(array($this->model, $this->metadata['filter']), $value)) {
+			return FALSE;
+		}
+		return TRUE;
+	}
 
-    /**
-     * This function validates the specified value against any constraints.
-     *
-     * @access protected
-     * @param mixed $value                          the value to be validated
-     * @return boolean                              whether the specified value validates
-     */
-    protected function validate($value) {
-        if (isset($this->metadata['enum']) && !in_array($value, $this->metadata['enum'])) {
-            return FALSE;
-        }
-        if (isset($this->metadata['callback']) && call_user_func(array($this->model, $this->metadata['callback']), $value)) {
-            return FALSE;
-        }
-        return TRUE;
-    }
+	/**
+	 * This function validates the specified value against any constraints.
+	 *
+	 * @access protected
+	 * @param mixed $value                          the value to be validated
+	 * @return boolean                              whether the specified value validates
+	 */
+	protected function validate($value) {
+		if (isset($this->metadata['enum']) && !in_array($value, $this->metadata['enum'])) {
+			return FALSE;
+		}
+		if (isset($this->metadata['callback']) && call_user_func(array($this->model, $this->metadata['callback']), $value)) {
+			return FALSE;
+		}
+		return TRUE;
+	}
 
-    /**
-     * This function resets the field's value.
-     *
-     * @access public
-     */
-    public function reset() {
-        $this->value = $this->metadata['default'];
-        $this->metadata['modified'] = FALSE;
-    }
+	/**
+	 * This function resets the field's value.
+	 *
+	 * @access public
+	 */
+	public function reset() {
+		$this->value = $this->metadata['default'];
+		$this->metadata['modified'] = FALSE;
+	}
 
 }
 ?>

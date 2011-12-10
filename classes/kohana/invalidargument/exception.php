@@ -28,8 +28,8 @@ class Kohana_InvalidArgument_Exception extends InvalidArgumentException {
 	* This function instantiates the exception with the specified message,
 	* variables, and code.
 	*
-    * @access public
-    * @param string $message                    the message
+	* @access public
+	* @param string $message                    the message
 	* @param array $variables                   the variables
 	* @param integer $code                      the code
 	* @return Kohana_InvalidArgument_Exception  the exception

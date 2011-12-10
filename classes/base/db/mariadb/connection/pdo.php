@@ -43,10 +43,10 @@ abstract class Base_DB_MariaDB_Connection_PDO extends DB_SQL_Connection_PDO {
 		if (!$this->is_connected()) {
 			$connection_string  = 'mysql:';
 			$connection_string .= 'host=' . $this->data_source->get_host_server() . ';';
-    		$port = $this->data_source->get_port();
-    		if (!empty($port)) {
-    		    $connection_string .= 'port=' . $port . ';';
-    		}
+			$port = $this->data_source->get_port();
+			if (!empty($port)) {
+				$connection_string .= 'port=' . $port . ';';
+			}
 			$connection_string .= 'dbname=' . $this->data_source->get_database();
 			$username = $this->data_source->get_username();
 			$password = $this->data_source->get_password();

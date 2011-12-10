@@ -29,12 +29,12 @@
  */
 abstract class Base_DB_Firebird_Delete_Builder extends DB_SQL_Delete_Builder {
 
-    /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     */
-    public function __construct() {
+	/**
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
+	public function __construct() {
 		parent::__construct('Firebird');
 	}
 
@@ -47,37 +47,37 @@ abstract class Base_DB_Firebird_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    $sql = "DELETE FROM {$this->data['from']}";
-	    
-	    if (!empty($this->data['where'])) {
-	        $do_append = FALSE;
-            $sql .= ' WHERE ';
-	        foreach ($this->data['where'] as $where) {
-	            if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-	                $sql .= " {$where[0]} ";
-	            }
-	            $sql .= $where[1];
-	            $do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-	        }
-	    }
-	    
-	    if (!empty($this->data['order_by'])) {
-	        $sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
-	    }
-	    
-	    if ($this->data['limit'] > 0) {
-	        $sql .= " ROWS {$this->data['limit']}";
-	    }
-	    
-	    //if ($this->data['offset'] > 0) {
-	    //    $sql .= " OFFSET {$this->data['offset']}";
-	    //}
-	    
-	    if ($terminated) {
-	        $sql .= ';';
-        }
-	    
-	    return $sql;
+		$sql = "DELETE FROM {$this->data['from']}";
+
+		if (!empty($this->data['where'])) {
+			$do_append = FALSE;
+			$sql .= ' WHERE ';
+			foreach ($this->data['where'] as $where) {
+				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					$sql .= " {$where[0]} ";
+				}
+				$sql .= $where[1];
+				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+			}
+		}
+
+		if (!empty($this->data['order_by'])) {
+			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+		}
+
+		if ($this->data['limit'] > 0) {
+			$sql .= " ROWS {$this->data['limit']}";
+		}
+
+		//if ($this->data['offset'] > 0) {
+		//    $sql .= " OFFSET {$this->data['offset']}";
+		//}
+
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
 	}
 
 }

@@ -27,19 +27,19 @@
  */
 abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 
-    /**
-     * This function returns a result set that contains an array of all fields in
-     * the specified database table/view.
-     *
-     * @access public
+	/**
+	 * This function returns a result set that contains an array of all fields in
+	 * the specified database table/view.
+	 *
+	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @param string $type                  a like constraint on the query
-     * @return array 						an array of fields within the specified
+	 * @param string $type                  a like constraint on the query
+	 * @return array 						an array of fields within the specified
 	 * 										table
 	 *
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
-     */
+	 */
 	public function fields($table, $like = '') {
 		$this->_connection or $this->connect();
 
@@ -75,7 +75,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @return array 						an array of indexes from the specified
+	 * @return array 						an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
@@ -173,17 +173,17 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		return $records;
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
-    /**
-     * This function returns an associated array which describes the properties
-     * for the specified SQL data type.
-     *
-     * @access protected
-     * @param string $type                   the SQL data type
-     * @return array                         an associated array which describes the properties
-     *                                       for the specified data type
-     */
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 */
 	protected function data_type($type) {
 		static $types = array(
 			// PostgreSQL >= 7.4

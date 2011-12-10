@@ -37,43 +37,43 @@
  */
 abstract class Base_DB_SQL_JoinType extends Kohana_Object {
 
-    const _CROSS_ = 'CROSS'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+	const _CROSS_ = 'CROSS'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
 	const _EXCEPTION_ = 'EXCEPTION'; // supported by DB2
 
-    const _INNER_ = 'INNER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+	const _INNER_ = 'INNER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
-    const _LEFT_ = 'LEFT'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
-    
-    const _LEFT_OUTER_ = 'LEFT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+	const _LEFT_ = 'LEFT'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
-    const _RIGHT_ = 'RIGHT'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
+	const _LEFT_OUTER_ = 'LEFT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
-    const _RIGHT_OUTER_ = 'RIGHT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
+	const _RIGHT_ = 'RIGHT'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
 
-    const _FULL_ = 'FULL'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
-    
-    const _FULL_OUTER_ = 'FULL OUTER'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
+	const _RIGHT_OUTER_ = 'RIGHT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
 
-    const _NATURAL_ = 'NATURAL'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
-    
-    const _NATURAL_CROSS_ = 'NATURAL CROSS'; // supported by SQLite
-    
-    const _NATURAL_INNER_ = 'NATURAL INNER'; // supported by Firebird, Oracle, PostgreSQL, SQLite
+	const _FULL_ = 'FULL'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
 
-    const _NATURAL_LEFT_ = 'NATURAL LEFT'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
+	const _FULL_OUTER_ = 'FULL OUTER'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
 
-    const _NATURAL_LEFT_OUTER_ = 'NATURAL LEFT OUTER'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
+	const _NATURAL_ = 'NATURAL'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
 
-    const _NATURAL_RIGHT_ = 'NATURAL RIGHT'; // supported by Firebird, MySQL, Oracle, PostgreSQL
+	const _NATURAL_CROSS_ = 'NATURAL CROSS'; // supported by SQLite
 
-    const _NATURAL_RIGHT_OUTER_ = 'NATURAL RIGHT OUTER'; // supported by Firebird, MySQL, Oracle, PostgreSQL
+	const _NATURAL_INNER_ = 'NATURAL INNER'; // supported by Firebird, Oracle, PostgreSQL, SQLite
 
-    const _NATURAL_FULL_ = 'NATURAL FULL'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
-    
-    const _NATURAL_FULL_OUTER_ = 'NATURAL FULL OUTER'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
+	const _NATURAL_LEFT_ = 'NATURAL LEFT'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
 
-    const _STRAIGHT_ = 'STRAIGHT'; // supported by MySQL
+	const _NATURAL_LEFT_OUTER_ = 'NATURAL LEFT OUTER'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
+
+	const _NATURAL_RIGHT_ = 'NATURAL RIGHT'; // supported by Firebird, MySQL, Oracle, PostgreSQL
+
+	const _NATURAL_RIGHT_OUTER_ = 'NATURAL RIGHT OUTER'; // supported by Firebird, MySQL, Oracle, PostgreSQL
+
+	const _NATURAL_FULL_ = 'NATURAL FULL'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
+
+	const _NATURAL_FULL_OUTER_ = 'NATURAL FULL OUTER'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
+
+	const _STRAIGHT_ = 'STRAIGHT'; // supported by MySQL
 
 }
 ?>

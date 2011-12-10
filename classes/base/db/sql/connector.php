@@ -27,9 +27,9 @@
  */
 abstract class Base_DB_SQL_Connector extends Kohana_Object {
 
-    const _AND_ = 'AND';
+	const _AND_ = 'AND';
 
-    const _OR_ = 'OR';
-    
+	const _OR_ = 'OR';
+
 }
 ?>

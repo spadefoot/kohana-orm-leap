@@ -27,59 +27,59 @@
  */
 abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_Statement {
 
-    /**
-    * This variable stores a reference to the data source.
-    *
-    * @access protected
-    * @var DB_DataSource
-    */
-    protected $source;
+	/**
+	* This variable stores a reference to the data source.
+	*
+	* @access protected
+	* @var DB_DataSource
+	*/
+	protected $source;
 
-    /**
-    * This variable stores an instance of the SQL statement builder of the preferred SQL
-    * language dialect.
-    *
-    * @access protected
-    * @var DB_SQL_Builder
-    */
-    protected $builder;
+	/**
+	* This variable stores an instance of the SQL statement builder of the preferred SQL
+	* language dialect.
+	*
+	* @access protected
+	* @var DB_SQL_Builder
+	*/
+	protected $builder;
 
-    /**
-    * This constructor instantiates this class using the specified data source.
-    *
-    * @access public
-    * @param mixed $config                  the data source configurations
-    */
-    public function __construct($config) {
-        $this->source = new DB_DataSource($config);
-        $builder = 'DB_' . $this->source->get_resource_type() . '_Insert_Builder';
-        $this->builder = new $builder();
-    }
+	/**
+	* This constructor instantiates this class using the specified data source.
+	*
+	* @access public
+	* @param mixed $config                  the data source configurations
+	*/
+	public function __construct($config) {
+		$this->source = new DB_DataSource($config);
+		$builder = 'DB_' . $this->source->get_resource_type() . '_Insert_Builder';
+		$this->builder = new $builder();
+	}
 
-    /**
-    * This function sets which table will be modified.
-    *
-    * @access public
-    * @param string $table                  the database table to be modified
-    * @return DB_SQL_Insert_Builder         a reference to the current instance
-    */
-    public function into($table) {
-        $this->builder->into($table);
-        return $this;
-    }
+	/**
+	* This function sets which table will be modified.
+	*
+	* @access public
+	* @param string $table                  the database table to be modified
+	* @return DB_SQL_Insert_Builder         a reference to the current instance
+	*/
+	public function into($table) {
+		$this->builder->into($table);
+		return $this;
+	}
 
-    /**
-    * This function sets the associated value with the specified column.
-    *
-    * @access public
-    * @param string $column                 the column to be set
-    * @param string $value                  the value to be set
-    * @return DB_SQL_Insert_Builder         a reference to the current instance
-    */
-    public function column($column, $value) {
-        $this->builder->column($column, $value);
-        return $this;
-    }
+	/**
+	* This function sets the associated value with the specified column.
+	*
+	* @access public
+	* @param string $column                 the column to be set
+	* @param string $value                  the value to be set
+	* @return DB_SQL_Insert_Builder         a reference to the current instance
+	*/
+	public function column($column, $value) {
+		$this->builder->column($column, $value);
+		return $this;
+	}
 
 	/**
 	 * This function returns the SQL statement.
@@ -90,23 +90,23 @@ abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    return $this->builder->statement($terminated);
+		return $this->builder->statement($terminated);
 	}
 
-    /**
-     * This function executes the SQL statement via the DAO class.
-     *
-     * @access public
-     * @param boolean $is_auto_incremented  whether to query for the last insert id
-     * @return integer                      the last insert id
-     */
-    public function execute() {
-        $is_auto_incremented = ((func_num_args() > 0) && (func_get_arg(0) === TRUE));
-        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
+	/**
+	 * This function executes the SQL statement via the DAO class.
+	 *
+	 * @access public
+	 * @param boolean $is_auto_incremented  whether to query for the last insert id
+	 * @return integer                      the last insert id
+	 */
+	public function execute() {
+		$is_auto_incremented = ((func_num_args() > 0) && (func_get_arg(0) === TRUE));
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
 		$primary_key = ($is_auto_incremented) ? $connection->get_last_insert_id() : 0;
-        return $primary_key;
-    }
+		return $primary_key;
+	}
 
 }
 ?>

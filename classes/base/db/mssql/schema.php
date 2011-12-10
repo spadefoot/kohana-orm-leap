@@ -27,17 +27,17 @@
  */
 abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 
-    /**
-     * This function returns a result set that contains an array of all fields in
-     * the specified database table/view.
-     *
-     * @access public
+	/**
+	 * This function returns a result set that contains an array of all fields in
+	 * the specified database table/view.
+	 *
+	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @param string $type                  a like constraint on the query
-     * @return array 						an array of fields within the specified
+	 * @param string $type                  a like constraint on the query
+	 * @return array 						an array of fields within the specified
 	 * 										table
-     */
+	 */
 	public function fields($table, $like = '') {
 		if (is_string($like)) {
 			$results = $this->query(Database::SELECT,'SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME LIKE '.$this->quote($table), FALSE);
@@ -75,7 +75,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @return array 						an array of indexes from the specified
+	 * @return array 						an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
@@ -167,17 +167,17 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		return $records;
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
-    /**
-     * This function returns an associated array which describes the properties
-     * for the specified SQL data type.
-     *
-     * @access protected
-     * @param string $type                   the SQL data type
-     * @return array                         an associated array which describes the properties
-     *                                       for the specified data type
-     */
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 */
 	protected function data_type($type) {
 		static $types = array(
 			'nvarchar'  => array('type' => 'string'),

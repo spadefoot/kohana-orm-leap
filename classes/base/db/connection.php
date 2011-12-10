@@ -43,21 +43,21 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	protected $link_id = NULL;
 
-    /**
-     * This variable stores the last SQL statement executed.
-     *
-     * @access protected
-     * @var string
-     */
-    protected $sql = '';
+	/**
+	 * This variable stores the last SQL statement executed.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $sql = '';
 
-    /**
-     * This variable stores the last error message reported.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $error = '';
+	/**
+	 * This variable stores the last error message reported.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $error = '';
 
 	/**
 	 * This function initializes the class with the specified data source.
@@ -71,7 +71,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 
 	/**
 	 * This function allows for the ability to open a connection using the data source
-     * provided.
+	 * provided.
 	 *
 	 * @access public
 	 * @abstract
@@ -96,7 +96,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $sql                       the SQL statement
-     * @param string $type               		the return type to be used
+	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
@@ -113,15 +113,15 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public abstract function execute($sql);
 
-    /**
-     * This function returns the last insert id.
-     *
-     * @access public
-     * @abstract
-     * @return integer                          the last insert id
+	/**
+	 * This function returns the last insert id.
+	 *
+	 * @access public
+	 * @abstract
+	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
-     */
-    public abstract function get_last_insert_id();
+	 */
+	public abstract function get_last_insert_id();
 
 	/**
 	 * This function returns the connection's link identifier.
@@ -133,7 +133,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public function &get_resource_id() {
 		if (!$this->is_connected()) {
-		    throw new Kohana_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
+			throw new Kohana_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
 		}
 		return $this->link_id;
 	}
@@ -149,14 +149,14 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	}
 
 	/**
-     * This function returns the last error reported.
+	 * This function returns the last error reported.
 	 *
 	 * @access public
 	 * @abstract
 	 * @return string                            the error message
 	 */
 	public function get_error() {
-	    return $this->error;
+		return $this->error;
 	}
 
 	/**
@@ -186,29 +186,29 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public abstract function close();
 
-    /**
-     * This destructor will ensure that the connection is closed.
-     *
-     * @access public
-     * @abstract
-     */
-    public abstract function __destruct();
+	/**
+	 * This destructor will ensure that the connection is closed.
+	 *
+	 * @access public
+	 * @abstract
+	 */
+	public abstract function __destruct();
 
-    /**
-    * This function returns a connection to the appropriate database based
-    * on the specified configurations.
-    *
-    * @access public
-    * @static
-    * @param mixed $config                      the data source configurations
-    * @return DB_Connection                     the database connection
-    */
+	/**
+	* This function returns a connection to the appropriate database based
+	* on the specified configurations.
+	*
+	* @access public
+	* @static
+	* @param mixed $config                      the data source configurations
+	* @return DB_Connection                     the database connection
+	*/
 	public static function factory($config = array()) {
-        $source = new DB_DataSource($config);
-        $dialect = $source->get_resource_type();
-        $driver = 'DB_' . $dialect . '_Connection_' . $source->get_driver();
-        $connection = new $driver($source);
-        return $connection;
+		$source = new DB_DataSource($config);
+		$dialect = $source->get_resource_type();
+		$driver = 'DB_' . $dialect . '_Connection_' . $source->get_driver();
+		$connection = new $driver($source);
+		return $connection;
 	}
 
 	/**

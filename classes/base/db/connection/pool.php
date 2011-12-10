@@ -47,15 +47,15 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 * @static
 	 * @var array
 	 */
-    protected static $pool = array();
+	protected static $pool = array();
 
-    /**
-    * This variable stores the id of the current connection.
-    *
-    * @access protected
-    * @var string
-    */
-    protected $id = NULL;
+	/**
+	* This variable stores the id of the current connection.
+	*
+	* @access protected
+	* @var string
+	*/
+	protected $id = NULL;
 
 	/**
 	 * This constructor creates an instance of this class.
@@ -75,41 +75,41 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 * This function returns the appropriate connection from the pool.
 	 *
 	 * @access public
-     * @param DB_DataSource $source             the data source configurations
+	 * @param DB_DataSource $source             the data source configurations
 	 * @return DB_Connection			        the appropriate connection
 	 */
-    public function get_connection($source = 'default') {
-        if (!(is_object($source) && ($source instanceof DB_DataSource))) {
-            $source = new DB_DataSource($source);
-        }
+	public function get_connection($source = 'default') {
+		if (!(is_object($source) && ($source instanceof DB_DataSource))) {
+			$source = new DB_DataSource($source);
+		}
 		$id = $source->get_id();
 		if ($id != $this->id) {
-    		if (!is_null($this->id)) {
-                self::$pool[$this->id]->close();
-    		}
-    		if (!isset(self::$pool[$id]))	{
-    			self::$pool[$id] = DB_Connection::factory($source);
-    		}
-    		$this->id = $id;
-    	}
+			if (!is_null($this->id)) {
+				self::$pool[$this->id]->close();
+			}
+			if (!isset(self::$pool[$id]))	{
+				self::$pool[$id] = DB_Connection::factory($source);
+			}
+			$this->id = $id;
+		}
 		if (!self::$pool[$id]->is_connected()) {
 			self::$pool[$id]->open();
 		}
 		return self::$pool[$id];
-    }
+	}
 
-    /**
-    * This function frees the current connection by closing it.
-    *
-    * @access public
-    */
-    public function release() {
+	/**
+	* This function frees the current connection by closing it.
+	*
+	* @access public
+	*/
+	public function release() {
 		if (!is_null($this->id)) {
-            self::$pool[$this->id]->close();
+			self::$pool[$this->id]->close();
 		}
-    }
+	}
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function is automatically called at the time of shutdown and closes any
@@ -118,7 +118,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 * @access public
 	 * @static
 	 */
-    public static function autorelease() {
+	public static function autorelease() {
 		foreach (self::$pool as $connection) {
 			if ($connection->is_connected()) {
 				$connection->close();
@@ -133,13 +133,13 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 * @static
 	 * @return DB_Connection_Pool               a singleton instance of this class
 	 */
-    public static function instance() {
+	public static function instance() {
 		if (is_null(self::$instance)) {
-		    register_shutdown_function(array('DB_Connection_Pool', 'autorelease'));
-    		self::$instance = new DB_Connection_Pool();
-	    }
-    	return self::$instance;
-    }
+			register_shutdown_function(array('DB_Connection_Pool', 'autorelease'));
+			self::$instance = new DB_Connection_Pool();
+		}
+		return self::$instance;
+	}
 
 }
 ?>

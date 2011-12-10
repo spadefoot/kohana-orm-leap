@@ -27,17 +27,17 @@
  */
 abstract class Base_DB_DB2_Schema extends DB_Schema {
 
-    /**
-     * This function returns a result set that contains an array of all fields in
-     * the specified database table/view.
-     *
-     * @access public
+	/**
+	 * This function returns a result set that contains an array of all fields in
+	 * the specified database table/view.
+	 *
+	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @param string $type                  a like constraint on the query
-     * @return array 						an array of fields within the specified
+	 * @param string $type                  a like constraint on the query
+	 * @return array 						an array of fields within the specified
 	 * 										table
-     */
+	 */
 	public function fields($table, $like = '') {
 		$table = $this->helper->prepare_identifier($table);
 
@@ -51,10 +51,10 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		$sql .= ';';
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql);
+		$records = $connection->query($sql);
 
 		$fields = array();
-		
+
 		foreach ($records as $record) {
 			list($type, $length) = $this->parse_type($record['Type']);
 
@@ -64,8 +64,8 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 			$field['type'] = $type;
 			$field['primary_key'] = ($record['Key'] == 'PRI');
 			if ($field['primary_key']) {
-			    $field['attributes']['auto_incremented'] = ($record['Extra'] == 'auto_increment');
-		    }
+				$field['attributes']['auto_incremented'] = ($record['Extra'] == 'auto_increment');
+			}
 			$field['nullable'] = ($record['Null'] == 'YES');
 			$field['default'] = $record['Default'];
 
@@ -117,7 +117,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @return array 						an array of indexes from the specified
+	 * @return array 						an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://www.dbforums.com/db2/1614810-how-see-indexes-db2-tables.html
@@ -208,17 +208,17 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		return $records;
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
-    /**
-     * This function returns an associated array which describes the properties
-     * for the specified SQL data type.
-     *
-     * @access protected
-     * @param string $type                   the SQL data type
-     * @return array                         an associated array which describes the properties
-     *                                       for the specified data type
-     */
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 */
 	protected function data_type($type) {
 		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),

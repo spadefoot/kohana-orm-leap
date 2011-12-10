@@ -42,16 +42,16 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	public function open() {
 		if (!$this->is_connected()) {
 			$connection_string  = 'host=' . $this->data_source->get_host_server();
-    		$port = $this->data_source->get_port();
-    		if (!empty($port)) {
+			$port = $this->data_source->get_port();
+			if (!empty($port)) {
 				$connection_string .= ' port=' . $port;
-		    }
+			}
 			$connection_string .= ' dbname=' . $this->data_source->get_database();
 			$connection_string .= ' user=' . $this->data_source->get_username();
 			$connection_string .= ' password=' . $this->data_source->get_password();
 			$this->link_id = @pg_connect($connection_string);
 			if ($this->link_id === FALSE) {
-		        $this->error = 'Message: Failed to establish connection. Reason: ' . pg_last_error();
+				$this->error = 'Message: Failed to establish connection. Reason: ' . pg_last_error();
 				throw new Kohana_Database_Exception($this->error, array());
 			}
 		}
@@ -75,7 +75,7 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-     * @param string $type						the return type to be used
+	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
@@ -83,26 +83,26 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.pg-last-error.php
 	 */
 	public function query($sql, $type = 'array') {
-        if (!$this->is_connected()) {
-            $this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-        }
-        $resource_id = @pg_query($this->link_id, $sql);
-        if ($resource_id === FALSE) {
-            $this->error = 'Message: Failed to query SQL statement. Reason: ' . pg_last_error($this->link_id);
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-        }
+		if (!$this->is_connected()) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+		}
+		$resource_id = @pg_query($this->link_id, $sql);
+		if ($resource_id === FALSE) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . pg_last_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+		}
 		$records = array();
 		$size = 0;
 		while ($record = pg_fetch_assoc($resource_id)) {
-            $records[] = DB_Connection::type_cast($type, $record);
+			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
-    	}
-    	@pg_free_result($resource_id);
+		}
+		@pg_free_result($resource_id);
 		$result_set = new DB_ResultSet($records, $size);
-        $this->sql = $sql;
+		$this->sql = $sql;
 		return $result_set;
-    }
+	}
 
 	/**
 	* This function allows for the ability to process a query that will not return
@@ -116,35 +116,35 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	*/
 	public function execute($sql) {
 		if (!$this->is_connected()) {
-		    $this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
+			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
 		$resource_id = @pg_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-		    $this->error = 'Message: Failed to execute SQL statement. Reason: ' . pg_last_error($this->link_id);
+			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . pg_last_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-        $this->sql = $sql;
+		$this->sql = $sql;
 		@pg_free_result($resource_id);
 	}
 
-    /**
-     * This function returns the last insert id.
-     *
-     * @access public
-     * @return integer                          the last insert id
+	/**
+	 * This function returns the last insert id.
+	 *
+	 * @access public
+	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
-     */
-    public function get_last_insert_id() {
-        $insert_id = pg_last_oid($this->link_id);
-        if ($insert_id === FALSE) {
-            $this->error = 'Message: Failed to fetch the last insert id. Reason: ' . pg_last_error($this->link_id);
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
-        }
-        return $insert_id;
-    }
+	 */
+	public function get_last_insert_id() {
+		$insert_id = pg_last_oid($this->link_id);
+		if ($insert_id === FALSE) {
+			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . pg_last_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+		}
+		return $insert_id;
+	}
 
 	/**
 	 * This function rollbacks a transaction.
@@ -185,18 +185,18 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 		return TRUE;
 	}
 
-    /**
-     * This destructor will ensure that the connection is closed.
-     *
-     * @access public
- 	 *
- 	 * @see http://www.php.net/manual/en/function.pg-close.php
-     */
-    public function __destruct() {
-        if (is_resource($this->link_id)) {
-            @pg_close($this->link_id);
-        }
-    }
+	/**
+	 * This destructor will ensure that the connection is closed.
+	 *
+	 * @access public
+	 *
+	 * @see http://www.php.net/manual/en/function.pg-close.php
+	 */
+	public function __destruct() {
+		if (is_resource($this->link_id)) {
+			@pg_close($this->link_id);
+		}
+	}
 
 }
 ?>

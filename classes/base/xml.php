@@ -28,52 +28,52 @@
  */
 abstract class Base_XML extends SimpleXMLElement {
 
-    /**
-     * This function converts an associated array to either a SimpleXMLElement or an XML formatted
-     * string depending on the second parameter.
-     *
-     * @access public
-     * @static
-     * @param array $array                          the associated array to be converted
-     * @param boolean $as_string                    whether to return a string
-     * @return mixed                                either a SimpleXMLElement or an XML
-     *                                              formatted string
-     */
-    public static function encode(Array $array, $as_string = FALSE) {
-        $content = self::convert_to_xml($array);
-        if ($as_string) {
-            return $content;
-        }
-        $XML = new XML($content);
-        return $XML;
-    }
+	/**
+	 * This function converts an associated array to either a SimpleXMLElement or an XML formatted
+	 * string depending on the second parameter.
+	 *
+	 * @access public
+	 * @static
+	 * @param array $array                          the associated array to be converted
+	 * @param boolean $as_string                    whether to return a string
+	 * @return mixed                                either a SimpleXMLElement or an XML
+	 *                                              formatted string
+	 */
+	public static function encode(Array $array, $as_string = FALSE) {
+		$content = self::convert_to_xml($array);
+		if ($as_string) {
+			return $content;
+		}
+		$XML = new XML($content);
+		return $XML;
+	}
 
-    /**
-     * This function returns an instance of the class with the contents of the specified
-     * XML file.
-     *
-     * @access public
-     * @static
-     * @param string $file                          the file name
-     * @return XML                               	an instance of this class
+	/**
+	 * This function returns an instance of the class with the contents of the specified
+	 * XML file.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $file                          the file name
+	 * @return XML                               	an instance of this class
 	 * @throws Kohana_InvalidArgument_Exception		indicates that the an argument is of the
 	 * 												wrong data type
-     * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
-     */
-    public static function load($file) {
-        if (!is_string($file)) {
-        	throw new Kohana_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
-        }
-        
-        $source = self::find_file($file);
-        
-        $content = file_get_contents($source);
-        
-        $XML = new XML($content);
-        return $XML;
-    }
+	 * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
+	 */
+	public static function load($file) {
+		if (!is_string($file)) {
+			throw new Kohana_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
+		}
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		$source = self::find_file($file);
+
+		$content = file_get_contents($source);
+
+		$XML = new XML($content);
+		return $XML;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function converts an associated array to an XML string.
@@ -118,40 +118,40 @@ abstract class Base_XML extends SimpleXMLElement {
 		}
 	}
 
-    /**
-     * This function searches for the file that first matches the specified file
-     * name and returns its path.
-     *
-     * @access protected
-     * @param string $file                          the file name
-     * @return string                               the file path
-     * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
-     */
-    protected static function find_file($file) {
-        if (file_exists($file)) {
-            return $file;
-        }
+	/**
+	 * This function searches for the file that first matches the specified file
+	 * name and returns its path.
+	 *
+	 * @access protected
+	 * @param string $file                          the file name
+	 * @return string                               the file path
+	 * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
+	 */
+	protected static function find_file($file) {
+		if (file_exists($file)) {
+			return $file;
+		}
 
-        $uri = APPPATH . 'xml' . DIRECTORY_SEPARATOR . $file;
-        if (file_exists($uri)) {
-            return $uri;
-        }
+		$uri = APPPATH . 'xml' . DIRECTORY_SEPARATOR . $file;
+		if (file_exists($uri)) {
+			return $uri;
+		}
 
-        $modules = Kohana::modules();
-        foreach($modules as $module) {
-            $uri = $module . 'xml' . DIRECTORY_SEPARATOR . $file;
-            if (file_exists($uri)) {
-                return $uri;
-            }
-        }
+		$modules = Kohana::modules();
+		foreach($modules as $module) {
+			$uri = $module . 'xml' . DIRECTORY_SEPARATOR . $file;
+			if (file_exists($uri)) {
+				return $uri;
+			}
+		}
 
-        $uri = SYSPATH . 'xml' . DIRECTORY_SEPARATOR . $file;
-        if (file_exists($uri)) {
-            return $uri;
-        }
+		$uri = SYSPATH . 'xml' . DIRECTORY_SEPARATOR . $file;
+		if (file_exists($uri)) {
+			return $uri;
+		}
 
 		throw new Kohana_FileNotFound_Exception('Message: Unable to locate file. Reason: No file exists with the specified file name.', array(':file', $file));
-    }
+	}
 
 }
 ?>

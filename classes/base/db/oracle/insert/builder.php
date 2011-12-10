@@ -30,11 +30,11 @@
 abstract class Base_DB_Oracle_Insert_Builder extends DB_SQL_Insert_Builder {
 
    /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     */
-    public function __construct() {
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
+	public function __construct() {
 		parent::__construct('Oracle');
 	}
 
@@ -49,19 +49,19 @@ abstract class Base_DB_Oracle_Insert_Builder extends DB_SQL_Insert_Builder {
 	 * @see http://www.oracle.com/technetwork/issue-archive/2006/06-sep/o56asktom-086197.html
 	 */
 	public function statement($terminated = TRUE) {
-	    $sql = "INSERT INTO {$this->data['into']}";
+		$sql = "INSERT INTO {$this->data['into']}";
 
-        if (!empty($this->data['column'])) {
-            $columns = implode(', ', array_keys($this->data['column']));
-            $values = implode(', ', array_values($this->data['column']));
-	        $sql .= " ({$columns}) VALUES ({$values})";
-	    }
+		if (!empty($this->data['column'])) {
+			$columns = implode(', ', array_keys($this->data['column']));
+			$values = implode(', ', array_values($this->data['column']));
+			$sql .= " ({$columns}) VALUES ({$values})";
+		}
 
-        if ($terminated) {
-	        $sql .= ';';
-        }
-	    
-	    return $sql;
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
 	}
 
 }

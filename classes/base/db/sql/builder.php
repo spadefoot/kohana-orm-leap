@@ -27,32 +27,32 @@
  */
 abstract class Base_DB_SQL_Builder extends Kohana_Object implements DB_SQL_Statement {
 
-    /**
-    * This constant represents an opening parenthesis.
-    *
-    * @access public
-    * @var string
-    */
-    const _OPENING_PARENTHESIS_ = '(';
+	/**
+	* This constant represents an opening parenthesis.
+	*
+	* @access public
+	* @var string
+	*/
+	const _OPENING_PARENTHESIS_ = '(';
 
-    /**
-    * This constant represents a closing parenthesis.
-    *
-    * @access public
-    * @var string
-    */
-    const _CLOSING_PARENTHESIS_ = ')';
+	/**
+	* This constant represents a closing parenthesis.
+	*
+	* @access public
+	* @var string
+	*/
+	const _CLOSING_PARENTHESIS_ = ')';
 
-    /**
-    * This function returns a new instance of the calling class.
-    *
-    * @access public
-    * @return DB_SQL_Builder                a new instance of the calling class
-    */
-    public static function factory() {
-        $class = self::get_called_class();
-        return new $class();
-    }
+	/**
+	* This function returns a new instance of the calling class.
+	*
+	* @access public
+	* @return DB_SQL_Builder                a new instance of the calling class
+	*/
+	public static function factory() {
+		$class = self::get_called_class();
+		return new $class();
+	}
 
 }
 ?>

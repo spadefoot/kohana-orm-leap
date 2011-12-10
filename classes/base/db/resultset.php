@@ -27,13 +27,13 @@
  */
 abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, Countable, Iterator {
 
-    /**
-     * This variable stores the records.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $records;
+	/**
+	 * This variable stores the records.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $records;
 
 	/**
 	 * This variable stores the current position in the records array.
@@ -41,7 +41,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @access protected
 	 * @var integer
 	 */
-    protected $position;
+	protected $position;
 
 	/**
 	 * This variable stores the length of the records array.
@@ -49,14 +49,14 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @access protected
 	 * @var integer
 	 */
-    protected $size;
+	protected $size;
 
-    /**
+	/**
 	 * This function initializes the class by wrapping the result set so that all database
 	 * result sets are accessible alike.
 	 *
 	 * @access public
-     * @param array $records					an array of records
+	 * @param array $records					an array of records
 	 * @param integer $size						the total number of records
 	 */
 	public function __construct(Array $records, $size) {
@@ -65,15 +65,15 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		$this->size = $size;
 	}
 
-    /**
-     * This function returns the total number of records contained in result set.
-     *
+	/**
+	 * This function returns the total number of records contained in result set.
+	 *
 	 * @access public
 	 * @return integer                          the total number of records
-     */
-    public function count() {
-        return $this->size;
-    }
+	 */
+	public function count() {
+		return $this->size;
+	}
 
 	/**
 	 * This function returns the current record.
@@ -85,53 +85,53 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		return $this->records[$this->position];
 	}
 
-    /**
-     * This function returns a record of the desired object type.
-     *
-     * @access public
-     * @abstract
-     * @param integer $index                    the record's index
-     * @return mixed                            the record
-     */
-    public function fetch($index = -1) {
-    	settype($index, 'integer');
-    	if ($index < 0) {
-    	    $index = $this->position;
-    	    $this->position++;
-    	}
-	    
-	    if (isset($this->records[$index])) {
-		    return $this->records[$index];
-	    }
+	/**
+	 * This function returns a record of the desired object type.
+	 *
+	 * @access public
+	 * @abstract
+	 * @param integer $index                    the record's index
+	 * @return mixed                            the record
+	 */
+	public function fetch($index = -1) {
+		settype($index, 'integer');
+		if ($index < 0) {
+			$index = $this->position;
+			$this->position++;
+		}
 
-	    return FALSE;
+		if (isset($this->records[$index])) {
+			return $this->records[$index];
+		}
+
+		return FALSE;
 	}
 
-    /**
-     * This function returns an array of records of the desired object type.
-     *
-     * @access public
-     * @return array                            an array of records
-     */
+	/**
+	 * This function returns an array of records of the desired object type.
+	 *
+	 * @access public
+	 * @return array                            an array of records
+	 */
 	public function fetch_all() {
 		return $this->records;
 	}
 
-    /**
-     * This function frees all data stored in the result set.
-     *
-     * @access public
-     */
-    public function free() {
+	/**
+	 * This function frees all data stored in the result set.
+	 *
+	 * @access public
+	 */
+	public function free() {
 		$this->records = array();
 		$this->position = 0;
 		$this->size = 0;
-    }
+	}
 
 	/**
 	 * This function returns the value for the named column from the current record.
 	 *
-     *     // Gets the value of "id" from the current record
+	 *     // Gets the value of "id" from the current record
 	 *     $id = $results->get('id');
 	 *
 	 * @param string $name                      the name of the column
@@ -142,31 +142,31 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	public function get($name, $default = NULL) {
 		$record = $this->current();
 
-        if (is_object($record)) {
-            try {
-                $value = $record->{$name};
-                if (!is_null($value)) {
-                    return $value;
-                }
-            }
-            catch (Exception $ex) { }
-        }
-    	else if (is_array($record) && isset($record[$name])) {
-    		return $record[$name];
-    	}
+		if (is_object($record)) {
+			try {
+				$value = $record->{$name};
+				if (!is_null($value)) {
+					return $value;
+				}
+			}
+			catch (Exception $ex) { }
+		}
+		else if (is_array($record) && isset($record[$name])) {
+			return $record[$name];
+		}
 
 		return $default;
 	}
 
-    /**
-     * This function returns whether any records were loaded.
-     *
-     * @access public
-     * @return boolean                          whether any records were loaded
-     */
-    public function is_loaded() {
-        return ($this->size > 0);
-    }
+	/**
+	 * This function returns whether any records were loaded.
+	 *
+	 * @access public
+	 * @return boolean                          whether any records were loaded
+	 */
+	public function is_loaded() {
+		return ($this->size > 0);
+	}
 
 	/**
 	 * This function returns the position to the current record.
@@ -185,56 +185,56 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @access public
 	 */
 	public function next() {
-        $this->position++;
+		$this->position++;
 	}
 
-    /**
-     * This function determines whether a offset exists.
-     *
-     * @access public
-     * @param integer $offset                   the offset to be evaluated
-     * @return boolean                          whether the requested index exists
-     */
-    public function offsetExists($offset) {
-        return isset($this->records[$offset]);
-    }
+	/**
+	 * This function determines whether a offset exists.
+	 *
+	 * @access public
+	 * @param integer $offset                   the offset to be evaluated
+	 * @return boolean                          whether the requested index exists
+	 */
+	public function offsetExists($offset) {
+		return isset($this->records[$offset]);
+	}
 
-    /**
-     * This functions gets value at the specified offset.
-     *
-     * @access public
-     * @param integer $offset                   the offset to be fetched
-     * @return mixed                            the value at the specified index
-     */
-    public function offsetGet($offset) {
-        return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
-    }
+	/**
+	 * This functions gets value at the specified offset.
+	 *
+	 * @access public
+	 * @param integer $offset                   the offset to be fetched
+	 * @return mixed                            the value at the specified index
+	 */
+	public function offsetGet($offset) {
+		return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
+	}
 
-    /**
-     * This functions sets the specified value at the specified offset.
-     *
-     * @access public
-     * @param integer $offset                   the offset to be set
-     * @param mixed $value                      the value to be set
-     */
-    public function offsetSet($offset, $value) {
-        if (is_null($offset)) {
-            $this->records[] = $value;
-        }
-        else {
-            $this->records[$offset] = $value;
-        }
-    }
+	/**
+	 * This functions sets the specified value at the specified offset.
+	 *
+	 * @access public
+	 * @param integer $offset                   the offset to be set
+	 * @param mixed $value                      the value to be set
+	 */
+	public function offsetSet($offset, $value) {
+		if (is_null($offset)) {
+			$this->records[] = $value;
+		}
+		else {
+			$this->records[$offset] = $value;
+		}
+	}
 
-    /**
-     * This functions allows for the specified offset to be unset.
-     *
-     * @access public
-     * @param integer $offset               the offset to be unset
-     */
-    public function offsetUnset($offset) {
-        unset($this->records[$offset]);
-    }
+	/**
+	 * This functions allows for the specified offset to be unset.
+	 *
+	 * @access public
+	 * @param integer $offset               the offset to be unset
+	 */
+	public function offsetUnset($offset) {
+		unset($this->records[$offset]);
+	}
 
 	/**
 	 * This function returns the current iterator position.
@@ -262,7 +262,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @return boolean					        whether the current iterator position is valid
 	 */
 	public function valid() {
-	    return isset($this->records[$this->position]);
+		return isset($this->records[$this->position]);
 	}
 
 }

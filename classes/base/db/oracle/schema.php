@@ -126,7 +126,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @return array 						an array of indexes from the specified
+	 * @return array 						an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
@@ -136,83 +136,83 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		$sql = "select INDEX_NAME, TABLE_NAME, TABLE_OWNER from SYS.ALL_INDEXES order by TABLE_OWNER, TABLE_NAME, INDEX_NAME";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    /**
-     * This function returns a result set that contains an array of all tables within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of tables within the database
-     *
+	/**
+	 * This function returns a result set that contains an array of all tables within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of tables within the database
+	 *
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
-     * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
-     */
+	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
+	 */
 	public function tables($like = '') {
 		$builder = DB_Oracle_Select_Builder::factory()
-		    ->column('table_name', 'name')
+			->column('table_name', 'name')
 			//->from('dba_tables')
 			//->from('all_tables')
-		    ->from('user_tables')
-		    ->order_by(DB::expr('LOWER("table_name")'));
+			->from('user_tables')
+			->order_by(DB::expr('LOWER("table_name")'));
 
 		if (!empty($like)) {
-    		$builder->where('table_name', 'LIKE', $like);
-    	}
+			$builder->where('table_name', 'LIKE', $like);
+		}
 
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    /**
-     * This function returns a result set that contains an array of all views within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of views within the database
+	/**
+	 * This function returns a result set that contains an array of all views within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of views within the database
 	 * 
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
-     */
+	 */
 	public function views($like = '') {
 		$builder = DB_Oracle_Select_Builder::factory()
-		    ->column('view_name', 'name')
+			->column('view_name', 'name')
 			//->from('dba_views')
 			//->from('all_views')
-		    ->from('user_views')
-		    ->order_by(DB::expr('LOWER("view_name")'));
+			->from('user_views')
+			->order_by(DB::expr('LOWER("view_name")'));
 
 		if (!empty($like)) {
-    		$builder->where('view_name', 'LIKE', $like);
-    	}
+			$builder->where('view_name', 'LIKE', $like);
+		}
 
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
-    /**
-     * This function returns an associated array which describes the properties
-     * for the specified SQL data type.
-     *
-     * @access protected
-     * @param string $type                   the SQL data type
-     * @return array                         an associated array which describes the properties
-     *                                       for the specified data type
-     */
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 */
 	protected function data_type($type) {
 		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),

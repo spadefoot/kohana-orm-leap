@@ -30,11 +30,11 @@
 abstract class Base_DB_MsSql_Update_Builder extends DB_SQL_Update_Builder {
 
    /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     */
-    public function __construct() {
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
+	public function __construct() {
 		parent::__construct('MsSQL');
 	}
 
@@ -45,53 +45,53 @@ abstract class Base_DB_MsSql_Update_Builder extends DB_SQL_Update_Builder {
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
-     *
-     * @see http://stackoverflow.com/questions/655010/how-to-update-and-order-by-using-ms-sql
+	 *
+	 * @see http://stackoverflow.com/questions/655010/how-to-update-and-order-by-using-ms-sql
 	 */
 	public function statement($terminated = TRUE) {
-        $alias = ($this->data['table'] == 't0') ? 't1' : 't0';
+		$alias = ($this->data['table'] == 't0') ? 't1' : 't0';
 
-        $sql = "WITH {$alias} AS (";
+		$sql = "WITH {$alias} AS (";
 
-        $sql .= 'SELECT';
+		$sql .= 'SELECT';
 
-        if ($this->data['limit'] > 0) {
-            $sql .= " TOP {$this->data['limit']}";
-        }
+		if ($this->data['limit'] > 0) {
+			$sql .= " TOP {$this->data['limit']}";
+		}
 
-        $sql .= " * FROM {$this->data['table']}";
+		$sql .= " * FROM {$this->data['table']}";
 
-        if (!empty($this->data['where'])) {
-            $do_append = FALSE;
-            $sql .= ' WHERE ';
-            foreach ($this->data['where'] as $where) {
-                if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-                    $sql .= " {$where[0]} ";
-                }
-                $sql .= $where[1];
-                $do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-            }
-        }
+		if (!empty($this->data['where'])) {
+			$do_append = FALSE;
+			$sql .= ' WHERE ';
+			foreach ($this->data['where'] as $where) {
+				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					$sql .= " {$where[0]} ";
+				}
+				$sql .= $where[1];
+				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+			}
+		}
 
-        if (!empty($this->data['order_by'])) {
-            $sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
-        }
+		if (!empty($this->data['order_by'])) {
+			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+		}
 
-        //if ($this->data['offset'] > 0) {
-        //    $sql .= " OFFSET {$this->data['offset']}";
-        //}
+		//if ($this->data['offset'] > 0) {
+		//    $sql .= " OFFSET {$this->data['offset']}";
+		//}
 
-        $sql .= ") UPDATE {$alias}";
-	    
-	    if (!empty($this->data['column'])) {
-		    $sql .= ' SET ' . implode(', ', array_values($this->data['column']));
-	    }
+		$sql .= ") UPDATE {$alias}";
 
-        if ($terminated) {
-	        $sql .= ';';
-        }
-	    
-	    return $sql;
+		if (!empty($this->data['column'])) {
+			$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
+		}
+
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
 	}
 
 }

@@ -51,7 +51,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 			$connection_string .= 'PWD=' . $this->data_source->get_password() . ';';
 			$this->link_id = @db2_connect($connection_string, '', '');
 			if ($this->link_id === FALSE) {
-		        $this->error = 'Message: Failed to establish connection. Reason: ' . db2_conn_error();
+				$this->error = 'Message: Failed to establish connection. Reason: ' . db2_conn_error();
 				throw new Kohana_Database_Exception($this->error, array());
 			}
 		}
@@ -67,12 +67,12 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function begin_transaction() {
 		if (!$this->is_connected()) {
-		    $this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
+			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
 		$resource_id = @db2_autocommit($this->link_id, DB2_AUTOCOMMIT_OFF);
 		if ($resource_id === FALSE) {
-		    $this->error = 'Message: Failed to begin SQL transaction. Reason: ' . db2_conn_error($this->link_id);
+			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . db2_conn_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
 	}
@@ -83,7 +83,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-     * @param string $type						the return type to be used
+	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
@@ -94,26 +94,26 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
 	public function query($sql, $type = 'array') {
-        if (!$this->is_connected()) {
-            $this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-        }
+		if (!$this->is_connected()) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+		}
 		$resource_id = @db2_prepare($this->link_id, $sql);
-        if (($resource_id === FALSE) || !db2_execute($resource_id)) {
-            $this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-        }
+		if (($resource_id === FALSE) || !db2_execute($resource_id)) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+		}
 		$records = array();
 		$size = 0;
 		while ($record = db2_fetch_assoc($resource_id)) {
-            $records[] = DB_Connection::type_cast($type, $record);
+			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
-    	}
+		}
 		@db2_free_result($resource_id);
 		$result_set = new DB_ResultSet($records, $size);
-        $this->sql = $sql;
+		$this->sql = $sql;
 		return $result_set;
-    }
+	}
 
 	/**
 	 * This function allows for the ability to process a query that will not return
@@ -128,36 +128,36 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function execute($sql) {
 		if (!$this->is_connected()) {
-		    $this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
+			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
 		$resource_id = @db2_exec($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-		    $this->error = 'Message: Failed to execute SQL statement. Reason: ' . db2_stmt_error($resource_id);
+			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . db2_stmt_error($resource_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-        $this->sql = $sql;
+		$this->sql = $sql;
 		@db2_free_result($resource_id);
 	}
 
-    /**
-     * This function returns the last insert id.
-     *
-     * @access public
-     * @return integer                          the last insert id
+	/**
+	 * This function returns the last insert id.
+	 *
+	 * @access public
+	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-last-insert-id.php
-     */
-    public function get_last_insert_id() {
-        $insert_id = @db2_last_insert_id($this->link_id);
-        if ($insert_id === FALSE) {
-            $this->error = 'Message: Failed to fetch the last insert id. Reason: ' . db2_conn_error($this->link_id);
-            throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
-        }
+	 */
+	public function get_last_insert_id() {
+		$insert_id = @db2_last_insert_id($this->link_id);
+		if ($insert_id === FALSE) {
+			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . db2_conn_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+		}
 		settype($insert_id, 'integer');
-        return $insert_id;
-    }
+		return $insert_id;
+	}
 
 	/**
 	 * This function rollbacks a transaction.
@@ -169,12 +169,12 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function rollback() {
 		if (!$this->is_connected()) {
-		    $this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
+			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
 		$resource_id = @db2_rollback($this->link_id);
 		if ($resource_id === FALSE) {
-		    $this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . db2_conn_error($this->link_id);
+			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . db2_conn_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
 		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
@@ -190,12 +190,12 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function commit() {
 		if (!$this->is_connected()) {
-		    $this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
+			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
 		$resource_id = @db2_commit($this->link_id);
 		if ($resource_id === FALSE) {
-		    $this->error = 'Message: Failed to commit SQL transaction. Reason: ' . db2_conn_error($this->link_id);
+			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . db2_conn_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
 		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
@@ -220,18 +220,18 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 		return TRUE;
 	}
 
-    /**
-     * This destructor will ensure that the connection is closed.
-     *
-     * @access public
+	/**
+	 * This destructor will ensure that the connection is closed.
+	 *
+	 * @access public
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-close.php
-     */
-    public function __destruct() {
-        if (is_resource($this->link_id)) {
-            @db2_close($this->link_id);
-        }
-    }
+	 */
+	public function __destruct() {
+		if (is_resource($this->link_id)) {
+			@db2_close($this->link_id);
+		}
+	}
 
 }
 ?>

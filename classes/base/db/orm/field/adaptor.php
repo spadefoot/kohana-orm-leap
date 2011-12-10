@@ -27,60 +27,60 @@
  */
 abstract class Base_DB_ORM_Field_Adaptor extends Kohana_Object {
 
-    /**
-     * This variable stores a reference to the implementing model.
-     *
-     * @access protected
-     * @var DB_ORM_Model
-     */
-    protected $model;
+	/**
+	 * This variable stores a reference to the implementing model.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Model
+	 */
+	protected $model;
 
-    /**
-     * This variable stores the adaptor's metadata.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $metadata;
+	/**
+	 * This variable stores the adaptor's metadata.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $metadata;
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param string $field                         the name of field in the database table
-     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
-     *                                              was specified
-     */
-    public function __construct(DB_ORM_Model $model, $field) {
-        if (!is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
-            throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
-        }
-        $this->model = $model;
-        $this->metadata['field'] = $field;
-    }
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param string $field                         the name of field in the database table
+	 * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
+	 *                                              was specified
+	 */
+	public function __construct(DB_ORM_Model $model, $field) {
+		if (!is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
+			throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
+		}
+		$this->model = $model;
+		$this->metadata['field'] = $field;
+	}
 
-    /**
-     * This function returns the value associated with the specified property.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @return mixed                                the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public abstract function __get($key);
+	/**
+	 * This function returns the value associated with the specified property.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public abstract function __get($key);
 
-    /**
-     * This function sets the value for the specified key.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @param mixed $value                          the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public abstract function __set($key, $value);
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public abstract function __set($key, $value);
 
 }
 ?>

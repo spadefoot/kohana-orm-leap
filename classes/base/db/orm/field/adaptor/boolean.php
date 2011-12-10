@@ -30,73 +30,73 @@
  */
 abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param array $metadata                       the adaptor's metadata
-     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
-     *                                              was specified
-     */
-    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-        parent::__construct($model, $metadata['field']);
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param array $metadata                       the adaptor's metadata
+	 * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
+	 *                                              was specified
+	 */
+	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+		parent::__construct($model, $metadata['field']);
 
-        $this->metadata['values'] = (isset($metadata['values']))
-            ? (array)$metadata['values']
-            : array('yes', 'no');
-    }
+		$this->metadata['values'] = (isset($metadata['values']))
+			? (array)$metadata['values']
+			: array('yes', 'no');
+	}
 
-    /**
-     * This function returns the value associated with the specified property.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @return mixed                                the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public function __get($key) {
-        switch ($key) {
-            case 'value':
-                $value = $this->model->{$this->metadata['field']};
-                if (is_bool($value)) {
-                    $value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
-                }
-                return $value;
-            break;
-            default:
-                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
-            break;
-        }
-        throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
-    }
+	/**
+	 * This function returns the value associated with the specified property.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __get($key) {
+		switch ($key) {
+			case 'value':
+				$value = $this->model->{$this->metadata['field']};
+				if (is_bool($value)) {
+					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
+				}
+				return $value;
+			break;
+			default:
+				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+			break;
+		}
+		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+	}
 
-    /**
-     * This function sets the value for the specified key.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @param mixed $value                          the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public function __set($key, $value) {
-        switch ($key) {
-            case 'value':
-                if (!is_null($value)) {
-                    $true = $this->metadata['values'][0];
-                    $value = (is_string($true) && is_string($value))
-                        ? (strcasecmp($true, $value) == 0)
-                        : ($true == $value);
-                }
-                $this->model->{$this->metadata['field']} = $value;
-            break;
-            default:
-                throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
-            break;
-        }
-    }
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'value':
+				if (!is_null($value)) {
+					$true = $this->metadata['values'][0];
+					$value = (is_string($true) && is_string($value))
+						? (strcasecmp($true, $value) == 0)
+						: ($true == $value);
+				}
+				$this->model->{$this->metadata['field']} = $value;
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+			break;
+		}
+	}
 
 }
 ?>

@@ -27,111 +27,111 @@
  */
 abstract class Base_DB_SQL_Delete_Proxy extends Kohana_Object implements DB_SQL_Statement {
 
-    /**
-    * This variable stores a reference to the data source.
-    *
-    * @access protected
-    * @var DB_DataSource
-    */
-    protected $source;
+	/**
+	* This variable stores a reference to the data source.
+	*
+	* @access protected
+	* @var DB_DataSource
+	*/
+	protected $source;
 
-    /**
-    * This variable stores an instance of the SQL statement builder of the preferred SQL
-    * language dialect.
-    *
-    * @access protected
-    * @var DB_SQL_Builder
-    */
-    protected $builder;
+	/**
+	* This variable stores an instance of the SQL statement builder of the preferred SQL
+	* language dialect.
+	*
+	* @access protected
+	* @var DB_SQL_Builder
+	*/
+	protected $builder;
 
-    /**
-    * This constructor instantiates this class using the specified data source.
-    *
-    * @access public
-    * @param mixed $config                  the data source configurations
-    */
-    public function __construct($config) {
-        $this->source = new DB_DataSource($config);
-        $builder = 'DB_' . $this->source->get_resource_type() . '_Delete_Builder';        
-        $this->builder = new $builder();
-    }
+	/**
+	* This constructor instantiates this class using the specified data source.
+	*
+	* @access public
+	* @param mixed $config                  the data source configurations
+	*/
+	public function __construct($config) {
+		$this->source = new DB_DataSource($config);
+		$builder = 'DB_' . $this->source->get_resource_type() . '_Delete_Builder';
+		$this->builder = new $builder();
+	}
 
-    /**
-    * This function sets which table will be modified.
-    *
-    * @access public
-    * @param string $table                  the database table to be modified
-    * @return DB_SQL_Delete_Builder         a reference to the current instance
-    */
-    public function from($table) {
-        $this->builder->from($table);
-        return $this;
-    }
+	/**
+	* This function sets which table will be modified.
+	*
+	* @access public
+	* @param string $table                  the database table to be modified
+	* @return DB_SQL_Delete_Builder         a reference to the current instance
+	*/
+	public function from($table) {
+		$this->builder->from($table);
+		return $this;
+	}
 
-    /**
-    * This function either opens or closes a "where" group.
-    *
-    * @access public
-    * @param string $parenthesis            the parenthesis to be used
-    * @param string $connector              the connector to be used
-    * @return DB_SQL_Delete_Builder         a reference to the current instance
-    */
-    public function where_block($parenthesis, $connector = 'AND') {
-        $this->builder->where_block($parenthesis, $connector);
-        return $this;
-    }
+	/**
+	* This function either opens or closes a "where" group.
+	*
+	* @access public
+	* @param string $parenthesis            the parenthesis to be used
+	* @param string $connector              the connector to be used
+	* @return DB_SQL_Delete_Builder         a reference to the current instance
+	*/
+	public function where_block($parenthesis, $connector = 'AND') {
+		$this->builder->where_block($parenthesis, $connector);
+		return $this;
+	}
 
-    /**
-    * This function adds a "where" constraint.
-    *
-    * @access public
-    * @param string $column                 the column to be constrained
-    * @param string $operator               the operator to be used
-    * @param string $value                  the value the column is constrained with
-    * @param string $connector              the connector to be used
-    * @return DB_SQL_Delete_Builder         a reference to the current instance
-    */
+	/**
+	* This function adds a "where" constraint.
+	*
+	* @access public
+	* @param string $column                 the column to be constrained
+	* @param string $operator               the operator to be used
+	* @param string $value                  the value the column is constrained with
+	* @param string $connector              the connector to be used
+	* @return DB_SQL_Delete_Builder         a reference to the current instance
+	*/
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
 		return $this;
 	}
 
-    /**
-    * This function sorts a column either ascending or descending order.
-    *
-    * @access public
-    * @param string $column                 the column to be sorted
-    * @param boolean $descending            whether to sort in descending order
-    * @return DB_SQL_Delete_Builder         a reference to the current instance
-    */
+	/**
+	* This function sorts a column either ascending or descending order.
+	*
+	* @access public
+	* @param string $column                 the column to be sorted
+	* @param boolean $descending            whether to sort in descending order
+	* @return DB_SQL_Delete_Builder         a reference to the current instance
+	*/
 	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $descending, $nulls);
 		return $this;
 	}
 
-    /**
-    * This function sets a "limit" constraint on the statement.
-    *
-    * @access public
-    * @param integer $limit                 the "limit" constraint
-    * @return DB_SQL_Delete_Builder         a reference to the current instance
-    */
+	/**
+	* This function sets a "limit" constraint on the statement.
+	*
+	* @access public
+	* @param integer $limit                 the "limit" constraint
+	* @return DB_SQL_Delete_Builder         a reference to the current instance
+	*/
 	public function limit($limit) {
 		$this->builder->limit($limit);
 		return $this;
 	}
 
-    /**
-    * This function sets an "offset" constraint on the statement.
-    *
-    * @access public
-    * @param integer $offset                the "offset" constraint
-    * @return DB_SQL_Delete_Builder         a reference to the current instance
-    */
-    public function offset($offset) {
-        $this->builder->offset($offset);
-        return $this;
-    }
+	/**
+	* This function sets an "offset" constraint on the statement.
+	*
+	* @access public
+	* @param integer $offset                the "offset" constraint
+	* @return DB_SQL_Delete_Builder         a reference to the current instance
+	*/
+	public function offset($offset) {
+		$this->builder->offset($offset);
+		return $this;
+	}
 
 	/**
 	 * This function returns the SQL statement.
@@ -142,18 +142,18 @@ abstract class Base_DB_SQL_Delete_Proxy extends Kohana_Object implements DB_SQL_
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    return $this->builder->statement($terminated);
+		return $this->builder->statement($terminated);
 	}
 
-    /**
-    * This function executes the SQL statement via the DAO class.
-    *
-    * @access public
-    */
-    public function execute() {
-        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
+	/**
+	* This function executes the SQL statement via the DAO class.
+	*
+	* @access public
+	*/
+	public function execute() {
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
-    }
+	}
 
 }
 ?>

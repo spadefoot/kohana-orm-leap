@@ -27,43 +27,43 @@
  */
 abstract class Base_DB_ORM_Relation extends Kohana_Object {
 
-    /**
-     * This variable stores a reference to the implementing active record.
-     *
-     * @access protected
-     * @var DB_ORM_Model
-     */
-    protected $model;
+	/**
+	 * This variable stores a reference to the implementing active record.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Model
+	 */
+	protected $model;
 
-    /**
-     * This variable stores the relation's metadata.
-     *
-     * @access protected
-     * @var array
-     */
-    protected $metadata;
+	/**
+	 * This variable stores the relation's metadata.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $metadata;
 
-    /**
-     * This variable stores the relation's corresponding model(s).
-     *
-     * @access protected
-     * @var mixed
-     */
-    protected $cache;
+	/**
+	 * This variable stores the relation's corresponding model(s).
+	 *
+	 * @access protected
+	 * @var mixed
+	 */
+	protected $cache;
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param string $type                          the type of relationship
-     */
-    public function __construct(DB_ORM_Model $model, $type) {
-        $this->model = $model;
-        $this->metadata = array();
-        $this->metadata['type'] = $type;
-        $this->cache = NULL;
-    }
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param string $type                          the type of relationship
+	 */
+	public function __construct(DB_ORM_Model $model, $type) {
+		$this->model = $model;
+		$this->metadata = array();
+		$this->metadata['type'] = $type;
+		$this->cache = NULL;
+	}
 
 	/**
 	 * This function returns the value associated with the specified property.
@@ -98,14 +98,14 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
 	 */
 	protected abstract function load();
 
-    /**
-     * This function resets the relation's cache to NULL.
-     *
-     * @access public
-     */
-    public function reset() {
-        $this->cache = NULL;;
-    }
+	/**
+	 * This function resets the relation's cache to NULL.
+	 *
+	 * @access public
+	 */
+	public function reset() {
+		$this->cache = NULL;;
+	}
 
 }
 ?>

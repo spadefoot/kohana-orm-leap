@@ -28,11 +28,11 @@
 abstract class Base_DB_MsSQL_Insert_Builder extends DB_SQL_Insert_Builder {
 
    /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     */
-    public function __construct() {
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
+	public function __construct() {
 		parent::__construct('MsSQL');
 	}
 
@@ -45,19 +45,19 @@ abstract class Base_DB_MsSQL_Insert_Builder extends DB_SQL_Insert_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    $sql = "INSERT INTO {$this->data['into']}";
+		$sql = "INSERT INTO {$this->data['into']}";
 
-        if (!empty($this->data['column'])) {
-            $columns = implode(', ', array_keys($this->data['column']));
-            $values = implode(', ', array_values($this->data['column']));
-	        $sql .= " ({$columns}) VALUES ({$values})";
-	    }
+		if (!empty($this->data['column'])) {
+			$columns = implode(', ', array_keys($this->data['column']));
+			$values = implode(', ', array_values($this->data['column']));
+			$sql .= " ({$columns}) VALUES ({$values})";
+		}
 
-        if ($terminated) {
-	        $sql .= ';';
-        }
-	    
-	    return $sql;
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
 	}
 
 }

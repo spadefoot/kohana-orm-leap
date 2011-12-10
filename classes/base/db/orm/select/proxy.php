@@ -27,232 +27,232 @@
  */
 abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL_Statement {
 
-    /**
-     * This variable stores the model's name.
-     *
-     * @access protected
-     * @var string
-     */
-    protected $model = NULL;
+	/**
+	 * This variable stores the model's name.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $model = NULL;
 
-    /**
-     * This variable stores a reference to the data source.
-     *
-     * @access protected
-     * @var DB_DataSource
-     */
-    protected $source = NULL;
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $source = NULL;
 
-    /**
-     * This variable stores an instance of the SQL builder class.
-     *
-     * @access protected
-     * @var DB_SQL_Select_Builder
-     */
-    protected $builder = NULL;
+	/**
+	 * This variable stores an instance of the SQL builder class.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Select_Builder
+	 */
+	protected $builder = NULL;
 
-    /**
-     * This constructor instantiates this class using the specified model's name.
-     *
-     * @access public
-     * @param string $model                 the model's name
-     * @param array $columns                the columns to be selected
-     */
-    public function __construct($model, Array $columns = array()) {
-        $model = DB_ORM_Model::model_name($model);
-        $this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
-        $builder = 'DB_' . $this->source->get_resource_type() . '_Select_Builder';
-        $this->builder = new $builder($columns);
-        $table = call_user_func(array($model, 'table'));
-        $this->builder->from($table);
-        $this->model = $model;
-    }
+	/**
+	 * This constructor instantiates this class using the specified model's name.
+	 *
+	 * @access public
+	 * @param string $model                 the model's name
+	 * @param array $columns                the columns to be selected
+	 */
+	public function __construct($model, Array $columns = array()) {
+		$model = DB_ORM_Model::model_name($model);
+		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
+		$builder = 'DB_' . $this->source->get_resource_type() . '_Select_Builder';
+		$this->builder = new $builder($columns);
+		$table = call_user_func(array($model, 'table'));
+		$this->builder->from($table);
+		$this->model = $model;
+	}
 
-    /**
-     * This function sets whether to constrain the SQL statement to only distinct records.
-     *
-     * @access public
-     * @param boolean $distinct             whether to constrain the SQL statement to only
-     *                                      distinct records
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function distinct($distinct = TRUE) {
-        $this->builder->distinct($distinct);
-        return $this;
-    }
+	/**
+	 * This function sets whether to constrain the SQL statement to only distinct records.
+	 *
+	 * @access public
+	 * @param boolean $distinct             whether to constrain the SQL statement to only
+	 *                                      distinct records
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function distinct($distinct = TRUE) {
+		$this->builder->distinct($distinct);
+		return $this;
+	}
 
-    /**
-     * This function explicits sets the specified column to be selected.
-     *
-     * @access public
-     * @param string $column                the column to be selected
-     * @param string $alias                 the alias to used for the specified table
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function column($column, $alias) {
-        $this->builder->column($column, $alias);
-        return $this;
-    }
+	/**
+	 * This function explicits sets the specified column to be selected.
+	 *
+	 * @access public
+	 * @param string $column                the column to be selected
+	 * @param string $alias                 the alias to used for the specified table
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function column($column, $alias) {
+		$this->builder->column($column, $alias);
+		return $this;
+	}
 
-    /**
-     * This function joins a table.
-     *
-     * @access public
-     * @param string $type                  the type of join
-     * @param string $table                 the table to be joined
-     * @param string $alias                 the alias to used for the specified table
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function join($type, $table, $alias = NULL) {
-        $this->builder->join($type, $table, $alias);
-        return $this;
-    }
+	/**
+	 * This function joins a table.
+	 *
+	 * @access public
+	 * @param string $type                  the type of join
+	 * @param string $table                 the table to be joined
+	 * @param string $alias                 the alias to used for the specified table
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function join($type, $table, $alias = NULL) {
+		$this->builder->join($type, $table, $alias);
+		return $this;
+	}
 
-    /**
-     * This function sets an "on" constraint for the last join specified.
-     *
-     * @access public
-     * @param string $column0               the column to be constrained on
-     * @param string $operator              the operator to be used
-     * @param string $column1               the constraint column
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     * @throws Kohana_SQL_Exception         indicates an invalid SQL build instruction
-     */
-    public function on($column0, $operator, $column1) {
-        $this->builder->on($column0, $operator, $column1);
-        return $this;
-    }
+	/**
+	 * This function sets an "on" constraint for the last join specified.
+	 *
+	 * @access public
+	 * @param string $column0               the column to be constrained on
+	 * @param string $operator              the operator to be used
+	 * @param string $column1               the constraint column
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @throws Kohana_SQL_Exception         indicates an invalid SQL build instruction
+	 */
+	public function on($column0, $operator, $column1) {
+		$this->builder->on($column0, $operator, $column1);
+		return $this;
+	}
 
-    /**
-     * This function sets a "using" constraint for the last join specified.
-     *
-     * @access public
-     * @param string $column                the column to be constrained
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function using($column) {
-        $this->builder->using($column);
-        return $this;
-    }
+	/**
+	 * This function sets a "using" constraint for the last join specified.
+	 *
+	 * @access public
+	 * @param string $column                the column to be constrained
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function using($column) {
+		$this->builder->using($column);
+		return $this;
+	}
 
-    /**
-     * This function either opens or closes a "where" group.
-     *
-     * @access public
-     * @param string $parenthesis           the parenthesis to be used
-     * @param string $connector             the connector to be used
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function where_block($parenthesis, $connector = 'AND') {
-        $this->builder->where_block($parenthesis, $connector);
-        return $this;
-    }
+	/**
+	 * This function either opens or closes a "where" group.
+	 *
+	 * @access public
+	 * @param string $parenthesis           the parenthesis to be used
+	 * @param string $connector             the connector to be used
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function where_block($parenthesis, $connector = 'AND') {
+		$this->builder->where_block($parenthesis, $connector);
+		return $this;
+	}
 
-    /**
-     * This function adds a "where" constraint.
-     *
-     * @access public
-     * @param string $column                the column to be constrained
-     * @param string $operator              the operator to be used
-     * @param string $value                 the value the column is constrained with
-     * @param string $connector             the connector to be used
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
+	/**
+	 * This function adds a "where" constraint.
+	 *
+	 * @access public
+	 * @param string $column                the column to be constrained
+	 * @param string $operator              the operator to be used
+	 * @param string $value                 the value the column is constrained with
+	 * @param string $connector             the connector to be used
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
 		return $this;
 	}
 
-    /**
-     * This function adds a "group by" clause.
-     *
-     * @access public
-     * @param string $column                the column to be grouped
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
+	/**
+	 * This function adds a "group by" clause.
+	 *
+	 * @access public
+	 * @param string $column                the column to be grouped
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
 	public function group_by($column) {
-	    $this->builder->group_by($column);
-	    return $this;
+		$this->builder->group_by($column);
+		return $this;
 	}
 
-    /**
-     * This function either opens or closes a "having" group.
-     *
-     * @access public
-     * @param string $parenthesis           the parenthesis to be used
-     * @param string $connector             the connector to be used
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function having_block($parenthesis, $connector = 'AND') {
-        $this->builder->having_block($parenthesis, $connector);
-        return $this;
-    }
+	/**
+	 * This function either opens or closes a "having" group.
+	 *
+	 * @access public
+	 * @param string $parenthesis           the parenthesis to be used
+	 * @param string $connector             the connector to be used
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function having_block($parenthesis, $connector = 'AND') {
+		$this->builder->having_block($parenthesis, $connector);
+		return $this;
+	}
 
-    /**
-     * This function adds a "having" constraint.
-     *
-     * @access public
-     * @param string $column                the column to be constrained
-     * @param string $operator              the operator to be used
-     * @param string $value                 the value the column is constrained with
-     * @param string $connector             the connector to be used
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
+	/**
+	 * This function adds a "having" constraint.
+	 *
+	 * @access public
+	 * @param string $column                the column to be constrained
+	 * @param string $operator              the operator to be used
+	 * @param string $value                 the value the column is constrained with
+	 * @param string $connector             the connector to be used
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
 	public function having($column, $operator, $value, $connector = 'AND') {
 		$this->builder->having($column, $operator, $value, $connector);
 		return $this;
 	}
 
-    /**
-     * This function sorts a column either ascending or descending order.
-     *
-     * @access public
-     * @param string $column                the column to be sorted
-     * @param boolean $descending           whether to sort in descending order
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
+	/**
+	 * This function sorts a column either ascending or descending order.
+	 *
+	 * @access public
+	 * @param string $column                the column to be sorted
+	 * @param boolean $descending           whether to sort in descending order
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
 	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $descending, $nulls);
 		return $this;
 	}
 
-    /**
-     * This function sets a "limit" constraint on the statement.
-     *
-     * @access public
-     * @param integer $limit                the "limit" constraint
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
+	/**
+	 * This function sets a "limit" constraint on the statement.
+	 *
+	 * @access public
+	 * @param integer $limit                the "limit" constraint
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
 		return $this;
 	}
 
-    /**
-     * This function sets an "offset" constraint on the statement.
-     *
-     * @access public
-     * @param integer $offset               the "offset" constraint
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function offset($offset) {
-        $this->builder->offset($offset);
-        return $this;
-    }
+	/**
+	 * This function sets an "offset" constraint on the statement.
+	 *
+	 * @access public
+	 * @param integer $offset               the "offset" constraint
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function offset($offset) {
+		$this->builder->offset($offset);
+		return $this;
+	}
 
-    /**
-     * This function combines another SQL statement using the specified operator.
-     *
-     * @access public
-     * @param string $operator              the operator to be used to append
-     *                                      the specified SQL statement
-     * @param string $statement             the SQL statement to be appended
-     * @return DB_SQL_Select_Builder        a reference to the current instance
-     */
-    public function combine($operator, $statement) {
-        $this->builder->combine($operator, $statement);
-        return $this;
-    }
+	/**
+	 * This function combines another SQL statement using the specified operator.
+	 *
+	 * @access public
+	 * @param string $operator              the operator to be used to append
+	 *                                      the specified SQL statement
+	 * @param string $statement             the SQL statement to be appended
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function combine($operator, $statement) {
+		$this->builder->combine($operator, $statement);
+		return $this;
+	}
 
 	/**
 	 * This function returns the SQL statement.
@@ -263,24 +263,24 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    return $this->builder->statement($terminated);
+		return $this->builder->statement($terminated);
 	}
 
-    /**
-     * This function performs a query using the SQL statement.
-     *
-     * @access public
-     * @param integer $limit                the "limit" constraint
+	/**
+	 * This function performs a query using the SQL statement.
+	 *
+	 * @access public
+	 * @param integer $limit                the "limit" constraint
 	 * @return DB_ResultSet                 the result set
-     */
-    public function query($limit = NULL) {
-        if (!is_null($limit)) {
-            $this->limit($limit);
-        }
-        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
-        $records = $connection->query($this->statement(), $this->model);
+	 */
+	public function query($limit = NULL) {
+		if (!is_null($limit)) {
+			$this->limit($limit);
+		}
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$records = $connection->query($this->statement(), $this->model);
 		return $records;
-    }
+	}
 
 }
 ?>

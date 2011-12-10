@@ -27,67 +27,67 @@
  */
 abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param array $metadata                       the field's metadata
-     */
-    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-        parent::__construct($model, 'string');
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param array $metadata                       the field's metadata
+	 */
+	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+		parent::__construct($model, 'string');
 
 		if (isset($metadata['savable'])) {
-            $this->metadata['savable'] = (boolean)$metadata['savable'];
-        }
+			$this->metadata['savable'] = (boolean)$metadata['savable'];
+		}
 
-        if (isset($metadata['nullable'])) {
-            $this->metadata['nullable'] = (boolean)$metadata['nullable'];
-        }
+		if (isset($metadata['nullable'])) {
+			$this->metadata['nullable'] = (boolean)$metadata['nullable'];
+		}
 
-        if (isset($metadata['filter'])) {
-            $this->metadata['filter'] = (string)$metadata['filter'];
-        }
+		if (isset($metadata['filter'])) {
+			$this->metadata['filter'] = (string)$metadata['filter'];
+		}
 
-        if (isset($metadata['callback'])) {
-            $this->metadata['callback'] = (string)$metadata['callback'];
-        }
+		if (isset($metadata['callback'])) {
+			$this->metadata['callback'] = (string)$metadata['callback'];
+		}
 
-        if (isset($metadata['enum'])) {
-            $this->metadata['enum'] = (array)$metadata['enum'];
-        }
+		if (isset($metadata['enum'])) {
+			$this->metadata['enum'] = (array)$metadata['enum'];
+		}
 
-        if (isset($metadata['default'])) {
-            $default = $metadata['default'];
-            if (!is_null($default)) {
-                settype($default, $this->metadata['type']);
-                $this->validate($default);
-            }
-            $this->metadata['default'] = $default;
-            $this->value = $default;
-        }
-        else if (!$this->metadata['nullable']) {
-            $default = '00:00:00';
-            $this->metadata['default'] = $default;
-            $this->value = $default;
-        }
-    }
+		if (isset($metadata['default'])) {
+			$default = $metadata['default'];
+			if (!is_null($default)) {
+				settype($default, $this->metadata['type']);
+				$this->validate($default);
+			}
+			$this->metadata['default'] = $default;
+			$this->value = $default;
+		}
+		else if (!$this->metadata['nullable']) {
+			$default = '00:00:00';
+			$this->metadata['default'] = $default;
+			$this->value = $default;
+		}
+	}
 
-    /**
-     * This function validates the specified value against any constraints.
-     *
-     * @access protected
-     * @param mixed $value                          the value to be validated
-     * @return boolean                              whether the specified value validates
-     */
-    protected function validate($value) {
-        if (!is_null($value)) {
-            if (!preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
-                return FALSE;
-            }
-        }
-        return parent::validate($value);
-    }
+	/**
+	 * This function validates the specified value against any constraints.
+	 *
+	 * @access protected
+	 * @param mixed $value                          the value to be validated
+	 * @return boolean                              whether the specified value validates
+	 */
+	protected function validate($value) {
+		if (!is_null($value)) {
+			if (!preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
+				return FALSE;
+			}
+		}
+		return parent::validate($value);
+	}
 
 }
 ?>

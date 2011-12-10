@@ -30,12 +30,12 @@
 abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 
    /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     * @param array $columns                the columns to be selected
-     */
-    public function __construct(Array $columns = array()) {
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 * @param array $columns                the columns to be selected
+	 */
+	public function __construct(Array $columns = array()) {
 		parent::__construct('MsSQL', $columns);
 	}
 
@@ -48,78 +48,78 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-        $sql = 'SELECT';
-    
-        if ($this->data['distinct']) {
-            $sql .= ' DISTINCT';
-        }
+		$sql = 'SELECT';
 
-        if ($this->data['limit'] > 0) {
-            $sql .= " TOP {$this->data['limit']}";
-        }
+		if ($this->data['distinct']) {
+			$sql .= ' DISTINCT';
+		}
 
-        $sql .= ' ' . ((!empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		if ($this->data['limit'] > 0) {
+			$sql .= " TOP {$this->data['limit']}";
+		}
 
-        if (!is_null($this->data['from'])) {
-            $sql .= " FROM {$this->data['from']}";
-        }
+		$sql .= ' ' . ((!empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
 
-        foreach ($this->data['join'] as $join) {
-            $sql .= " {$join[0]}";
-            if (!empty($join[1])) {
-                $sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
-            }
-            else if (!empty($join[2])) {
-                $sql .= ' USING ' . implode(', ', $join[2]);
-            }
-        }
+		if (!is_null($this->data['from'])) {
+			$sql .= " FROM {$this->data['from']}";
+		}
 
-        if (!empty($this->data['where'])) {
-            $do_append = FALSE;
-            $sql .= ' WHERE ';
-            foreach ($this->data['where'] as $where) {
-                if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-                    $sql .= " {$where[0]} ";
-                }
-                $sql .= $where[1];
-                $do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-            }
-        }
+		foreach ($this->data['join'] as $join) {
+			$sql .= " {$join[0]}";
+			if (!empty($join[1])) {
+				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
+			}
+			else if (!empty($join[2])) {
+				$sql .= ' USING ' . implode(', ', $join[2]);
+			}
+		}
 
-        if (!empty($this->data['group_by'])) {
-            $sql .= ' GROUP BY ' . implode(', ', $this->data['group_by']);
-        }
+		if (!empty($this->data['where'])) {
+			$do_append = FALSE;
+			$sql .= ' WHERE ';
+			foreach ($this->data['where'] as $where) {
+				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					$sql .= " {$where[0]} ";
+				}
+				$sql .= $where[1];
+				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+			}
+		}
 
-        if (!empty($this->data['having'])) {
-            $do_append = FALSE;
-            $sql .= ' HAVING ';
-            foreach ($this->data['having'] as $having) {
-                if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-                    $sql .= " {$having[0]} ";
-                }
-                $sql .= $having[1];
-                $do_append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-            }
-        }
+		if (!empty($this->data['group_by'])) {
+			$sql .= ' GROUP BY ' . implode(', ', $this->data['group_by']);
+		}
 
-        if (!empty($this->data['order_by'])) {
-            $sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
-        }
-    
-        if ($this->data['offset'] > 0) {
-            $sql .= " OFFSET {$this->data['offset']}";
-        }
+		if (!empty($this->data['having'])) {
+			$do_append = FALSE;
+			$sql .= ' HAVING ';
+			foreach ($this->data['having'] as $having) {
+				if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					$sql .= " {$having[0]} ";
+				}
+				$sql .= $having[1];
+				$do_append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+			}
+		}
 
-        foreach ($this->data['combine'] as $combine) {
-            $sql .= " {$combine}";
-        }
+		if (!empty($this->data['order_by'])) {
+			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+		}
 
-        if ($terminated) {
-            $sql .= ';';
-        }
-    
-        return $sql;
-    }
+		if ($this->data['offset'] > 0) {
+			$sql .= " OFFSET {$this->data['offset']}";
+		}
+
+		foreach ($this->data['combine'] as $combine) {
+			$sql .= " {$combine}";
+		}
+
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
+	}
 
 }
 ?>

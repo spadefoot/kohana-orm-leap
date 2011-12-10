@@ -35,29 +35,29 @@
  */
 interface Base_DB_SQL_Translator_Interface {
 
-    /**
-    * This function returns an equivalent Firebird SQL statement.
-    *
-    * @access public
-    * @return string                                the Firebird SQL statement
-    */
-    public function fbsql();
+	/**
+	* This function returns an equivalent Firebird SQL statement.
+	*
+	* @access public
+	* @return string                                the Firebird SQL statement
+	*/
+	public function fbsql();
 
-    /**
-    * This function returns an equivalent MS SQL statement.
-    *
-    * @access public
-    * @return string                                the MS SQL statement
-    */
-    public function mssql();
+	/**
+	* This function returns an equivalent MS SQL statement.
+	*
+	* @access public
+	* @return string                                the MS SQL statement
+	*/
+	public function mssql();
 
-    /**
-    * This function returns an equivalent MySQL statement.
-    *
-    * @access public
-    * @return string                                the MySQL statement
-    */
-    public function mysql();
+	/**
+	* This function returns an equivalent MySQL statement.
+	*
+	* @access public
+	* @return string                                the MySQL statement
+	*/
+	public function mysql();
 
 }
 ?>

@@ -134,10 +134,10 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 						settype($default_value, 'string');
 					break;
 				}
-			    $fields[$field]['default_value'] = $default_value;
+				$fields[$field]['default_value'] = $default_value;
 			}
 			else {
-			    $fields[$field]['default_value'] = NULL;
+				$fields[$field]['default_value'] = NULL;
 			}
 
 			$fields[$field]['ordinal_position'] = $ordinal_position; // TODO fix ordinal position
@@ -181,67 +181,67 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		return $buffer;
 	}
 
-    /**
-     * This function returns a result set that contains an array of all tables within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of tables within the database
+	/**
+	 * This function returns a result set that contains an array of all tables within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of tables within the database
 	 *
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
-     */
+	 */
 	public function tables($like = '') {
 		$builder = DB_MySQL_Select_Builder::factory()
-		    ->column('TABLE_NAME', 'table_name')
-		    ->from('information_schema.TABLES')
-		    ->where('TABLE_SCHEMA', 'LIKE', $this->data_source->get_database())
-		    ->where('TABLE_TYPE', 'LIKE', 'BASE_TABLE')
-		    ->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
+			->column('TABLE_NAME', 'table_name')
+			->from('information_schema.TABLES')
+			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->get_database())
+			->where('TABLE_TYPE', 'LIKE', 'BASE_TABLE')
+			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
 
 		if (!empty($like)) {
-    		$builder->where('TABLE_NAME', 'LIKE', $like);
-    	}
+			$builder->where('TABLE_NAME', 'LIKE', $like);
+		}
 
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    /**
-     * This function returns a result set that contains an array of all views within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of views within the database
+	/**
+	 * This function returns a result set that contains an array of all views within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of views within the database
 	 *
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
-     */
+	 */
 	public function views($like = '') {
 		$builder = DB_MySQL_Select_Builder::factory()
-		    ->column('TABLE_NAME', 'table_name')
-		    ->from('information_schema.TABLES')
-		    ->where('TABLE_SCHEMA', 'LIKE', $this->data_source->get_database())
-		    ->where('TABLE_TYPE', 'LIKE', 'VIEW')
-		    ->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
+			->column('TABLE_NAME', 'table_name')
+			->from('information_schema.TABLES')
+			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->get_database())
+			->where('TABLE_TYPE', 'LIKE', 'VIEW')
+			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
 
 		if (!empty($like)) {
-    		$builder->where('TABLE_NAME', 'LIKE', $like);
-    	}
+			$builder->where('TABLE_NAME', 'LIKE', $like);
+		}
 
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
 	/**
 	 * This function returns an associated array which describes the properties

@@ -34,41 +34,41 @@
  */
 abstract class Base_DB_SQL_Operator extends Kohana_Object {
 
-    // Comparison Operators
+	// Comparison Operators
 
-    const _EQUAL_TO_ = '=';
+	const _EQUAL_TO_ = '=';
 
-    const _NOT_EQUIVALENT_ = '<>';
+	const _NOT_EQUIVALENT_ = '<>';
 
-    const _NOT_EQUAL_TO_ = '!=';
+	const _NOT_EQUAL_TO_ = '!=';
 
-    const _BETWEEN_ = 'BETWEEN';
-    
-    const _NOT_BETWEEN_ = 'NOT BETWEEN';
-    
-    const _LIKE_ = 'LIKE';
-    
-    const _NOT_LIKE_ = 'NOT_LIKE';
+	const _BETWEEN_ = 'BETWEEN';
 
-    const _LESS_THAN_ = '<';
-    
-    const _LESS_THAN_OR_EQUAL_TO_ = '<=';
-    
-    const _GREATER_THAN_ = '>';
+	const _NOT_BETWEEN_ = 'NOT BETWEEN';
 
-    const _GREATER_THAN_OR_EQUAL_TO_ = '>=';
+	const _LIKE_ = 'LIKE';
 
-    const _IN_ = 'IN';
-    
-    const _NOT_IN_ = 'NOT IN';
-    
-    const _IS_ = 'IS';
-    
-    const _IS_NOT_ = 'IS NOT';
+	const _NOT_LIKE_ = 'NOT_LIKE';
 
-    const _REGEX_ = 'REGEX'; // supported by MySQL, SQLite (variation)
-    
-    const _NOT_REGEX_ = 'NOT REGEX'; // supported by MySQL, SQLite (variation)
+	const _LESS_THAN_ = '<';
+
+	const _LESS_THAN_OR_EQUAL_TO_ = '<=';
+
+	const _GREATER_THAN_ = '>';
+
+	const _GREATER_THAN_OR_EQUAL_TO_ = '>=';
+
+	const _IN_ = 'IN';
+
+	const _NOT_IN_ = 'NOT IN';
+
+	const _IS_ = 'IS';
+
+	const _IS_NOT_ = 'IS NOT';
+
+	const _REGEX_ = 'REGEX'; // supported by MySQL, SQLite (variation)
+
+	const _NOT_REGEX_ = 'NOT REGEX'; // supported by MySQL, SQLite (variation)
 
 	const _GLOB_ = 'GLOB'; // supported by SQLite
 
@@ -78,31 +78,31 @@ abstract class Base_DB_SQL_Operator extends Kohana_Object {
 
 	const _NOT_MATCH_ = 'NOT MATCH'; // supported by SQLite
 
-    const _SIMILAR_TO_ = 'SIMILAR TO'; // supported by PostgreSQL
-    
-    const _NOT_SIMILAR_TO_ = 'NOT SIMILAR TO'; // supported by PostgreSQL
+	const _SIMILAR_TO_ = 'SIMILAR TO'; // supported by PostgreSQL
 
-    // Set Operators
+	const _NOT_SIMILAR_TO_ = 'NOT SIMILAR TO'; // supported by PostgreSQL
 
-    const _EXCEPT_ = 'EXCEPT'; // supported by DB2, MS SQL, PostgreSQL, SQLite
+	// Set Operators
 
-    const _EXCEPT_ALL_ = 'EXCEPT ALL'; // supported by PostgreSQL
-    
-    const _EXCEPT_DISTINCT_ = 'EXCEPT DISTINCT';
+	const _EXCEPT_ = 'EXCEPT'; // supported by DB2, MS SQL, PostgreSQL, SQLite
 
-    const _INTERSECT_ = 'INTERSECT'; // supported by DB2, MS SQL, Oracle, PostgreSQL, SQLite
-    
-    const _INTERSECT_ALL_ = 'INTERSECT ALL'; // supported by PostgreSQL
+	const _EXCEPT_ALL_ = 'EXCEPT ALL'; // supported by PostgreSQL
 
-    const _INTERSECT_DISTINCT_ = 'INTERSECT DISTINCT';
+	const _EXCEPT_DISTINCT_ = 'EXCEPT DISTINCT';
 
-    const _MINUS_ = 'MINUS'; // supported by Oracle
+	const _INTERSECT_ = 'INTERSECT'; // supported by DB2, MS SQL, Oracle, PostgreSQL, SQLite
 
-    const _UNION_ = 'UNION'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+	const _INTERSECT_ALL_ = 'INTERSECT ALL'; // supported by PostgreSQL
 
-    const _UNION_ALL_ = 'UNION_ALL'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+	const _INTERSECT_DISTINCT_ = 'INTERSECT DISTINCT';
 
-    const _UNION_DISTINCT_ = 'UNION DISTINCT'; // support by Firebird, MySQL
+	const _MINUS_ = 'MINUS'; // supported by Oracle
+
+	const _UNION_ = 'UNION'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+
+	const _UNION_ALL_ = 'UNION_ALL'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+
+	const _UNION_DISTINCT_ = 'UNION DISTINCT'; // support by Firebird, MySQL
 
 }
 ?>

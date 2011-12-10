@@ -27,49 +27,49 @@
  */
 abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_Statement {
 
-    /**
-     * This variable stores a reference to the data source.
-     *
-     * @access protected
-     * @var DB_DataSource
-     */
-    protected $source = NULL;
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $source = NULL;
 
-    /**
-     * This variable stores an instance of the SQL builder class.
-     *
-     * @access protected
-     * @var DB_SQL_Insert_Builder
-     */
-    protected $builder = NULL;
+	/**
+	 * This variable stores an instance of the SQL builder class.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Insert_Builder
+	 */
+	protected $builder = NULL;
 
-    /**
-     * This constructor instantiates this class using the specified model's name.
-     *
-     * @access public
-     * @param string $model                 the model's name
-     */
-    public function __construct($model) {
-        $model = DB_ORM_Model::model_name($model);
-        $this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
-        $builder = 'DB_' . $this->source->get_resource_type() . '_Insert_Builder';
-        $this->builder = new $builder();
-        $table = call_user_func(array($model, 'table'));
-        $this->builder->into($table);
-    }
+	/**
+	 * This constructor instantiates this class using the specified model's name.
+	 *
+	 * @access public
+	 * @param string $model                 the model's name
+	 */
+	public function __construct($model) {
+		$model = DB_ORM_Model::model_name($model);
+		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
+		$builder = 'DB_' . $this->source->get_resource_type() . '_Insert_Builder';
+		$this->builder = new $builder();
+		$table = call_user_func(array($model, 'table'));
+		$this->builder->into($table);
+	}
 
-    /**
-     * This function sets the associated value with the specified column.
-     *
-     * @access public
-     * @param string $column                the column to be set
-     * @param string $value                 the value to be set
-     * @return DB_SQL_Insert_Builder        a reference to the current instance
-     */
-    public function column($column, $value) {
-        $this->builder->column($column, $value);
-        return $this;
-    }
+	/**
+	 * This function sets the associated value with the specified column.
+	 *
+	 * @access public
+	 * @param string $column                the column to be set
+	 * @param string $value                 the value to be set
+	 * @return DB_SQL_Insert_Builder        a reference to the current instance
+	 */
+	public function column($column, $value) {
+		$this->builder->column($column, $value);
+		return $this;
+	}
 
 	/**
 	 * This function returns the SQL statement.
@@ -80,23 +80,23 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    return $this->builder->statement($terminated);
+		return $this->builder->statement($terminated);
 	}
 
-    /**
-     * This function executes the SQL statement.
-     *
-     * @access public
-     * @param boolean $is_auto_incremented  whether to query for the last insert id
-     * @return integer                      the last insert id
-     */
-    public function execute() {
-        $is_auto_incremented = call_user_func(array($this->model, 'is_auto_incremented'));
-        $connection = DB_Connection_Pool::instance()->get_connection($this->source);
+	/**
+	 * This function executes the SQL statement.
+	 *
+	 * @access public
+	 * @param boolean $is_auto_incremented  whether to query for the last insert id
+	 * @return integer                      the last insert id
+	 */
+	public function execute() {
+		$is_auto_incremented = call_user_func(array($this->model, 'is_auto_incremented'));
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
 		$primary_key = ($is_auto_incremented) ? $connection->get_last_insert_id() : 0;
-        return $primary_key;
-    }
+		return $primary_key;
+	}
 
 }
 ?>

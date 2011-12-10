@@ -27,13 +27,13 @@
  */
 abstract class Base_DB_Schema extends Kohana_Object {
 
-    /**
-     * This variable stores a reference to the data source.
-     *
-     * @access protected
-     * @var DB_DataSource
-     */
-    protected $data_source = NULL;
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $data_source = NULL;
 
 	/**
 	 * This variable stores a reference to the helper class that implements the expression
@@ -44,12 +44,12 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 */
 	protected $helper = NULL;
 
-    /**
-     * This constructor instantiates this class using the specified data source.
-     *
-     * @access public
-     * @param mixed $config                  the data source configurations
-     */
+	/**
+	 * This constructor instantiates this class using the specified data source.
+	 *
+	 * @access public
+	 * @param mixed $config                  the data source configurations
+	 */
 	public function __construct($config) {
 		$this->data_source = new DB_DataSource($config);
 		$dialect = $this->data_source->get_resource_type();
@@ -82,39 +82,39 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 */
 	public abstract function indexes($table);
 
-    /**
-     * This function returns a result set that contains an array of all tables within
-     * the database.
-     *
-     * @access public
+	/**
+	 * This function returns a result set that contains an array of all tables within
+	 * the database.
+	 *
+	 * @access public
 	 * @abstract
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of tables within the database
-     */
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of tables within the database
+	 */
 	public abstract function tables($like = '');
 
-    /**
-     * This function returns a result set that contains an array of all views within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of views within the database
-     */
+	/**
+	 * This function returns a result set that contains an array of all views within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of views within the database
+	 */
 	public abstract function views($like = '');
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
-    /**
-     * This function returns an associated array which describes the properties
-     * for the specified SQL data type.
-     *
-     * @access protected
-     * @param string $type                   the SQL data type
-     * @return array                         an associated array which describes the properties
-     *                                       for the specified data type
-     */
-    protected function data_type($type) {
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 */
+	protected function data_type($type) {
 		static $types = array(
 			// SQL-92
 			'bit'                           => array('type' => 'string', 'exact' => TRUE),
@@ -175,7 +175,7 @@ abstract class Base_DB_Schema extends Kohana_Object {
 		return array();
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
 	//protected function get_php_type($type) {
 	//	return

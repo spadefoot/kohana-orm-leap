@@ -27,38 +27,38 @@
  */
 abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param array $metadata                       the relation's metadata
-     */
-    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-        parent::__construct($model, 'belongs_to');
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param array $metadata                       the relation's metadata
+	 */
+	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+		parent::__construct($model, 'belongs_to');
 
-        // the parent model is the referenced table
-        $this->metadata['parent_model'] = DB_ORM_Model::model_name($metadata['parent_model']);
+		// the parent model is the referenced table
+		$this->metadata['parent_model'] = DB_ORM_Model::model_name($metadata['parent_model']);
 
-        // the candidate key is an ordered list of field names in the parent model
-        if (isset($metadata['candidate_key'])) {
-            $this->metadata['candidate_key'] = $metadata['candidate_key'];
-        }
-        else if (isset($metadata['parent_key'])) {
-            $this->metadata['candidate_key'] = $metadata['parent_key'];
-        }
-        else {
-            $this->metadata['candidate_key'] = call_user_func(array($this->metadata['parent_model'], 'primary_key'));
-        }
+		// the candidate key is an ordered list of field names in the parent model
+		if (isset($metadata['candidate_key'])) {
+			$this->metadata['candidate_key'] = $metadata['candidate_key'];
+		}
+		else if (isset($metadata['parent_key'])) {
+			$this->metadata['candidate_key'] = $metadata['parent_key'];
+		}
+		else {
+			$this->metadata['candidate_key'] = call_user_func(array($this->metadata['parent_model'], 'primary_key'));
+		}
 
-        // the child model is the referencing table
-        $this->metadata['child_model'] = get_class($model);
+		// the child model is the referencing table
+		$this->metadata['child_model'] = get_class($model);
 
-        // the foreign key is an ordered list of field names in the child model
-        $this->metadata['foreign_key'] = (isset($metadata['foreign_key']))
-            ? $metadata['foreign_key']
-            : $metadata['child_key'];
-    }
+		// the foreign key is an ordered list of field names in the child model
+		$this->metadata['foreign_key'] = (isset($metadata['foreign_key']))
+			? $metadata['foreign_key']
+			: $metadata['child_key'];
+	}
 
 	/**
 	 * This function loads the corresponding model(s).
@@ -69,27 +69,27 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 	protected function load() {
 		$parent_model = $this->metadata['parent_model'];
 
-        $candidate_key = $this->metadata['candidate_key'];
+		$candidate_key = $this->metadata['candidate_key'];
 		$foreign_key = $this->metadata['foreign_key'];
 
-        $field_count = count($foreign_key);
+		$field_count = count($foreign_key);
 
 		$sql = DB_ORM::select($parent_model);
-        for ($i = 0; $i < $field_count; $i++) {
-            $sql->where($candidate_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$foreign_key[$i]});
-        }
+		for ($i = 0; $i < $field_count; $i++) {
+			$sql->where($candidate_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$foreign_key[$i]});
+		}
 
-        $result = $sql->limit(1)->query();
+		$result = $sql->limit(1)->query();
 
-        if (!$result->is_loaded()) {
-            $record = new $parent_model();
-            for ($i = 0; $i < $field_count; $i++) {
-                $record->{$candidate_key[$i]} = $this->model->{$foreign_key[$i]};
-            }
-            return $record;
-        }
-        
-        return $result->fetch();
+		if (!$result->is_loaded()) {
+			$record = new $parent_model();
+			for ($i = 0; $i < $field_count; $i++) {
+				$record->{$candidate_key[$i]} = $this->model->{$foreign_key[$i]};
+			}
+			return $record;
+		}
+
+		return $result->fetch();
 	}
 
 }

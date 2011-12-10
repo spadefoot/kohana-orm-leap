@@ -37,16 +37,16 @@ abstract class Base_DB_ToolKit extends Kohana_Object {
 	 * @see http://www.finalwebsites.com/forums/topic/convert-string-to-slug
 	 * @see http://snipplr.com/view/2809/convert-string-to-slug/
 	 */
-    public static function slug($value) {
-        if (!empty($value)) {
-            $value = strtolower($value);
-            $value = preg_replace('/[^a-z0-9-]/', '-', $value);
-            $value = preg_replace('/-+/', '-', $value);
-            $value = trim($value, '-');
-            return $value;
-        }
-        return '';
-    }
+	public static function slug($value) {
+		if (!empty($value)) {
+			$value = strtolower($value);
+			$value = preg_replace('/[^a-z0-9-]/', '-', $value);
+			$value = preg_replace('/-+/', '-', $value);
+			$value = trim($value, '-');
+			return $value;
+		}
+		return '';
+	}
 
 }
 ?>

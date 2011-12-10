@@ -30,11 +30,11 @@
 abstract class Base_DB_MsSQL_Delete_Builder extends DB_SQL_Delete_Builder {
 
    /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     */
-    public function __construct() {
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
+	public function __construct() {
 		parent::__construct('MsSQL');
 	}
 
@@ -45,49 +45,49 @@ abstract class Base_DB_MsSQL_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
-     *
-     * @see http://stackoverflow.com/questions/733668/delete-the-first-record-from-a-table-in-sql-server-without-a-where-condition
+	 *
+	 * @see http://stackoverflow.com/questions/733668/delete-the-first-record-from-a-table-in-sql-server-without-a-where-condition
 	 */
 	public function statement($terminated = TRUE) {
-        $alias = ($this->data['from'] == 't0') ? 't1' : 't0';
+		$alias = ($this->data['from'] == 't0') ? 't1' : 't0';
 
-        $sql = "WITH {$alias} AS (";
+		$sql = "WITH {$alias} AS (";
 
-        $sql .= 'SELECT';
+		$sql .= 'SELECT';
 
-        if ($this->data['limit'] > 0) {
-            $sql .= " TOP {$this->data['limit']}";
-        }
+		if ($this->data['limit'] > 0) {
+			$sql .= " TOP {$this->data['limit']}";
+		}
 
-        $sql .= " * FROM {$this->data['from']}";
+		$sql .= " * FROM {$this->data['from']}";
 
-        if (!empty($this->data['where'])) {
-            $do_append = FALSE;
-            $sql .= ' WHERE ';
-            foreach ($this->data['where'] as $where) {
-                if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-                    $sql .= " {$where[0]} ";
-                }
-                $sql .= $where[1];
-                $do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-            }
-        }
+		if (!empty($this->data['where'])) {
+			$do_append = FALSE;
+			$sql .= ' WHERE ';
+			foreach ($this->data['where'] as $where) {
+				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					$sql .= " {$where[0]} ";
+				}
+				$sql .= $where[1];
+				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+			}
+		}
 
-        if (!empty($this->data['order_by'])) {
-            $sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
-        }
+		if (!empty($this->data['order_by'])) {
+			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+		}
 
-        //if ($this->data['offset'] > 0) {
-        //    $sql .= " OFFSET {$this->data['offset']}";
-        //}
+		//if ($this->data['offset'] > 0) {
+		//    $sql .= " OFFSET {$this->data['offset']}";
+		//}
 
-        $sql .= ") DELETE FROM {$alias}";
-        
-        if ($terminated) {
-            $sql .= ';';
-        }
+		$sql .= ") DELETE FROM {$alias}";
 
-	    return $sql;
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
 	}
 
 }

@@ -28,79 +28,79 @@
  */
 abstract class Base_DB_ORM_Field_Adaptor_JSON extends DB_ORM_Field_Adaptor {
 
-    /**
-     * This constructor initializes the class.
-     *
-     * @access public
-     * @param DB_ORM_Model $model                   a reference to the implementing model
-     * @param array $metadata                       the adaptor's metadata
-     * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
-     *                                              was specified
-     */
-    public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-        parent::__construct($model, $metadata['field']);
+	/**
+	 * This constructor initializes the class.
+	 *
+	 * @access public
+	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param array $metadata                       the adaptor's metadata
+	 * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
+	 *                                              was specified
+	 */
+	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+		parent::__construct($model, $metadata['field']);
 
-        $this->metadata['prefix'] = (isset($metadata['prefix']))
-            ? (string)$metadata['prefix']
-            : '';
+		$this->metadata['prefix'] = (isset($metadata['prefix']))
+			? (string)$metadata['prefix']
+			: '';
 
-        $this->metadata['suffix'] = (isset($metadata['suffix']))
-            ? (string)$metadata['suffix']
-            : '';
-    }
+		$this->metadata['suffix'] = (isset($metadata['suffix']))
+			? (string)$metadata['suffix']
+			: '';
+	}
 
-    /**
-     * This function returns the value associated with the specified property.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @return mixed                                the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public function __get($key) {
-        switch ($key) {
-            case 'value':
-                $value = $this->model->{$this->metadata['field']};
-                if (is_string($value)) {
-                    $start = strlen($this->metadata['prefix']);
-                    $length = strlen($value) - ($start + strlen($this->metadata['suffix']));
-                    if ($length >= 0) {
-                        $value = substr($value, $start, $length);
-                    }
-                    $value = json_decode($value, TRUE);
-                }
-                return $value;
-            break;
-            default:
-                if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
-            break;
-        }
-        throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
-    }
+	/**
+	 * This function returns the value associated with the specified property.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __get($key) {
+		switch ($key) {
+			case 'value':
+				$value = $this->model->{$this->metadata['field']};
+				if (is_string($value)) {
+					$start = strlen($this->metadata['prefix']);
+					$length = strlen($value) - ($start + strlen($this->metadata['suffix']));
+					if ($length >= 0) {
+						$value = substr($value, $start, $length);
+					}
+					$value = json_decode($value, TRUE);
+				}
+				return $value;
+			break;
+			default:
+				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+			break;
+		}
+		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+	}
 
-    /**
-     * This function sets the value for the specified key.
-     *
-     * @access public
-     * @param string $key                           the name of the property
-     * @param mixed $value                          the value of the property
-     * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
-     *                                              either inaccessible or undefined
-     */
-    public function __set($key, $value) {
-        switch ($key) {
-            case 'value':
-                if (is_array($value)) {
-                    $value = $this->metadata['prefix'] . json_encode($value) . $this->metadata['suffix'];
-                }
-                $this->model->{$this->metadata['field']} = $value;
-            break;
-            default:
-                throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
-            break;
-        }
-    }
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'value':
+				if (is_array($value)) {
+					$value = $this->metadata['prefix'] . json_encode($value) . $this->metadata['suffix'];
+				}
+				$this->model->{$this->metadata['field']} = $value;
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+			break;
+		}
+	}
 
 }
 ?>
