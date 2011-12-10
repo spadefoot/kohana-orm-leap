@@ -1,7 +1,7 @@
 Changelog for LEAP ORM
 
 2011-12-10
-* Converted indentation to tabs per Isaiah request (Issue #2).
+* Converted indentation to tabs per Isaiah's request (Issue #2).
 
 2011-12-09
 * Alphabetized some class functions.
