@@ -2,7 +2,7 @@ Changelog for LEAP ORM
 
 2011-12-10
 * Converted indentation to tabs per Isaiah's request (Issue #2).
-* Changed a coman to a semicolon in config/database.php
+* Changed a comma to a semicolon in config/database.php
 
 2011-12-09
 * Alphabetized some class functions.
