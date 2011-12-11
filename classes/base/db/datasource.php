@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-09
+ * @version 2011-12-11
  *
  * @abstract
  */
@@ -44,7 +44,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 * @throws Kohana_InvalidProperty_Exception      indicates that the connection string is invalid
 	 */
 	public function __construct($config) {
-		if (is_null($config) || empty($config)) {
+		if (empty($config)) {
 			$id = 'database.default';
 			$this->settings = Kohana::$config->load($id);
 			$this->settings['id'] = $id;

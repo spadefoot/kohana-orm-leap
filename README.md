@@ -26,7 +26,7 @@ LEAP provides a number of features, such as:
 
 * Plugins for DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
 * Designed to work in conjunction with other database tools for Kohana.
-* Config files for designating the database driver (e.g. PDO) and connection strings.
+* Config file for designating the database driver (e.g. PDO) and connection strings.
 * Classes are easily extendible.
 * A database connection pool for managing resources.
 * A powerful query builder for creating SQL statements.
@@ -45,8 +45,8 @@ To start using LEAP, follow these steps:
 1. Just download the module from github.
 2. Unzip the download to the modules folder in Kohana.
 3. Rename the uncompressed folder to "leap".
-4. Modify the two config files: leap/config/database.php and leap/config/leap.php.
-5. Navigate to your application folder and add "leap" as a module to the bootstrap.
+4. Modify leap/config/database.php.
+5. Add "leap" as a module to application/bootstrap.php.
 6. Begin creating your models in the application/classes/model/leap/ folder.
 
 ## Required Files
@@ -90,7 +90,7 @@ This project is constantly being improved and extended.  Here is a list of some 
 
 * Plugins for CouchDB, Drizzle, MongoDB, and XML RDB.
 * Master / Slave support.
-* Unit tests.
+* More unit tests.
 
 If you would like to take on some of these features, please fork this project and then send a pull request when your done.
 

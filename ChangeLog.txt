@@ -1,5 +1,10 @@
 Changelog for LEAP ORM
 
+2011-12-11
+* Removed duplicate data type check in Base_DB_DataSource::__construct().
+* Added unit test for DB_DataSource.
+* Updated README.md.
+
 2011-12-10
 * Converted indentation to tabs per Isaiah's request (Issue #2).
 * Changed a comma to a semicolon in config/database.php
