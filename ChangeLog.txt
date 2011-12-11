@@ -1,8 +1,10 @@
 Changelog for LEAP ORM
 
 2011-12-11
-* Removed duplicate data type check in Base_DB_DataSource::__construct().
+* Removed is_null in Base_DB_DataSource::__construct().
 * Added unit test for DB_DataSource.
+* Added unit test for DB_Toolkit.
+* Added logic to increment/decrement size in Base_DB_ResultSet::offsetSet() and Base_DB_ResultSet::offsetUnset().
 * Updated README.md.
 
 2011-12-10

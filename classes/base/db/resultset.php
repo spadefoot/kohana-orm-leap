@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-09
+ * @version 2011-12-11
  *
  * @abstract
  */
@@ -220,6 +220,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	public function offsetSet($offset, $value) {
 		if (is_null($offset)) {
 			$this->records[] = $value;
+			$this->size++;
 		}
 		else {
 			$this->records[$offset] = $value;
@@ -233,7 +234,10 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @param integer $offset               the offset to be unset
 	 */
 	public function offsetUnset($offset) {
-		unset($this->records[$offset]);
+		if (isset($this->records[$offset])) {
+			unset($this->records[$offset]);
+			$this->size--;
+		}
 	}
 
 	/**
