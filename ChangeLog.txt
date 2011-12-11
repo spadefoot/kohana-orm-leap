@@ -5,7 +5,10 @@ Changelog for LEAP ORM
 * Added unit test for DB_DataSource.
 * Added unit test for DB_Toolkit.
 * Added logic to increment/decrement size in Base_DB_ResultSet::offsetSet() and Base_DB_ResultSet::offsetUnset().
-* Replaced all { } with {} in accordance with Kohana's Conventions and Coding Style.
+* Standardized some code in accordance with Kohana's Conventions and Coding Style.
+	- Replaced all { } with {}.
+	- Standandized type casts.
+	- Added space around !.
 * Updated README.md.
 
 2011-12-10
