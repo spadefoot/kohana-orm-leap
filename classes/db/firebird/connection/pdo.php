@@ -23,5 +23,5 @@
  * @category Firebird
  * @version 2011-12-06
  */
-class DB_Firebird_Connection_PDO extends Base_DB_Firebird_Connection_PDO { }
+class DB_Firebird_Connection_PDO extends Base_DB_Firebird_Connection_PDO {}
 ?>

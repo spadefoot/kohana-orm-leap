@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-21
+ * @version 2011-12-11
  */
-class DB_DB2_Schema extends Base_DB_DB2_Schema { }
+class DB_DB2_Schema extends Base_DB_DB2_Schema {}
 ?>

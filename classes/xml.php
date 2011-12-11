@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2011-12-08
+ * @version 2011-12-11
  */
-class XML extends Base_XML { }
+class XML extends Base_XML {}
 ?>

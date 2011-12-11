@@ -23,5 +23,5 @@
  * @category Firebird
  * @version 2011-12-06
  */
-class DB_Firebird_Connection_Std extends Base_DB_Firebird_Connection_Std { }
+class DB_Firebird_Connection_Std extends Base_DB_Firebird_Connection_Std {}
 ?>

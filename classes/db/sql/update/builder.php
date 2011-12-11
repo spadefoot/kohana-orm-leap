@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Update_Builder extends Base_DB_SQL_Update_Builder { }
+abstract class DB_SQL_Update_Builder extends Base_DB_SQL_Update_Builder {}
 ?>

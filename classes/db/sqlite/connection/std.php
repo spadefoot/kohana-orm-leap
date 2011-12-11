@@ -23,5 +23,5 @@
  * @category SQLite
  * @version 2011-06-20
  */
-class DB_SQLite_Connection_Std extends Base_DB_SQLite_Connection_Std { }
+class DB_SQLite_Connection_Std extends Base_DB_SQLite_Connection_Std {}
 ?>

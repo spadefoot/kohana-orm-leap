@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class DB_ORM_Field_Adaptor extends Base_DB_ORM_Field_Adaptor { }
+abstract class DB_ORM_Field_Adaptor extends Base_DB_ORM_Field_Adaptor {}
 ?>

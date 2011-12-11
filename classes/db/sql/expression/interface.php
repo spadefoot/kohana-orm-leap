@@ -23,5 +23,5 @@
  * @category SQL
  * @version 2011-12-06
  */
-interface DB_SQL_Expression_Interface extends Base_DB_SQL_Expression_Interface { }
+interface DB_SQL_Expression_Interface extends Base_DB_SQL_Expression_Interface {}
 ?>

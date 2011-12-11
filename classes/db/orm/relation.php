@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class DB_ORM_Relation extends Base_DB_ORM_Relation { }
+abstract class DB_ORM_Relation extends Base_DB_ORM_Relation {}
 ?>

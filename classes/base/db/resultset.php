@@ -149,7 +149,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 					return $value;
 				}
 			}
-			catch (Exception $ex) { }
+			catch (Exception $ex) {}
 		}
 		else if (is_array($record) && isset($record[$name])) {
 			return $record[$name];

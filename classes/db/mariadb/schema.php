@@ -23,5 +23,5 @@
  * @category MariaDB
  * @version 2011-11-20
  */
-class DB_MariaDB_Schema extends Base_DB_MariaDB_Schema { }
+class DB_MariaDB_Schema extends Base_DB_MariaDB_Schema {}
 ?>

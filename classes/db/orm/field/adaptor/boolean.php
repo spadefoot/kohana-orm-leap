@@ -24,5 +24,5 @@
  * @category ORM
  * @version 2011-12-05
  */
-class DB_ORM_Field_Adaptor_Boolean extends Base_DB_ORM_Field_Adaptor_Boolean { }
+class DB_ORM_Field_Adaptor_Boolean extends Base_DB_ORM_Field_Adaptor_Boolean {}
 ?>

@@ -23,5 +23,5 @@
  * @category SQLite
  * @version 2011-06-21
  */
-class DB_SQLite_Schema extends Base_DB_SQLite_Schema { }
+class DB_SQLite_Schema extends Base_DB_SQLite_Schema {}
 ?>

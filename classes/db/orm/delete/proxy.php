@@ -23,5 +23,5 @@
  * @category ORM
  * @version 2011-06-10
  */
-class DB_ORM_Delete_Proxy extends Base_DB_ORM_Delete_Proxy { }
+class DB_ORM_Delete_Proxy extends Base_DB_ORM_Delete_Proxy {}
 ?>

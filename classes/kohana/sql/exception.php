@@ -20,7 +20,7 @@
  * This class indicates there is an SQL problem.
  *
  * @package Exception
- * @version 2011-06-07
+ * @version 2011-12-11
  */
-class Kohana_SQL_Exception extends Kohana_Exception { }
+class Kohana_SQL_Exception extends Kohana_Exception {}
 ?>

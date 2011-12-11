@@ -23,5 +23,5 @@
  * @category MySQL
  * @version 2011-12-06
  */
-class DB_MySQL_Update_Builder extends Base_DB_MySQL_Update_Builder { }
+class DB_MySQL_Update_Builder extends Base_DB_MySQL_Update_Builder {}
 ?>

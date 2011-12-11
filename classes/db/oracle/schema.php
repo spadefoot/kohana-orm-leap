@@ -23,5 +23,5 @@
  * @category Oracle
  * @version 2011-06-21
  */
-class DB_Oracle_Schema extends Base_DB_Oracle_Schema { }
+class DB_Oracle_Schema extends Base_DB_Oracle_Schema {}
 ?>

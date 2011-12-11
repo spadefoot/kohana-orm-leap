@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-20
+ * @version 2011-12-11
  */
-class DB_DB2_Connection_Std extends Base_DB_DB2_Connection_Std { }
+class DB_DB2_Connection_Std extends Base_DB_DB2_Connection_Std {}
 ?>

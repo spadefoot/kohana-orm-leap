@@ -20,7 +20,7 @@
  * This class indicates that an argument does not match with the expected value.
  *
  * @package Exception
- * @version 2011-06-07
+ * @version 2011-12-11
  */
 class Kohana_InvalidArgument_Exception extends InvalidArgumentException {
 
@@ -49,7 +49,7 @@ class Kohana_InvalidArgument_Exception extends InvalidArgumentException {
 	* @uses Kohana::exception_text
 	* @return string                            the string for this object
 	*/
-	public function __toString(){
+	public function __toString() {
 		return Kohana::exception_text($this);
 	}
 

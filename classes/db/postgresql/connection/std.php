@@ -23,5 +23,5 @@
  * @category PostgreSQL
  * @version 2011-12-06
  */
-class DB_PostgreSQL_Connection_Std extends Base_DB_PostgreSQL_Connection_Std { }
+class DB_PostgreSQL_Connection_Std extends Base_DB_PostgreSQL_Connection_Std {}
 ?>

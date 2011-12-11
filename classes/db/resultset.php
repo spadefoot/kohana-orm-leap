@@ -23,5 +23,5 @@
  * @category Connection
  * @version 2011-06-09
  */
-class DB_ResultSet extends Base_DB_ResultSet { }
+class DB_ResultSet extends Base_DB_ResultSet {}
 ?>

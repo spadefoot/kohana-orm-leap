@@ -23,5 +23,5 @@
  * @category Firebird
  * @version 2011-06-09
  */
-class DB_Firebird_Expression extends Base_DB_Firebird_Expression { }
+class DB_Firebird_Expression extends Base_DB_Firebird_Expression {}
 ?>

@@ -23,5 +23,5 @@
  * @category MySQL
  * @version 2011-12-06
  */
-class DB_MySQL_Connection_Std extends Base_DB_MySQL_Connection_Std { }
+class DB_MySQL_Connection_Std extends Base_DB_MySQL_Connection_Std {}
 ?>

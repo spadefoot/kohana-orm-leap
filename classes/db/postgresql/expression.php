@@ -23,5 +23,5 @@
  * @category PostgreSQL
  * @version 2011-06-09
  */
-class DB_PostgreSQL_Expression extends Base_DB_PostgreSQL_Expression { }
+class DB_PostgreSQL_Expression extends Base_DB_PostgreSQL_Expression {}
 ?>

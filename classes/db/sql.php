@@ -23,5 +23,5 @@
  * @category SQL
  * @version 2011-06-07
  */
-class DB_SQL extends Base_DB_SQL { }
+class DB_SQL extends Base_DB_SQL {}
 ?>

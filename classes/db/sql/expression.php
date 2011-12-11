@@ -23,5 +23,5 @@
  * @category SQL
  * @version 2011-12-06
  */
-class DB_SQL_Expression extends Base_DB_SQL_Expression { }
+class DB_SQL_Expression extends Base_DB_SQL_Expression {}
 ?>

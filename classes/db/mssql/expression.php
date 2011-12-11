@@ -23,5 +23,5 @@
  * @category MS SQL
  * @version 2011-06-09
  */
-class DB_MsSQL_Expression extends Base_DB_MsSQL_Expression { }
+class DB_MsSQL_Expression extends Base_DB_MsSQL_Expression {}
 ?>

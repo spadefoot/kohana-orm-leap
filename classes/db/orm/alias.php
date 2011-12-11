@@ -23,5 +23,5 @@
  * @category ORM
  * @version 2011-11-26
  */
-class DB_ORM_Alias extends Base_DB_ORM_Alias { }
+class DB_ORM_Alias extends Base_DB_ORM_Alias {}
 ?>

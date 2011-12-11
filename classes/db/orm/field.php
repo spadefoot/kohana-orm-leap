@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class DB_ORM_Field extends Base_DB_ORM_Field { }
+abstract class DB_ORM_Field extends Base_DB_ORM_Field {}
 ?>

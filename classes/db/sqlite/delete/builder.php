@@ -23,5 +23,5 @@
  * @category SQLite
  * @version 2011-12-06
  */
-class DB_SQLite_Delete_Builder extends Base_DB_SQLite_Delete_Builder { }
+class DB_SQLite_Delete_Builder extends Base_DB_SQLite_Delete_Builder {}
 ?>

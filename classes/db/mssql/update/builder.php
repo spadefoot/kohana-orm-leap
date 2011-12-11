@@ -23,5 +23,5 @@
  * @category MS SQL
  * @version 2011-12-06
  */
-class DB_MsSql_Update_Builder extends Base_DB_MsSql_Update_Builder { }
+class DB_MsSql_Update_Builder extends Base_DB_MsSql_Update_Builder {}
 ?>

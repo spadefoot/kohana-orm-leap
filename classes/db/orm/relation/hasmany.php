@@ -23,5 +23,5 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Relation_HasMany extends Base_DB_ORM_Relation_HasMany { }
+class DB_ORM_Relation_HasMany extends Base_DB_ORM_Relation_HasMany {}
 ?>

@@ -21,9 +21,9 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-05
+ * @version 2011-12-11
  *
  * @abstract
  */
-class DB_Connection_Pool extends Base_DB_Connection_Pool { }
+class DB_Connection_Pool extends Base_DB_Connection_Pool {}
 ?>

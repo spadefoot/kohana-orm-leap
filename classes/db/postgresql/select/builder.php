@@ -23,5 +23,5 @@
  * @category PostgreSQL
  * @version 2011-06-10
  */
-class DB_PostgreSQL_Select_Builder extends Base_DB_PostgreSQL_Select_Builder { }
+class DB_PostgreSQL_Select_Builder extends Base_DB_PostgreSQL_Select_Builder {}
 ?>

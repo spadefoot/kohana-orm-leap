@@ -23,5 +23,5 @@
  * @category MariaDB
  * @version 2011-11-20
  */
-class DB_MariaDB_Select_Builder extends Base_DB_MariaDB_Select_Builder { }
+class DB_MariaDB_Select_Builder extends Base_DB_MariaDB_Select_Builder {}
 ?>

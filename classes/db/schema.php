@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class DB_Schema extends Base_DB_Schema { }
+abstract class DB_Schema extends Base_DB_Schema {}
 ?>

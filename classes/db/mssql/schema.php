@@ -23,5 +23,5 @@
  * @category MsSQL
  * @version 2011-06-21
  */
-class DB_MsSQL_Schema extends Base_DB_MsSQL_Schema { }
+class DB_MsSQL_Schema extends Base_DB_MsSQL_Schema {}
 ?>

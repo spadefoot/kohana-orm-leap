@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Expression extends Database_Expression { }
+abstract class Base_DB_SQL_Expression extends Database_Expression {}
 ?>

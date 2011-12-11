@@ -24,5 +24,5 @@
  * @category Connection
  * @version 2011-12-04
  */
-class DB_ToolKit extends Base_DB_ToolKit { }
+class DB_ToolKit extends Base_DB_ToolKit {}
 ?>

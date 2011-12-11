@@ -23,5 +23,5 @@
  * @category MariaDB
  * @version 2011-11-20
  */
-class DB_MariaDB_Connection_Std extends Base_DB_MariaDB_Connection_Std { }
+class DB_MariaDB_Connection_Std extends Base_DB_MariaDB_Connection_Std {}
 ?>

@@ -24,5 +24,5 @@
  * @category ORM
  * @version 2011-12-03
  */
-class DB_ORM_Field_Adaptor_Array extends Base_DB_ORM_Field_Adaptor_Array { }
+class DB_ORM_Field_Adaptor_Array extends Base_DB_ORM_Field_Adaptor_Array {}
 ?>

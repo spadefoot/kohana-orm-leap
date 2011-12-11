@@ -23,5 +23,5 @@
  * @category PostgreSQL
  * @version 2011-06-21
  */
-class DB_PostgreSQL_Schema extends Base_DB_PostgreSQL_Schema { }
+class DB_PostgreSQL_Schema extends Base_DB_PostgreSQL_Schema {}
 ?>

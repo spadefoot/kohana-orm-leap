@@ -62,14 +62,14 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 *
 	 * @access protected
 	 */
-	protected function __construct() { }
+	protected function __construct() {}
 
 	/**
 	 * This function prevents the class from being cloned.
 	 *
 	 * @access protected
 	 */
-	protected function __clone() { }
+	protected function __clone() {}
 
 	/**
 	 * This function returns the appropriate connection from the pool.

@@ -23,5 +23,5 @@
  * @category SQLite
  * @version 2011-06-09
  */
-class DB_SQLite_Expression extends Base_DB_SQLite_Expression { }
+class DB_SQLite_Expression extends Base_DB_SQLite_Expression {}
 ?>

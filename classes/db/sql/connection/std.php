@@ -25,5 +25,5 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Connection_Std extends Base_DB_SQL_Connection_Std { }
+abstract class DB_SQL_Connection_Std extends Base_DB_SQL_Connection_Std {}
 ?>

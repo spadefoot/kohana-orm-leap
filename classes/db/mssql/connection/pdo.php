@@ -23,5 +23,5 @@
  * @category MS SQL
  * @version 2011-12-06
  */
-class DB_MsSQL_Connection_PDO extends Base_DB_MsSQL_Connection_PDO { }
+class DB_MsSQL_Connection_PDO extends Base_DB_MsSQL_Connection_PDO {}
 ?>

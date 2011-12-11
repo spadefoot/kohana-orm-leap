@@ -23,5 +23,5 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Blob extends Base_DB_ORM_Field_Blob { }
+class DB_ORM_Field_Blob extends Base_DB_ORM_Field_Blob {}
 ?>

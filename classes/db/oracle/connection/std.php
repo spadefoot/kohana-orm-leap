@@ -23,5 +23,5 @@
  * @category Oracle
  * @version 2011-06-20
  */
-class DB_Oracle_Connection_Std extends Base_DB_Oracle_Connection_Std { }
+class DB_Oracle_Connection_Std extends Base_DB_Oracle_Connection_Std {}
 ?>

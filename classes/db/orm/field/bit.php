@@ -23,5 +23,5 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Bit extends Base_DB_ORM_Field_Bit { }
+class DB_ORM_Field_Bit extends Base_DB_ORM_Field_Bit {}
 ?>

@@ -23,5 +23,5 @@
  * @category MySQL
  * @version 2011-06-09
  */
-class DB_MySQL_Expression extends Base_DB_MySQL_Expression { }
+class DB_MySQL_Expression extends Base_DB_MySQL_Expression {}
 ?>

@@ -23,5 +23,5 @@
  * @category Oracle
  * @version 2011-06-15
  */
-class DB_Oracle_Insert_Builder extends Base_DB_Oracle_Insert_Builder { }
+class DB_Oracle_Insert_Builder extends Base_DB_Oracle_Insert_Builder {}
 ?>

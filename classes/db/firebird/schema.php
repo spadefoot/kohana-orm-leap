@@ -23,5 +23,5 @@
  * @category Firebird
  * @version 2011-06-21
  */
-class DB_Firebird_Schema extends Base_DB_Firebird_Schema { }
+class DB_Firebird_Schema extends Base_DB_Firebird_Schema {}
 ?>

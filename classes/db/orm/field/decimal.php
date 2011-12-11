@@ -23,5 +23,5 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Decimal extends Base_DB_ORM_Field_Decimal { }
+class DB_ORM_Field_Decimal extends Base_DB_ORM_Field_Decimal {}
 ?>
