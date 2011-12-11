@@ -17,7 +17,7 @@ $config['default'] = array(
     'charset'       => 'utf8',      // string
     'profiling'     => TRUE,        // boolean
     'table_prefix'  => '',          // string
-),
+);
 
 return $config;
 ?>
