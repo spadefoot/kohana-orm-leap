@@ -45,7 +45,7 @@ class DB_ToolKitTest extends PHPUnit_Framework_TestCase {
 	 *
 	 * @access public
 	 * @param array $argument                          	the test values
-	 * @param string $expected_value                 	the expected database value
+	 * @param string $expected_value                 	the expected value
 	 */
 	public function test_slug($argument, $expected_value) {
 		$this->assertSame($expected_value, DB_ToolKit::slug($argument));
