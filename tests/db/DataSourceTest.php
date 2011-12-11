@@ -62,7 +62,7 @@ class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
 		$this->assertGreaterThan(0, strlen($source->get_id()));
 		$this->assertSame($expected_password, $source->get_password());
 		$this->assertSame($expected_port, $source->get_port());
-		$this->assertSame($expected_resource_type, $exception->get_resource_type());
+		$this->assertSame($expected_resource_type, $source->get_resource_type());
 		$this->assertSame($expected_username, $source->get_username());
 		$this->assertSame($expected_persistent, $source->is_persistent());
 	}
