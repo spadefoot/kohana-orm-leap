@@ -41,7 +41,7 @@ class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
 	 * This function tests DB_DataSource::__construct().
 	 *
 	 * @access public
-	 * @param array $arguments                          the test values
+	 * @param array $test_values                        the test values
 	 * @param string $expected_database                 the expected database value
 	 * @param string $expected_driver                   the expected driver value
 	 * @param string $expected_host_server              the expected host server value
@@ -52,9 +52,9 @@ class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
 	 * @param string $expected_username                 the expected username value
 	 * @param string $expected_persistent               the expected persistent value
 	 */
-	public function test_constructor($arguments, $expected_database, $expected_driver, $expected_host_server, $expected_id, $expected_password, $expected_port, $expected_resource_type, $expected_username, $expected_persistent) {
+	public function test_constructor($test_values, $expected_database, $expected_driver, $expected_host_server, $expected_id, $expected_password, $expected_port, $expected_resource_type, $expected_username, $expected_persistent) {
 		// Initialization
-		$source = new DB_DataSource(reset($arguments));
+		$source = new DB_DataSource(reset($test_values));
 		// Assertions
 		$this->assertSame($expected_database, $source->get_database());
 		$this->assertSame($expected_driver, $source->get_driver());
