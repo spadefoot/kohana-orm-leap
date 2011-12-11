@@ -43,7 +43,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['values'] = (isset($metadata['values']))
-			? (array)$metadata['values']
+			? (array) $metadata['values']
 			: array('yes', 'no');
 	}
 
@@ -84,7 +84,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if (!is_null($value)) {
+				if ( ! is_null($value)) {
 					$true = $this->metadata['values'][0];
 					$value = (is_string($true) && is_string($value))
 						? (strcasecmp($true, $value) == 0)

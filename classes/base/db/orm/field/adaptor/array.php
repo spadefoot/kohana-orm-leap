@@ -41,7 +41,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['delimiter'] = (isset($metadata['delimiter']))
-			? (string)$metadata['delimiter']
+			? (string) $metadata['delimiter']
 			: ',';
 
 		$this->metadata['regex'] = '/' . preg_quote($this->metadata['delimiter']) . '/';

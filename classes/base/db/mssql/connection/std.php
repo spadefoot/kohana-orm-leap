@@ -38,11 +38,11 @@ abstract class Base_DB_MsSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 *                                          the database connection
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			try {
 				$connection_string = $this->data_source->get_host_server();
 				$port = $this->data_source->get_port();
-				if (!empty($port)) {
+				if ( ! empty($port)) {
 					$connection_string .= ':' . $port;
 				}
 				$this->link_id = mssql_connect($connection_string, $this->data_source->get_username(), $this->data_source->get_password());
@@ -82,7 +82,7 @@ abstract class Base_DB_MsSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -112,7 +112,7 @@ abstract class Base_DB_MsSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
@@ -137,9 +137,9 @@ abstract class Base_DB_MsSQL_Connection_Std extends DB_SQL_Connection_Std {
 			$sql = $this->sql;
 			if (preg_match('/^INSERT\s+(TOP.+\s+)?INTO\s+(.*?)\s+/i', $sql, $matches)) {
 				$table = Arr::get($matches, 2);
-				$query = (!empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS insert_id" : 'SELECT SCOPE_IDENTITY() AS insert_id';
+				$query = ( ! empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS insert_id" : 'SELECT SCOPE_IDENTITY() AS insert_id';
 				$result_set = $this->query($query);
-				$insert_id = ($result_set->is_loaded()) ? ((integer)Arr::get($result_set->fetch(0), 'insert_id')) : 0;
+				$insert_id = ($result_set->is_loaded()) ? ( (int)  Arr::get($result_set->fetch(0), 'insert_id')) : 0;
 				$this->sql = $sql;
 				return $insert_id;
 			}

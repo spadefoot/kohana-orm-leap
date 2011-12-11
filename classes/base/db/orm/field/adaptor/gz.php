@@ -44,7 +44,7 @@ abstract class Base_DB_ORM_Field_Adaptor_GZ extends DB_ORM_Field_Adaptor {
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['level'] = (isset($metadata['level']))
-			? min(0, max(9, (integer)$metadata['level']))
+			? min(0, max(9, (int) $metadata['level']))
 			: 9;
 	}
 

@@ -171,7 +171,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements Iterator {
 	* @throws Kohana_InvalidArgumentException   indicates that there is a data type mismatch
 	*/
 	public function __construct($statement, $cleanse = FALSE) {
-		if (!is_string($statement) && !empty($statement)) {
+		if ( ! is_string($statement) && !empty($statement)) {
 			throw new Kohana_InvalidArgument_Exception('Invalid argument has been specified.', array(':statement' => $statement, ':cleanse' => $cleanse));
 		}
 		$this->statement = $statement;
@@ -180,7 +180,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements Iterator {
 		$this->tuples = array();
 		$this->index = 0;
 		$this->size = 0;
-		$this->cleanse = (boolean)$cleanse;
+		$this->cleanse = (bool) $cleanse;
 		$this->evaluate();
 	}
 
@@ -464,7 +464,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements Iterator {
 					$this->position += strlen($token);
 				break;
 			}
-			if (!$this->cleanse || ($tuple[1] != self::WHITESPACE_TOKEN)) {
+			if ( ! $this->cleanse || ($tuple[1] != self::WHITESPACE_TOKEN)) {
 				$this->tuples[] = $tuple;
 				$this->size++;
 				break;

@@ -49,7 +49,7 @@ abstract class Base_DB_PostgreSQL_Update_Builder extends DB_SQL_Update_Builder {
 	public function statement($terminated = TRUE) {
 		$sql = '';
 
-		if (!empty($this->data['where'])) {
+		if ( ! empty($this->data['where'])) {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
@@ -61,7 +61,7 @@ abstract class Base_DB_PostgreSQL_Update_Builder extends DB_SQL_Update_Builder {
 			}
 		}
 
-		if (!empty($this->data['order_by'])) {
+		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
@@ -73,13 +73,13 @@ abstract class Base_DB_PostgreSQL_Update_Builder extends DB_SQL_Update_Builder {
 			$sql .= " OFFSET {$this->data['offset']}";
 		}
 
-		if (!empty($sql)) {
+		if ( ! empty($sql)) {
 			$sql = " WHERE ctid = any(array(SELECT ctid FROM {$this->data['table']}" . $sql . '))';
 		}
 
 		$stmt = "UPDATE {$this->data['table']}";
 
-		if (!empty($this->data['column'])) {
+		if ( ! empty($this->data['column'])) {
 			$stmt .= ' SET ' . implode(', ', array_values($this->data['column']));
 		}
 

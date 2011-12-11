@@ -80,7 +80,7 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 		}
 		$result = $sql->limit(1)->query();
 
-		if (!$result->is_loaded()) {
+		if ( ! $result->is_loaded()) {
 			$record = new $child_model();
 			for ($i = 0; $i < $field_count; $i++) {
 				$record->{$foreign_key[$i]} = $this->model->{$candidate_key[$i]};

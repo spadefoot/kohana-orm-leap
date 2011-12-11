@@ -49,7 +49,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$fields = array();
 		foreach ($records as $record) {
-			if (!empty($regex) || preg_match($regex, $record['name'])){
+			if ( ! empty($regex) || preg_match($regex, $record['name'])){
 				list($type, $length) = $this->parse_type($record['Type']);
 
 				$field = $this->data_type($type);
@@ -137,7 +137,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	public function tables($like = '') {
 		$sql = "SELECT [tbl_name] AS [name] FROM [sqlite_master] WHERE [type] = 'table' AND [tbl_name] NOT IN ('sqlite_sequence')";
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$like = $this->helper->prepare_value($like);
 			$sql .= ' AND [tbl_name] LIKE ' . $like;
 		}
@@ -188,7 +188,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://www.regular-expressions.info/mysql.html
 	 */
 	protected function like_to_regex($like) {
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$length = strlen($like);
 			if (preg_match('/^%.*%$/' , $like)) {
 				return '/^.*' . substr($like, 1, $length - 2) . '.*$/';

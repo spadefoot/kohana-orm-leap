@@ -41,7 +41,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-conn-error.php
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$connection_string  = 'DRIVER={IBM DB2 ODBC DRIVER};';
 			$connection_string .= 'DATABASE=' . $this->data_source->get_database() . ';';
 			$connection_string .= 'HOSTNAME=' . $this->data_source->get_host_server() . ';';
@@ -66,7 +66,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-autocommit.php
 	 */
 	public function begin_transaction() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
@@ -94,7 +94,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -127,7 +127,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
@@ -168,7 +168,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-rollback.php
 	 */
 	public function rollback() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
@@ -189,7 +189,7 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.db2-commit.php
 	 */
 	public function commit() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}

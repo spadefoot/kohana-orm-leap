@@ -49,10 +49,10 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://download.oracle.com/docs/cd/E11882_01/network.112/e10836/naming.htm
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$connection_string = '//'. $this->data_source->get_host_server();
 			$port = $this->data_source->get_port(); // default port is 1521
-			if (!empty($port)) {
+			if ( ! empty($port)) {
 				$connection_string .= ':' . $port;
 			}
 			$connection_string .= '/' . $this->data_source->get_database();
@@ -76,7 +76,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.oci-commit.php
 	 */
 	public function begin_transaction() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
@@ -98,7 +98,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -129,7 +129,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
@@ -160,7 +160,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 				$table = Arr::get($matches, 1);
 				$query = "SELECT MAX(ID) FROM {$table};";
 				$result = $this->query($query);
-				$insert_id = ($result->is_loaded()) ? ((integer)Arr::get($result->fetch(0), 'ID')) : 0;
+				$insert_id = ($result->is_loaded()) ? ( (int)  Arr::get($result->fetch(0), 'ID')) : 0;
 				$this->sql = $sql;
 				return $insert_id;
 			}
@@ -182,7 +182,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function rollback() {
 		$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
@@ -204,7 +204,7 @@ abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function commit() {
 		$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}

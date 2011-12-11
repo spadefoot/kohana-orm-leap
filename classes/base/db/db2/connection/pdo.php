@@ -40,7 +40,7 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$connection_string  = 'ibm:';
 			$connection_string .= 'DRIVER={IBM DB2 ODBC DRIVER};';
 			$connection_string .= 'DATABASE=' . $this->data_source->get_database() . ';';

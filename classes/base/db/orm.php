@@ -65,7 +65,7 @@ abstract class Base_DB_ORM extends Kohana_Object {
 	 */
 	public static function model($model, Array $primary_key = array()) {
 		$model = DB_ORM_Model::factory($model);
-		if (!empty($primary_key)) {
+		if ( ! empty($primary_key)) {
 			$model_key = call_user_func(array(get_class($model), 'primary_key'));
 			$count = count($model_key);
 			for ($i = 0; $i < $count; $i++) {

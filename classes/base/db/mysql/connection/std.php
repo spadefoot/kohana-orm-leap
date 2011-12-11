@@ -38,7 +38,7 @@ abstract class Base_DB_MySQL_Connection_Std extends DB_SQL_Connection_Std {
 	 *                                          the database connection
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->link_id = @mysql_connect($this->data_source->get_host_server(), $this->data_source->get_username(), $this->data_source->get_password());
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . mysql_error();
@@ -76,7 +76,7 @@ abstract class Base_DB_MySQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -106,7 +106,7 @@ abstract class Base_DB_MySQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}

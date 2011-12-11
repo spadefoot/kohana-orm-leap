@@ -39,46 +39,46 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 
 		// Fixed precision and scale numeric data from -10^38 -1 through 10^38 -1.
 
-		$this->metadata['scale'] = (integer)$metadata['scale']; // the scale (i.e. the number of digits that can be stored following the decimal point)
+		$this->metadata['scale'] = (int) $metadata['scale']; // the scale (i.e. the number of digits that can be stored following the decimal point)
 		if ($this->metadata['scale'] == 0) {
 			$this->metadata['type'] = 'integer';
 		}
 
-		$this->metadata['precision'] = (integer)$metadata['precision']; // the precision (i.e. the number of significant digits that are stored for values)
+		$this->metadata['precision'] = (int) $metadata['precision']; // the precision (i.e. the number of significant digits that are stored for values)
 		if ($this->metadata['type'] == 'double') {
 			$this->metadata['precision'] += 1;
 		}
 
 		if (isset($metadata['savable'])) {
-			$this->metadata['savable'] = (boolean)$metadata['savable'];
+			$this->metadata['savable'] = (bool) $metadata['savable'];
 		}
 
 		if (isset($metadata['nullable'])) {
-			$this->metadata['nullable'] = (boolean)$metadata['nullable'];
+			$this->metadata['nullable'] = (bool) $metadata['nullable'];
 		}
 
 		if (isset($metadata['filter'])) {
-			$this->metadata['filter'] = (string)$metadata['filter'];
+			$this->metadata['filter'] = (string) $metadata['filter'];
 		}
 
 		if (isset($metadata['callback'])) {
-			$this->metadata['callback'] = (string)$metadata['callback'];
+			$this->metadata['callback'] = (string) $metadata['callback'];
 		}
 
 		if (isset($metadata['enum'])) {
-			$this->metadata['enum'] = (array)$metadata['enum'];
+			$this->metadata['enum'] = (array) $metadata['enum'];
 		}
 
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if (!is_null($default)) {
+			if ( ! is_null($default)) {
 				settype($default, $this->metadata['type']);
 				$this->validate($default);
 			}
 			$this->metadata['default'] = $default;
 			$this->value = $default;
 		}
-		else if (!$this->metadata['nullable']) {
+		else if ( ! $this->metadata['nullable']) {
 			$default = 0.0;
 			settype($default, $this->metadata['type']);
 			$this->metadata['default'] = $default;
@@ -98,8 +98,8 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if (!is_null($value)) {
-					$value = number_format((float)$this->value, $this->metadata['scale']);
+				if ( ! is_null($value)) {
+					$value = number_format( (float) $this->value, $this->metadata['scale']);
 					settype($value, $this->metadata['type']);
 					$this->validate($value);
 					$this->value = $value;
@@ -110,7 +110,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 				$this->metadata['modified'] = TRUE;
 			break;
 			case 'modified':
-				$this->metadata['modified'] = (boolean)$value;
+				$this->metadata['modified'] = (bool) $value;
 			break;
 			default:
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
@@ -126,7 +126,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected function validate($value) {
-		if (!is_null($value)) {
+		if ( ! is_null($value)) {
 			if (strlen("{$value}") > $this->metadata['precision']) {
 				return FALSE;
 			}

@@ -41,7 +41,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	public function fields($table, $like = '') {
 		$sql = 'SHOW FULL COLUMNS FROM ' . $this->helper->prepare_identifier($table);
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$like = $this->helper->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
@@ -172,7 +172,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			$buffer[$i]['table_name'] = $record['Table'];
 			$buffer[$i]['field_name'] = $record['Column_name'];
 			$buffer[$i]['index_name'] = $record['Key_name'];
-			$buffer[$i]['sequence'] = (integer)$record['Seq_in_index'];
+			$buffer[$i]['sequence'] = (int) $record['Seq_in_index'];
 			$buffer[$i]['is_primary_key'] = ($record['Key_name'] == 'PRIMARY');
 			$buffer[$i]['is_unique'] = ($record['Non_unique'] == '0');
 			$i++;
@@ -199,7 +199,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			->where('TABLE_TYPE', 'LIKE', 'BASE_TABLE')
 			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 
@@ -229,7 +229,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			->where('TABLE_TYPE', 'LIKE', 'VIEW')
 			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 

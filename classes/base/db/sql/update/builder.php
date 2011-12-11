@@ -128,7 +128,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->helper->prepare_operator('COMPARISON', $operator);
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
-			if (!is_array($value)) {
+			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			$column = $this->helper->prepare_identifier($column);

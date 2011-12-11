@@ -79,20 +79,20 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 * @return DB_Connection			        the appropriate connection
 	 */
 	public function get_connection($source = 'default') {
-		if (!(is_object($source) && ($source instanceof DB_DataSource))) {
+		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
 			$source = new DB_DataSource($source);
 		}
 		$id = $source->get_id();
 		if ($id != $this->id) {
-			if (!is_null($this->id)) {
+			if ( ! is_null($this->id)) {
 				self::$pool[$this->id]->close();
 			}
-			if (!isset(self::$pool[$id]))	{
+			if ( ! isset(self::$pool[$id]))	{
 				self::$pool[$id] = DB_Connection::factory($source);
 			}
 			$this->id = $id;
 		}
-		if (!self::$pool[$id]->is_connected()) {
+		if ( ! self::$pool[$id]->is_connected()) {
 			self::$pool[$id]->open();
 		}
 		return self::$pool[$id];
@@ -104,7 +104,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	* @access public
 	*/
 	public function release() {
-		if (!is_null($this->id)) {
+		if ( ! is_null($this->id)) {
 			self::$pool[$this->id]->close();
 		}
 	}

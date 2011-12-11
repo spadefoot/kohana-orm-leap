@@ -55,23 +55,23 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			$sql .= ' DISTINCT';
 		}
 
-		$sql .= ' ' . ((!empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
 
-		if (!is_null($this->data['from'])) {
+		if ( ! is_null($this->data['from'])) {
 			$sql .= " FROM {$this->data['from']}";
 		}
 
 		foreach ($this->data['join'] as $join) {
 			$sql .= " {$join[0]}";
-			if (!empty($join[1])) {
+			if ( ! empty($join[1])) {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
-			else if (!empty($join[2])) {
+			else if ( ! empty($join[2])) {
 				$sql .= ' USING ' . implode(', ', $join[2]);
 			}
 		}
 
-		if (!empty($this->data['where'])) {
+		if ( ! empty($this->data['where'])) {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
@@ -83,11 +83,11 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			}
 		}
 
-		if (!empty($this->data['group_by'])) {
+		if ( ! empty($this->data['group_by'])) {
 			$sql .= ' GROUP BY ' . implode(', ', $this->data['group_by']);
 		}
 
-		if (!empty($this->data['having'])) {
+		if ( ! empty($this->data['having'])) {
 			$do_append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
@@ -99,7 +99,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			}
 		}
 
-		if (!empty($this->data['order_by'])) {
+		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 

@@ -40,10 +40,10 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.pg-connect.php
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$connection_string  = 'host=' . $this->data_source->get_host_server();
 			$port = $this->data_source->get_port();
-			if (!empty($port)) {
+			if ( ! empty($port)) {
 				$connection_string .= ' port=' . $port;
 			}
 			$connection_string .= ' dbname=' . $this->data_source->get_database();
@@ -83,7 +83,7 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @see http://www.php.net/manual/en/function.pg-last-error.php
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -115,7 +115,7 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	* @see http://www.php.net/manual/en/function.pg-insert.php
 	*/
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}

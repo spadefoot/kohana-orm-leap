@@ -81,7 +81,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 
 		$result = $sql->limit(1)->query();
 
-		if (!$result->is_loaded()) {
+		if ( ! $result->is_loaded()) {
 			$record = new $parent_model();
 			for ($i = 0; $i < $field_count; $i++) {
 				$record->{$candidate_key[$i]} = $this->model->{$foreign_key[$i]};

@@ -157,11 +157,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	public function delete($reset = FALSE) {
 		$self = get_class($this);
 		$is_savable = call_user_func(array($self, 'is_savable'));
-		if (!$is_savable) {
+		if ( ! $is_savable) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
 		}
 		$primary_key = call_user_func(array($self, 'primary_key'));
-		if (!is_array($primary_key) || empty($primary_key)) {
+		if ( ! is_array($primary_key) || empty($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
 		$data_source = call_user_func(array($self, 'data_source'));
@@ -254,7 +254,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if (is_array($primary_key) && !empty($primary_key)) {
 			$buffer = '';
 			foreach ($primary_key as $column) {
-				if (!isset($this->fields[$column])) {
+				if ( ! isset($this->fields[$column])) {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
 				$buffer .= "{$column}={$this->fields[$column]->value}";
@@ -275,7 +275,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if (empty($columns)) {
 			$self = get_class($this);
 			$primary_key = call_user_func(array($self, 'primary_key'));
-			if (!is_array($primary_key) || empty($primary_key)) {
+			if ( ! is_array($primary_key) || empty($primary_key)) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
 			$data_source = call_user_func(array($self, 'data_source'));
@@ -285,7 +285,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				$sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
 			$record = $sql->query(1);
-			if (!$record->is_loaded()) {
+			if ( ! $record->is_loaded()) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}
 			$columns = $record->fetch(0);
@@ -332,11 +332,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	public function save($reload = FALSE) {
 		$self = get_class($this);
 		$is_savable = call_user_func(array($self, 'is_savable'));
-		if (!$is_savable) {
+		if ( ! $is_savable) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
 		}
 		$primary_key = call_user_func(array($self, 'primary_key'));
-		if (!is_array($primary_key) || empty($primary_key)) {
+		if ( ! is_array($primary_key) || empty($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
 		$data_source = call_user_func(array($self, 'data_source'));
@@ -344,7 +344,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		$columns = array_keys($this->fields);
 		$hash_code = $this->hash_code();
 		$do_insert = is_null($hash_code);
-		if (!$do_insert) {
+		if ( ! $do_insert) {
 			$do_insert = (is_null($this->metadata['saved']) || ($hash_code != $this->metadata['saved']));
 			if ($do_insert) {
 				$sql = DB_SQL::select($data_source)
@@ -355,14 +355,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				}
 				$do_insert = !($sql->limit(1)->query()->is_loaded());
 			}
-			if (!$do_insert) {
+			if ( ! $do_insert) {
 				foreach ($primary_key as $column) {
 					$index = array_search($column, $columns);
 					if ($index !== FALSE) {
 						unset($columns[$index]);
 					}
 				}
-				if (!empty($columns)) {
+				if ( ! empty($columns)) {
 					$sql = DB_SQL::update($data_source)
 						->table($table);
 					$count = 0;
@@ -393,7 +393,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 					}
 				}
 			}
-			if (!empty($columns)) {
+			if ( ! empty($columns)) {
 				$sql = DB_SQL::insert($data_source)
 					->into($table);
 				$count = 0;

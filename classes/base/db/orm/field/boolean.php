@@ -38,31 +38,31 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 		parent::__construct($model, 'boolean');
 
 		if (isset($metadata['savable'])) {
-			$this->metadata['savable'] = (boolean)$metadata['savable'];
+			$this->metadata['savable'] = (bool) $metadata['savable'];
 		}
 
 		if (isset($metadata['nullable'])) {
-			$this->metadata['nullable'] = (boolean)$metadata['nullable'];
+			$this->metadata['nullable'] = (bool) $metadata['nullable'];
 		}
 
 		if (isset($metadata['filter'])) {
-			$this->metadata['filter'] = (string)$metadata['filter'];
+			$this->metadata['filter'] = (string) $metadata['filter'];
 		}
 
 		if (isset($metadata['callback'])) {
-			$this->metadata['callback'] = (string)$metadata['callback'];
+			$this->metadata['callback'] = (string) $metadata['callback'];
 		}
 
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if (!is_null($default)) {
+			if ( ! is_null($default)) {
 				settype($default, $this->metadata['type']);
 				$this->validate($default);
 			}
 			$this->metadata['default'] = $default;
 			$this->value = $default;
 		}
-		else if (!$this->metadata['nullable']) {
+		else if ( ! $this->metadata['nullable']) {
 			$default = FALSE;
 			$this->metadata['default'] = $default;
 			$this->value = $default;

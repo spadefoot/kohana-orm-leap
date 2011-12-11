@@ -51,11 +51,11 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 	 *                                          the database connection
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$connection_string = $this->data_source->get_host_server();
-			if (!preg_match('/^localhost$/i', $connection_string)) {
+			if ( ! preg_match('/^localhost$/i', $connection_string)) {
 				$port = $this->data_source->get_port();
-				if (!empty($port)) {
+				if ( ! empty($port)) {
 					$connection_string .= '/' . $port;
 				}
 			}
@@ -75,7 +75,7 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function begin_transaction() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
@@ -97,7 +97,7 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -127,7 +127,7 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
@@ -155,7 +155,7 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 			if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
 				$table = Arr::get($matches, 1);
 				$result = $this->query("SELECT ID FROM {$table} ORDER BY ID DESC ROWS 1;");
-				$insert_id = ($result->is_loaded()) ? ((integer)Arr::get($result->fetch(0), 'ID')) : 0;
+				$insert_id = ($result->is_loaded()) ? ( (int)  Arr::get($result->fetch(0), 'ID')) : 0;
 				$this->sql = $sql;
 				return $insert_id;
 			}
@@ -174,7 +174,7 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function rollback() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
@@ -192,7 +192,7 @@ abstract class Base_DB_Firebird_Connection_Std extends DB_SQL_Connection_Std {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function commit() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}

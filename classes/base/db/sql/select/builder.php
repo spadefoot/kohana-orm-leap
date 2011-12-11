@@ -104,7 +104,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 */
 	public function column($column, $alias = NULL) {
 		$column = $this->helper->prepare_identifier($column);
-		if (!is_null($alias)) {
+		if ( ! is_null($alias)) {
 			$alias = $this->helper->prepare_alias($alias);
 			$column = "{$column} AS {$alias}";
 		}
@@ -122,7 +122,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 */
 	public function from($table, $alias = NULL) {
 		$table = $this->helper->prepare_identifier($table);
-		if (!is_null($alias)) {
+		if ( ! is_null($alias)) {
 			$alias = $this->helper->prepare_alias($alias);
 			$table = "{$table} AS {$alias}";
 		}
@@ -141,11 +141,11 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 */
 	public function join($type, $table, $alias = NULL) {
 		$table = 'JOIN ' . $this->helper->prepare_identifier($table);
-		if (!is_null($type)) {
+		if ( ! is_null($type)) {
 			$type = $this->helper->prepare_join($type);
 			$table = "{$type} {$table}";
 		}
-		if (!is_null($alias)) {
+		if ( ! is_null($alias)) {
 			$alias = $this->helper->prepare_alias($alias);
 			$table = "{$table} {$alias}";
 		}
@@ -164,10 +164,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
-		if (!empty($this->data['join'])) {
+		if ( ! empty($this->data['join'])) {
 			$index = count($this->data['join']) - 1;
 			$condition = $this->data['join'][$index][2];
-			if (!empty($condition)) {
+			if ( ! empty($condition)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
 			}
 			$column0 = $this->helper->prepare_identifier($column0);
@@ -190,10 +190,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function using($column) {
-		if (!empty($this->data['join'])) {
+		if ( ! empty($this->data['join'])) {
 			$index = count($this->data['join']) - 1;
 			$condition = $this->data['join'][$index][1];
-			if (!empty($condition)) {
+			if ( ! empty($condition)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column' => $column));
 			}
 			$column = $this->helper->prepare_identifier($column);
@@ -234,7 +234,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->helper->prepare_operator('COMPARISON', $operator);
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
-			if (!is_array($value)) {
+			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			$column = $this->helper->prepare_identifier($column);
@@ -317,7 +317,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		}
 		$operator = $this->helper->prepare_operator('COMPARISON', $operator);
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
-			if (!is_array($value)) {
+			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			$column = $this->helper->prepare_identifier($column);
@@ -404,7 +404,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		if (is_object($statement) && ($statement instanceof $select_builder)) {
 			$statement = $statement->statement(FALSE);
 		}
-		else if (!preg_match('/^SELECT.*$/i', $statement)) {
+		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
 			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
 		}
 		else if ($statement[count($statement - 1)] == ';') {

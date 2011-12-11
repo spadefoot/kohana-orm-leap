@@ -132,7 +132,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 *                                          established
 	 */
 	public function &get_resource_id() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			throw new Kohana_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
 		}
 		return $this->link_id;

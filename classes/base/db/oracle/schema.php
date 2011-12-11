@@ -52,7 +52,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 
 		$sql = 'SHOW FULL COLUMNS FROM ' . $table;
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$like = $this->helper->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
@@ -160,7 +160,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 			->from('user_tables')
 			->order_by(DB::expr('LOWER("table_name")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('table_name', 'LIKE', $like);
 		}
 
@@ -190,7 +190,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 			->from('user_views')
 			->order_by(DB::expr('LOWER("view_name")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('view_name', 'LIKE', $like);
 		}
 

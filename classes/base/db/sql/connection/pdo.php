@@ -75,7 +75,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
@@ -104,7 +104,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
@@ -202,7 +202,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 * @access public
 	 */
 	public function __destruct() {
-		if (!is_null($this->connection)) {
+		if ( ! is_null($this->connection)) {
 		   unset($this->connection);
 		}
 	}

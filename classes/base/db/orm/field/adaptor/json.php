@@ -41,11 +41,11 @@ abstract class Base_DB_ORM_Field_Adaptor_JSON extends DB_ORM_Field_Adaptor {
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['prefix'] = (isset($metadata['prefix']))
-			? (string)$metadata['prefix']
+			? (string) $metadata['prefix']
 			: '';
 
 		$this->metadata['suffix'] = (isset($metadata['suffix']))
-			? (string)$metadata['suffix']
+			? (string) $metadata['suffix']
 			: '';
 	}
 

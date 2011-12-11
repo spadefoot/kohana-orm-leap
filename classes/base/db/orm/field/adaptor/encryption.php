@@ -43,7 +43,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['config'] = (isset($metadata['config']))
-			? (array)$metadata['config']
+			? (array) $metadata['config']
 			: NULL;
 	}
 

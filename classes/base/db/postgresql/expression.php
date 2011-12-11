@@ -54,7 +54,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	* @throws Kohana_InvalidArgument_Exception  indicates that there is a data type mismatch
 	*/
 	public function prepare_alias($expr) {
-		if (!is_string($expr)) {
+		if ( ! is_string($expr)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		return self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $expr)) . self::_CLOSING_QUOTE_CHARACTER_;
@@ -68,7 +68,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	* @return string                            the prepared expression
 	*/
 	public function prepare_boolean($expr) {
-		return (boolean)$expr;
+		return (bool) $expr;
 	}
 
 	/**
@@ -107,7 +107,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 		else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
 			return $expr->value();
 		}
-		else if (!is_string($expr)) {
+		else if ( ! is_string($expr)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid identifier expression specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
@@ -278,11 +278,11 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 				return $expr->value();
 			}
 			else {
-				return self::prepare_value((string)$expr); // Convert the object to a string
+				return self::prepare_value( (string) $expr); // Convert the object to a string
 			}
 		}
 		else if (is_integer($expr)) {
-			return (integer)$expr;
+			return (int) $expr;
 		}
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);

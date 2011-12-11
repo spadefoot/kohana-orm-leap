@@ -145,7 +145,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		if (is_object($record)) {
 			try {
 				$value = $record->{$name};
-				if (!is_null($value)) {
+				if ( ! is_null($value)) {
 					return $value;
 				}
 			}

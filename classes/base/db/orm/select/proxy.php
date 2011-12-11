@@ -274,7 +274,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @return DB_ResultSet                 the result set
 	 */
 	public function query($limit = NULL) {
-		if (!is_null($limit)) {
+		if ( ! is_null($limit)) {
 			$this->limit($limit);
 		}
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);

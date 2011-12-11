@@ -128,7 +128,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 			->where('table_schema', 'NOT IN', array('pg_catalog', 'information_schema'))
 			->order_by(DB::expr('LOWER("table_name")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('table_name', 'LIKE', $like);
 		}
 
@@ -161,7 +161,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 			->where('table_name', 'NOT LIKE', 'pg_%')
 			->order_by(DB::expr('LOWER("table_name")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('table_name', 'LIKE', $like);
 		}
 

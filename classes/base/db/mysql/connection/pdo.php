@@ -40,11 +40,11 @@ abstract class Base_DB_MySQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
 	 */
 	public function open() {
-		if (!$this->is_connected()) {
+		if ( ! $this->is_connected()) {
 			$connection_string  = 'mysql:';
 			$connection_string .= 'host=' . $this->data_source->get_host_server() . ';';
 			$port = $this->data_source->get_port();
-			if (!empty($port)) {
+			if ( ! empty($port)) {
 				$connection_string .= 'port=' . $port . ';';
 			}
 			$connection_string .= 'dbname=' . $this->data_source->get_database();

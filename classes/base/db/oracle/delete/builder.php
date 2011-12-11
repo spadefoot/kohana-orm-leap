@@ -52,7 +52,7 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 	public function statement($terminated = TRUE) {
 		$sql = "DELETE FROM {$this->data['from']}";
 
-		if (!empty($this->data['where'])) {
+		if ( ! empty($this->data['where'])) {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
@@ -64,7 +64,7 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 			}
 		}
 
-		if (!empty($this->data['order_by'])) {
+		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 

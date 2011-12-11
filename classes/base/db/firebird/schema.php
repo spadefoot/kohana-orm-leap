@@ -232,7 +232,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 
 			$fields[$field]['attributes'] = $type[3];
 
-			$fields[$field]['nullable'] = (boolean)$record['nullable'];
+			$fields[$field]['nullable'] = (bool) $record['nullable'];
 
 			$default_value = $record['default_value'];
 			if ($default_value != 'null') {
@@ -326,7 +326,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->where_block(')')
 			->order_by(DB::expr('UPPER("RDB$RELATION_NAME")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where(DB::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
 		}
 
@@ -359,7 +359,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->where_block(')')
 			->order_by(DB::expr('UPPER("RDB$RELATION_NAME")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where(DB::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
 		}
 

@@ -43,7 +43,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 
 		$sql = 'SHOW FULL COLUMNS FROM ' . $table;
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$like = $this->helper->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
@@ -165,7 +165,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 			->where('tabschema', '=', 'SYSCAT')
 			->order_by(DB::expr('LOWER("tabname")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('tabname', 'LIKE', $like);
 		}
 
@@ -196,7 +196,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 			->where('valid', '<>', 'Y')
 			->order_by(DB::expr('LOWER("tabname")'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('viewname', 'LIKE', $like);
 		}
 

@@ -61,7 +61,7 @@ abstract class Base_DB_MsSql_Update_Builder extends DB_SQL_Update_Builder {
 
 		$sql .= " * FROM {$this->data['table']}";
 
-		if (!empty($this->data['where'])) {
+		if ( ! empty($this->data['where'])) {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
@@ -73,7 +73,7 @@ abstract class Base_DB_MsSql_Update_Builder extends DB_SQL_Update_Builder {
 			}
 		}
 
-		if (!empty($this->data['order_by'])) {
+		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
@@ -83,7 +83,7 @@ abstract class Base_DB_MsSql_Update_Builder extends DB_SQL_Update_Builder {
 
 		$sql .= ") UPDATE {$alias}";
 
-		if (!empty($this->data['column'])) {
+		if ( ! empty($this->data['column'])) {
 			$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
 		}
 

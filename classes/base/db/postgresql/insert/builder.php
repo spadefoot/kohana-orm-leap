@@ -49,7 +49,7 @@ abstract class Base_DB_PostgreSQL_Insert_Builder extends DB_SQL_Insert_Builder {
 	public function statement($terminated = TRUE) {
 		$sql = "INSERT INTO {$this->data['into']}";
 
-		if (!empty($this->data['column'])) {
+		if ( ! empty($this->data['column'])) {
 			$columns = implode(', ', array_keys($this->data['column']));
 			$values = implode(', ', array_values($this->data['column']));
 			$sql .= " ({$columns}) VALUES ({$values})";

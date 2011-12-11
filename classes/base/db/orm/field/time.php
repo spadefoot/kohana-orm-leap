@@ -38,35 +38,35 @@ abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 		parent::__construct($model, 'string');
 
 		if (isset($metadata['savable'])) {
-			$this->metadata['savable'] = (boolean)$metadata['savable'];
+			$this->metadata['savable'] = (bool) $metadata['savable'];
 		}
 
 		if (isset($metadata['nullable'])) {
-			$this->metadata['nullable'] = (boolean)$metadata['nullable'];
+			$this->metadata['nullable'] = (bool) $metadata['nullable'];
 		}
 
 		if (isset($metadata['filter'])) {
-			$this->metadata['filter'] = (string)$metadata['filter'];
+			$this->metadata['filter'] = (string) $metadata['filter'];
 		}
 
 		if (isset($metadata['callback'])) {
-			$this->metadata['callback'] = (string)$metadata['callback'];
+			$this->metadata['callback'] = (string) $metadata['callback'];
 		}
 
 		if (isset($metadata['enum'])) {
-			$this->metadata['enum'] = (array)$metadata['enum'];
+			$this->metadata['enum'] = (array) $metadata['enum'];
 		}
 
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if (!is_null($default)) {
+			if ( ! is_null($default)) {
 				settype($default, $this->metadata['type']);
 				$this->validate($default);
 			}
 			$this->metadata['default'] = $default;
 			$this->value = $default;
 		}
-		else if (!$this->metadata['nullable']) {
+		else if ( ! $this->metadata['nullable']) {
 			$default = '00:00:00';
 			$this->metadata['default'] = $default;
 			$this->value = $default;
@@ -81,8 +81,8 @@ abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected function validate($value) {
-		if (!is_null($value)) {
-			if (!preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
+		if ( ! is_null($value)) {
+			if ( ! preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
 				return FALSE;
 			}
 		}

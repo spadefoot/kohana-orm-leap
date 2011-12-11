@@ -126,7 +126,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->where('TABLE_TYPE', '=', 'BASE TABLE')
 			->order_by(DB::expr('LOWER([TABLE_NAME])'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 
@@ -155,7 +155,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->where('TABLE_TYPE', '=', 'VIEW')
 			->order_by(DB::expr('LOWER([TABLE_NAME])'));
 
-		if (!empty($like)) {
+		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 

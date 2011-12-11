@@ -109,7 +109,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 		switch ($key) {
 			case 'data':
 			case 'value':
-				if (!is_null($value)) {
+				if ( ! is_null($value)) {
 					settype($value, $this->metadata['type']);
 					$this->validate($value);
 					$this->value = $value;
@@ -120,7 +120,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 				$this->metadata['modified'] = TRUE;
 			break;
 			case 'modified':
-				$this->metadata['modified'] = (boolean)$value;
+				$this->metadata['modified'] = (bool) $value;
 			break;
 			default:
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
