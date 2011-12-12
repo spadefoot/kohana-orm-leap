@@ -17,11 +17,11 @@
  */
 
 /**
- * This class handles a standard PostgreSQL connection.
+ * This class handles a standard Firebird connection.
  *
  * @package Leap
- * @category PostgreSQL
- * @version 2011-12-06
+ * @category Firebird
+ * @version 2011-12-11
  */
-class DB_PostgreSQL_Connection_Std extends Base_DB_PostgreSQL_Connection_Std {}
+class DB_Firebird_Connection_Standard extends Base_DB_Firebird_Connection_Standard {}
 ?>

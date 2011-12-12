@@ -17,13 +17,11 @@
  */
 
 /**
- * This class handles a standard connection.
+ * This class handles a standard MariaDB connection.
  *
  * @package Leap
- * @category SQL
- * @version 2011-06-20
- *
- * @abstract
+ * @category MariaDB
+ * @version 2011-12-11
  */
-abstract class Base_DB_SQL_Connection_Std extends DB_Connection {}
+class DB_MariaDB_Connection_Standard extends Base_DB_MariaDB_Connection_Standard {}
 ?>

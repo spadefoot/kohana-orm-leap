@@ -17,11 +17,11 @@
  */
 
 /**
- * This class handles a standard MySQL connection.
+ * This class handles an imporved MySQL connection.
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-06
+ * @version 2011-12-11
  */
-class DB_MySQL_Connection_Std extends Base_DB_MySQL_Connection_Std {}
+class DB_MySQL_Connection_Improved extends Base_DB_MySQL_Connection_Improved {}
 ?>

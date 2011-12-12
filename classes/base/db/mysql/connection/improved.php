@@ -17,41 +17,31 @@
  */
 
 /**
- * This class handles a standard PostgreSQL connection.
+ * This class handles an improved MySQL connection.
  *
  * @package Leap
- * @category PostgreSQL
- * @version 2011-06-20
+ * @category MySQL
+ * @version 2011-12-11
  *
- * @see http://php.net/manual/en/ref.pgsql.php
+ * @see http://www.php.net/manual/en/book.mysqli.php
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
+abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Standard {
 
 	/**
 	 * This function allows for the ability to open a connection using
 	 * the configurations provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception         indicates that there is problem with
-	 *                                           the database connection
-	 * 
-	 * @see http://www.php.net/manual/en/function.pg-connect.php
+	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 *                                          the database connection
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string  = 'host=' . $this->data_source->get_host_server();
-			$port = $this->data_source->get_port();
-			if ( ! empty($port)) {
-				$connection_string .= ' port=' . $port;
-			}
-			$connection_string .= ' dbname=' . $this->data_source->get_database();
-			$connection_string .= ' user=' . $this->data_source->get_username();
-			$connection_string .= ' password=' . $this->data_source->get_password();
-			$this->link_id = @pg_connect($connection_string);
+		    $this->link_id = mysqli_connect($this->data_source->get_host_server(), $this->data_source->get_username(), $this->data_source->get_password(), $this->data_source->get_database());
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . pg_last_error();
+				$this->error = 'Message: Failed to establish connection. Reason: ' . mysqli_connect_error();
 				throw new Kohana_Database_Exception($this->error, array());
 			}
 		}
@@ -63,10 +53,18 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 *
-	 * @see http://www.postgresql.org/docs/8.3/static/sql-start-transaction.html
+	 * @see http://www.php.net/manual/en/mysqli.autocommit.php
 	 */
 	public function begin_transaction() {
-		$this->execute('START TRANSACTION;');
+		if ( ! $this->is_connected()) {
+			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'START TRANSACTION;'));
+		}
+		$resource_id = @mysqli_autocommit($this->link_id, FALSE);
+		if ($resource_id === FALSE) {
+			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . mysqli_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'START TRANSACTION;'));
+		}
 	}
 
 	/**
@@ -78,54 +76,49 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-query.php
-	 * @see http://www.php.net/manual/en/function.pg-last-error.php
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
-		$resource_id = @pg_query($this->link_id, $sql);
+		$resource_id = @mysqli_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . pg_last_error($this->link_id);
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mysqli_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
 		$records = array();
 		$size = 0;
-		while ($record = pg_fetch_assoc($resource_id)) {
+		while ($record = mysqli_fetch_assoc($resource_id)) {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		@pg_free_result($resource_id);
+		@mysqli_free_result($resource_id);
 		$result_set = new DB_ResultSet($records, $size);
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	* This function allows for the ability to process a query that will not return
-	* data using the passed string.
-	*
-	* @access public
-	* @param string $sql						the SQL statement
-	* @throws Kohana_SQL_Exception              indicates that the executed statement failed
-	*
-	* @see http://www.php.net/manual/en/function.pg-insert.php
-	*/
+	 * This function allows for the ability to process a query that will not return
+	 * data using the passed string.
+	 *
+	 * @access public
+	 * @param string $sql						the SQL statement
+	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-		$resource_id = @pg_query($this->link_id, $sql);
+		$resource_id = @mysqli_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . pg_last_error($this->link_id);
+			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . mysqli_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
 		$this->sql = $sql;
-		@pg_free_result($resource_id);
+		@mysqli_free_result($resource_id);
 	}
 
 	/**
@@ -134,13 +127,11 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * @access public
 	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
 	 */
 	public function get_last_insert_id() {
-		$insert_id = pg_last_oid($this->link_id);
+		$insert_id = @mysqli_insert_id($this->link_id);
 		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . pg_last_error($this->link_id);
+			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . mysqli_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
 		}
 		return $insert_id;
@@ -151,9 +142,20 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/mysqli.rollback.php
 	 */
 	public function rollback() {
-		$this->execute('ROLLBACK;');
+		if ( ! $this->is_connected()) {
+			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+		}
+		$resource_id = @mysqli_rollback($this->link_id);
+		if ($resource_id === FALSE) {
+			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . mysqli_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+		}
+		@mysqli_autocommit($this->link_id, TRUE);
 	}
 
 	/**
@@ -161,22 +163,31 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/mysqli.commit.php
 	 */
 	public function commit() {
-		$this->execute('COMMIT;');
+		if ( ! $this->is_connected()) {
+			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
+		}
+		$resource_id = @mysqli_commit($this->link_id);
+		if ($resource_id === FALSE) {
+			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . mysqli_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
+		}
+		@mysqli_autocommit($this->link_id, TRUE);
 	}
 
 	/**
 	 * This function allows for the ability to close the connection that was opened.
 	 *
 	 * @access public
-	 * @return boolean                           whether an open connection was closed
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-close.php
+	 * @return boolean                          whether an open connection was closed
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@pg_close($this->link_id)) {
+			if (@mysqli_close($this->link_id)) {
 				$this->link_id = NULL;
 				return TRUE;
 			}
@@ -189,12 +200,10 @@ abstract class Base_DB_PostgreSQL_Connection_Std extends DB_SQL_Connection_Std {
 	 * This destructor will ensure that the connection is closed.
 	 *
 	 * @access public
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-close.php
 	 */
 	public function __destruct() {
 		if (is_resource($this->link_id)) {
-			@pg_close($this->link_id);
+			@mysqli_close($this->link_id);
 		}
 	}
 

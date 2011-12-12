@@ -14,7 +14,7 @@ of this project was to create an ORM for Kohana that works with any major databa
 
 Another goal of this project was to make the LEAP ORM a true Kohana module so that it could be just dropped into the Kohana's modules folder and
 work.  Even though ORMs like [Doctrine](http://www.doctrine-project.org/projects/orm) could be adapted for Kohana, doing so requires a lot of work
-to work correctly.  Besides, Doctrine is now so blotted and old that it really needs to be refactored.
+to function correctly.  Besides, Doctrine is now so bloated and old that it really needs to be refactored.
 
 A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. [Kohana's
 official ORM](https://github.com/kohana/orm), [Jelly](https://github.com/creatoro/jelly), and [Sprig](https://github.com/sittercity/sprig/)) cannot
@@ -27,7 +27,7 @@ LEAP provides a number of features, such as:
 * Plugins for DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
 * Designed to work in conjunction with other database tools for Kohana.
 * Config file for designating the database driver (e.g. PDO) and connection strings.
-* Classes are easily extendible.
+* Classes are easily extensible.
 * A database connection pool for managing resources.
 * A powerful query builder for creating SQL statements.
 * Sanitizes data to help prevent SQL injection attacks.
@@ -51,7 +51,7 @@ To start using LEAP, follow these steps:
 
 ## Required Files
 
-The LEAP ORM module is meant to be completely independent of other Kohana modules.  However, it is recommended that Kohana's database module is
+The LEAP ORM module is meant to be completely independent of other Kohana modules.  However, it is recommended that Kohana's database module be
 installed as well so that you can utilize the Database_Expression class.  As for the files within LEAP, you can remove any database plugins that
 you are not using.  This is possible because each database plugin in LEAP is considered independent of the others.
 
@@ -71,13 +71,13 @@ You can also send an email to spadefoot.oss@gmail.com.
 If you find a bug in the code or if you would like to make a recommendation, we would be happy to hear from you.  Here are three methods you can
 use to submit bugs:
 
-* Log an issue in this project's issue tracker.
+* Log an issue in this project's [issue tracker](https://github.com/spadefoot/kohana-orm-leap/issues?sort=comments&direction=desc&state=open).
 * Create a fork of this project and submit a [pull request](http://help.github.com/send-pull-requests/).
 * Send an email to spadefoot.oss@gmail.com.
 
 ## Known Issues
 
-Please see this project's issue tracker on github for any known issues.
+Please see this project's [issue tracker](https://github.com/spadefoot/kohana-orm-leap/issues?sort=comments&direction=desc&state=open) on github for any known issues.
 
 ## Updates
 

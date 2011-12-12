@@ -17,11 +17,11 @@
  */
 
 /**
- * This class handles a standard DB2 connection.
+ * This class handles a standard PostgreSQL connection.
  *
  * @package Leap
- * @category DB2
+ * @category PostgreSQL
  * @version 2011-12-11
  */
-class DB_DB2_Connection_Std extends Base_DB_DB2_Connection_Std {}
+class DB_PostgreSQL_Connection_Standard extends Base_DB_PostgreSQL_Connection_Standard {}
 ?>

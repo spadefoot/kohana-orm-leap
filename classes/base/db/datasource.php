@@ -88,7 +88,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 * @return string                               the database driver to be used
 	 */
 	public function get_driver() {
-		return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'std';
+		return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'standard';
 	}
 
 	/**

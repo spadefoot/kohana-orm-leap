@@ -17,11 +17,11 @@
  */
 
 /**
- * This class handles a standard Firebird connection.
+ * This class handles a standard MS SQL connection.
  *
  * @package Leap
- * @category Firebird
- * @version 2011-12-06
+ * @category MS SQL
+ * @version 2011-12-11
  */
-class DB_Firebird_Connection_Std extends Base_DB_Firebird_Connection_Std {}
+class DB_MsSQL_Connection_Standard extends Base_DB_MsSQL_Connection_Standard {}
 ?>

@@ -32,8 +32,8 @@ class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function provider_constructor() {
 		return array(
-			array(array(NULL), '', 'std', 'localhost', 'default', '', '', 'mysql', '', FALSE),
-			array(array('default'), '', 'std', 'localhost', 'default', '', '', 'mysql', '', FALSE),
+			array(array(NULL), '', 'standard', 'localhost', 'default', '', '', 'mysql', '', FALSE),
+			array(array('default'), '', 'standard', 'localhost', 'default', '', '', 'mysql', '', FALSE),
 		);
 	}
 

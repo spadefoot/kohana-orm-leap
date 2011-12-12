@@ -9,6 +9,8 @@ Changelog for LEAP ORM
 	- Replaced all { } with {}.
 	- Standandized type casts.
 	- Added space around !.
+* Changed connection classes from std to standard.
+* Added MySQLi driver classes.
 * Updated README.md.
 
 2011-12-10

@@ -4,7 +4,7 @@ $config = array();
 
 $config['default'] = array(
     'type'          => 'mysql',     // string (e.g. db2, firebird, mariadb, mssql, mysql, oracle, postgresql, or sqlite)
-    'driver'        => 'std',       // string (e.g. std or pdo)
+    'driver'        => 'standard',  // string (e.g. standard, improved, or pdo)
     'connection'    => array(
         'persistent'    => FALSE,       // boolean
         'hostname'      => 'localhost', // string

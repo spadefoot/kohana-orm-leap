@@ -17,17 +17,17 @@
  */
 
 /**
- * This class handles a standard MariaDB connection.
+ * This class handles a standard SQLite connection.
  *
  * @package Leap
- * @category MariaDB
- * @version 2011-11-20
+ * @category SQLite
+ * @version 2011-12-11
  *
- * @see http://www.php.net/manual/en/book.mysql.php
+ * @see http://www.php.net/manual/en/ref.sqlite.php
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
+abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
 	 * This function allows for the ability to open a connection using
@@ -39,14 +39,10 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$this->link_id = @mysql_connect($this->data_source->get_host_server(), $this->data_source->get_username(), $this->data_source->get_password());
+			$sqlite_error = NULL;
+		    $this->link_id = @sqlite_open($this->data_source->get_database(), 0666, $sqlite_error);
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . mysql_error();
-				throw new Kohana_Database_Exception($this->error, array());
-			}
-			$database = @mysql_select_db($this->data_source->get_database(), $this->link_id);
-			if ($database === FALSE) {
-				$this->error = 'Message: Failed to connect to database. Reason: ' . mysql_error($this->link_id);
+		        $this->error = 'Message: Failed to establish connection. Reason: ' . $sqlite_error;
 				throw new Kohana_Database_Exception($this->error, array());
 			}
 		}
@@ -58,11 +54,11 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
-	 * @see http://php.net/manual/en/function.mysql-query.php
+	 * @see http://www.sqlite.org/lang_transaction.html
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
 	 */
 	public function begin_transaction() {
-		$this->execute('START TRANSACTION;');
+		$this->execute('BEGIN IMMEDIATE TRANSACTION;');
 	}
 
 	/**
@@ -71,31 +67,31 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
+     * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-		}
-		$resource_id = @mysql_query($sql, $this->link_id);
-		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mysql_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-		}
+        if ( ! $this->is_connected()) {
+            $this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
+            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+        }
+        $resource_id = @sqlite_query($this->link_id, $sql);
+        if ($resource_id === FALSE) {
+            $this->error = 'Message: Failed to query SQL statement. Reason: ' . sqlite_error_string(sqlite_last_error($this->link_id));
+            throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+        }
 		$records = array();
 		$size = 0;
-		while ($record = mysql_fetch_assoc($resource_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($record = sqlite_fetch_array($resource_id, SQLITE_ASSOC)) {
+            $records[] = DB_Connection::type_cast($type, $record);
 			$size++;
-		}
-		@mysql_free_result($resource_id);
+    	}
+    	$resource_id = NULL;
 		$result_set = new DB_ResultSet($records, $size);
-		$this->sql = $sql;
+        $this->sql = $sql;
 		return $result_set;
-	}
+    }
 
 	/**
 	 * This function allows for the ability to process a query that will not return
@@ -107,33 +103,33 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
+		    $this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-		$resource_id = @mysql_query($sql, $this->link_id);
+		$sqlite_error = NULL;
+		$resource_id = @sqlite_exec($this->link_id, $sql, $sqlite_error);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . mysql_error($this->link_id);
+		    $this->error = 'Message: Failed to execute SQL statement. Reason: ' . $sqlite_error;
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-		$this->sql = $sql;
-		@mysql_free_result($resource_id);
+        $this->sql = $sql;
 	}
 
-	/**
-	 * This function returns the last insert id.
-	 *
-	 * @access public
-	 * @return integer                          the last insert id
+    /**
+     * This function returns the last insert id.
+     *
+     * @access public
+     * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
-	 */
-	public function get_last_insert_id() {
-		$insert_id = @mysql_insert_id($this->link_id);
-		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . mysql_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
-		}
-		return $insert_id;
-	}
+     */
+    public function get_last_insert_id() {
+        $insert_id = @sqlite_last_insert_rowid($this->link_id);
+        if ($insert_id === FALSE) {
+            $this->error = 'Message: Failed to fetch the last insert id. Reason: ' . sqlite_error_string(sqlite_last_error($this->link_id));
+            throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+        }
+        return $insert_id;
+    }
 
 	/**
 	 * This function rollbacks a transaction.
@@ -141,10 +137,11 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 *
-	 * @see http://php.net/manual/en/function.mysql-query.php
+	 * @see http://www.sqlite.org/lang_transaction.html
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
 	 */
 	public function rollback() {
-		$this->execute('ROLLBACK;');
+		$this->execute('ROLLBACK TRANSACTION;');
 	}
 
 	/**
@@ -153,11 +150,11 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
-	 * @see http://php.net/manual/en/function.mysql-query.php
+	 * @see http://www.sqlite.org/lang_transaction.html
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
 	 */
 	public function commit() {
-		$this->execute('COMMIT;');
+		$this->execute('COMMIT TRANSACTION;');
 	}
 
 	/**
@@ -168,7 +165,7 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@mysql_close($this->link_id)) {
+			if (@sqlite_close($this->link_id)) {
 				$this->link_id = NULL;
 				return TRUE;
 			}
@@ -177,16 +174,16 @@ abstract class Base_DB_MariaDB_Connection_Std extends DB_SQL_Connection_Std {
 		return TRUE;
 	}
 
-	/**
-	 * This destructor will ensure that the connection is closed.
-	 *
-	 * @access public
-	 */
-	public function __destruct() {
-		if (is_resource($this->link_id)) {
-			@mysql_close($this->link_id);
-		}
-	}
+    /**
+     * This destructor will ensure that the connection is closed.
+     *
+     * @access public
+     */
+    public function __destruct() {
+        if (is_resource($this->link_id)) {
+            @sqlite_close($this->link_id);
+        }
+    }
 
 }
 ?>

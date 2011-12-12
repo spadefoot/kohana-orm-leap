@@ -21,9 +21,9 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-20
+ * @version 2011-12-11
  *
  * @abstract
  */
-abstract class DB_SQL_Connection_Std extends Base_DB_SQL_Connection_Std {}
+abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {}
 ?>

@@ -17,11 +17,11 @@
  */
 
 /**
- * This class handles a standard Oracle connection.
+ * This class handles a standard SQLite connection.
  *
  * @package Leap
- * @category Oracle
- * @version 2011-06-20
+ * @category SQLite
+ * @version 2011-12-11
  */
-class DB_Oracle_Connection_Std extends Base_DB_Oracle_Connection_Std {}
+class DB_SQLite_Connection_Standard extends Base_DB_SQLite_Connection_Standard {}
 ?>

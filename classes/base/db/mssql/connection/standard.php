@@ -21,13 +21,13 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-12-04
+ * @version 2011-12-11
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Connection_Std extends DB_SQL_Connection_Std {
+abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
 	 * This function allows for the ability to open a connection using

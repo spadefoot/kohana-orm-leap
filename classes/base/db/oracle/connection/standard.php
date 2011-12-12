@@ -21,13 +21,13 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-04
+ * @version 2011-12-11
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Connection_Std extends DB_SQL_Connection_Std {
+abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
 	 * This variable stores the execution mode, which is used to handle transactions.

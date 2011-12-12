@@ -17,17 +17,30 @@
  */
 
 /**
- * This class handles a standard DB2 connection.
+ * This class handles a standard Firebird connection.
+ *
+ * Firebird installation instruction:
+ *
+ *     	To install interbase (aka ibase) copy C:\Program Files\FishBowl\Client\bin\fbclient.dll
+ *		into "C:\WINDOWS\system32\" and rename file to gds32.dll.
+ *
+ *     	Edit C:\WINDOWS\system32\drivers\etc\services by appending to the end the following:
+ *     	gds_db           3050/tcp    fb                     #Firebird
+ *
+ *     	Restart either Apache or the computer
  *
  * @package Leap
- * @category DB2
- * @version 2011-06-20
+ * @category Firebird
+ * @version 2011-12-11
  *
- * @see http://php.net/manual/en/ref.ibm-db2.php
+ * @see http://us3.php.net/manual/en/book.ibase.php
+ * @see http://us2.php.net/manual/en/ibase.installation.php
+ * @see http://www.firebirdfaq.org/faq227/
+ * @see http://www.firebirdfaq.org/cat3/
  *
  * @abstract
  */
-abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
+abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
 	 * This function allows for the ability to open a connection using
@@ -36,22 +49,20 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
 	 *                                          the database connection
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-connect.php
-	 * @see http://www.php.net/manual/en/function.db2-conn-error.php
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string  = 'DRIVER={IBM DB2 ODBC DRIVER};';
-			$connection_string .= 'DATABASE=' . $this->data_source->get_database() . ';';
-			$connection_string .= 'HOSTNAME=' . $this->data_source->get_host_server() . ';';
-			$connection_string .= 'PORT=' . $this->data_source->get_port() . ';';
-			$connection_string .= 'PROTOCOL=TCPIP;';
-			$connection_string .= 'UID=' . $this->data_source->get_username() . ';';
-			$connection_string .= 'PWD=' . $this->data_source->get_password() . ';';
-			$this->link_id = @db2_connect($connection_string, '', '');
+			$connection_string = $this->data_source->get_host_server();
+			if ( ! preg_match('/^localhost$/i', $connection_string)) {
+				$port = $this->data_source->get_port();
+				if ( ! empty($port)) {
+					$connection_string .= '/' . $port;
+				}
+			}
+			$connection_string .= ':' . $this->data_source->get_database();
+			$this->link_id = @ibase_connect($connection_string, $this->data_source->get_username(), $this->data_source->get_password());
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . db2_conn_error();
+				$this->error = 'Message: Failed to establish connection. Reason: ' . ibase_errmsg();
 				throw new Kohana_Database_Exception($this->error, array());
 			}
 		}
@@ -62,17 +73,15 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-autocommit.php
 	 */
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
-		$resource_id = @db2_autocommit($this->link_id, DB2_AUTOCOMMIT_OFF);
+		$resource_id = @ibase_trans($this->link_id, IBASE_READ | IBASE_WRITE);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . db2_conn_error($this->link_id);
+			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . ibase_errmsg();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
 		}
 	}
@@ -83,33 +92,27 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
+	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-prepare.php
-	 * @see http://www.php.net/manual/en/function.db2-execute.php
-	 * @see http://www.php.net/manual/en/function.db2-stmt-error.php
-	 * @see http://www.php.net/manual/en/function.db2-fetch-assoc.php
-	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
-		$resource_id = @db2_prepare($this->link_id, $sql);
-		if (($resource_id === FALSE) || !db2_execute($resource_id)) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);
+		$resource_id = @ibase_query($this->link_id, $sql);
+		if ($resource_id === FALSE) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . ibase_errmsg();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
 		$records = array();
 		$size = 0;
-		while ($record = db2_fetch_assoc($resource_id)) {
+		while ($record = ibase_fetch_assoc($resource_id)) {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		@db2_free_result($resource_id);
+		@ibase_free_result($resource_id);
 		$result_set = new DB_ResultSet($records, $size);
 		$this->sql = $sql;
 		return $result_set;
@@ -121,23 +124,20 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Kohana_SQL_Exception              indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-exec.php
-	 * @see http://www.php.net/manual/en/function.db2-free-result.php
+	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-		$resource_id = @db2_exec($this->link_id, $sql);
+		$stmt = ibase_prepare($this->link_id, $sql);
+		$resource_id = @ibase_execute($stmt);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . db2_stmt_error($resource_id);
+			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . ibase_errmsg();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
 		$this->sql = $sql;
-		@db2_free_result($resource_id);
 	}
 
 	/**
@@ -147,16 +147,24 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
-	 * @see http://www.php.net/manual/en/function.db2-last-insert-id.php
+	 * @see http://www.firebirdfaq.org/faq243/
 	 */
 	public function get_last_insert_id() {
-		$insert_id = @db2_last_insert_id($this->link_id);
-		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . db2_conn_error($this->link_id);
+		try {
+			$sql = $this->sql;
+			if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
+				$table = Arr::get($matches, 1);
+				$result = $this->query("SELECT ID FROM {$table} ORDER BY ID DESC ROWS 1;");
+				$insert_id = ($result->is_loaded()) ? ( (int)  Arr::get($result->fetch(0), 'ID')) : 0;
+				$this->sql = $sql;
+				return $insert_id;
+			}
+			return 0;
+		}
+		catch (Exception $ex) {
+			$this->error = preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage());
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
 		}
-		settype($insert_id, 'integer');
-		return $insert_id;
 	}
 
 	/**
@@ -164,20 +172,17 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-rollback.php
 	 */
 	public function rollback() {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
-		$resource_id = @db2_rollback($this->link_id);
+		$resource_id = @ibase_rollback($this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . db2_conn_error($this->link_id);
+			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . ibase_errmsg();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
 		}
-		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
 	}
 
 	/**
@@ -185,20 +190,17 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-commit.php
 	 */
 	public function commit() {
 		if ( ! $this->is_connected()) {
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
-		$resource_id = @db2_commit($this->link_id);
+		$resource_id = @ibase_commit($this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . db2_conn_error($this->link_id);
+			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . ibase_errmsg();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
-		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
 	}
 
 	/**
@@ -206,12 +208,10 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 *
 	 * @access public
 	 * @return boolean                          whether an open connection was closed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-close.php
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@db2_close($this->link_id)) {
+			if (@ibase_close($this->link_id)) {
 				$this->link_id = NULL;
 				return TRUE;
 			}
@@ -224,12 +224,10 @@ abstract class Base_DB_DB2_Connection_Std extends DB_SQL_Connection_Std {
 	 * This destructor will ensure that the connection is closed.
 	 *
 	 * @access public
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-close.php
 	 */
 	public function __destruct() {
 		if (is_resource($this->link_id)) {
-			@db2_close($this->link_id);
+			@ibase_close($this->link_id);
 		}
 	}
 
