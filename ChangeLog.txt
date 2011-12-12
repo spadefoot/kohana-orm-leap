@@ -1,7 +1,9 @@
 Changelog for LEAP ORM
 
 2011-12-12
-* Addressed the loading of field schema over and over again with class serialization in DB_Connection (Issue #1).
+* Addressed the loading of field schema over and over again with class serialization in DB_Connection per Crystal's request (Issue #1).
+* Added MySQLi driver classes for MariaDB.
+* Changed $cached_types to $cached_objects in Base_DB_Connection.
 
 2011-12-11
 * Removed is_null in Base_DB_DataSource::__construct().
@@ -13,7 +15,7 @@ Changelog for LEAP ORM
 	- Standandized type casts.
 	- Added space around !.
 * Changed connection classes from std to standard.
-* Added MySQLi driver classes.
+* Added MySQLi driver classes for MySQL.
 * Updated README.md.
 
 2011-12-10

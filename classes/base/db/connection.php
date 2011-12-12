@@ -203,7 +203,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access protected
 	 * @var array
 	 */
-	protected static $cached_types = array();
+	protected static $cached_objects = array();
 
 	/**
 	 * This function returns a connection to the appropriate database based
@@ -243,12 +243,12 @@ abstract class Base_DB_Connection extends Kohana_Object {
 				return (object) $record;
 			break;
 			default:
-				if ( ! isset(self::$cached_types[$type])) {
+				if ( ! isset(self::$cached_objects[$type])) {
 					$object = new $type();
-					self::$cached_types[$type] = serialize($object);
+					self::$cached_objects[$type] = serialize($object);
 				}
 				else {
-					$object = unserialize( (string) self::$cached_types[$type]);
+					$object = unserialize( (string) self::$cached_objects[$type]);
 				}
 				foreach ($record as $key => $value) {
 					$object->{$key} = $value;
