@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-08
+ * @version 2011-12-12
  *
  * @abstract
  */
@@ -87,14 +87,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
-		if ($this->is_adaptor($name)) {
-			return $this->adaptors[$name]->value;
+		if ($this->is_field($name)) {
+			return $this->fields[$name]->value;
 		}
 		else if ($this->is_alias($name)) {
 			return $this->aliases[$name]->value;
 		}
-		else if ($this->is_field($name)) {
-			return $this->fields[$name]->value;
+		else if ($this->is_adaptor($name)) {
+			return $this->adaptors[$name]->value;
 		}
 		else if ($this->is_relation($name)) {
 			return $this->relations[$name]->result;
@@ -114,15 +114,15 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($name, $value) {
-		if ($this->is_adaptor($name)) {
-			$this->adaptors[$name]->value = $value;
+		if ($this->is_field($name)) {
+			$this->fields[$name]->value = $value;
+			$this->metadata['loaded'] = TRUE;
 		}
 		else if ($this->is_alias($name)) {
 			$this->aliases[$name]->value = $value;
 		}
-		else if ($this->is_field($name)) {
-			$this->fields[$name]->value = $value;
-			$this->metadata['loaded'] = TRUE;
+		else if ($this->is_adaptor($name)) {
+			$this->adaptors[$name]->value = $value;
 		}
 		else {
 			throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name, ':value' => $value));

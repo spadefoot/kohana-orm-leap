@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-09
+ * @version 2011-12-12
  *
  * @abstract
  */
@@ -194,15 +194,26 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public abstract function __destruct();
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
-	* This function returns a connection to the appropriate database based
-	* on the specified configurations.
-	*
-	* @access public
-	* @static
-	* @param mixed $config                      the data source configurations
-	* @return DB_Connection                     the database connection
-	*/
+	 * This variable stores an array of serialized class objects, which is
+	 * used when type casting a result set.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected static $cached_types = array();
+
+	/**
+	 * This function returns a connection to the appropriate database based
+	 * on the specified configurations.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                     the data source configurations
+	 * @return DB_Connection                    the database connection
+	 */
 	public static function factory($config = array()) {
 		$source = new DB_DataSource($config);
 		$dialect = $source->get_resource_type();
@@ -229,10 +240,16 @@ abstract class Base_DB_Connection extends Kohana_Object {
 				return $record;
 			break;
 			case 'object':
-				return (object)$record;
+				return (object) $record;
 			break;
 			default:
-				$object = new $type();
+				if ( ! isset(self::$cached_types[$type])) {
+					$object = new $type();
+					self::$cached_types[$type] = serialize($object);
+				}
+				else {
+					$object = unserialize( (string) self::$cached_types[$type]);
+				}
 				foreach ($record as $key => $value) {
 					$object->{$key} = $value;
 				}

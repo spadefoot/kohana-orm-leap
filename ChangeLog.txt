@@ -1,5 +1,8 @@
 Changelog for LEAP ORM
 
+2011-12-12
+* Addressed the loading of field schema over and over again with class serialization in DB_Connection (Issue #1).
+
 2011-12-11
 * Removed is_null in Base_DB_DataSource::__construct().
 * Added unit test for DB_DataSource.
