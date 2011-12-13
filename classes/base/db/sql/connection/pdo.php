@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2011-11-27
+ * @version 2011-12-13
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -180,6 +180,17 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . $ex->getMessage();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		return $this->connection->quote($string);
 	}
 
 	/**

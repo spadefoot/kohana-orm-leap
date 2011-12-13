@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-11-07
+ * @version 2011-12-12
  *
  * @abstract
  */
@@ -53,15 +53,15 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	protected $data = NULL;
 
 	/**
-	 * This constructor instantiates this class using the specified dialect.
+	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param string $dialect 					the SQL statement to be used
+	 * @param DB_DataSource $source             the data source to be used
 	 */
-	public function __construct($dialect) {
-		$this->dialect = $dialect;
-		$helper = 'DB_' . $dialect . '_Expression';
-		$this->helper = new $helper();
+	public function __construct(DB_DataSource $source) {
+		$this->dialect = $source->get_resource_type();
+		$helper = 'DB_' . $this->dialect . '_Expression';
+		$this->helper = new $helper($source);
 		$this->data = array();
 		$this->data['table'] = NULL;
 		$this->data['column'] = array();

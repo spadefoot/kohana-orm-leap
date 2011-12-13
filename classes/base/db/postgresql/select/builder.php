@@ -21,23 +21,13 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-15
+ * @version 2011-12-12
  *
  * @see http://www.postgresql.org/docs/9.0/static/sql-select.html
  *
  * @abstract
  */
 abstract class Base_DB_PostgreSQL_Select_Builder extends DB_SQL_Select_Builder {
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 * @param array $columns                the columns to be selected
-	 */
-	public function __construct(Array $columns = array()) {
-		parent::__construct('PostgreSQL', $columns);
-	}
 
 	/**
 	 * This function returns the SQL statement.

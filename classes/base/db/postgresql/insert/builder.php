@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-11-18
+ * @version 2011-12-12
  *
  * @see http://www.postgresql.org/docs/8.3/interactive/sql-insert.html
  *
  * @abstract
  */
 abstract class Base_DB_PostgreSQL_Insert_Builder extends DB_SQL_Insert_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('PostgreSQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

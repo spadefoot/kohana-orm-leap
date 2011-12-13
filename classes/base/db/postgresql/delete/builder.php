@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-17
+ * @version 2011-12-12
  *
  * @see http://www.postgresql.org/docs/9.0/static/sql-delete.html
  * @see http://www.pgsql.cz/index.php/PostgreSQL_SQL_Tricks
@@ -31,15 +31,6 @@
  * @abstract
  */
 abstract class Base_DB_PostgreSQL_Delete_Builder extends DB_SQL_Delete_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('PostgreSQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @abstract
  */
@@ -176,6 +176,15 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
 	 */
 	public abstract function commit();
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public abstract function escape_string($string);
 
 	/**
 	 * This function allows for the ability to close the connection that was opened.

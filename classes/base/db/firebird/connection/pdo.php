@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-20
+ * @version 2011-12-12
  *
  * @see http://www.php.net/manual/en/ref.pdo-firebird.php
  *
@@ -62,6 +62,20 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			$this->link_id = DB_SQL_Connection_PDO::$counter++;
 		}
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		// TODO improve this escaping method
+		$unpacked = unpack('H*hex', $string);
+		$string = 'x\'' . $unpacked['hex'] . '\'';
+		return $string;
 	}
 
 }

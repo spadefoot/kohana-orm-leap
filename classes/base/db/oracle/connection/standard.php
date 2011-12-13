@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -214,6 +214,20 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . $oci_error['message'];
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		// TODO improve this escaping method
+		$unpacked = unpack('H*hex', $string);
+		$string = '0x' . $unpacked['hex'];
+		return $string;
 	}
 
 	/**

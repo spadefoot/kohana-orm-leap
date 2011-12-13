@@ -21,23 +21,13 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-06-18
+ * @version 2011-12-12
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
  * @abstract
  */
 abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 * @param array $columns                    the columns to be selected
-	 */
-	public function __construct(Array $columns = array()) {
-		parent::__construct('Oracle', $columns);
-	}
 
 	/**
 	 * This function combines another SQL statement using the specified operator.

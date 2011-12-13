@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-08
+ * @version 2011-12-12
  *
  * @abstract
  */
@@ -53,16 +53,16 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	protected $data = NULL;
 
 	/**
-	 * This constructor instantiates this class using the specified dialect.
+	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param string $dialect 					the SQL statement to be used
+	 * @param DB_DataSource $source             the data source to be used
 	 * @param array $columns                    the columns to be selected
 	 */
-	public function __construct($dialect, Array $columns) {
-		$this->dialect = $dialect;
-		$helper = 'DB_' . $dialect . '_Expression';
-		$this->helper = new $helper();
+	public function __construct(DB_DataSource $source, Array $columns = array()) {
+		$this->dialect = $source->get_resource_type();
+		$helper = 'DB_' . $this->dialect . '_Expression';
+		$this->helper = new $helper($source);
 		$this->data = array();
 		$this->data['distinct'] = FALSE;
 		$this->data['column'] = array();

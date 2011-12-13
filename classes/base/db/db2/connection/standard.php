@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -199,6 +199,19 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
 		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 *
+	 * @see http://www.php.net/manual/en/function.db2-escape-string.php
+	 */
+	public function escape_string($string) {
+		return "'" . db2_escape_string($string) . "'";
 	}
 
 	/**

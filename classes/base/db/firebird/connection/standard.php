@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -201,6 +201,20 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . ibase_errmsg();
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		// TODO improve this escaping method
+		$unpacked = unpack('H*hex', $string);
+		$string = 'x\'' . $unpacked['hex'] . '\'';
+		return $string;
 	}
 
 	/**

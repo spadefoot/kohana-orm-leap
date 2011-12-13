@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-03
+ * @version 2011-12-12
  *
  * @abstract
  */
@@ -54,7 +54,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	public function __construct($config, Array $columns = array()) {
 		$this->source = new DB_DataSource($config);
 		$builder = 'DB_' . $this->source->get_resource_type() . '_Select_Builder';
-		$this->builder = new $builder($columns);
+		$this->builder = new $builder($this->source, $columns);
 	}
 
 	/**

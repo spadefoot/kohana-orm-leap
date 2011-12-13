@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-17
+ * @version 2011-12-12
  *
  * @see http://www.postgresql.org/docs/8.2/interactive/sql-update.html
  *
  * @abstract
  */
 abstract class Base_DB_PostgreSQL_Update_Builder extends DB_SQL_Update_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('PostgreSQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

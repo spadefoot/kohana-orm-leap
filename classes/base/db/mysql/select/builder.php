@@ -21,23 +21,13 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-15
+ * @version 2011-12-12
  *
  * @see http://dev.mysql.com/doc/refman/5.0/en/select.html
  *
  * @abstract
  */
 abstract class Base_DB_MySQL_Select_Builder extends DB_SQL_Select_Builder {
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 * @param array $columns                    the columns to be selected
-	 */
-	public function __construct(Array $columns = array()) {
-		parent::__construct('MySQL', $columns);
-	}
 
 	/**
 	 * This function returns the SQL statement.

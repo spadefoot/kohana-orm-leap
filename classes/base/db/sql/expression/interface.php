@@ -21,11 +21,19 @@
  * 
  * @package Leap
  * @category SQL
- * @version 2011-06-08
+ * @version 2011-12-12
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
  */
 interface Base_DB_SQL_Expression_Interface {
+
+	/**
+	 * This function initializes the class with the specified data source.
+	 *
+	 * @access public
+	 * @param mixed $source                     the data source to be used
+	 */
+	public function __construct($source);
 
 	/**
 	* This function prepares the specified token as an alias.

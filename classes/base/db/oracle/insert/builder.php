@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-11-18
+ * @version 2011-12-12
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/appdev.101/b10807/13_elems025.htm
  *
  * @abstract
  */
 abstract class Base_DB_Oracle_Insert_Builder extends DB_SQL_Insert_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('Oracle');
-	}
 
 	/**
 	 * This function returns the SQL statement.

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -164,6 +164,19 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 *
+	 * @see http://www.php.net/manual/en/function.pg-escape-string.php
+	 */
+	public function escape_string($string) {
+		return "'" . pg_escape_string($this->link_id, $string) . "'";
 	}
 
 	/**

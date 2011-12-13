@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-18
+ * @version 2011-12-12
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000939.htm
  *
  * @abstract
  */
 abstract class Base_DB_DB2_Delete_Builder extends DB_SQL_Delete_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('DB2');
-	}
 
 	/**
 	 * This function returns the SQL statement.

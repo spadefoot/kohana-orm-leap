@@ -27,17 +27,17 @@
  */
 abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
-    /**
-     * This function returns a result set that contains an array of all fields in
-     * the specified database table/view.
-     *
-     * @access public
+	/**
+	 * This function returns a result set that contains an array of all fields in
+	 * the specified database table/view.
+	 *
+	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @param string $type                  a like constraint on the query
-     * @return array 						an array of fields within the specified
+	 * @param string $type                  a like constraint on the query
+	 * @return array 						an array of fields within the specified
 	 * 										table
-     */
+	 */
 	public function fields($table, $like = '') {
 		$table = $this->helper->prepare_value($table);
 		$regex = $this->like_to_regex($like);
@@ -45,7 +45,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$sql = "PRAGMA table_info({$table});";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql);
+		$records = $connection->query($sql);
 
 		$fields = array();
 		foreach ($records as $record) {
@@ -58,8 +58,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 				$field['type'] = $type;
 				$field['primary_key'] = ($record['pk'] == 1);
 				if ($field['primary_key']) {
-			    	$field['attributes']['auto_incremented'] = ($record['Extra'] == 'auto_increment');
-		    	}
+					$field['attributes']['auto_incremented'] = ($record['Extra'] == 'auto_increment');
+				}
 				$field['nullable'] = ($record['notnull'] == 1);
 				$field['default'] = $record['dflt_value'];
 
@@ -112,7 +112,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-     * @return array 						an array of indexes from the specified
+	 * @return array 						an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://stackoverflow.com/questions/157392/how-do-i-find-out-if-a-sqlite-index-is-unique-with-sql
@@ -121,19 +121,19 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$sql = "PRAGMA INDEX_LIST('" . $table . "');";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    /**
-     * This function returns a result set that contains an array of all tables within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of tables within the database
-     */
+	/**
+	 * This function returns a result set that contains an array of all tables within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of tables within the database
+	 */
 	public function tables($like = '') {
 		$sql = "SELECT [tbl_name] AS [name] FROM [sqlite_master] WHERE [type] = 'table' AND [tbl_name] NOT IN ('sqlite_sequence')";
 
@@ -146,34 +146,34 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$sql .= ';';
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-    	$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->fetch_all();
 
 		return $records;
 	}
 
-    /**
-     * This function returns a result set that contains an array of all views within
-     * the database.
-     *
-     * @access public
-     * @param string $like                  a like constraint on the query
-     * @return array 						an array of views within the database
-     */
+	/**
+	 * This function returns a result set that contains an array of all views within
+	 * the database.
+	 *
+	 * @access public
+	 * @param string $like                  a like constraint on the query
+	 * @return array 						an array of views within the database
+	 */
 	public function views($like = '') {
 		return array();
 	}
 
-    ///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
 
-    /**
-     * This function returns an associated array which describes the properties
-     * for the specified SQL data type.
-     *
-     * @access protected
-     * @param string $type                   the SQL data type
-     * @return array                         an associated array which describes the properties
-     *                                       for the specified data type
-     */
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 */
 	protected function data_type($type) {
 
 	}

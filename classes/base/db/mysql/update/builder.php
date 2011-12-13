@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-15
+ * @version 2011-12-12
  *
  * @see http://dev.mysql.com/doc/refman/5.0/en/update.html
  *
  * @abstract
  */
 abstract class Base_DB_MySQL_Update_Builder extends DB_SQL_Update_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('MySQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

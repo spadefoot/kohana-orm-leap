@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-06-15
+ * @version 2011-12-12
  *
  * @see http://msdn.microsoft.com/en-us/library/ms189835.aspx
  *
  * @abstract
  */
 abstract class Base_DB_MsSQL_Delete_Builder extends DB_SQL_Delete_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('MsSQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

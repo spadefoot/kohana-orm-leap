@@ -21,23 +21,13 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-11-20
+ * @version 2011-12-12
  *
  * @see http://dev.mysql.com/doc/refman/5.0/en/select.html
  *
  * @abstract
  */
 abstract class Base_DB_MariaDB_Select_Builder extends DB_SQL_Select_Builder {
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 * @param array $columns                    the columns to be selected
-	 */
-	public function __construct(Array $columns = array()) {
-		parent::__construct('MariaDB', $columns);
-	}
 
 	/**
 	 * This function returns the SQL statement.

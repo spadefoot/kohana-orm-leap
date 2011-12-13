@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-06-15
+ * @version 2011-12-12
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-delete.html
  *
  * @abstract
  */
 abstract class Base_DB_Firebird_Delete_Builder extends DB_SQL_Delete_Builder {
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('Firebird');
-	}
 
 	/**
 	 * This function returns the SQL statement.

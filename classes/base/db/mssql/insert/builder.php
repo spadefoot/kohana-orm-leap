@@ -21,20 +21,11 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-11-18
+ * @version 2011-12-12
  *
  * @see http://msdn.microsoft.com/en-us/library/aa933206%28v=sql.80%29.aspx
  */
 abstract class Base_DB_MsSQL_Insert_Builder extends DB_SQL_Insert_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('MsSQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

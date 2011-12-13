@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-18
+ * @version 2011-12-12
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
@@ -29,16 +29,6 @@
  * @abstract
  */
 abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 * @param array $columns                    the columns to be selected
-	 */
-	public function __construct(Array $columns = array()) {
-		parent::__construct('DB2', $columns);
-	}
 
 	/**
 	 * This function returns the SQL statement.

@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-15
+ * @version 2011-12-12
  *
  * @see http://dev.mysql.com/doc/refman/5.0/en/delete.html
  *
  * @abstract
  */
 abstract class Base_DB_MySQL_Delete_Builder extends DB_SQL_Delete_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('MySQL');
-	}
 
 	/**
 	 * This function returns the SQL statement.

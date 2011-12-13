@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-11-20
+ * @version 2011-12-12
  *
  * @see http://dev.mysql.com/doc/refman/5.5/en/insert.html
  *
  * @abstract
  */
 abstract class Base_DB_MariaDB_Insert_Builder extends DB_SQL_Insert_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('MariaDB');
-	}
 
 	/**
 	 * This function returns the SQL statement.

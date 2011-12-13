@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -39,7 +39,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-		    $this->link_id = mysqli_connect($this->data_source->get_host_server(), $this->data_source->get_username(), $this->data_source->get_password(), $this->data_source->get_database());
+			$this->link_id = mysqli_connect($this->data_source->get_host_server(), $this->data_source->get_username(), $this->data_source->get_password(), $this->data_source->get_database());
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . mysqli_connect_error();
 				throw new Kohana_Database_Exception($this->error, array());
@@ -177,6 +177,17 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
 		}
 		@mysqli_autocommit($this->link_id, TRUE);
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		return "'" . mysqli_real_escape_string($this->link_id, $string) . "'";
 	}
 
 	/**

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-04
+ * @version 2011-12-12
  *
  * @abstract
  */
@@ -44,6 +44,25 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @const string
 	 */
 	const _CLOSING_QUOTE_CHARACTER_ = '"';
+
+	/**
+	 * This variable stores the data source for which the expression is being
+	 * prepared for.
+	 *
+	 * @access protected
+	 * @var mixed
+	 */
+	protected $source;
+
+	/**
+	 * This function initializes the class with the specified data source.
+	 *
+	 * @access public
+	 * @param mixed $source                     the data source to be used
+	 */
+	public function __construct($source) {
+		$this->source = $source;
+	}
 
 	/**
 	* This function prepares the specified expression as an alias.
@@ -290,9 +309,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 			return "''";
 		}
 		else {
-			$unpacked = unpack('H*hex', $expr);
-			$expr = '0x' . $unpacked['hex'];
-			return $expr;
+			return DB_Connection_Pool::instance()->get_connection($this->source)->escape_string($expr);
 		}
 	}
 

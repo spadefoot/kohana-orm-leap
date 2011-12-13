@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -158,6 +158,17 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		return "'" . mysql_real_escape_string($string, $this->link_id) . "'";
 	}
 
 	/**

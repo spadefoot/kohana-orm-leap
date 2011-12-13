@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-12-11
+ * @version 2011-12-12
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -171,6 +171,20 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @return string                           the escaped string
+	 */
+	public function escape_string($string) {
+		// TODO improve this escaping method
+		$unpacked = unpack('H*hex', $string);
+		$string = '0x' . $unpacked['hex'];
+		return $string;
 	}
 
 	/**

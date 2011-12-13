@@ -21,22 +21,13 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-11-18
+ * @version 2011-12-12
  *
  * @see http://www.sqlite.org/lang_insert.html
  *
  * @abstract
  */
 abstract class Base_DB_SQLite_Insert_Builder extends DB_SQL_Insert_Builder {
-
-   /**
-     * This constructor instantiates this class.
-     *
-     * @access public
-     */
-    public function __construct() {
-		parent::__construct('SQLite');
-	}
 
 	/**
 	 * This function returns the SQL statement.
@@ -47,19 +38,19 @@ abstract class Base_DB_SQLite_Insert_Builder extends DB_SQL_Insert_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-	    $sql = "INSERT INTO {$this->data['into']}";
+		$sql = "INSERT INTO {$this->data['into']}";
 
-        if ( ! empty($this->data['column'])) {
-            $columns = implode(', ', array_keys($this->data['column']));
-            $values = implode(', ', array_values($this->data['column']));
-	        $sql .= " ({$columns}) VALUES ({$values})";
-	    }
+		if ( ! empty($this->data['column'])) {
+			$columns = implode(', ', array_keys($this->data['column']));
+			$values = implode(', ', array_values($this->data['column']));
+			$sql .= " ({$columns}) VALUES ({$values})";
+		}
 
-        if ($terminated) {
-	        $sql .= ';';
-        }
-	    
-	    return $sql;
+		if ($terminated) {
+			$sql .= ';';
+		}
+
+		return $sql;
 	}
 
 }

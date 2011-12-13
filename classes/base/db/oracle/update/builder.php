@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-06-18
+ * @version 2011-12-12
  *
  * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/statements_10007.htm#i2067715
  * @see http://psoug.org/reference/update.html
@@ -29,15 +29,6 @@
  * @abstract
  */
 abstract class Base_DB_Oracle_Update_Builder extends DB_SQL_Update_Builder {
-
-   /**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct('Oracle');
-	}
 
 	/**
 	 * This function returns the SQL statement.
