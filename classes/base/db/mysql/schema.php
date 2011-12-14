@@ -195,7 +195,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		$builder = DB_MySQL_Select_Builder::factory()
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->get_database())
+			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->database)
 			->where('TABLE_TYPE', 'LIKE', 'BASE_TABLE')
 			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
 
@@ -225,7 +225,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		$builder = DB_MySQL_Select_Builder::factory()
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->get_database())
+			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->database)
 			->where('TABLE_TYPE', 'LIKE', 'VIEW')
 			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
 

@@ -42,16 +42,16 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 	public function open() {
 		if ( ! $this->is_connected()) {
 			$connection_string  = 'firebird:';
-			$connection_string .= 'dbname=' . $this->data_source->get_host_server();
+			$connection_string .= 'dbname=' . $this->data_source->host;
 			if ( ! preg_match('/^localhost$/i', $connection_string)) {
-				$port = $this->data_source->get_port();
+				$port = $this->data_source->port;
 				if ( ! empty($port)) {
 					$connection_string .= '/' . $port;
 				}
 			}
-			$connection_string .= ':' . $this->data_source->get_database();
-			$username = $this->data_source->get_username();
-			$password = $this->data_source->get_password();
+			$connection_string .= ':' . $this->data_source->database;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
 			try {
 				$this->connection = new PDO($connection_string, $username, $password);
 			}

@@ -43,12 +43,12 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 		if ( ! $this->is_connected()) {
 			$connection_string  = 'ibm:';
 			$connection_string .= 'DRIVER={IBM DB2 ODBC DRIVER};';
-			$connection_string .= 'DATABASE=' . $this->data_source->get_database() . ';';
-			$connection_string .= 'HOSTNAME=' . $this->data_source->get_host_server() . ';';
-			$connection_string .= 'PORT=' . $this->data_source->get_port() . ';';
+			$connection_string .= 'DATABASE=' . $this->data_source->database . ';';
+			$connection_string .= 'HOSTNAME=' . $this->data_source->host . ';';
+			$connection_string .= 'PORT=' . $this->data_source->port . ';';
 			$connection_string .= 'PROTOCOL=TCPIP;';
-			$username = $this->data_source->get_username();
-			$password = $this->data_source->get_password();
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
 			try {
 				$this->connection = new PDO($connection_string, $username, $password);
 			}

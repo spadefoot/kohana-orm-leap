@@ -56,14 +56,14 @@ class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
 		// Initialization
 		$source = new DB_DataSource(reset($test_values));
 		// Assertions
-		$this->assertSame($expected_database, $source->get_database());
-		$this->assertSame($expected_driver, $source->get_driver());
-		$this->assertSame($expected_host_server, $source->get_host_server());
-		$this->assertGreaterThan(0, strlen($source->get_id()));
-		$this->assertSame($expected_password, $source->get_password());
-		$this->assertSame($expected_port, $source->get_port());
-		$this->assertSame($expected_resource_type, $source->get_resource_type());
-		$this->assertSame($expected_username, $source->get_username());
+		$this->assertSame($expected_database, $source->database);
+		$this->assertSame($expected_driver, $source->driver);
+		$this->assertSame($expected_host_server, $source->host);
+		$this->assertGreaterThan(0, strlen($source->id));
+		$this->assertSame($expected_password, $source->password);
+		$this->assertSame($expected_port, $source->port);
+		$this->assertSame($expected_resource_type, $source->dialect);
+		$this->assertSame($expected_username, $source->username);
 		$this->assertSame($expected_persistent, $source->is_persistent());
 	}
 

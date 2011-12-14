@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -41,14 +41,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string  = 'host=' . $this->data_source->get_host_server();
-			$port = $this->data_source->get_port();
+			$connection_string  = 'host=' . $this->data_source->host;
+			$port = $this->data_source->port;
 			if ( ! empty($port)) {
 				$connection_string .= ' port=' . $port;
 			}
-			$connection_string .= ' dbname=' . $this->data_source->get_database();
-			$connection_string .= ' user=' . $this->data_source->get_username();
-			$connection_string .= ' password=' . $this->data_source->get_password();
+			$connection_string .= ' dbname=' . $this->data_source->database;
+			$connection_string .= ' user=' . $this->data_source->username;
+			$connection_string .= ' password=' . $this->data_source->password;
 			$this->link_id = @pg_connect($connection_string);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . pg_last_error();
@@ -87,6 +87,11 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @pg_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . pg_last_error($this->link_id);
@@ -99,7 +104,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$size++;
 		}
 		@pg_free_result($resource_id);
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

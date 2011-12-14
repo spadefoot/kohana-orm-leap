@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -40,18 +40,18 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	public function open() {
 		if ( ! $this->is_connected()) {
 			try {
-				$connection_string = $this->data_source->get_host_server();
-				$port = $this->data_source->get_port();
+				$connection_string = $this->data_source->host;
+				$port = $this->data_source->port;
 				if ( ! empty($port)) {
 					$connection_string .= ':' . $port;
 				}
-				$this->link_id = mssql_connect($connection_string, $this->data_source->get_username(), $this->data_source->get_password());
+				$this->link_id = mssql_connect($connection_string, $this->data_source->username, $this->data_source->password);
 			}
 			catch (ErrorException $ex) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
 				throw new Kohana_Database_Exception($this->error, array());
 			}
-			$database = @mssql_select_db($this->data_source->get_database(), $this->link_id);
+			$database = @mssql_select_db($this->data_source->database, $this->link_id);
 			if ($database === FALSE) {
 				$this->error = 'Message: Failed to connect to database. Reason: ' . mssql_get_last_message();
 				throw new Kohana_Database_Exception($this->error, array());
@@ -86,6 +86,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @mssql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mssql_get_last_message();
@@ -98,7 +103,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 			$size++;
 		}
 		@mssql_free_result($resource_id);
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

@@ -79,6 +79,11 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$result = @$this->connection->query($sql);
 		if ($result === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . $this->connection->errorInfo();
@@ -90,7 +95,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

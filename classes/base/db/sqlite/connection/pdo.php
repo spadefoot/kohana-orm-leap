@@ -42,9 +42,9 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 	public function open() {
 		if ( ! $this->is_connected()) {
 			$connection_string  = 'sqlite:';
-			$connection_string .= $this->data_source->get_database();
-			$username = $this->data_source->get_username();
-			$password = $this->data_source->get_password();
+			$connection_string .= $this->data_source->database;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
 			try {
 				$this->connection = new PDO($connection_string, $username, $password);
 			}

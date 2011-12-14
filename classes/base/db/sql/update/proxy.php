@@ -52,7 +52,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
 	*/
 	public function __construct($config) {
 		$this->source = new DB_DataSource($config);
-		$builder = 'DB_' . $this->source->get_resource_type() . '_Update_Builder';
+		$builder = 'DB_' . $this->source->dialect . '_Update_Builder';
 		$this->builder = new $builder($this->source);
 	}
 

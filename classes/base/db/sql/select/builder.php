@@ -60,7 +60,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param array $columns                    the columns to be selected
 	 */
 	public function __construct(DB_DataSource $source, Array $columns = array()) {
-		$this->dialect = $source->get_resource_type();
+		$this->dialect = $source->dialect;
 		$helper = 'DB_' . $this->dialect . '_Expression';
 		$this->helper = new $helper($source);
 		$this->data = array();

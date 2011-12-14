@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-11
+ * @version 2011-12-13
  *
  * @abstract
  */
-abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, Countable, Iterator {
+abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
 	/**
 	 * This variable stores the records.
@@ -56,8 +56,8 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * result sets are accessible alike.
 	 *
 	 * @access public
-	 * @param array $records					an array of records
-	 * @param integer $size						the total number of records
+	 * @param array $records					    an array of records
+	 * @param integer $size						    the total number of records
 	 */
 	public function __construct(Array $records, $size) {
 		$this->records = $records;
@@ -69,7 +69,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This function returns the total number of records contained in result set.
 	 *
 	 * @access public
-	 * @return integer                          the total number of records
+	 * @return integer                              the total number of records
 	 */
 	public function count() {
 		return $this->size;
@@ -79,7 +79,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This function returns the current record.
 	 *
 	 * @access public
-	 * @return mixed						    the current record
+	 * @return mixed						        the current record
 	 */
 	public function current() {
 		return $this->records[$this->position];
@@ -90,8 +90,8 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 *
 	 * @access public
 	 * @abstract
-	 * @param integer $index                    the record's index
-	 * @return mixed                            the record
+	 * @param integer $index                        the record's index
+	 * @return mixed                                the record
 	 */
 	public function fetch($index = -1) {
 		settype($index, 'integer');
@@ -111,7 +111,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This function returns an array of records of the desired object type.
 	 *
 	 * @access public
-	 * @return array                            an array of records
+	 * @return array                                an array of records
 	 */
 	public function fetch_all() {
 		return $this->records;
@@ -134,10 +134,10 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 *     // Gets the value of "id" from the current record
 	 *     $id = $results->get('id');
 	 *
-	 * @param string $name                      the name of the column
-	 * @param mixed $default                    the default value should the column
-	 *                                          does not exist
-	 * @return mixed                            the value for the named column
+	 * @param string $name                          the name of the column
+	 * @param mixed $default                        the default value should the column
+	 *                                              does not exist
+	 * @return mixed                                the value for the named column
 	 */
 	public function get($name, $default = NULL) {
 		$record = $this->current();
@@ -162,7 +162,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This function returns whether any records were loaded.
 	 *
 	 * @access public
-	 * @return boolean                          whether any records were loaded
+	 * @return boolean                              whether any records were loaded
 	 */
 	public function is_loaded() {
 		return ($this->size > 0);
@@ -172,7 +172,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This function returns the position to the current record.
 	 *
 	 * @access public
-	 * @return integer					        the position of the current record
+	 * @return integer					            the position of the current record
 	 */
 	public function key() {
 		return $this->position;
@@ -192,8 +192,8 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This function determines whether a offset exists.
 	 *
 	 * @access public
-	 * @param integer $offset                   the offset to be evaluated
-	 * @return boolean                          whether the requested index exists
+	 * @param integer $offset                       the offset to be evaluated
+	 * @return boolean                              whether the requested index exists
 	 */
 	public function offsetExists($offset) {
 		return isset($this->records[$offset]);
@@ -203,8 +203,8 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This functions gets value at the specified offset.
 	 *
 	 * @access public
-	 * @param integer $offset                   the offset to be fetched
-	 * @return mixed                            the value at the specified index
+	 * @param integer $offset                       the offset to be fetched
+	 * @return mixed                                the value at the specified index
 	 */
 	public function offsetGet($offset) {
 		return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
@@ -214,37 +214,30 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * This functions sets the specified value at the specified offset.
 	 *
 	 * @access public
-	 * @param integer $offset                   the offset to be set
-	 * @param mixed $value                      the value to be set
+	 * @param integer $offset                       the offset to be set
+	 * @param mixed $value                          the value to be set
+	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
-		if (is_null($offset)) {
-			$this->records[] = $value;
-			$this->size++;
-		}
-		else {
-			$this->records[$offset] = $value;
-		}
+        throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified.', array());
 	}
 
 	/**
 	 * This functions allows for the specified offset to be unset.
 	 *
 	 * @access public
-	 * @param integer $offset               the offset to be unset
+	 * @param integer $offset                       the offset to be unset
+	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		if (isset($this->records[$offset])) {
-			unset($this->records[$offset]);
-			$this->size--;
-		}
+        throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified..', array());
 	}
 
 	/**
 	 * This function returns the current iterator position.
 	 *
 	 * @access public
-	 * @return integer					        the current iterator position
+	 * @return integer					            the current iterator position
 	 */
 	public function position() {
 		return $this->position;
@@ -259,11 +252,26 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		$this->position = 0;
 	}
 
+    /**
+     * This function sets the position pointer to the seeked position.
+     *
+     * @access public
+     * @param integer $position                     the seeked position
+     * @throws Kohana_OutOfBounds_Exception         indicates that the seeked position
+     *                                              is out of bounds
+     */
+    public function seek($position) {
+        $this->position = $position;
+        if ( ! $this->valid()) {
+            throw new Kohana_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
+        }
+    }
+
 	/**
 	 * This function checks if the current iterator position is valid.
 	 *
 	 * @access public
-	 * @return boolean					        whether the current iterator position is valid
+	 * @return boolean					            whether the current iterator position is valid
 	 */
 	public function valid() {
 		return isset($this->records[$this->position]);

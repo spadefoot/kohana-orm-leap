@@ -82,7 +82,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
 			$source = new DB_DataSource($source);
 		}
-		$id = $source->get_id();
+		$id = $source->id;
 		if ($id != $this->id) {
 			if ( ! is_null($this->id)) {
 				self::$pool[$this->id]->close();

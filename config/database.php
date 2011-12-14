@@ -15,7 +15,7 @@ $config['default'] = array(
     ),
     'caching'       => FALSE,       // boolean
     'charset'       => 'utf8',      // string
-    'profiling'     => TRUE,        // boolean
+    'profiling'     => FALSE,       // boolean
     'table_prefix'  => '',          // string
 );
 

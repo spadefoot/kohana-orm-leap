@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -52,15 +52,15 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string = $this->data_source->get_host_server();
+			$connection_string = $this->data_source->host;
 			if ( ! preg_match('/^localhost$/i', $connection_string)) {
-				$port = $this->data_source->get_port();
+				$port = $this->data_source->port;
 				if ( ! empty($port)) {
 					$connection_string .= '/' . $port;
 				}
 			}
-			$connection_string .= ':' . $this->data_source->get_database();
-			$this->link_id = @ibase_connect($connection_string, $this->data_source->get_username(), $this->data_source->get_password());
+			$connection_string .= ':' . $this->data_source->database;
+			$this->link_id = @ibase_connect($connection_string, $this->data_source->username, $this->data_source->password);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . ibase_errmsg();
 				throw new Kohana_Database_Exception($this->error, array());
@@ -101,6 +101,11 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @ibase_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . ibase_errmsg();
@@ -113,7 +118,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$size++;
 		}
 		@ibase_free_result($resource_id);
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

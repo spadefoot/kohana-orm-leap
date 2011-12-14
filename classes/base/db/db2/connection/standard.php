@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -43,12 +43,12 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	public function open() {
 		if ( ! $this->is_connected()) {
 			$connection_string  = 'DRIVER={IBM DB2 ODBC DRIVER};';
-			$connection_string .= 'DATABASE=' . $this->data_source->get_database() . ';';
-			$connection_string .= 'HOSTNAME=' . $this->data_source->get_host_server() . ';';
-			$connection_string .= 'PORT=' . $this->data_source->get_port() . ';';
+			$connection_string .= 'DATABASE=' . $this->data_source->database . ';';
+			$connection_string .= 'HOSTNAME=' . $this->data_source->host . ';';
+			$connection_string .= 'PORT=' . $this->data_source->port . ';';
 			$connection_string .= 'PROTOCOL=TCPIP;';
-			$connection_string .= 'UID=' . $this->data_source->get_username() . ';';
-			$connection_string .= 'PWD=' . $this->data_source->get_password() . ';';
+			$connection_string .= 'UID=' . $this->data_source->username . ';';
+			$connection_string .= 'PWD=' . $this->data_source->password . ';';
 			$this->link_id = @db2_connect($connection_string, '', '');
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . db2_conn_error();
@@ -98,6 +98,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @db2_prepare($this->link_id, $sql);
 		if (($resource_id === FALSE) || !db2_execute($resource_id)) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);
@@ -110,7 +115,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			$size++;
 		}
 		@db2_free_result($resource_id);
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

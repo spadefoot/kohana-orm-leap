@@ -61,7 +61,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	public function __construct($model, Array $columns = array()) {
 		$model = DB_ORM_Model::model_name($model);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
-		$builder = 'DB_' . $this->source->get_resource_type() . '_Select_Builder';
+		$builder = 'DB_' . $this->source->dialect . '_Select_Builder';
 		$this->builder = new $builder($this->source, $columns);
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->from($table);

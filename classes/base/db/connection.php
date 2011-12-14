@@ -31,9 +31,25 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * This variable stores the connection configurations.
 	 *
 	 * @access protected
+	 * @var string
+	 */
+    protected $cache_key = NULL;
+
+	/**
+	 * This variable stores the connection configurations.
+	 *
+	 * @access protected
 	 * @var DB_DataSource
 	 */
 	protected $data_source = NULL;
+
+	/**
+	 * This variable stores the last error message reported.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $error = '';
 
 	/**
 	 * This variable is used to store the connection's link identifier.
@@ -50,14 +66,6 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @var string
 	 */
 	protected $sql = '';
-
-	/**
-	 * This variable stores the last error message reported.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $error = '';
 
 	/**
 	 * This function initializes the class with the specified data source.
@@ -79,6 +87,34 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 *                                          the database connection
 	 */
 	public abstract function open();
+
+    /**
+     * This function manages query caching.
+     *
+     * @access protected
+     * @param string $sql                       the SQL statement being queried
+	 * @param string $type						the return type that is being used
+     * @param DB_ResultSet $results             the result set
+     * @return DB_ResultSet                     the result set for the specified
+     */
+    protected function cache($sql, $type, $results = NULL) {
+        if ($this->data_source->cache->enabled) {
+            if ( ! is_null($results)) {
+        		if ($this->data_source->cache->lifetime > 0) {
+        		    Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
+        		}
+        		return $results;
+            }
+            else if ($this->data_source->cache->lifetime !== NULL) {
+    			$this->cache_key = 'DB_Connection::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
+    			$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
+    			if (($results !== NULL) && !$this->data_source->cache->force) {
+    				return $results;
+    			}
+    		}
+        }
+        return $results;
+    }
 
 	/**
 	 * This function begins a transaction.
@@ -181,6 +217,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
+	 * @abstract
 	 * @param string $string                    the string to be escaped
 	 * @return string                           the escaped string
 	 */
@@ -225,8 +262,8 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public static function factory($config = array()) {
 		$source = new DB_DataSource($config);
-		$dialect = $source->get_resource_type();
-		$driver = 'DB_' . $dialect . '_Connection_' . $source->get_driver();
+		$dialect = $source->dialect;
+		$driver = 'DB_' . $dialect . '_Connection_' . $source->driver;
 		$connection = new $driver($source);
 		return $connection;
 	}

@@ -42,14 +42,14 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	public function open() {
 		if ( ! $this->is_connected()) {
 			$connection_string  = 'oci:';
-			$connection_string .= 'dbname=//'. $this->data_source->get_host_server();
-			$port = $this->data_source->get_port(); // default port is 1521
+			$connection_string .= 'dbname=//'. $this->data_source->host;
+			$port = $this->data_source->port; // default port is 1521
 			if ( ! empty($port)) {
 				$connection_string .= ':' . $port;
 			}
-			$connection_string .= '/' . $this->data_source->get_database();
-			$username = $this->data_source->get_username();
-			$password = $this->data_source->get_password();
+			$connection_string .= '/' . $this->data_source->database;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
 			try {
 				$this->connection = new PDO($connection_string, $username, $password);
 			}

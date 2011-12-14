@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -40,7 +40,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	public function open() {
 		if ( ! $this->is_connected()) {
 			$sqlite_error = NULL;
-			$this->link_id = @sqlite_open($this->data_source->get_database(), 0666, $sqlite_error);
+			$this->link_id = @sqlite_open($this->data_source->database, 0666, $sqlite_error);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $sqlite_error;
 				throw new Kohana_Database_Exception($this->error, array());
@@ -76,6 +76,11 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @sqlite_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . sqlite_error_string(sqlite_last_error($this->link_id));
@@ -88,7 +93,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 			$size++;
 		}
 		$resource_id = NULL;
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -39,7 +39,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$this->link_id = mysqli_connect($this->data_source->get_host_server(), $this->data_source->get_username(), $this->data_source->get_password(), $this->data_source->get_database());
+			$this->link_id = mysqli_connect($this->data_source->host, $this->data_source->username, $this->data_source->password, $this->data_source->database);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . mysqli_connect_error();
 				throw new Kohana_Database_Exception($this->error, array());
@@ -82,6 +82,11 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @mysqli_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mysqli_error($this->link_id);
@@ -94,7 +99,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			$size++;
 		}
 		@mysqli_free_result($resource_id);
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}

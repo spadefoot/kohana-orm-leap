@@ -52,7 +52,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Kohana_Object implements DB_SQL_
 	public function __construct($model) {
 		$model = DB_ORM_Model::model_name($model);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
-		$builder = 'DB_' . $this->source->get_resource_type() . '_Delete_Builder';
+		$builder = 'DB_' . $this->source->dialect . '_Delete_Builder';
 		$this->builder = new $builder($this->source);
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->from($table);

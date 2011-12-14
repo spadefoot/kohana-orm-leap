@@ -52,7 +52,7 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 */
 	public function __construct($config) {
 		$this->data_source = new DB_DataSource($config);
-		$dialect = $this->data_source->get_resource_type();
+		$dialect = $this->data_source->dialect;
 		$helper = 'DB_' . $dialect . '_Expression';
 		$this->helper = new $helper();
 	}

@@ -3,6 +3,8 @@ Changelog for LEAP ORM
 2011-12-13
 * Made improvements to how strings are escaped per Isaiah's request (Issue #7).
 * Modified the constructor to all builder classes.
+* Changed the 'profiling' setting to FALSE in config/database.php.
+* Added query caching to all connections.
 
 2011-12-12
 * Addressed the loading of field schema over and over again with class serialization in DB_Connection per Crystal's request (Issue #1).

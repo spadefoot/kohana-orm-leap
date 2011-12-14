@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-11
+ * @version 2011-12-13
  *
  * @abstract
  */
@@ -72,85 +72,48 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	}
 
 	/**
-	 * This function returns the database.
+	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
-	 * @return string            					the database
+	 * @param string $name                          the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
 	 */
-	public function get_database() {
-		return (isset($this->settings['connection']['database'])) ? $this->settings['connection']['database'] : '';
-	}
-
-	/**
-	 * This function returns the database driver to be used.
-	 *
-	 * @access public
-	 * @return string                               the database driver to be used
-	 */
-	public function get_driver() {
-		return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'standard';
-	}
-
-	/**
-	 * This function returns the host server.
-	 *
-	 * @access public
-	 * @return string            					the host server
-	 */
-	public function get_host_server() {
-		return (isset($this->settings['connection']['hostname'])) ? $this->settings['connection']['hostname'] : 'localhost';
-	}
-
-	/**
-	 * This function returns the name of the data source configuration group.
-	 *
-	 * @access public
-	 * @return string								the name of the data source configuration
-	 * 												group
-	 */
-	public function get_id() {
-		return $this->settings['id'];
-	}
-
-	/**
-	 * This function returns the password.
-	 *
-	 * @access public
-	 * @return string            					the password
-	 */
-	public function get_password() {
-		return (isset($this->settings['connection']['password'])) ? $this->settings['connection']['password'] : '';
-	}
-
-	/**
-	 * This function returns the port.
-	 *
-	 * @access public
-	 * @return string            					the port
-	 */
-	public function get_port() {
-		return (isset($this->settings['connection']['port'])) ? $this->settings['connection']['port'] : '';
-	}
-
-	/**
-	 * This function returns the resource/database type.
-	 *
-	 * @access public
-	 * @return string            					the resource/database type
-	 */
-	public function get_resource_type() {
-		return (isset($this->settings['type'])) ? strtolower($this->settings['type']) : 'mysql';
-	}
-
-	/**
-	 * This function returns the username.
-	 *
-	 * @access public
-	 * @return string            					the username
-	 */
-	public function get_username() {
-		return (isset($this->settings['connection']['username'])) ? $this->settings['connection']['username'] : '';
-	}
+	public function __get($name) {
+        switch ($name) {
+            case 'id':
+                return $this->settings['id'];
+            break;
+            case 'cache':
+                // TODO make this modifiable
+                $cache = array();
+                $cache['enabled'] = (isset($this->settings['caching'])) ? (bool) $this->settings['caching'] : FALSE;
+                $cache['lifetime'] = Kohana::$cache_life;
+                $cache['force'] = FALSE;
+                return (object) $cache;
+            break;
+            case 'dialect':
+            case 'type':
+                return (isset($this->settings['type'])) ? $this->settings['type'] : 'mysql';
+            break;
+            case 'driver':
+		        return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'standard';
+		    break;
+            case 'database':
+            case 'password':
+            case 'port':
+            case 'username':
+		        return (isset($this->settings['connection'][$name])) ? $this->settings['connection'][$name] : '';
+		    break;
+            case 'host':
+		        return (isset($this->settings['connection']['hostname'])) ? $this->settings['connection']['hostname'] : 'localhost';
+		    break;
+            default:
+                throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+            break;
+        }
+    }
 
 	/**
 	 * This function determines whether the connection is persistent.

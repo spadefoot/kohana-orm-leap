@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-12
+ * @version 2011-12-13
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -50,13 +50,13 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string = '//'. $this->data_source->get_host_server();
-			$port = $this->data_source->get_port(); // default port is 1521
+			$connection_string = '//'. $this->data_source->host;
+			$port = $this->data_source->port; // default port is 1521
 			if ( ! empty($port)) {
 				$connection_string .= ':' . $port;
 			}
-			$connection_string .= '/' . $this->data_source->get_database();
-			$this->link_id = @oci_connect($this->data_source->get_username(), $this->data_source->get_password(), $connection_string);
+			$connection_string .= '/' . $this->data_source->database;
+			$this->link_id = @oci_connect($this->data_source->username, $this->data_source->password, $connection_string);
 			if ($this->link_id === FALSE) {
 				$oci_error = oci_error();
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $oci_error['message'];
@@ -102,6 +102,11 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$result_set = $this->cache($sql, $type);
+		if ( ! is_null($result_set)) {
+		    $this->sql = $sql;
+	        return $result_set;
+	    }
 		$resource_id = @oci_parse($this->link_id, $sql);
 		if (($resource_id === FALSE) || !oci_execute($resource_id, $this->execution_mode)) {
 			$oci_error = oci_error($resource_id);
@@ -115,7 +120,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$size++;
 		}
 		@oci_free_statement($resource_id);
-		$result_set = new DB_ResultSet($records, $size);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
 	}
