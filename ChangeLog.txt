@@ -5,6 +5,8 @@ Changelog for LEAP ORM
 * Modified the constructor to all builder classes.
 * Changed the 'profiling' setting to FALSE in config/database.php.
 * Added query caching to all connections.
+* Changed functions in Base_DB_DataSource to properties.
+* Changed fetch_all() to as_array() in Base_DB_ResultSet.
 
 2011-12-12
 * Addressed the loading of field schema over and over again with class serialization in DB_Connection per Crystal's request (Issue #1).

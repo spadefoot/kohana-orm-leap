@@ -66,6 +66,16 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	}
 
 	/**
+	 * This function returns an array of records of the desired object type.
+	 *
+	 * @access public
+	 * @return array                                an array of records
+	 */
+	public function as_array() {
+		return $this->records;
+	}
+
+	/**
 	 * This function returns the total number of records contained in result set.
 	 *
 	 * @access public
@@ -105,16 +115,6 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		}
 
 		return FALSE;
-	}
-
-	/**
-	 * This function returns an array of records of the desired object type.
-	 *
-	 * @access public
-	 * @return array                                an array of records
-	 */
-	public function fetch_all() {
-		return $this->records;
 	}
 
 	/**

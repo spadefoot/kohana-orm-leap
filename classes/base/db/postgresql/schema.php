@@ -103,7 +103,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 			i.relname;";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->as_array();
 
 		return $records;
 	}
@@ -135,7 +135,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->as_array();
 
 		return $records;
 	}
@@ -168,7 +168,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->as_array();
 
 		return $records;
 	}

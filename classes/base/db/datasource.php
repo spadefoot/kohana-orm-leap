@@ -93,6 +93,9 @@ abstract class Base_DB_DataSource extends Kohana_Object {
                 $cache['force'] = FALSE;
                 return (object) $cache;
             break;
+            case 'charset':
+                return (isset($this->settings['charset'])) ? $this->settings['charset'] : 'utf8';
+            break;
             case 'dialect':
             case 'type':
                 return (isset($this->settings['type'])) ? $this->settings['type'] : 'mysql';

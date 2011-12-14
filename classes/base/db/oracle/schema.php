@@ -136,7 +136,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		$sql = "select INDEX_NAME, TABLE_NAME, TABLE_OWNER from SYS.ALL_INDEXES order by TABLE_OWNER, TABLE_NAME, INDEX_NAME";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->as_array();
 
 		return $records;
 	}
@@ -167,7 +167,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->as_array();
 
 		return $records;
 	}
@@ -197,7 +197,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		$sql = $builder->statement();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->fetch_all();
+		$records = $connection->query($sql)->as_array();
 
 		return $records;
 	}
