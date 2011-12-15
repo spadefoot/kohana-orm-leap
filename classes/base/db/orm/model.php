@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-12
+ * @version 2011-12-14
  *
  * @abstract
  */
@@ -280,11 +280,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			}
 			$data_source = call_user_func(array($self, 'data_source'));
 			$table = call_user_func(array($self, 'table'));
-			$sql = DB_SQL::select($data_source)->from($table);
+			$sql = DB_SQL::select($data_source)->from($table)->limit(1);
 			foreach ($primary_key as $column) {
 				$sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
-			$record = $sql->query(1);
+			$record = $sql->query();
 			if ( ! $record->is_loaded()) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}

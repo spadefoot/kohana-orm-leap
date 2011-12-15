@@ -5,6 +5,7 @@ Changelog for LEAP ORM
 * Alphabetized som instance variables in proxy classes.
 * Made it possible to pass a primary_key to DB_ORM::model without wrapping it in an array.
 * Fixed some variables in DB_DataSourceTest.
+* Changed query($limit = NULL) to query($type = 'array') in Base_DB_SQL_Select_Proxy.
 
 2011-12-13
 * Made improvements to how strings are escaped per Isaiah's request (Issue #7).
