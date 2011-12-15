@@ -21,11 +21,19 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-12
+ * @version 2011-12-14
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL_Statement {
+
+	/**
+	 * This variable stores an instance of the SQL builder class.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Select_Builder
+	 */
+	protected $builder = NULL;
 
 	/**
 	 * This variable stores the model's name.
@@ -42,14 +50,6 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @var DB_DataSource
 	 */
 	protected $source = NULL;
-
-	/**
-	 * This variable stores an instance of the SQL builder class.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Select_Builder
-	 */
-	protected $builder = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified model's name.

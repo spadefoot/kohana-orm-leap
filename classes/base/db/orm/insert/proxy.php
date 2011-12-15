@@ -21,19 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-12
+ * @version 2011-12-14
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_Statement {
-
-	/**
-	 * This variable stores a reference to the data source.
-	 *
-	 * @access protected
-	 * @var DB_DataSource
-	 */
-	protected $source = NULL;
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
@@ -42,6 +34,22 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @var DB_SQL_Insert_Builder
 	 */
 	protected $builder = NULL;
+
+	/**
+	 * This variable stores the model's name.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $model = NULL;
+
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $source = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified model's name.
@@ -56,6 +64,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 		$this->builder = new $builder($this->source);
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->into($table);
+		$this->model = $model;
 	}
 
 	/**

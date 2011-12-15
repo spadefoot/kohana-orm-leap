@@ -21,19 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-12
+ * @version 2011-12-14
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_Statement {
-
-	/**
-	 * This variable stores a reference to the data source.
-	 *
-	 * @access protected
-	 * @var DB_DataSource
-	 */
-	protected $source = NULL;
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
@@ -42,6 +34,14 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * @var DB_SQL_Update_Builder
 	 */
 	protected $builder = NULL;
+
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $source = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified model's name.

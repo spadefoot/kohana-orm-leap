@@ -63,9 +63,12 @@ abstract class Base_DB_ORM extends Kohana_Object {
 	 *                                      that will be used to load the model
 	 * @return mixed                        an instance of the specified model
 	 */
-	public static function model($model, Array $primary_key = array()) {
+	public static function model($model, $primary_key = array()) {
 		$model = DB_ORM_Model::factory($model);
 		if ( ! empty($primary_key)) {
+		    if ( ! is_array($primary_key)) {
+		        $primary_key = array($primary_key);
+		    }
 			$model_key = call_user_func(array(get_class($model), 'primary_key'));
 			$count = count($model_key);
 			for ($i = 0; $i < $count; $i++) {
