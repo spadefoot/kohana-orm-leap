@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-11-26
+ * @version 2011-12-17
  */
-class DB_ORM_Alias extends Base_DB_ORM_Alias {}
+class DB_ORM_Field_Alias extends Base_DB_ORM_Field_Alias {}
 ?>

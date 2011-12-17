@@ -6,6 +6,7 @@ Changelog for LEAP ORM
 * Added 3 new adaptor classes: number, object, and uom.
 * Added a new UOM config for adaptor.
 * Removed an unneeded property in Base_DB_ORM_Field.
+* Moved Base_DB_ORM_Alias to Base_DB_ORM_Field_Alias and DB_ORM_Alias to DB_ORM_Field_Alias.
 
 2011-12-14
 * Added a missing instance variable: $model.
