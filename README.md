@@ -18,7 +18,7 @@ to function correctly.  Besides, Doctrine is now so bloated and old that it real
 
 A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. [Kohana's
 official ORM](https://github.com/kohana/orm), [Jelly](https://github.com/creatoro/jelly), and [Sprig](https://github.com/sittercity/sprig/)) cannot
-handle.  LEAP, on the other hand, is able to load models using composite keys.
+handle.  The LEAP ORM for Kohana, on the other hand, is able to load models using composite keys.
 
 ## Features
 
@@ -26,17 +26,18 @@ LEAP provides a number of features, such as:
 
 * Plugins for DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
 * Designed to work in conjunction with other database tools for Kohana.
-* Config file for designating the database driver (e.g. PDO) and connection strings.
+* [Config file for designating the database driver (e.g. PDO) and connection strings](http://orm.spadefootcode.com/tutorials/setting-up-a-database-connection/).
 * Classes are easily extensible.
-* A database connection pool for managing resources.
-* A powerful query builder for creating SQL statements.
+* A [database connection pool](http://orm.spadefootcode.com/tutorials/establishing-a-database-connection/) for managing resources.
+* A powerful [query builder for creating SQL statements](http://orm.spadefootcode.com/tutorials/building-sql-statements/).
 * Sanitizes data to help prevent SQL injection attacks.
 * Supports composite primary keys and composite foreign keys.
-* Enforces strong data types on database fields.
-* Allows aliases to be declared.
-* Makes working with certain database fields easy with field adaptors.
+* Enforces strong data types on [database fields](http://orm.spadefootcode.com/tutorials/mapping-a-model/#fields).
+* Allows [field aliases](http://orm.spadefootcode.com/tutorials/mapping-a-model/#aliases) to be declared.
+* Makes working with certain database fields easy with [field adaptors](http://orm.spadefootcode.com/tutorials/mapping-a-model/#adaptors).
 * A toolkit of useful functions.
-* A [Web site](http://orm.spadefootcode.com) documenting its API and with examples.
+* [Leap's API](http://orm.spadefootcode.com/api/annotated.html) that documents each class.
+* Lots of [tutorials](http://orm.spadefootcode.com/tutorials/index/).
 
 ## Getting Started
 
@@ -49,6 +50,8 @@ To start using LEAP, follow these steps:
 5. Add "leap" as a module to application/bootstrap.php.
 6. Begin creating your models in the application/classes/model/leap/ folder.
 
+For more information, see the tutorial [Installing LEAP](http://orm.spadefootcode.com/tutorials/installing-leap/).
+
 ## Required Files
 
 The LEAP ORM module is meant to be completely independent of other Kohana modules.  However, it is recommended that Kohana's database module be
@@ -57,19 +60,19 @@ you are not using.  This is possible because each database plugin in LEAP is con
 
 ## Documentation
 
-This project is well-documented.  The API has been posted on [Spadefoot's LEAP ORM for Kohana](http://orm.spadefootcode.com) Web site.  Likewise,
-this Web site also has numerous examples and tutorials.  You can also find other tutorials and examples online (please let us know if you find one
-that we should highlight here).
+This project is accompanied by a companion Web site, which documents the [API for the LEAP ORM](http://orm.spadefootcode.com/api/annotated.html)
+and has a number of [examples and tutorials](http://orm.spadefootcode.com/tutorials/index/). You can also find other tutorials and examples
+online (please let us know if you find one that we should highlight here).
 
 ## Further Assistance
 
-Although LEAP is simple to use with the Kohana PHP Framework, you can get further assistance by asking questions on [Stack Overflow](http://stackoverlow.com).
-You can also send an email to spadefoot.oss@gmail.com.
+Although LEAP is simple to use with the Kohana PHP Framework, you can get further assistance by asking questions on either [Kohana's Forum](http://forum.kohanaframework.org/)
+or [Stack Overflow](http://stackoverlow.com). You can also send an email to spadefoot.oss@gmail.com.
 
 ## Reporting Bugs & Making Recommendations
 
-If you find a bug in the code or if you would like to make a recommendation, we would be happy to hear from you.  Here are three methods you can
-use to submit bugs:
+If you find a bug in the code or if you would like to make a recommendation, we would be happy to hear from you.  Here are three methods
+you can use to submit bugs:
 
 * Log an issue in this project's [issue tracker](https://github.com/spadefoot/kohana-orm-leap/issues?sort=comments&direction=desc&state=open).
 * Create a fork of this project and submit a [pull request](http://help.github.com/send-pull-requests/).
@@ -81,8 +84,8 @@ Please see this project's [issue tracker](https://github.com/spadefoot/kohana-or
 
 ## Updates
 
-Make sure that you add yourself as a watcher of this project so that you can watch for updates.  If you would like to be notified directly via
-email please send an email to spadefoot.oss@gmail.com.
+Make sure that you add yourself as a watcher of this project so that you can watch for updates.  If you would like to be notified directly
+via email please send an email to spadefoot.oss@gmail.com.
 
 ## Future Development
 
@@ -92,7 +95,8 @@ This project is constantly being improved and extended.  Here is a list of some 
 * Master / Slave support.
 * More unit tests.
 
-If you would like to take on some of these features, please fork this project and then send a pull request when your done.
+If you would like to take on some of these features, please fork this project and then send a [pull request](http://help.github.com/send-pull-requests/)
+when your done.
 
 ## License (Apache v2.0)
 

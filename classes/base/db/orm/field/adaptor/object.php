@@ -57,7 +57,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Object  extends DB_ORM_Field_Adaptor {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
 				if ( ! is_null($value)) {
-					$value = unserialize($value);
+					$value = (string) unserialize($value);
 				}
 				return $value;
 			break;
