@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -148,7 +148,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 * @return boolean                          whether a connection is established
 	 */
 	public function is_connected() {
-		return !is_null($this->connection);
+		return ! empty($this->connection);
 	}
 
 	/**

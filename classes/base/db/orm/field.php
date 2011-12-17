@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-05
+ * @version 2011-12-17
  *
  * @abstract
  *
@@ -107,7 +107,6 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 */
 	public function __set($key, $value) {
 		switch ($key) {
-			case 'data':
 			case 'value':
 				if ( ! is_null($value)) {
 					settype($value, $this->metadata['type']);

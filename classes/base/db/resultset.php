@@ -219,7 +219,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
-        throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified.', array());
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified.', array());
 	}
 
 	/**
@@ -230,7 +230,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-        throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified..', array());
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified..', array());
 	}
 
 	/**
@@ -252,20 +252,20 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		$this->position = 0;
 	}
 
-    /**
-     * This function sets the position pointer to the seeked position.
-     *
-     * @access public
-     * @param integer $position                     the seeked position
-     * @throws Kohana_OutOfBounds_Exception         indicates that the seeked position
-     *                                              is out of bounds
-     */
-    public function seek($position) {
-        $this->position = $position;
-        if ( ! $this->valid()) {
-            throw new Kohana_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
-        }
-    }
+	/**
+	 * This function sets the position pointer to the seeked position.
+	 *
+	 * @access public
+	 * @param integer $position                     the seeked position
+	 * @throws Kohana_OutOfBounds_Exception         indicates that the seeked position
+	 *                                              is out of bounds
+	 */
+	public function seek($position) {
+		$this->position = $position;
+		if ( ! $this->valid()) {
+			throw new Kohana_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
+		}
+	}
 
 	/**
 	 * This function checks if the current iterator position is valid.

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-12-12
+ * @version 2011-12-17
  *
  * @see http://www.php.net/manual/en/ref.pdo-pgsql.connection.php
  *
@@ -41,24 +41,28 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string  = 'pgsql:';
-			$connection_string .= 'host=' . $this->data_source->host . ';';
-			$port = $this->data_source->port;
-			if ( ! empty($port)) {
-				$connection_string .= 'port=' . $port . ';'; // default is 5432
-			}
-			$connection_string .= 'dbname=' . $this->data_source->database;
-			$username = $this->data_source->username;
-			$password = $this->data_source->password;
 			try {
-				$this->connection = new PDO($connection_string, $username, $password);
+				$connection_string  = 'pgsql:';
+				$connection_string .= 'host=' . $this->data_source->host . ';';
+				$port = $this->data_source->port;
+				if ( ! empty($port)) {
+					$connection_string .= 'port=' . $port . ';'; // default is 5432
+				}
+				$connection_string .= 'dbname=' . $this->data_source->database;
+				$username = $this->data_source->username;
+				$password = $this->data_source->password;
+				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+				if ($this->data_source->is_persistent()) {
+					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
+				}
+				$this->connection = new PDO($connection_string, $username, $password, $attributes);
+				$this->link_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':source' => $connection_string, ':username' => $username, 'password' => $password));
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
-			$this->link_id = self::$counter++;
 		}
 	}
 

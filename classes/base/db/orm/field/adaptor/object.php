@@ -17,18 +17,16 @@
  */
 
 /**
- * This class represents a "boolean" adaptor for handling non-standard boolean
- * values, such as "yes/no" decisions.
+ * This class represents an "object" adaptor for a handling object storage
+ * in a database table.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-17
  *
- * @see http://www.php.net/manual/en/language.types.boolean.php
- *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_Object  extends DB_ORM_Field_Adaptor {
 
 	/**
 	 * This constructor initializes the class.
@@ -42,9 +40,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, $metadata['field']);
 
-		$this->metadata['values'] = (isset($metadata['values']))
-			? (array) $metadata['values']
-			: array('yes', 'no');
+		$this->metadata['type'] = (string) $metadata['type'];
 	}
 
 	/**
@@ -61,7 +57,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
 				if ( ! is_null($value)) {
-					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
+					$value = unserialize($value);
 				}
 				return $value;
 			break;
@@ -85,10 +81,10 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				if ( ! is_null($value)) {
-					$true = $this->metadata['values'][0];
-					$value = (is_string($true) && is_string($value))
-						? (strcasecmp($true, $value) == 0)
-						: ($true == $value);
+					if ( ! (is_object($value) && ($value instanceof $this->metadata['type']))) {
+						throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Value is not an instance of data type.', array(':object' => $this->metadata['type'], ':type' => gettype($value)));
+					}
+					$value = serialize($value);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;

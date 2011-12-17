@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-05
+ * @version 2011-12-17
  *
  * @see http://www.iitechs.com/kohana/userguide/api/kohana/Encrypt
  *
@@ -43,7 +43,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['config'] = (isset($metadata['config']))
-			? (array) $metadata['config']
+			? $metadata['config']
 			: NULL;
 	}
 
@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if (is_string($value)) {
+				if ( ! is_null($value)) {
 					$value = Encrypt::instance($this->metadata['config'])->decode($value);
 				}
 				return $value;
@@ -84,7 +84,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if (is_string($value)) {
+				if ( ! is_null($value)) {
 					$value = Encrypt::instance($this->metadata['config'])->encode($value);
 				}
 				$this->model->{$this->metadata['field']} = $value;

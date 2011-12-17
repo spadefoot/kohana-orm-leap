@@ -17,18 +17,18 @@
  */
 
 /**
- * This class represents a "boolean" adaptor for handling non-standard boolean
- * values, such as "yes/no" decisions.
+ * This class represents a "number" adaptor for a handling formatted numbers.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-17
  *
- * @see http://www.php.net/manual/en/language.types.boolean.php
+ * @see http://php.net/manual/en/function.number-format.php
+ * @see http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_Number extends DB_ORM_Field_Adaptor {
 
 	/**
 	 * This constructor initializes the class.
@@ -42,9 +42,31 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, $metadata['field']);
 
-		$this->metadata['values'] = (isset($metadata['values']))
-			? (array) $metadata['values']
-			: array('yes', 'no');
+		// Sets the number of decimal points.
+		$this->metadata['precision'] = (isset($metadata['precision']))
+			? (int) $metadata['precision']
+			: 0;
+
+		// Sets the data type that will be used when casting value.
+		$this->metadata['type'] = ($this->metadata['precision'] > 0) ? 'double' : 'integer';
+
+		// Sets the separator between the fractional and integer digits.
+		$this->metadata['separator'] = (isset($metadata['separator']))
+			? (string) $metadata['separator']
+			: '.';
+
+		$this->metadata['regex'] = array();
+
+		// Sets the regex that will be used to replace separator
+		$this->metadata['regex'][0] = '/' . preg_quote($this->metadata['separator']) . '/';
+
+		// Sets the thousands delimiter.
+		$this->metadata['delimiter'] = (isset($metadata['delimiter']))
+			? (string) $metadata['delimiter']
+			: ',';
+
+		// Sets the regex that will be used to replace delimiter
+		$this->metadata['regex'][1] = '/' . preg_quote($this->metadata['delimiter']) . '/';
 	}
 
 	/**
@@ -61,7 +83,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
 				if ( ! is_null($value)) {
-					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
+					$value = number_format($value, $this->metadata['precision'], $this->metadata['separator'], $this->metadata['delimiter']);
 				}
 				return $value;
 			break;
@@ -84,11 +106,10 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
-					$true = $this->metadata['values'][0];
-					$value = (is_string($true) && is_string($value))
-						? (strcasecmp($true, $value) == 0)
-						: ($true == $value);
+				if (is_string($value)) {
+					$value = preg_replace($this->metadata['regex'][1], '', $value);
+					$value = preg_replace($this->metadata['regex'][0], '.', $value);
+					settype($value, $this->metadata['type']);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;

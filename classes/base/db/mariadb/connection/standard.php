@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -39,15 +39,20 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$this->link_id = @mysql_connect($this->data_source->host, $this->data_source->username, $this->data_source->password);
+			$host = $this->data_source->host;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$this->link_id = ($this->data_source->is_persistent())
+				? @mysql_pconnect($host, $username, $password)
+				: @mysql_connect($host, $username, $password, TRUE);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . mysql_error();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 			$database = @mysql_select_db($this->data_source->database, $this->link_id);
 			if ($database === FALSE) {
 				$this->error = 'Message: Failed to connect to database. Reason: ' . mysql_error($this->link_id);
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
 	}
@@ -82,9 +87,9 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @mysql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mysql_error($this->link_id);

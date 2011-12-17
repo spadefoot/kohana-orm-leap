@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -56,11 +56,15 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 				$connection_string .= ':' . $port;
 			}
 			$connection_string .= '/' . $this->data_source->database;
-			$this->link_id = @oci_connect($this->data_source->username, $this->data_source->password, $connection_string);
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$this->link_id = ($this->data_source->is_persistent())
+				? @oci_pconnect($username, $password, $connection_string)
+				: @oci_connect($username, $password, $connection_string);
 			if ($this->link_id === FALSE) {
 				$oci_error = oci_error();
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $oci_error['message'];
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 		}
@@ -104,9 +108,9 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @oci_parse($this->link_id, $sql);
 		if (($resource_id === FALSE) || !oci_execute($resource_id, $this->execution_mode)) {
 			$oci_error = oci_error($resource_id);

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -45,16 +45,20 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 				if ( ! empty($port)) {
 					$connection_string .= ':' . $port;
 				}
-				$this->link_id = mssql_connect($connection_string, $this->data_source->username, $this->data_source->password);
+				$username = $this->data_source->username;
+				$password = $this->data_source->password;
+				$this->link_id = ($this->data_source->is_persistent())
+					? mssql_pconnect($connection_string, $username, $password)
+					: mssql_connect($connection_string, $username, $password, TRUE);
 			}
 			catch (ErrorException $ex) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 			$database = @mssql_select_db($this->data_source->database, $this->link_id);
 			if ($database === FALSE) {
 				$this->error = 'Message: Failed to connect to database. Reason: ' . mssql_get_last_message();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
 	}
@@ -88,9 +92,9 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @mssql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mssql_get_last_message();

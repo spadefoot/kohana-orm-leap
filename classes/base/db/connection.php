@@ -33,7 +33,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access protected
 	 * @var string
 	 */
-    protected $cache_key = NULL;
+	protected $cache_key = NULL;
 
 	/**
 	 * This variable stores the connection configurations.
@@ -88,33 +88,33 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public abstract function open();
 
-    /**
-     * This function manages query caching.
-     *
-     * @access protected
-     * @param string $sql                       the SQL statement being queried
+	/**
+	 * This function manages query caching.
+	 *
+	 * @access protected
+	 * @param string $sql                       the SQL statement being queried
 	 * @param string $type						the return type that is being used
-     * @param DB_ResultSet $results             the result set
-     * @return DB_ResultSet                     the result set for the specified
-     */
-    protected function cache($sql, $type, $results = NULL) {
-        if ($this->data_source->cache->enabled) {
-            if ( ! is_null($results)) {
-        		if ($this->data_source->cache->lifetime > 0) {
-        		    Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
-        		}
-        		return $results;
-            }
-            else if ($this->data_source->cache->lifetime !== NULL) {
-    			$this->cache_key = 'DB_Connection::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
-    			$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
-    			if (($results !== NULL) && !$this->data_source->cache->force) {
-    				return $results;
-    			}
-    		}
-        }
-        return $results;
-    }
+	 * @param DB_ResultSet $results             the result set
+	 * @return DB_ResultSet                     the result set for the specified
+	 */
+	protected function cache($sql, $type, $results = NULL) {
+		if ($this->data_source->cache->enabled) {
+			if ( ! is_null($results)) {
+				if ($this->data_source->cache->lifetime > 0) {
+					Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
+				}
+				return $results;
+			}
+			else if ($this->data_source->cache->lifetime !== NULL) {
+				$this->cache_key = 'DB_Connection::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
+				$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
+				if (($results !== NULL) && !$this->data_source->cache->force) {
+					return $results;
+				}
+			}
+		}
+		return $results;
+	}
 
 	/**
 	 * This function begins a transaction.

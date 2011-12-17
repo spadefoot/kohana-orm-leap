@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-08
+ * @version 2011-12-17
  *
  * @abstract
  */
@@ -54,7 +54,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if (is_string($value)) {
+				if ( ! is_null($value)) {
 					$value = new XML($value);
 				}
 				return $value;

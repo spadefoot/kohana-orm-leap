@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -60,10 +60,14 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 				}
 			}
 			$connection_string .= ':' . $this->data_source->database;
-			$this->link_id = @ibase_connect($connection_string, $this->data_source->username, $this->data_source->password);
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$this->link_id = ($this->data_source->is_persistent())
+				? @ibase_pconnect($connection_string, $username, $password)
+				: @ibase_connect($connection_string, $username, $password);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . ibase_errmsg();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
 	}
@@ -103,9 +107,9 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @ibase_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . ibase_errmsg();

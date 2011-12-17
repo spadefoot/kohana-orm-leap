@@ -17,18 +17,15 @@
  */
 
 /**
- * This class represents a "boolean" adaptor for handling non-standard boolean
- * values, such as "yes/no" decisions.
+ * This class represents a "number" adaptor for a handling UOM conversions.
  *
  * @package Leap
  * @category ORM
  * @version 2011-12-17
  *
- * @see http://www.php.net/manual/en/language.types.boolean.php
- *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 
 	/**
 	 * This constructor initializes the class.
@@ -42,9 +39,23 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, $metadata['field']);
 
-		$this->metadata['values'] = (isset($metadata['values']))
-			? (array) $metadata['values']
-			: array('yes', 'no');
+		$this->metadata['units'] = array();
+
+		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][0]);
+
+		if (($unit = Kohana::$config->load($group)) === NULL) {
+			throw new Kohana_InvalidProperty_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+		}
+
+		$this->metadata['units'][0] = $unit; // field's unit
+
+		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][1]);
+
+		if (($unit = Kohana::$config->load($group)) === NULL) {
+			throw new Kohana_InvalidProperty_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+		}
+
+		$this->metadata['units'][1] = $unit; // adaptor's unit
 	}
 
 	/**
@@ -61,7 +72,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
 				if ( ! is_null($value)) {
-					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
+					$value = self::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
 				}
 				return $value;
 			break;
@@ -85,10 +96,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				if ( ! is_null($value)) {
-					$true = $this->metadata['values'][0];
-					$value = (is_string($true) && is_string($value))
-						? (strcasecmp($true, $value) == 0)
-						: ($true == $value);
+					$value = self::convert($value, $this->metadata['units'][1], $this->metadata['units'][0]);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;
@@ -96,6 +104,46 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * This function converts a value's units.
+	 *
+	 * @access protected
+	 * @static
+	 * @param double $value                     the value to converted
+	 * @param string $units0                    the value's starting units
+	 * @param string $units1                    the value's ending units
+	 * @return double                           the new value
+	 */
+	protected static function convert($value, $units0, $units1) {
+		return ($value * self::parse($units0)) / self::parse($units1);
+	}
+
+	/**
+	 * This function parses a mathematical expression to evaluate it.
+	 *
+	 * @access protected
+	 * @static
+	 * @param string $expr                      the expression to be evaluated
+	 * @return double                           the value
+	 *
+	 * @see http://de.php.net/eval
+	 */
+	protected static function parse($expr) {
+		$expr = preg_replace("/[^0-9+\-.*\/()%]/", "", $expr);
+		$expr = preg_replace("/([+-])([0-9]{1})(%)/", "*(1\$1.0\$2)", $expr);
+		$expr = preg_replace("/([+-])([0-9]+)(%)/", "*(1\$1.\$2)", $expr);
+		$expr = preg_replace("/([0-9]+)(%)/", ".\$1", $expr);
+		if ($expr == "") {
+			$value = 0;
+		}
+		else {
+			eval("\$value=" . $expr . ";");
+		}
+		return $value;
 	}
 
 }

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-12
+ * @version 2011-12-17
  *
  * @see http://www.php.net/manual/en/ref.pdo-sqlite.php
  *
@@ -41,19 +41,21 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string  = 'sqlite:';
-			$connection_string .= $this->data_source->database;
-			$username = $this->data_source->username;
-			$password = $this->data_source->password;
 			try {
-				$this->connection = new PDO($connection_string, $username, $password);
+				$connection_string  = 'sqlite:';
+				$connection_string .= $this->data_source->database;
+				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+				if ($this->data_source->is_persistent()) {
+					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
+				}
+				$this->connection = new PDO($connection_string, '', '', $attributes);
+				$this->link_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
 				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':source' => $connection_string, ':username' => $username, 'password' => $password));
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
-			$this->link_id = self::$counter++;
 		}
 	}
 

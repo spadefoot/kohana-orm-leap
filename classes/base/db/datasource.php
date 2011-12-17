@@ -81,42 +81,42 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
-        switch ($name) {
-            case 'id':
-                return $this->settings['id'];
-            break;
-            case 'cache':
-                // TODO make this modifiable
-                $cache = array();
-                $cache['enabled'] = (isset($this->settings['caching'])) ? (bool) $this->settings['caching'] : FALSE;
-                $cache['lifetime'] = Kohana::$cache_life;
-                $cache['force'] = FALSE;
-                return (object) $cache;
-            break;
-            case 'charset':
-                return (isset($this->settings['charset'])) ? $this->settings['charset'] : 'utf8';
-            break;
-            case 'dialect':
-            case 'type':
-                return (isset($this->settings['type'])) ? $this->settings['type'] : 'mysql';
-            break;
-            case 'driver':
-		        return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'standard';
-		    break;
-            case 'database':
-            case 'password':
-            case 'port':
-            case 'username':
-		        return (isset($this->settings['connection'][$name])) ? $this->settings['connection'][$name] : '';
-		    break;
-            case 'host':
-		        return (isset($this->settings['connection']['hostname'])) ? $this->settings['connection']['hostname'] : 'localhost';
-		    break;
-            default:
-                throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
-            break;
-        }
-    }
+		switch ($name) {
+			case 'id':
+				return $this->settings['id'];
+			break;
+			case 'cache':
+				// TODO make this modifiable
+				$cache = array();
+				$cache['enabled'] = (isset($this->settings['caching'])) ? (bool) $this->settings['caching'] : FALSE;
+				$cache['lifetime'] = Kohana::$cache_life;
+				$cache['force'] = FALSE;
+				return (object) $cache;
+			break;
+			case 'charset':
+				return (isset($this->settings['charset'])) ? $this->settings['charset'] : 'utf8';
+			break;
+			case 'dialect':
+			case 'type':
+				return (isset($this->settings['type'])) ? $this->settings['type'] : 'mysql';
+			break;
+			case 'driver':
+				return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'standard';
+			break;
+			case 'database':
+			case 'password':
+			case 'port':
+			case 'username':
+				return (isset($this->settings['connection'][$name])) ? $this->settings['connection'][$name] : '';
+			break;
+			case 'host':
+				return (isset($this->settings['connection']['hostname'])) ? $this->settings['connection']['hostname'] : 'localhost';
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+			break;
+		}
+	}
 
 	/**
 	 * This function determines whether the connection is persistent.

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -49,10 +49,12 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			$connection_string .= 'PROTOCOL=TCPIP;';
 			$connection_string .= 'UID=' . $this->data_source->username . ';';
 			$connection_string .= 'PWD=' . $this->data_source->password . ';';
-			$this->link_id = @db2_connect($connection_string, '', '');
+			$this->link_id = ($this->data_source->is_persistent())
+				? @db2_pconnect($connection_string, '', '')
+				: @db2_connect($connection_string, '', '');
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . db2_conn_error();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
 	}
@@ -100,9 +102,9 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @db2_prepare($this->link_id, $sql);
 		if (($resource_id === FALSE) || !db2_execute($resource_id)) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);

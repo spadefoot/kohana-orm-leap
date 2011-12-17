@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -49,10 +49,12 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$connection_string .= ' dbname=' . $this->data_source->database;
 			$connection_string .= ' user=' . $this->data_source->username;
 			$connection_string .= ' password=' . $this->data_source->password;
-			$this->link_id = @pg_connect($connection_string);
+			$this->link_id = ($this->data_source->is_persistent())
+				? @pg_pconnect($connection_string)
+				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . pg_last_error();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
 	}
@@ -89,9 +91,9 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @pg_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . pg_last_error($this->link_id);

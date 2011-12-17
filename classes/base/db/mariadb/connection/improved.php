@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-13
+ * @version 2011-12-17
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -36,13 +36,22 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
 	 *                                          the database connection
+	 *
+	 * @see http://php.net/manual/en/mysqli.persistconns.php
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$this->link_id = mysqli_connect($this->data_source->host, $this->data_source->username, $this->data_source->password, $this->data_source->database);
+			$host = $this->data_source->host;
+			if ($this->data_source->is_persistent()) {
+				$host = 'p:' . $host;
+			}
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$database = $this->data_source->database;
+			$this->link_id = @mysqli_connect($host, $username, $password, $database);
 			if ($this->link_id === FALSE) {
 				$this->error = 'Message: Failed to establish connection. Reason: ' . mysqli_connect_error();
-				throw new Kohana_Database_Exception($this->error, array());
+				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
 	}
@@ -84,9 +93,9 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$resource_id = @mysqli_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mysqli_error($this->link_id);

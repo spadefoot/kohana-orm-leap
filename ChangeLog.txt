@@ -1,5 +1,12 @@
 Changelog for LEAP ORM
 
+2011-12-17
+* Added logic for establishing persistent connections (Issue #8).
+* Minor edits to __get and __set in adaptor classes.
+* Added 3 new adaptor classes: number, object, and uom.
+* Added a new UOM config for adaptor.
+* Removed an unneeded property in Base_DB_ORM_Field.
+
 2011-12-14
 * Added a missing instance variable: $model.
 * Alphabetized som instance variables in proxy classes.
