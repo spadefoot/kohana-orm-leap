@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2011-12-17
  *
  * @abstract
  */
@@ -83,12 +83,8 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 			$sql->where($foreign_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$candidate_key[$i]});
 		}
 		if (isset($this->metadata['options'])) {
-			$options = $this->metadata['options'];
-			if (isset($options['limit'])) {
-				$sql->limit($options['limit']);
-			}
-			if (isset($option['offset'])) {
-				$sql->offset($options['offset']);
+			foreach ($this->metadata['options'] as $option) {
+				call_user_func_array(array($sql, $option[0]), $option[1]);
 			}
 		}
 		$result = $sql->query();

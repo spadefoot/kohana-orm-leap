@@ -31,6 +31,7 @@ LEAP provides a number of features, such as:
 * A [database connection pool](http://orm.spadefootcode.com/tutorials/establishing-a-database-connection/) for managing resources.
 * A powerful [query builder for creating SQL statements](http://orm.spadefootcode.com/tutorials/building-sql-statements/).
 * Sanitizes data to help prevent SQL injection attacks.
+* Capable of handling non-integers primary keys.
 * Supports composite primary keys and composite foreign keys.
 * Enforces strong data types on [database fields](http://orm.spadefootcode.com/tutorials/mapping-a-model/#fields).
 * Allows [field aliases](http://orm.spadefootcode.com/tutorials/mapping-a-model/#aliases) to be declared.
