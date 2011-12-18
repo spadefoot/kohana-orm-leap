@@ -59,9 +59,9 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 			? $metadata['foreign_key']
 			: $metadata['child_key'];
 
-		if (isset($metadata['options'])) {
-			$this->metadata['options'] = $metadata['options']; // a set of options that will modify the query
-		}
+		$this->metadata['options'] = (isset($metadata['options']))
+			? (array) $metadata['options'] // a set of options that will modify the query
+			: array();
 	}
 
 	/**
@@ -82,10 +82,8 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		for ($i = 0; $i < $field_count; $i++) {
 			$sql->where($foreign_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$candidate_key[$i]});
 		}
-		if (isset($this->metadata['options'])) {
-			foreach ($this->metadata['options'] as $option) {
-				call_user_func_array(array($sql, $option[0]), $option[1]);
-			}
+		foreach ($this->metadata['options'] as $option) {
+			call_user_func_array(array($sql, $option[0]), $option[1]);
 		}
 		$result = $sql->query();
 
