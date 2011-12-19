@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-12-12
+ * @version 2011-12-18
  *
  * @abstract
  */
@@ -246,6 +246,42 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 			}
 		}
 		throw new Kohana_InvalidArgument_Exception('Message: Invalid operator token specified. Reason: Token must exist in the enumerated set.', array(':group' => $group, ':expr' => $expr));
+	}
+
+	/**
+	 * This function prepare the specified expression as a ordering token.
+	 *
+	 * @access public
+	 * @param string $column                    the column to be sorted
+	 * @param string $ordering                  the ordering token that signal whether the
+	 *                                          column will sorted either in ascending or
+	 *                                          descending order
+	 * @param string $nulls                     the weight to be given to null values
+	 * @return string                           the prepared clause
+	 *
+	 * @see http://www.postgresql.org/docs/9.0/static/sql-select.html
+	 */
+	public function prepare_ordering($column, $ordering, $nulls) {
+		$column = $this->prepare_identifier($column);
+		switch (strtoupper($ordering)) {
+			case 'DESC':
+				$ordering = 'DESC';
+			break;
+			case 'ASC':
+			default:
+				$ordering = 'ASC';
+			break;
+		}
+		$expr = "{$column} {$ordering}";
+		switch (strtoupper($nulls)) {
+			case 'FIRST':
+				$expr .= ' NULLS FIRST';
+			break;
+			case 'LAST':
+				$expr .= ' NULLS LAST';
+			break;
+		}
+		return $expr;
 	}
 
 	/**

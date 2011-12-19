@@ -21,9 +21,11 @@
  *
  * @package Leap
  * @category DB
- * @version 2011-12-14
+ * @version 2011-12-18
+ *
+ * @group spadefoot.leap
  */
-class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
+class DB_DataSourceTest extends Unittest_Testcase {
 
 	/**
 	 * This function provides the test data for self::test_constructor().
@@ -51,6 +53,8 @@ class DB_DataSourceTest extends PHPUnit_Framework_TestCase {
 	 * @param string $expected_resource_type            the expected resource type value
 	 * @param string $expected_username                 the expected username value
 	 * @param string $expected_persistent               the expected persistent value
+	 *
+	 * @dataProvider provider_constructor
 	 */
 	public function test_constructor($test_values, $expected_database, $expected_driver, $expected_host_server, $expected_id, $expected_password, $expected_port, $expected_type, $expected_username, $expected_persistent) {
 		// Initialization

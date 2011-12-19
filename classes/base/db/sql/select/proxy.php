@@ -21,11 +21,19 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-14
+ * @version 2011-12-18
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_Statement {
+
+	/**
+	 * This variable stores an instance of the SQL builder class.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Select_Builder
+	 */
+	protected $builder;
 
 	/**
 	 * This variable stores a reference to the data source.
@@ -34,15 +42,6 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @var DB_DataSource
 	 */
 	protected $source;
-
-	/**
-	 * This variable stores an instance of the SQL statement builder of the preferred SQL
-	 * language dialect.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Builder
-	 */
-	protected $builder;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -206,15 +205,18 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
-	 * This function sorts a column either ascending or descending order.
+	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param boolean $descending           whether to sort in descending order
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @param string $ordering              the ordering token that signal whether the
+	 *                                      column will sorted either in ascending or
+	 *                                      descending order
+	 * @param string $nulls                 the weight to be given to null values
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
-	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
-		$this->builder->order_by($column, $descending, $nulls);
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->builder->order_by($column, $ordering, $nulls);
 		return $this;
 	}
 
@@ -269,7 +271,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
-	 * This function executes the SQL statement via the DAO class.
+	 * This function performs a query using the built SQL statement.
 	 *
 	 * @access public
 	 * @param string $type               	the return type to be used

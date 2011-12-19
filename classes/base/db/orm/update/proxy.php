@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-14
+ * @version 2011-12-18
  *
  * @abstract
  */
@@ -64,7 +64,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $column                the column to be set
 	 * @param string $value                 the value to be set
-	 * @return DB_SQL_Update_Builder        a reference to the current instance
+	 * @return DB_ORM_Update_Proxy          a reference to the current instance
 	 */
 	public function set($column, $value) {
 		$this->builder->set($column, $value);
@@ -77,7 +77,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $parenthesis           the parenthesis to be used
 	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Update_Builder        a reference to the current instance
+	 * @return DB_ORM_Update_Proxy          a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);
@@ -92,7 +92,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $operator              the operator to be used
 	 * @param string $value                 the value the column is constrained with
 	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Update_Builder        a reference to the current instance
+	 * @return DB_ORM_Update_Proxy          a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -100,15 +100,18 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
-	 * This function sorts a column either ascending or descending order.
+	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param boolean $descending           whether to sort in descending order
-	 * @return DB_SQL_Update_Builder        a reference to the current instance
+	 * @param string $ordering              the ordering token that signal whether the
+	 *                                      column will sorted either in ascending or
+	 *                                      descending order
+	 * @param string $nulls                 the weight to be given to null values
+	 * @return DB_ORM_Update_Proxy          a reference to the current instance
 	 */
-	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
-		$this->builder->order_by($column, $descending, $nulls);
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->builder->order_by($column, $ordering, $nulls);
 		return $this;
 	}
 
@@ -117,7 +120,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param integer $limit                the "limit" constraint
-	 * @return DB_SQL_Update_Builder        a reference to the current instance
+	 * @return DB_ORM_Update_Proxy          a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -129,7 +132,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param integer $offset               the "offset" constraint
-	 * @return DB_SQL_Update_Builder        a reference to the current instance
+	 * @return DB_ORM_Update_Proxy          a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
@@ -149,7 +152,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
-	 * This function executes the SQL statement.
+	 * This function executes the built SQL statement.
 	 *
 	 * @access public
 	 */

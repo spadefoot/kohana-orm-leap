@@ -1,5 +1,10 @@
 Changelog for LEAP ORM
 
+2011-12-18
+* Refactored order_by functions in builder/proxy classes.
+* Added missing doccomments in unit tests.
+* Fixed inline documentation.
+
 2011-12-17
 * Added logic for establishing persistent connections (Issue #8).
 * Minor edits to __get and __set in adaptor classes.

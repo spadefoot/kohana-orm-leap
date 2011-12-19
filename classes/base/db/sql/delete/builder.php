@@ -21,11 +21,19 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-12
+ * @version 2011-12-18
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
+
+	/**
+	 * This variable stores the build data for the SQL statement.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $data = NULL;
 
 	/**
 	 * This variable stores the name of the SQL dialect being used.
@@ -43,14 +51,6 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @var DB_SQL_Expression_Interface
 	 */
 	protected $helper = NULL;
-
-	/**
-	 * This variable stores the build data for the SQL statement.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $data = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -78,8 +78,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function from($table) {
-		$table = $this->helper->prepare_identifier($table);
-		$this->data['from'] = $table;
+		$this->data['from'] = $this->helper->prepare_identifier($table);
 		return $this;
 	}
 
@@ -144,17 +143,18 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function sorts a column either ascending or descending order.
+	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
-	 * @param string $column                    the column to be sorted
-	 * @param boolean $descending               whether to sort in descending order
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
+	 * @param string $column                the column to be sorted
+	 * @param string $ordering              the ordering token that signal whether the
+	 *                                      column will sorted either in ascending or
+	 *                                      descending order
+	 * @param string $nulls                 the weight to be given to null values
+	 * @return DB_SQL_Delete_Builder        a reference to the current instance
 	 */
-	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
-		$column = $this->helper->prepare_identifier($column);
-		$descending = $this->helper->prepare_boolean($descending);
-		$this->data['order_by'][] = "{$column} " . (($descending) ? 'DESC' : 'ASC');
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->data['order_by'][] = $this->helper->prepare_ordering($column, $ordering, $nulls);
 		return $this;
 	}
 
@@ -166,8 +166,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function limit($limit) {
-		$limit = $this->helper->prepare_natural($limit);
-		$this->data['limit'] = $limit;
+		$this->data['limit'] = $this->helper->prepare_natural($limit);
 		return $this;
 	}
 
@@ -179,8 +178,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function offset($offset) {
-		$offset = $this->helper->prepare_natural($offset);
-		$this->data['offset'] = $offset;
+		$this->data['offset'] = $this->helper->prepare_natural($offset);
 		return $this;
 	}
 

@@ -21,35 +21,34 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-12
+ * @version 2011-12-18
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_Statement {
 
 	/**
-	* This variable stores a reference to the data source.
-	*
-	* @access protected
-	* @var DB_DataSource
-	*/
-	protected $source;
-
-	/**
-	* This variable stores an instance of the SQL statement builder of the preferred SQL
-	* language dialect.
-	*
-	* @access protected
-	* @var DB_SQL_Builder
-	*/
+	 * This variable stores an instance of the SQL builder class.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Update_Builder
+	 */
 	protected $builder;
 
 	/**
-	* This constructor instantiates this class using the specified data source.
-	*
-	* @access public
-	* @param mixed $config                  the data source configurations
-	*/
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $source;
+
+	/**
+	 * This constructor instantiates this class using the specified data source.
+	 *
+	 * @access public
+	 * @param mixed $config                 the data source configurations
+	 */
 	public function __construct($config) {
 		$this->source = new DB_DataSource($config);
 		$builder = 'DB_' . $this->source->dialect . '_Update_Builder';
@@ -57,90 +56,93 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
-	* This function sets which table will be modified.
-	*
-	* @access public
-	* @param string $table                  the database table to be modified
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
+	 * This function sets which table will be modified.
+	 *
+	 * @access public
+	 * @param string $table                 the database table to be modified
+	 * @return DDB_SQL_Update_Proxy         a reference to the current instance
+	 */
 	public function table($table) {
 		$this->builder->table($table);
 		return $this;
 	}
 
 	/**
-	* This function sets the associated value with the specified column.
-	*
-	* @access public
-	* @param string $column                 the column to be set
-	* @param string $value                  the value to be set
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
+	 * This function sets the associated value with the specified column.
+	 *
+	 * @access public
+	 * @param string $column                the column to be set
+	 * @param string $value                 the value to be set
+	 * @return DB_SQL_Update_Proxy          a reference to the current instance
+	 */
 	public function set($column, $value) {
 		$this->builder->set($column, $value);
 		return $this;
 	}
 
 	/**
-	* This function either opens or closes a "where" group.
-	*
-	* @access public
-	* @param string $parenthesis            the parenthesis to be used
-	* @param string $connector              the connector to be used
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
+	 * This function either opens or closes a "where" group.
+	 *
+	 * @access public
+	 * @param string $parenthesis           the parenthesis to be used
+	 * @param string $connector             the connector to be used
+	 * @return DB_SQL_Update_Proxy          a reference to the current instance
+	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);
 		return $this;
 	}
 
 	/**
-	* This function adds a "where" constraint.
-	*
-	* @access public
-	* @param string $column                 the column to be constrained
-	* @param string $operator               the operator to be used
-	* @param string $value                  the value the column is constrained with
-	* @param string $connector              the connector to be used
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
+	 * This function adds a "where" constraint.
+	 *
+	 * @access public
+	 * @param string $column                the column to be constrained
+	 * @param string $operator              the operator to be used
+	 * @param string $value                 the value the column is constrained with
+	 * @param string $connector             the connector to be used
+	 * @return DB_SQL_Update_Proxy          a reference to the current instance
+	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
 		return $this;
 	}
 
 	/**
-	* This function sorts a column either ascending or descending order.
-	*
-	* @access public
-	* @param string $column                 the column to be sorted
-	* @param boolean $descending            whether to sort in descending order
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
-	public function order_by($column, $descending = FALSE, $nulls = 'DEFAULT') {
-		$this->builder->order_by($column, $descending, $nulls);
+	 * This function sets how a column will be sorted.
+	 *
+	 * @access public
+	 * @param string $column                the column to be sorted
+	 * @param string $ordering              the ordering token that signal whether the
+	 *                                      column will sorted either in ascending or
+	 *                                      descending order
+	 * @param string $nulls                 the weight to be given to null values
+	 * @return DB_SQL_Update_Proxy          a reference to the current instance
+	 */
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->builder->order_by($column, $ordering, $nulls);
 		return $this;
 	}
 
 	/**
-	* This function sets a "limit" constraint on the statement.
-	*
-	* @access public
-	* @param integer $limit                 the "limit" constraint
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
+	 * This function sets a "limit" constraint on the statement.
+	 *
+	 * @access public
+	 * @param integer $limit                the "limit" constraint
+	 * @return DB_SQL_Update_Proxy          a reference to the current instance
+	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
 		return $this;
 	}
 
 	/**
-	* This function sets an "offset" constraint on the statement.
-	*
-	* @access public
-	* @param integer $offset                the "offset" constraint
-	* @return DB_SQL_Update_Builder         a reference to the current instance
-	*/
+	 * This function sets an "offset" constraint on the statement.
+	 *
+	 * @access public
+	 * @param integer $offset               the "offset" constraint
+	 * @return DB_SQL_Update_Proxy          a reference to the current instance
+	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
 		return $this;
@@ -159,10 +161,10 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
-	* This function executes the SQL statement via the DAO class.
-	*
-	* @access public
-	*/
+	 * This function executes the built SQL statement.
+	 *
+	 * @access public
+	 */
 	public function execute() {
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
