@@ -1,5 +1,8 @@
 Changelog for LEAP ORM
 
+2011-12-22
+* Refactored Base_DB_DataSource and DB_DataSourceTest.
+
 2011-12-18
 * Refactored order_by functions in builder/proxy classes.
 * Added missing doccomments in unit tests.

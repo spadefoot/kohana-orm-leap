@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-13
+ * @version 2011-12-22
  *
  * @abstract
  */
@@ -41,27 +41,25 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 * @access public
 	 * @param mixed $config                          the data source configurations
 	 * @throws Kohana_InvalidArgument_Exception      indicates that there is a data type mismatch
-	 * @throws Kohana_InvalidProperty_Exception      indicates that the connection string is invalid
+	 * @throws Kohana_InvalidProperty_Exception      indicates that the database group is undefined
 	 */
 	public function __construct($config) {
 		if (empty($config)) {
 			$id = 'database.default';
-			$this->settings = Kohana::$config->load($id);
-			$this->settings['id'] = $id;
+			if (($config = Kohana::$config->load($id)) === NULL) {
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
+			}
+			$this->setup($config, $id);
 		}
 		else if (is_string($config)) {
 			$id = 'database.' . $config;
-			$this->settings = Kohana::$config->load($id);
-			if ($this->settings === NULL) {
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :group is undefined.', array(':group' => $config));
+			if (($config = Kohana::$config->load($id)) === NULL) {
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
-			$this->settings['id'] = $id;
+			$this->setup($config, $id);
 		}
 		else if (is_array($config)) {
-			$this->settings = $config;
-			if ( ! isset($this->settings['id'])) {
-				$this->settings['id'] = 'unique_id.' . uniqid();
-			}
+			$this->setup($config);
 		}
 		else if (is_object($config) && ($config instanceof DB_DataSource)) {
 			$this->settings = $config->settings;
@@ -70,6 +68,63 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			throw new Kohana_InvalidArgument_Exception('Message: Unable to load data source. Reason: Data type :type is mismatched.', array(':type' => gettype($config)));
 		}
 	}
+
+    protected function setup($settings, $id = NULL) {
+        $this->settings = array();
+
+        if (is_null($id)) {
+            $this->settings['id'] = (isset($settings['id']))
+                ? (string) $settings['id']
+                : 'unique_id.' . uniqid();
+        }
+        else {
+            $this->settings['id'] = (string) $id;
+        }
+        
+        $cache = array();
+		$cache['enabled'] = (isset($settings['caching'])) ? (bool) $settings['caching'] : FALSE;
+		$cache['lifetime'] = Kohana::$cache_life;
+		$cache['force'] = FALSE;
+		$this->settings['cache'] = (object) $cache;
+
+		$this->settings['charset'] = (isset($settings['charset']))
+		    ? (string) $settings['charset']
+		    : 'utf8';
+
+		$this->settings['database'] = (isset($settings['connection']['database']))
+		    ? (string) $settings['connection']['database']
+		    : '';
+
+		$this->settings['dialect'] = (isset($settings['type']))
+		    ? (string) $settings['type']
+		    : 'mysql';
+
+		$this->settings['driver'] = (isset($settings['driver']))
+		    ? (string) $settings['driver']
+		    : 'standard';
+
+        $this->settings['host'] = (isset($settings['connection']['hostname']))
+            ? (string) $settings['connection']['hostname']
+            : 'localhost';
+
+		$this->settings['persistent'] = (isset($settings['connection']['persistent']))
+		    ? (bool) $settings['connection']['persistent']
+		    : FALSE;
+
+		$this->settings['password'] = (isset($settings['connection']['password']))
+		    ? (string) $settings['connection']['password']
+		    : '';
+
+		$this->settings['port'] = (isset($settings['connection']['port']))
+		    ? (string) $settings['connection']['port']
+		    : '';
+
+		$this->settings['type'] = $this->settings['dialect'];
+
+		$this->settings['username'] = (isset($settings['connection']['username']))
+		    ? (string) $settings['connection']['username']
+		    : '';
+    }
 
 	/**
 	 * This function returns the value associated with the specified property.
@@ -82,35 +137,18 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 */
 	public function __get($name) {
 		switch ($name) {
-			case 'id':
-				return $this->settings['id'];
-			break;
 			case 'cache':
-				// TODO make this modifiable
-				$cache = array();
-				$cache['enabled'] = (isset($this->settings['caching'])) ? (bool) $this->settings['caching'] : FALSE;
-				$cache['lifetime'] = Kohana::$cache_life;
-				$cache['force'] = FALSE;
-				return (object) $cache;
-			break;
 			case 'charset':
-				return (isset($this->settings['charset'])) ? $this->settings['charset'] : 'utf8';
-			break;
-			case 'dialect':
-			case 'type':
-				return (isset($this->settings['type'])) ? $this->settings['type'] : 'mysql';
-			break;
-			case 'driver':
-				return (isset($this->settings['driver'])) ? $this->settings['driver'] : 'standard';
-			break;
 			case 'database':
+			case 'dialect':
+			case 'driver':
+			case 'host':
+			case 'id':
 			case 'password':
 			case 'port':
+			case 'type':
 			case 'username':
-				return (isset($this->settings['connection'][$name])) ? $this->settings['connection'][$name] : '';
-			break;
-			case 'host':
-				return (isset($this->settings['connection']['hostname'])) ? $this->settings['connection']['hostname'] : 'localhost';
+				return $this->settings[$name];
 			break;
 			default:
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
@@ -125,10 +163,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 * @return boolean                              whether the connection is persistent
 	 */
 	public function is_persistent() {
-		if (isset($this->settings['persistent'])) {
-			return (bool) $this->settings['persistent'];
-		}
-		return FALSE;
+		return $this->settings['persistent'];
 	}
 
 }

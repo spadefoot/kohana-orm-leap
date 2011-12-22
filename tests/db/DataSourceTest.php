@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB
- * @version 2011-12-18
+ * @version 2011-12-22
  *
  * @group spadefoot.leap
  */
@@ -33,9 +33,27 @@ class DB_DataSourceTest extends Unittest_Testcase {
 	 * @access public
 	 */
 	public function provider_constructor() {
+		$expected = array(
+            'type' => 'mysql',
+            'driver' => 'standard',
+            'connection' => array(
+                'persistent' => FALSE,
+                'hostname' => 'localhost',
+                'port' => '',
+                'database' => '',
+                'username' => 'root',
+                'password' => 'root',
+            ),
+            'caching' => FALSE,
+            'charset' => 'utf8',
+            'profiling' => FALSE,
+            'table_prefix' => '',
+        );
+		
 		return array(
-			array(array(NULL), '', 'standard', 'localhost', 'default', '', '', 'mysql', '', FALSE),
-			array(array('default'), '', 'standard', 'localhost', 'default', '', '', 'mysql', '', FALSE),
+			array(array(NULL), $expected),
+			array(array('default'), $expected),
+			array(array(new DB_DataSource('default')), $expected),
 		);
 	}
 
@@ -43,33 +61,25 @@ class DB_DataSourceTest extends Unittest_Testcase {
 	 * This function tests DB_DataSource::__construct().
 	 *
 	 * @access public
-	 * @param array $test_values                        the test values
-	 * @param string $expected_database                 the expected database value
-	 * @param string $expected_driver                   the expected driver value
-	 * @param string $expected_host_server              the expected host server value
-	 * @param string $expected_id                       the expected id value
-	 * @param string $expected_password                 the expected password value
-	 * @param string $expected_port                     the expected port value
-	 * @param string $expected_resource_type            the expected resource type value
-	 * @param string $expected_username                 the expected username value
-	 * @param string $expected_persistent               the expected persistent value
+	 * @param array $test_data                          the test data
+	 * @param string $expected_database                 the expected values
 	 *
 	 * @dataProvider provider_constructor
 	 */
-	public function test_constructor($test_values, $expected_database, $expected_driver, $expected_host_server, $expected_id, $expected_password, $expected_port, $expected_type, $expected_username, $expected_persistent) {
+	public function test_constructor($test_data, $expected) {
 		// Initialization
-		$source = new DB_DataSource(reset($test_values));
+		$source = new DB_DataSource(reset($test_data));
 		// Assertions
-		$this->assertSame($expected_database, $source->database);
-		$this->assertSame($expected_driver, $source->driver);
-		$this->assertSame($expected_host_server, $source->host);
-		$this->assertGreaterThan(0, strlen($source->id));
-		$this->assertSame($expected_password, $source->password);
-		$this->assertSame($expected_port, $source->port);
-		$this->assertSame($expected_type, $source->dialect);
-		$this->assertSame($expected_type, $source->type);
-		$this->assertSame($expected_username, $source->username);
-		$this->assertSame($expected_persistent, $source->is_persistent());
+		$this->assertSame($expected['connection']['database'], $source->database, 'Failed when checking database property.');
+		$this->assertSame($expected['driver'], $source->driver, 'Failed when checking driver property.');
+		$this->assertSame($expected['connection']['hostname'], $source->host, 'Failed when checking host property.');
+		$this->assertGreaterThan(0, strlen($source->id), 'Failed when checking id property.');
+		$this->assertSame($expected['connection']['password'], $source->password, 'Failed when checking password property.');
+		//$this->assertSame($expected['connection']['port'], $source->port, 'Failed when checking port property.');
+		$this->assertSame($expected['type'], $source->dialect, 'Failed when checking dialect property.');
+		$this->assertSame($expected['type'], $source->type, 'Failed when checking type property.');
+		$this->assertSame($expected['connection']['username'], $source->username, 'Failed when checking username property.');
+		$this->assertSame($expected['connection']['persistent'], $source->is_persistent(), 'Failed when checking is_persistent() function.');
 	}
 
 }
