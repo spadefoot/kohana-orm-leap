@@ -34,22 +34,22 @@ class DB_DataSourceTest extends Unittest_Testcase {
 	 */
 	public function provider_constructor() {
 		$expected = array(
-            'type' => 'mysql',
-            'driver' => 'standard',
-            'connection' => array(
-                'persistent' => FALSE,
-                'hostname' => 'localhost',
-                'port' => '',
-                'database' => '',
-                'username' => 'root',
-                'password' => 'root',
-            ),
-            'caching' => FALSE,
-            'charset' => 'utf8',
-            'profiling' => FALSE,
-            'table_prefix' => '',
-        );
-		
+			'type' => 'mysql',
+			'driver' => 'standard',
+			'connection' => array(
+				'persistent' => FALSE,
+				'hostname' => 'localhost',
+				'port' => '',
+				'database' => '',
+				'username' => 'root',
+				'password' => 'root',
+			),
+			'caching' => FALSE,
+			'charset' => 'utf8',
+			'profiling' => FALSE,
+			'table_prefix' => '',
+		);
+
 		return array(
 			array(array(NULL), $expected),
 			array(array('default'), $expected),

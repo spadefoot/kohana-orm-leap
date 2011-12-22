@@ -51,7 +51,7 @@ To start using LEAP, follow these steps:
 5. Add "leap" as a module to application/bootstrap.php.
 6. Begin creating your models in the application/classes/model/leap/ folder.
 
-For more information, see the tutorial [Installing LEAP](http://orm.spadefootcode.com/tutorials/installing-leap/).
+For more information, see the tutorial on [installing LEAP](http://orm.spadefootcode.com/tutorials/installing-leap/).
 
 ## Required Files
 
@@ -61,7 +61,7 @@ you are not using.  This is possible because each database plugin in LEAP is con
 
 ## Documentation
 
-This project is accompanied by a companion Web site, which documents the [API for the LEAP ORM](http://orm.spadefootcode.com/api/annotated.html)
+This project is accompanied by [a companion Web site](http://orm.spadefootcode.com), which documents the [API for the LEAP ORM](http://orm.spadefootcode.com/api/annotated.html)
 and has a number of [examples and tutorials](http://orm.spadefootcode.com/tutorials/index/). You can also find other tutorials and examples
 online (please let us know if you find one that we should highlight here).
 
@@ -73,7 +73,7 @@ or [Stack Overflow](http://stackoverlow.com). You can also send an email to spad
 ## Reporting Bugs & Making Recommendations
 
 If you find a bug in the code or if you would like to make a recommendation, we would be happy to hear from you.  Here are three methods
-you can use to submit bugs:
+you can use to notify us:
 
 * Log an issue in this project's [issue tracker](https://github.com/spadefoot/kohana-orm-leap/issues?sort=comments&direction=desc&state=open).
 * Create a fork of this project and submit a [pull request](http://help.github.com/send-pull-requests/).

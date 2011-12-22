@@ -69,63 +69,6 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 		}
 	}
 
-    protected function setup($settings, $id = NULL) {
-        $this->settings = array();
-
-        if (is_null($id)) {
-            $this->settings['id'] = (isset($settings['id']))
-                ? (string) $settings['id']
-                : 'unique_id.' . uniqid();
-        }
-        else {
-            $this->settings['id'] = (string) $id;
-        }
-        
-        $cache = array();
-		$cache['enabled'] = (isset($settings['caching'])) ? (bool) $settings['caching'] : FALSE;
-		$cache['lifetime'] = Kohana::$cache_life;
-		$cache['force'] = FALSE;
-		$this->settings['cache'] = (object) $cache;
-
-		$this->settings['charset'] = (isset($settings['charset']))
-		    ? (string) $settings['charset']
-		    : 'utf8';
-
-		$this->settings['database'] = (isset($settings['connection']['database']))
-		    ? (string) $settings['connection']['database']
-		    : '';
-
-		$this->settings['dialect'] = (isset($settings['type']))
-		    ? (string) $settings['type']
-		    : 'mysql';
-
-		$this->settings['driver'] = (isset($settings['driver']))
-		    ? (string) $settings['driver']
-		    : 'standard';
-
-        $this->settings['host'] = (isset($settings['connection']['hostname']))
-            ? (string) $settings['connection']['hostname']
-            : 'localhost';
-
-		$this->settings['persistent'] = (isset($settings['connection']['persistent']))
-		    ? (bool) $settings['connection']['persistent']
-		    : FALSE;
-
-		$this->settings['password'] = (isset($settings['connection']['password']))
-		    ? (string) $settings['connection']['password']
-		    : '';
-
-		$this->settings['port'] = (isset($settings['connection']['port']))
-		    ? (string) $settings['connection']['port']
-		    : '';
-
-		$this->settings['type'] = $this->settings['dialect'];
-
-		$this->settings['username'] = (isset($settings['connection']['username']))
-		    ? (string) $settings['connection']['username']
-		    : '';
-    }
-
 	/**
 	 * This function returns the value associated with the specified property.
 	 *
@@ -164,6 +107,70 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 */
 	public function is_persistent() {
 		return $this->settings['persistent'];
+	}
+
+	/**
+	 * This function handles the initialization of the data source's settings.
+	 *
+	 * @access protected
+	 * @param array $settings                           the settings to be used
+	 * @param string $id                                the data source's id
+	 */
+	protected function setup($settings, $id = NULL) {
+		$this->settings = array();
+
+		if (is_null($id)) {
+			$this->settings['id'] = (isset($settings['id']))
+				? (string) $settings['id']
+				: 'unique_id.' . uniqid();
+		}
+		else {
+			$this->settings['id'] = (string) $id;
+		}
+
+		$cache = array();
+		$cache['enabled'] = (isset($settings['caching'])) ? (bool) $settings['caching'] : FALSE;
+		$cache['lifetime'] = Kohana::$cache_life;
+		$cache['force'] = FALSE;
+		$this->settings['cache'] = (object) $cache;
+
+		$this->settings['charset'] = (isset($settings['charset']))
+			? (string) $settings['charset']
+			: 'utf8';
+
+		$this->settings['database'] = (isset($settings['connection']['database']))
+			? (string) $settings['connection']['database']
+			: '';
+
+		$this->settings['dialect'] = (isset($settings['type']))
+			? (string) $settings['type']
+			: 'mysql';
+
+		$this->settings['driver'] = (isset($settings['driver']))
+			? (string) $settings['driver']
+			: 'standard';
+
+		$this->settings['host'] = (isset($settings['connection']['hostname']))
+			? (string) $settings['connection']['hostname']
+			: 'localhost';
+
+		$this->settings['persistent'] = (isset($settings['connection']['persistent']))
+			? (bool) $settings['connection']['persistent']
+			: FALSE;
+
+		$this->settings['password'] = (isset($settings['connection']['password']))
+			? (string) $settings['connection']['password']
+			: '';
+
+		$this->settings['port'] = (isset($settings['connection']['port']))
+			? (string) $settings['connection']['port']
+			: '';
+
+		$this->settings['type'] = $this->settings['dialect'];
+
+		$this->settings['username'] = (isset($settings['connection']['username']))
+			? (string) $settings['connection']['username']
+			: '';
 	}
 
 }
