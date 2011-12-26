@@ -2,7 +2,7 @@ Changelog for LEAP ORM
 
 2011-12-26
 * Added the ability to extend builder classes.
-* Updated unit tests.
+* Updated unit tests and added a new unit test.
 
 2011-12-22
 * Refactored Base_DB_DataSource and DB_DataSourceTest.

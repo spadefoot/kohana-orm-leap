@@ -52,7 +52,7 @@ class DB_ToolKitTest extends Unittest_Testcase {
 	 * @dataProvider provider_slug
 	 */
 	public function test_slug($test_data, $expected) {
-		$this->assertSame($expected, DB_ToolKit::slug($test_data));
+		$this->assertSame($expected, DB_ToolKit::slug($test_data), 'Failed when testing slug().');
 	}
 
 }

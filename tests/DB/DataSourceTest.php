@@ -71,16 +71,16 @@ class DB_DataSourceTest extends Unittest_Testcase {
 		// Initialization
 		$source = new DB_DataSource($test_data);
 		// Assertions
-		$this->assertSame($expected['connection']['database'], $source->database, 'Failed when checking database property.');
-		$this->assertSame($expected['driver'], $source->driver, 'Failed when checking driver property.');
-		$this->assertSame($expected['connection']['hostname'], $source->host, 'Failed when checking host property.');
-		$this->assertRegExp('/^(database|unique_id)\.[a-zA-Z0-9_]+$/', $source->id, 'Failed when checking id property.');
-		$this->assertSame($expected['connection']['password'], $source->password, 'Failed when checking password property.');
-		$this->assertSame($expected['connection']['port'], $source->port, 'Failed when checking port property.');
-		$this->assertSame($expected['type'], $source->dialect, 'Failed when checking dialect property.');
-		$this->assertSame($expected['type'], $source->type, 'Failed when checking type property.');
-		$this->assertSame($expected['connection']['username'], $source->username, 'Failed when checking username property.');
-		$this->assertSame($expected['connection']['persistent'], $source->is_persistent(), 'Failed when checking is_persistent() function.');
+		$this->assertSame($expected['connection']['database'], $source->database, 'Failed when testing "database" property.');
+		$this->assertSame($expected['driver'], $source->driver, 'Failed when testing "driver" property.');
+		$this->assertSame($expected['connection']['hostname'], $source->host, 'Failed when testing "host" property.');
+		$this->assertRegExp('/^(database|unique_id)\.[a-zA-Z0-9_]+$/', $source->id, 'Failed when testing "id" property.');
+		$this->assertSame($expected['connection']['password'], $source->password, 'Failed when testing "password" property.');
+		$this->assertSame($expected['connection']['port'], $source->port, 'Failed when testing "port" property.');
+		$this->assertSame($expected['type'], $source->dialect, 'Failed when testing "dialect" property.');
+		$this->assertSame($expected['type'], $source->type, 'Failed when testing "type" property.');
+		$this->assertSame($expected['connection']['username'], $source->username, 'Failed when testing "username" property.');
+		$this->assertSame($expected['connection']['persistent'], $source->is_persistent(), 'Failed when testing is_persistent().');
 	}
 
 }
