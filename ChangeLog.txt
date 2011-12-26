@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2011-12-26
+* Added the ability to extend builder classes.
+* Updated unit tests.
+
 2011-12-22
 * Refactored Base_DB_DataSource and DB_DataSourceTest.
 
@@ -19,7 +23,7 @@ Changelog for LEAP ORM
 
 2011-12-14
 * Added a missing instance variable: $model.
-* Alphabetized som instance variables in proxy classes.
+* Alphabetized some instance variables in proxy classes.
 * Made it possible to pass a primary_key to DB_ORM::model without wrapping it in an array.
 * Fixed some variables in DB_DataSourceTest.
 * Changed query($limit = NULL) to query($type = 'array') in Base_DB_SQL_Select_Proxy.
@@ -38,7 +42,7 @@ Changelog for LEAP ORM
 * Changed $cached_types to $cached_objects in Base_DB_Connection.
 
 2011-12-11
-* Removed is_null in Base_DB_DataSource::__construct().
+* Removed is_null() in Base_DB_DataSource::__construct().
 * Added unit test for DB_DataSource.
 * Added unit test for DB_Toolkit.
 * Added logic to increment/decrement size in Base_DB_ResultSet::offsetSet() and Base_DB_ResultSet::offsetUnset().

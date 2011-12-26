@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB
- * @version 2011-12-22
+ * @version 2011-12-23
  *
  * @group spadefoot.leap
  */
@@ -51,9 +51,10 @@ class DB_DataSourceTest extends Unittest_Testcase {
 		);
 
 		return array(
-			array(array(NULL), $expected),
-			array(array('default'), $expected),
-			array(array(new DB_DataSource('default')), $expected),
+			array(NULL, $expected),
+			array('default', $expected),
+			array($expected, $expected),
+			array(new DB_DataSource('default'), $expected),
 		);
 	}
 
@@ -61,21 +62,21 @@ class DB_DataSourceTest extends Unittest_Testcase {
 	 * This function tests DB_DataSource::__construct().
 	 *
 	 * @access public
-	 * @param array $test_data                          the test data
-	 * @param string $expected_database                 the expected values
+	 * @param mixed $test_data                          the test data
+	 * @param string $expected                          the expected values
 	 *
 	 * @dataProvider provider_constructor
 	 */
 	public function test_constructor($test_data, $expected) {
 		// Initialization
-		$source = new DB_DataSource(reset($test_data));
+		$source = new DB_DataSource($test_data);
 		// Assertions
 		$this->assertSame($expected['connection']['database'], $source->database, 'Failed when checking database property.');
 		$this->assertSame($expected['driver'], $source->driver, 'Failed when checking driver property.');
 		$this->assertSame($expected['connection']['hostname'], $source->host, 'Failed when checking host property.');
-		$this->assertGreaterThan(0, strlen($source->id), 'Failed when checking id property.');
+		$this->assertRegExp('/^(database|unique_id)\.[a-zA-Z0-9_]+$/', $source->id, 'Failed when checking id property.');
 		$this->assertSame($expected['connection']['password'], $source->password, 'Failed when checking password property.');
-		//$this->assertSame($expected['connection']['port'], $source->port, 'Failed when checking port property.');
+		$this->assertSame($expected['connection']['port'], $source->port, 'Failed when checking port property.');
 		$this->assertSame($expected['type'], $source->dialect, 'Failed when checking dialect property.');
 		$this->assertSame($expected['type'], $source->type, 'Failed when checking type property.');
 		$this->assertSame($expected['connection']['username'], $source->username, 'Failed when checking username property.');

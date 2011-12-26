@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-14
+ * @version 2011-12-25
  *
  * @abstract
  */
@@ -423,6 +423,22 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * This function returns the builder's class name.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $builder                       the builder's name
+	 * @return string                               the builder's class name
+	 */
+	public static function builder_name($builder) {
+		$prefix = 'Builder_Leap_';
+		if (preg_match('/^' . $prefix . '.*$/i', $builder)) {
+			return $builder;
+		}
+		return $prefix . $builder;
+	}
+
+	/**
 	 * This function returns a list of column names.
 	 *
 	 * @access public
@@ -494,6 +510,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *
 	 * @access public
 	 * @static
+	 * @param string $model                         the model's name
 	 * @return string                               the model's class name
 	 */
 	public static function model_name($model) {

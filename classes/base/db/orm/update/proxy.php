@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-18
+ * @version 2011-12-26
  *
  * @abstract
  */
@@ -36,6 +36,14 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	protected $builder = NULL;
 
 	/**
+	 * This variable stores an instance of the ORM builder extension class.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Builder
+	 */
+	protected $extension = NULL;
+
+	/**
 	 * This variable stores a reference to the data source.
 	 *
 	 * @access protected
@@ -47,24 +55,53 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This constructor instantiates this class using the specified model's name.
 	 *
 	 * @access public
-	 * @param string $model                  the model's name
+	 * @param string $model                         the model's name
 	 */
 	public function __construct($model) {
-		$model = DB_ORM_Model::model_name($model);
+	    $name = $model;
+		$model = DB_ORM_Model::model_name($name);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
 		$builder = 'DB_' . $this->source->dialect . '_Update_Builder';
 		$this->builder = new $builder($this->source);
+		$extension = DB_ORM_Model::builder_name($name);
+	    if (class_exists($extension)) {
+	        $this->extension = new $extension($this->builder);
+	    }
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->table($table);
 	}
+
+    /**
+     * This function attempts to call an otherwise inaccessible function on the model's
+     * builder extension.
+     *
+     * @access public
+     * @param string $function                      the name of the called function
+     * @param array $arguments                      an array with the parameters passed
+     * @return mixed                                the result of the called function
+     * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
+     *                                              inaccessible
+     */
+    public function __call($function, $arguments) {
+        if ( ! is_null($this->extension)) {
+            if (method_exists($this->extension, $function)) {
+                $result = call_user_func_array(array($this->extension, $function), $arguments);
+                if ($result instanceof DB_ORM_Builder) {
+                    return $this;
+                }
+                return $result;
+            }
+        }
+        throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
+    }
 
 	/**
 	 * This function sets the associated value with the specified column.
 	 *
 	 * @access public
-	 * @param string $column                the column to be set
-	 * @param string $value                 the value to be set
-	 * @return DB_ORM_Update_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be set
+	 * @param string $value                         the value to be set
+	 * @return DB_ORM_Update_Proxy                  a reference to the current instance
 	 */
 	public function set($column, $value) {
 		$this->builder->set($column, $value);
@@ -75,9 +112,9 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function either opens or closes a "where" group.
 	 *
 	 * @access public
-	 * @param string $parenthesis           the parenthesis to be used
-	 * @param string $connector             the connector to be used
-	 * @return DB_ORM_Update_Proxy          a reference to the current instance
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_ORM_Update_Proxy                  a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);
@@ -88,11 +125,11 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function adds a "where" constraint.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @param string $operator              the operator to be used
-	 * @param string $value                 the value the column is constrained with
-	 * @param string $connector             the connector to be used
-	 * @return DB_ORM_Update_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @param string $operator                      the operator to be used
+	 * @param string $value                         the value the column is constrained with
+	 * @param string $connector                     the connector to be used
+	 * @return DB_ORM_Update_Proxy                  a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -103,12 +140,12 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
-	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
-	 *                                      column will sorted either in ascending or
-	 *                                      descending order
-	 * @param string $nulls                 the weight to be given to null values
-	 * @return DB_ORM_Update_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be sorted
+	 * @param string $ordering                      the ordering token that signal whether the
+	 *                                              column will sorted either in ascending or
+	 *                                              descending order
+	 * @param string $nulls                         the weight to be given to null values
+	 * @return DB_ORM_Update_Proxy                  a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $ordering, $nulls);
@@ -119,8 +156,8 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function sets a "limit" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $limit                the "limit" constraint
-	 * @return DB_ORM_Update_Proxy          a reference to the current instance
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_ORM_Update_Proxy                  a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -131,8 +168,8 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function sets an "offset" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $offset               the "offset" constraint
-	 * @return DB_ORM_Update_Proxy          a reference to the current instance
+	 * @param integer $offset                       the "offset" constraint
+	 * @return DB_ORM_Update_Proxy                  a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
@@ -143,9 +180,9 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @param boolean $terminated                   whether to add a semi-colon to the end
+	 *                                              of the statement
+	 * @return string                               the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);

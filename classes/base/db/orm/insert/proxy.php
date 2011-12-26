@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-14
+ * @version 2011-12-26
  *
  * @abstract
  */
@@ -34,6 +34,14 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @var DB_SQL_Insert_Builder
 	 */
 	protected $builder = NULL;
+
+	/**
+	 * This variable stores an instance of the ORM builder extension class.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Builder
+	 */
+	protected $extension = NULL;
 
 	/**
 	 * This variable stores the model's name.
@@ -55,25 +63,54 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * This constructor instantiates this class using the specified model's name.
 	 *
 	 * @access public
-	 * @param string $model                 the model's name
+	 * @param string $model                         the model's name
 	 */
 	public function __construct($model) {
-		$model = DB_ORM_Model::model_name($model);
+	    $name = $model;
+		$model = DB_ORM_Model::model_name($name);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
 		$builder = 'DB_' . $this->source->dialect . '_Insert_Builder';
 		$this->builder = new $builder($this->source);
+		$extension = DB_ORM_Model::builder_name($name);
+	    if (class_exists($extension)) {
+	        $this->extension = new $extension($this->builder);
+	    }
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->into($table);
 		$this->model = $model;
 	}
 
+    /**
+     * This function attempts to call an otherwise inaccessible function on the model's
+     * builder extension.
+     *
+     * @access public
+     * @param string $function                      the name of the called function
+     * @param array $arguments                      an array with the parameters passed
+     * @return mixed                                the result of the called function
+     * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
+     *                                              inaccessible
+     */
+    public function __call($function, $arguments) {
+        if ( ! is_null($this->extension)) {
+            if (method_exists($this->extension, $function)) {
+                $result = call_user_func_array(array($this->extension, $function), $arguments);
+                if ($result instanceof DB_ORM_Builder) {
+                    return $this;
+                }
+                return $result;
+            }
+        }
+        throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
+    }
+
 	/**
 	 * This function sets the associated value with the specified column.
 	 *
 	 * @access public
-	 * @param string $column                the column to be set
-	 * @param string $value                 the value to be set
-	 * @return DB_SQL_Insert_Builder        a reference to the current instance
+	 * @param string $column                        the column to be set
+	 * @param string $value                         the value to be set
+	 * @return DB_SQL_Insert_Builder                a reference to the current instance
 	 */
 	public function column($column, $value) {
 		$this->builder->column($column, $value);
@@ -84,9 +121,9 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @param boolean $terminated                   whether to add a semi-colon to the end
+	 *                                              of the statement
+	 * @return string                               the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);
@@ -96,8 +133,8 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function executes the SQL statement.
 	 *
 	 * @access public
-	 * @param boolean $is_auto_incremented  whether to query for the last insert id
-	 * @return integer                      the last insert id
+	 * @param boolean $is_auto_incremented          whether to query for the last insert id
+	 * @return integer                              the last insert id
 	 */
 	public function execute() {
 		$is_auto_incremented = call_user_func(array($this->model, 'is_auto_incremented'));

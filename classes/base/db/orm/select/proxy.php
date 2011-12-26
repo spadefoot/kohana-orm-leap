@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-18
+ * @version 2011-12-26
  *
  * @abstract
  */
@@ -34,6 +34,14 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @var DB_SQL_Select_Builder
 	 */
 	protected $builder = NULL;
+
+	/**
+	 * This variable stores an instance of the ORM builder extension class.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Builder
+	 */
+	protected $extension = NULL;
 
 	/**
 	 * This variable stores the model's name.
@@ -55,26 +63,55 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This constructor instantiates this class using the specified model's name.
 	 *
 	 * @access public
-	 * @param string $model                 the model's name
-	 * @param array $columns                the columns to be selected
+	 * @param string $model                         the model's name
+	 * @param array $columns                        the columns to be selected
 	 */
 	public function __construct($model, Array $columns = array()) {
-		$model = DB_ORM_Model::model_name($model);
+	    $name = $model;
+		$model = DB_ORM_Model::model_name($name);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
 		$builder = 'DB_' . $this->source->dialect . '_Select_Builder';
 		$this->builder = new $builder($this->source, $columns);
+		$extension = DB_ORM_Model::builder_name($name);
+	    if (class_exists($extension)) {
+	        $this->extension = new $extension($this->builder);
+	    }
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->from($table);
 		$this->model = $model;
 	}
 
+    /**
+     * This function attempts to call an otherwise inaccessible function on the model's
+     * builder extension.
+     *
+     * @access public
+     * @param string $function                      the name of the called function
+     * @param array $arguments                      an array with the parameters passed
+     * @return mixed                                the result of the called function
+     * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
+     *                                              inaccessible
+     */
+    public function __call($function, $arguments) {
+        if ( ! is_null($this->extension)) {
+            if (method_exists($this->extension, $function)) {
+                $result = call_user_func_array(array($this->extension, $function), $arguments);
+                if ($result instanceof DB_ORM_Builder) {
+                    return $this;
+                }
+                return $result;
+            }
+        }
+        throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
+    }
+
 	/**
 	 * This function sets whether to constrain the SQL statement to only distinct records.
 	 *
 	 * @access public
-	 * @param boolean $distinct             whether to constrain the SQL statement to only
-	 *                                      distinct records
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param boolean $distinct                     whether to constrain the SQL statement to only
+	 *                                              distinct records
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function distinct($distinct = TRUE) {
 		$this->builder->distinct($distinct);
@@ -85,9 +122,9 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function explicits sets the specified column to be selected.
 	 *
 	 * @access public
-	 * @param string $column                the column to be selected
-	 * @param string $alias                 the alias to used for the specified table
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be selected
+	 * @param string $alias                         the alias to used for the specified table
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function column($column, $alias) {
 		$this->builder->column($column, $alias);
@@ -98,10 +135,10 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function joins a table.
 	 *
 	 * @access public
-	 * @param string $type                  the type of join
-	 * @param string $table                 the table to be joined
-	 * @param string $alias                 the alias to used for the specified table
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $type                          the type of join
+	 * @param string $table                         the table to be joined
+	 * @param string $alias                         the alias to used for the specified table
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
 		$this->builder->join($type, $table, $alias);
@@ -112,11 +149,11 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function sets an "on" constraint for the last join specified.
 	 *
 	 * @access public
-	 * @param string $column0               the column to be constrained on
-	 * @param string $operator              the operator to be used
-	 * @param string $column1               the constraint column
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
-	 * @throws Kohana_SQL_Exception         indicates an invalid SQL build instruction
+	 * @param string $column0                       the column to be constrained on
+	 * @param string $operator                      the operator to be used
+	 * @param string $column1                       the constraint column
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
+	 * @throws Kohana_SQL_Exception                 indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
 		$this->builder->on($column0, $operator, $column1);
@@ -127,8 +164,8 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function sets a "using" constraint for the last join specified.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function using($column) {
 		$this->builder->using($column);
@@ -139,9 +176,9 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function either opens or closes a "where" group.
 	 *
 	 * @access public
-	 * @param string $parenthesis           the parenthesis to be used
-	 * @param string $connector             the connector to be used
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);
@@ -152,11 +189,11 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function adds a "where" constraint.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @param string $operator              the operator to be used
-	 * @param string $value                 the value the column is constrained with
-	 * @param string $connector             the connector to be used
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @param string $operator                      the operator to be used
+	 * @param string $value                         the value the column is constrained with
+	 * @param string $connector                     the connector to be used
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -167,8 +204,8 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function adds a "group by" clause.
 	 *
 	 * @access public
-	 * @param string $column                the column to be grouped
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be grouped
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function group_by($column) {
 		$this->builder->group_by($column);
@@ -179,9 +216,9 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function either opens or closes a "having" group.
 	 *
 	 * @access public
-	 * @param string $parenthesis           the parenthesis to be used
-	 * @param string $connector             the connector to be used
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function having_block($parenthesis, $connector = 'AND') {
 		$this->builder->having_block($parenthesis, $connector);
@@ -192,11 +229,11 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function adds a "having" constraint.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @param string $operator              the operator to be used
-	 * @param string $value                 the value the column is constrained with
-	 * @param string $connector             the connector to be used
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @param string $operator                      the operator to be used
+	 * @param string $value                         the value the column is constrained with
+	 * @param string $connector                     the connector to be used
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function having($column, $operator, $value, $connector = 'AND') {
 		$this->builder->having($column, $operator, $value, $connector);
@@ -207,12 +244,12 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
-	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
-	 *                                      column will sorted either in ascending or
-	 *                                      descending order
-	 * @param string $nulls                 the weight to be given to null values
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be sorted
+	 * @param string $ordering                      the ordering token that signal whether the
+	 *                                              column will sorted either in ascending or
+	 *                                              descending order
+	 * @param string $nulls                         the weight to be given to null values
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $ordering, $nulls);
@@ -223,8 +260,8 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function sets a "limit" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $limit                the "limit" constraint
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -235,8 +272,8 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function sets an "offset" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $offset               the "offset" constraint
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param integer $offset                       the "offset" constraint
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
@@ -247,10 +284,10 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function combines another SQL statement using the specified operator.
 	 *
 	 * @access public
-	 * @param string $operator              the operator to be used to append
-	 *                                      the specified SQL statement
-	 * @param string $statement             the SQL statement to be appended
-	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 * @param string $operator                      the operator to be used to append
+	 *                                              the specified SQL statement
+	 * @param string $statement                     the SQL statement to be appended
+	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function combine($operator, $statement) {
 		$this->builder->combine($operator, $statement);
@@ -261,9 +298,9 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @param boolean $terminated                   whether to add a semi-colon to the end
+	 *                                              of the statement
+	 * @return string                               the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);
@@ -273,8 +310,8 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function performs a query using the built SQL statement.
 	 *
 	 * @access public
-	 * @param integer $limit                the "limit" constraint
-	 * @return DB_ResultSet                 the result set
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_ResultSet                         the result set
 	 */
 	public function query($limit = NULL) {
 		if ( ! is_null($limit)) {

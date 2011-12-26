@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB
- * @version 2011-12-18
+ * @version 2011-12-23
  *
  * @group spadefoot.leap
  */
@@ -46,13 +46,13 @@ class DB_ToolKitTest extends Unittest_Testcase {
 	 * This function tests DB_ToolKit::slug().
 	 *
 	 * @access public
-	 * @param array $test_value                         the test value
-	 * @param string $expected_value                 	the expected value
+	 * @param mixed $test_data                          the test data
+	 * @param string $expected                          the expected value
 	 *
 	 * @dataProvider provider_slug
 	 */
-	public function test_slug($test_value, $expected_value) {
-		$this->assertSame($expected_value, DB_ToolKit::slug($test_value));
+	public function test_slug($test_data, $expected) {
+		$this->assertSame($expected, DB_ToolKit::slug($test_data));
 	}
 
 }
