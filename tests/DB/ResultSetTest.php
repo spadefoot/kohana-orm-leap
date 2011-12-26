@@ -17,7 +17,7 @@
  */
 
 /**
- * This class tests DB_DataSource.
+ * This class tests DB_ResultSet.
  *
  * @package Leap
  * @category DB
@@ -25,7 +25,7 @@
  *
  * @group spadefoot.leap
  */
-class DB_DataSourceTest extends Unittest_Testcase {
+class DB_ResultSetTest extends Unittest_Testcase {
 
 	/**
 	 * This function provides the test data for self::test_constructor().
