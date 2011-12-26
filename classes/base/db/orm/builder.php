@@ -35,15 +35,15 @@ abstract class Base_DB_ORM_Builder extends Kohana_Object {
 	 */
 	protected $builder = NULL;
 
-    /**
+	/**
 	 * This constructor instantiates this class.
 	 *
 	 * @access public
 	 * @param string $builder                   the SQL builder class to be extended
 	 */
 	public function __construct(DB_SQL_Builder $builder) {
-	    $this->builder = $builder;
-    }
+		$this->builder = $builder;
+	}
 
 }
 ?>

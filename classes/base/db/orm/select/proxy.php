@@ -67,43 +67,43 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @param array $columns                        the columns to be selected
 	 */
 	public function __construct($model, Array $columns = array()) {
-	    $name = $model;
+		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
 		$builder = 'DB_' . $this->source->dialect . '_Select_Builder';
 		$this->builder = new $builder($this->source, $columns);
 		$extension = DB_ORM_Model::builder_name($name);
-	    if (class_exists($extension)) {
-	        $this->extension = new $extension($this->builder);
-	    }
+		if (class_exists($extension)) {
+			$this->extension = new $extension($this->builder);
+		}
 		$table = call_user_func(array($model, 'table'));
 		$this->builder->from($table);
 		$this->model = $model;
 	}
 
-    /**
-     * This function attempts to call an otherwise inaccessible function on the model's
-     * builder extension.
-     *
-     * @access public
-     * @param string $function                      the name of the called function
-     * @param array $arguments                      an array with the parameters passed
-     * @return mixed                                the result of the called function
-     * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
-     *                                              inaccessible
-     */
-    public function __call($function, $arguments) {
-        if ( ! is_null($this->extension)) {
-            if (method_exists($this->extension, $function)) {
-                $result = call_user_func_array(array($this->extension, $function), $arguments);
-                if ($result instanceof DB_ORM_Builder) {
-                    return $this;
-                }
-                return $result;
-            }
-        }
-        throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
-    }
+	/**
+	 * This function attempts to call an otherwise inaccessible function on the model's
+	 * builder extension.
+	 *
+	 * @access public
+	 * @param string $function                      the name of the called function
+	 * @param array $arguments                      an array with the parameters passed
+	 * @return mixed                                the result of the called function
+	 * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
+	 *                                              inaccessible
+	 */
+	public function __call($function, $arguments) {
+		if ( ! is_null($this->extension)) {
+			if (method_exists($this->extension, $function)) {
+				$result = call_user_func_array(array($this->extension, $function), $arguments);
+				if ($result instanceof DB_ORM_Builder) {
+					return $this;
+				}
+				return $result;
+			}
+		}
+		throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
+	}
 
 	/**
 	 * This function sets whether to constrain the SQL statement to only distinct records.
