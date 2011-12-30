@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2011-12-30
  *
  * @abstract
  */
@@ -40,24 +40,16 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 		// the parent model is the referenced table
 		$this->metadata['parent_model'] = get_class($model);
 
-		// the candidate key is an ordered list of field names in the parent model
-		if (isset($metadata['candidate_key'])) {
-			$this->metadata['candidate_key'] = $metadata['candidate_key'];
-		}
-		else if (isset($metadata['parent_key'])) {
-			$this->metadata['candidate_key'] = $metadata['parent_key'];
-		}
-		else {
-			$this->metadata['candidate_key'] = call_user_func(array($this->metadata['parent_model'], 'primary_key'));
-		}
+		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
+		$this->metadata['parent_key'] = (isset($metadata['parent_key']))
+		    ? (array) $metadata['parent_key']
+		    : call_user_func(array($this->metadata['parent_model'], 'primary_key'));
 
 		// the child model is the referencing table
 		$this->metadata['child_model'] = DB_ORM_Model::model_name($metadata['child_model']);
 
-		// the foreign key is an ordered list of field names in the child model
-		$this->metadata['foreign_key'] = (isset($metadata['foreign_key']))
-			? $metadata['foreign_key']
-			: $metadata['child_key'];
+		// the child key (i.e. foreign key) is an ordered list of field names in the child model
+		$this->metadata['child_key'] = (array) $metadata['child_key'];
 	}
 
 	/**
@@ -67,23 +59,23 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 	 * @return mixed								the corresponding model(s)
 	 */
 	protected function load() {
+		$parent_key = $this->metadata['parent_key'];
+
 		$child_model = $this->metadata['child_model'];
+		$child_key = $this->metadata['child_key'];
 
-		$candidate_key = $this->metadata['candidate_key'];
-		$foreign_key = $this->metadata['foreign_key'];
+		$field_count = count($child_key);
 
-		$field_count = count($foreign_key);
-
-		$sql = DB_ORM::select($child_model);
+		$builder = DB_ORM::select($child_model);
 		for ($i = 0; $i < $field_count; $i++) {
-			$sql->where($foreign_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$candidate_key[$i]});
+			$builder->where($child_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
 		}
-		$result = $sql->limit(1)->query();
+		$result = $builder->limit(1)->query();
 
 		if ( ! $result->is_loaded()) {
 			$record = new $child_model();
 			for ($i = 0; $i < $field_count; $i++) {
-				$record->{$foreign_key[$i]} = $this->model->{$candidate_key[$i]};
+				$record->{$child_key[$i]} = $this->model->{$parent_key[$i]};
 			}
 			return $record;
 		}

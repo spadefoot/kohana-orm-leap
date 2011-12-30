@@ -1,5 +1,11 @@
 Changelog for LEAP ORM
 
+2011-12-30
+* Change metadata 'type' to 'class' in Base_DB_ORM_Field_Adaptor_Object.
+* Remove deprecated metadata 'candidate_key' and 'foreign_key' in relation classes.
+* Added a new unit test for DB_ResultSet.
+* Made some minor edits to the inline documentation.
+
 2011-12-26
 * Added the ability to extend builder classes.
 * Updated unit tests and added a new unit test.

@@ -21,33 +21,33 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-08
+ * @version 2011-12-30
  *
  * @abstract
  */
 abstract class Base_DB_ORM extends Kohana_Object {
 
 	/**
-	* This function returns an instance of the DB_ORM_Delete_Proxy.
-	*
-	* @access public
-	* @static
-	* @param string $model                  the model's name
-	* @return DB_ORM_Delete_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_ORM_Delete_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $model                 the model's name
+	 * @return DB_ORM_Delete_Proxy          an instance of the class
+	 */
 	public static function delete($model) {
 		$proxy = new DB_ORM_Delete_Proxy($model);
 		return $proxy;
 	}
 
 	/**
-	* This function returns an instance of the DB_ORM_Insert_Proxy.
-	*
-	* @access public
-	* @static
-	* @param string $model                  the model's name
-	* @return DB_ORM_Insert_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_ORM_Insert_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $model                 the model's name
+	 * @return DB_ORM_Insert_Proxy          an instance of the class
+	 */
 	public static function insert($model) {
 		$proxy = new DB_ORM_Insert_Proxy($model);
 		return $proxy;
@@ -81,27 +81,27 @@ abstract class Base_DB_ORM extends Kohana_Object {
 	}
 
 	/**
-	* This function returns an instance of the DB_ORM_Select_Proxy.
-	*
-	* @access public
-	* @static
-	* @param string $model                  the model's name
-	* @param array $columns                 the columns to be selected
-	* @return DB_ORM_Select_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_ORM_Select_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $model                 the model's name
+	 * @param array $columns                the columns to be selected
+	 * @return DB_ORM_Select_Proxy          an instance of the class
+	 */
 	public static function select($model, Array $columns = array()) {
 		$proxy = new DB_ORM_Select_Proxy($model, $columns);
 		return $proxy;
 	}
 
 	/**
-	* This function returns an instance of the DB_ORM_Update_Proxy.
-	*
-	* @access public
-	* @static
-	* @param string $model                  the model's name
-	* @return DB_ORM_Update_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_ORM_Update_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $model                 the model's name
+	 * @return DB_ORM_Update_Proxy          an instance of the class
+	 */
 	public static function update($model) {
 		$proxy = new DB_ORM_Update_Proxy($model);
 		return $proxy;

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-26
+ * @version 2011-12-27
  *
  * @abstract
  */
@@ -39,7 +39,7 @@ abstract class Base_DB_ORM_Builder extends Kohana_Object {
 	 * This constructor instantiates this class.
 	 *
 	 * @access public
-	 * @param string $builder                   the SQL builder class to be extended
+	 * @param DB_SQL_Builder $builder             the SQL builder class to be extended
 	 */
 	public function __construct(DB_SQL_Builder $builder) {
 		$this->builder = $builder;

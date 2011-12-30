@@ -40,7 +40,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Object  extends DB_ORM_Field_Adaptor {
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, $metadata['field']);
 
-		$this->metadata['type'] = (string) $metadata['type'];
+		$this->metadata['class'] = (string) $metadata['class'];
 	}
 
 	/**
@@ -81,8 +81,8 @@ abstract class Base_DB_ORM_Field_Adaptor_Object  extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				if ( ! is_null($value)) {
-					if ( ! (is_object($value) && ($value instanceof $this->metadata['type']))) {
-						throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Value is not an instance of data type.', array(':object' => $this->metadata['type'], ':type' => gettype($value)));
+					if ( ! (is_object($value) && ($value instanceof $this->metadata['class']))) {
+						throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Value is not an instance of data type.', array(':object' => $this->metadata['class'], ':type' => gettype($value)));
 					}
 					$value = (string) serialize($value);
 				}

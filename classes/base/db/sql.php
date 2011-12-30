@@ -21,60 +21,60 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-11-27
+ * @version 2011-12-30
  *
  * @abstract
  */
 abstract class Base_DB_SQL extends Kohana_Object {
 
 	/**
-	* This function returns an instance of the DB_SQL_Delete_Proxy.
-	*
-	* @access public
-	* @static
-	* @param mixed $config                  the data source configurations
-	* @return DB_SQL_Delete_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_SQL_Delete_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                 the data source configurations
+	 * @return DB_SQL_Delete_Proxy          an instance of the class
+	 */
 	public static function delete($config = 'default') {
 		$proxy = new DB_SQL_Delete_Proxy($config);
 		return $proxy;
 	}
 
 	/**
-	* This function returns an instance of the DB_SQL_Insert_Proxy.
-	*
-	* @access public
-	* @static
-	* @param mixed $config                  the data source configurations
-	* @return DB_SQL_Insert_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_SQL_Insert_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                 the data source configurations
+	 * @return DB_SQL_Insert_Proxy          an instance of the class
+	 */
 	public static function insert($config = 'default') {
 		$proxy = new DB_SQL_Insert_Proxy($config);
 		return $proxy;
 	}
 
 	/**
-	* This function returns an instance of the DB_SQL_Select_Proxy.
-	*
-	* @access public
-	* @static
-	* @param mixed $config                  the data source configurations
-	* @param array $columns                 the columns to be selected
-	* @return DB_SQL_Select_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_SQL_Select_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                 the data source configurations
+	 * @param array $columns                the columns to be selected
+	 * @return DB_SQL_Select_Proxy          an instance of the class
+	 */
 	public static function select($config = 'default', Array $columns = array()) {
 		$proxy = new DB_SQL_Select_Proxy($config, $columns);
 		return $proxy;
 	}
 
 	/**
-	* This function returns an instance of the DB_SQL_Update_Proxy.
-	*
-	* @access public
-	* @static
-	* @param mixed $config                  the data source configurations
-	* @return DB_SQL_Update_Proxy           an instance of the class
-	*/
+	 * This function returns an instance of the DB_SQL_Update_Proxy.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                 the data source configurations
+	 * @return DB_SQL_Update_Proxy          an instance of the class
+	 */
 	public static function update($config = 'default') {
 		$proxy = new DB_SQL_Update_Proxy($config);
 		return $proxy;
