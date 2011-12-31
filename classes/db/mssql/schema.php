@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a way to access the scheme for a MsSQL database.
+ * This class provides a way to access the scheme for a MS SQL database.
  *
  * @package Leap
- * @category MsSQL
- * @version 2011-06-21
+ * @category MS SQL
+ * @version 2011-12-31
  */
 class DB_MsSQL_Schema extends Base_DB_MsSQL_Schema {}
 ?>

@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a way to access the scheme for a MsSQL database.
+ * This class provides a way to access the scheme for a MS SQL database.
  *
  * @package Leap
- * @category MsSQL
+ * @category MS SQL
  * @version 2011-12-31
  *
  * @abstract
