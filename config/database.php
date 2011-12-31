@@ -3,7 +3,7 @@
 $config = array();
 
 $config['default'] = array(
-    'type'          => 'mysql',     // string (e.g. db2, firebird, mariadb, mssql, mysql, oracle, postgresql, or sqlite)
+    'type'          => 'mysql',     // string (e.g. db2, drizzle, firebird, mariadb, mssql, mysql, oracle, postgresql, or sqlite)
     'driver'        => 'standard',  // string (e.g. standard, improved, or pdo)
     'connection'    => array(
         'persistent'    => FALSE,       // boolean

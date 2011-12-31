@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-06-23
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -35,7 +35,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @param string $type                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
+	 * @return DB_ResultSet         		an array of fields within the specified
 	 * 										table
 	 *
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
@@ -59,7 +59,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -126,19 +126,19 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
+	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 * @see http://forums.oracle.com/forums/thread.jspa?threadID=424532
 	 */
 	public function indexes($table) {
-		$sql = "select INDEX_NAME, TABLE_NAME, TABLE_OWNER from SYS.ALL_INDEXES order by TABLE_OWNER, TABLE_NAME, INDEX_NAME";
+		$sql = "SELECT INDEX_NAME, TABLE_NAME, TABLE_OWNER FROM SYS.ALL_INDEXES ORDER BY TABLE_OWNER, TABLE_NAME, INDEX_NAME;";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$results = $connection->query($sql);
 
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -147,29 +147,26 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet 				an array of tables within the database
 	 *
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
 	 */
 	public function tables($like = '') {
-		$builder = DB_Oracle_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			//->from('dba_tables')
 			//->from('all_tables')
 			->from('user_tables')
-			->order_by(DB::expr('LOWER("table_name")'));
+			->order_by(DB_SQL::expr('LOWER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -183,23 +180,20 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
 	 */
 	public function views($like = '') {
-		$builder = DB_Oracle_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('view_name', 'name')
 			//->from('dba_views')
 			//->from('all_views')
 			->from('user_views')
-			->order_by(DB::expr('LOWER("view_name")'));
+			->order_by(DB_SQL::expr('LOWER("view_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('view_name', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
@@ -209,9 +203,9 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
+	 * @param string $type                  the SQL data type
+	 * @return array                        an associated array which describes the properties
+	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
 		static $types = array(

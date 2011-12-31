@@ -17,17 +17,17 @@
  */
 
 /**
- * This class builds a MS SQL update statement.
+ * This class builds a Drizzle delete statement.
  *
  * @package Leap
- * @category MS SQL
+ * @category Drizzle
  * @version 2011-12-31
  *
- * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
+ * @see http://dev.mysql.com/doc/refman/5.0/en/delete.html
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
+abstract class Base_DB_Drizzle_Delete_Builder extends DB_SQL_Delete_Builder {
 
 	/**
 	 * This function returns the SQL statement.
@@ -36,21 +36,9 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
-	 *
-	 * @see http://stackoverflow.com/questions/655010/how-to-update-and-order-by-using-ms-sql
 	 */
 	public function statement($terminated = TRUE) {
-		$alias = ($this->data['table'] == 't0') ? 't1' : 't0';
-
-		$sql = "WITH {$alias} AS (";
-
-		$sql .= 'SELECT';
-
-		if ($this->data['limit'] > 0) {
-			$sql .= " TOP {$this->data['limit']}";
-		}
-
-		$sql .= " * FROM {$this->data['table']}";
+		$sql = "DELETE FROM {$this->data['from']}";
 
 		if ( ! empty($this->data['where'])) {
 			$do_append = FALSE;
@@ -68,14 +56,12 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
-		//if ($this->data['offset'] > 0) {
-		//    $sql .= " OFFSET {$this->data['offset']}";
-		//}
+		if ($this->data['limit'] > 0) {
+			$sql .= " LIMIT {$this->data['limit']}";
+		}
 
-		$sql .= ") UPDATE {$alias}";
-
-		if ( ! empty($this->data['column'])) {
-			$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
+		if ($this->data['offset'] > 0) {
+			$sql .= " OFFSET {$this->data['offset']}";
 		}
 
 		if ($terminated) {

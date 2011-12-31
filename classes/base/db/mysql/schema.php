@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-04
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -35,7 +35,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @param string $type                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
+	 * @return DB_ResultSet 				an array of fields within the specified
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
@@ -48,7 +48,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql)->as_array();
 
 		$fields = array();
@@ -154,7 +154,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
+	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
 	 */
 	public function indexes($table) {
@@ -162,7 +162,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 
 		$sql = 'SHOW INDEX FROM ' . $table . ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql)->as_array();
 
 		$buffer = array();
@@ -178,7 +178,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			$i++;
 		}
 
-		return $buffer;
+		return new DB_ResultSet($buffer, $i);
 	}
 
 	/**
@@ -187,28 +187,25 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet 				an array of tables within the database
 	 *
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function tables($like = '') {
-		$builder = DB_MySQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->database)
+			->where('TABLE_SCHEMA', 'LIKE', $this->source->database)
 			->where('TABLE_TYPE', 'LIKE', 'BASE_TABLE')
-			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
+			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -217,28 +214,25 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet 				an array of views within the database
 	 *
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function views($like = '') {
-		$builder = DB_MySQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', 'LIKE', $this->data_source->database)
+			->where('TABLE_SCHEMA', 'LIKE', $this->source->database)
 			->where('TABLE_TYPE', 'LIKE', 'VIEW')
-			->order_by(DB::expr('UPPER(`TABLE_NAME`)'));
+			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
@@ -248,9 +242,9 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
+	 * @param string $type                  the SQL data type
+	 * @return array                        an associated array which describes the properties
+	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
 		case 'blob':

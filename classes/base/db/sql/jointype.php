@@ -21,10 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-18
+ * @version 2011-12-31
  *
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyjoin.htm
  * @see http://www.craigsmullins.com/outer-j.htm
+ * @see http://docs.drizzle.org/join.html
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
  * @see http://msdn.microsoft.com/en-us/library/aa259187%28v=sql.80%29.aspx
  * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
@@ -37,7 +38,9 @@
  */
 abstract class Base_DB_SQL_JoinType extends Kohana_Object {
 
-	const _CROSS_ = 'CROSS'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+    const _NONE_ = NULL; // supported by all
+
+	const _CROSS_ = 'CROSS'; // supported by DB2, Drizzle, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
 	const _EXCEPTION_ = 'EXCEPTION'; // supported by DB2
 

@@ -17,30 +17,27 @@
  */
 
 /**
- * This class handles a standard Firebird connection.
- *
- * Firebird installation instruction:
- *
- *     	To install interbase (aka ibase) copy C:\Program Files\FishBowl\Client\bin\fbclient.dll
- *		into "C:\WINDOWS\system32\" and rename file to gds32.dll.
- *
- *     	Edit C:\WINDOWS\system32\drivers\etc\services by appending to the end the following:
- *     	gds_db           3050/tcp    fb                     #Firebird
- *
- *     	Restart either Apache or the computer
+ * This class handles a standard Drizzle connection.
  *
  * @package Leap
- * @category Firebird
+ * @category Drizzle
  * @version 2011-12-31
  *
- * @see http://us3.php.net/manual/en/book.ibase.php
- * @see http://us2.php.net/manual/en/ibase.installation.php
- * @see http://www.firebirdfaq.org/faq227/
- * @see http://www.firebirdfaq.org/cat3/
+ * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
+ * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
+ * @see http://plugins.svn.wordpress.org/drizzle/trunk/db.php
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_Standard {
+abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Standard {
+
+    /**
+     * This variable stores the last insert id.
+     *
+     * @access protected
+     * @var integer
+     */
+    protected $insert_id = FALSE;
 
 	/**
 	 * This function allows for the ability to open a connection using
@@ -52,21 +49,15 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string = $this->data_source->host;
-			if ( ! preg_match('/^localhost$/i', $connection_string)) {
-				$port = $this->data_source->port;
-				if ( ! empty($port)) {
-					$connection_string .= '/' . $port;
-				}
-			}
-			$connection_string .= ':' . $this->data_source->database;
+			$handle = drizzle_create();
+			$host = $this->data_source->host;
+			$port = $this->data_source->port;
+			$database = $this->data_source->database;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
-			$this->link_id = ($this->data_source->is_persistent())
-				? @ibase_pconnect($connection_string, $username, $password)
-				: @ibase_connect($connection_string, $username, $password);
+			$this->link_id = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . ibase_errmsg();
+				$this->error = 'Message: Failed to establish connection. Reason: ' . drizzle_error($handle);
 				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
@@ -77,17 +68,11 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 *
+	 * @see http://docs.drizzle.org/start_transaction.html
 	 */
 	public function begin_transaction() {
-		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
-		}
-		$resource_id = @ibase_trans($this->link_id, IBASE_READ | IBASE_WRITE);
-		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . ibase_errmsg();
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
-		}
+		$this->execute('START TRANSACTION;');
 	}
 
 	/**
@@ -96,7 +81,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @param string $type               		the return type to be used
+	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
@@ -110,18 +95,25 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$resource_id = @ibase_query($this->link_id, $sql);
+		$resource_id = @drizzle_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . ibase_errmsg();
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . drizzle_con_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		if ( ! @drizzle_result_buffer($resource_id)) {
+			$this->error = 'Message: Failed to query SQL statement. Reason: ' . drizzle_con_error($this->link_id);
+			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+	    }
 		$records = array();
 		$size = 0;
-		while ($record = ibase_fetch_assoc($resource_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
-			$size++;
-		}
-		@ibase_free_result($resource_id);
+		if (@drizzle_result_row_count($resource_id)) {
+    		while ($record = drizzle_row_next($resource_id)) {
+    			$records[] = DB_Connection::type_cast($type, $record);
+    			$size++;
+    		}
+        }
+        $this->insert_id = FALSE;
+		@drizzle_result_free($resource_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
 		return $result_set;
@@ -140,13 +132,16 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-		$stmt = ibase_prepare($this->link_id, $sql);
-		$resource_id = @ibase_execute($stmt);
+		$resource_id = @drizzle_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . ibase_errmsg();
+			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . drizzle_con_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
+	    $this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql)
+	        ? @drizzle_result_insert_id($resource_id)
+	        : FALSE;
 		$this->sql = $sql;
+		@drizzle_result_free($resource_id);
 	}
 
 	/**
@@ -155,25 +150,13 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * @access public
 	 * @return integer                          the last insert id
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
-	 *
-	 * @see http://www.firebirdfaq.org/faq243/
 	 */
 	public function get_last_insert_id() {
-		try {
-			$sql = $this->sql;
-			if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
-				$table = Arr::get($matches, 1);
-				$result = $this->query("SELECT ID FROM {$table} ORDER BY ID DESC ROWS 1;");
-				$insert_id = ($result->is_loaded()) ? ( (int)  Arr::get($result->fetch(0), 'ID')) : 0;
-				$this->sql = $sql;
-				return $insert_id;
-			}
-			return 0;
-		}
-		catch (Exception $ex) {
-			$this->error = preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage());
+		if ($this->insert_id === FALSE) {
+			$this->error = 'Message: Failed to fetch the last insert id. Reason: No insert id could be derived.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
 		}
+		return $insert_id;
 	}
 
 	/**
@@ -181,17 +164,11 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 *
+	 * @see http://docs.drizzle.org/rollback.html
 	 */
 	public function rollback() {
-		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
-		}
-		$resource_id = @ibase_rollback($this->link_id);
-		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . ibase_errmsg();
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
-		}
+		$this->execute('ROLLBACK;');
 	}
 
 	/**
@@ -199,17 +176,11 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 *
+	 * @see http://docs.drizzle.org/commit.html
 	 */
 	public function commit() {
-		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
-		}
-		$resource_id = @ibase_commit($this->link_id);
-		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . ibase_errmsg();
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
-		}
+		$this->execute('COMMIT;');
 	}
 
 	/**
@@ -218,14 +189,9 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * @access public
 	 * @param string $string                    the string to be escaped
 	 * @return string                           the escaped string
-	 *
-	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
 	 */
 	public function escape_string($string) {
-		// TODO improve this escaping method
-		$unpacked = unpack('H*hex', $string);
-		$string = 'x\'' . $unpacked['hex'] . '\'';
-		return $string;
+		return "'" . drizzle_escape_string($this->link_id, $string) . "'";
 	}
 
 	/**
@@ -236,7 +202,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@ibase_close($this->link_id)) {
+			if (@drizzle_con_close($this->link_id)) {
 				$this->link_id = NULL;
 				return TRUE;
 			}
@@ -252,7 +218,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function __destruct() {
 		if (is_resource($this->link_id)) {
-			@ibase_close($this->link_id);
+		    @drizzle_con_close($this->link_id);
 		}
 	}
 

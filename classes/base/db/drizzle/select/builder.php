@@ -17,17 +17,17 @@
  */
 
 /**
- * This class builds a MS SQL update statement.
+ * This class builds a Drizzle select statement.
  *
  * @package Leap
- * @category MS SQL
+ * @category Drizzle
  * @version 2011-12-31
  *
- * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
+ * @see http://dev.mysql.com/doc/refman/5.0/en/select.html
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
+abstract class Base_DB_Drizzle_Select_Builder extends DB_SQL_Select_Builder {
 
 	/**
 	 * This function returns the SQL statement.
@@ -36,21 +36,29 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
-	 *
-	 * @see http://stackoverflow.com/questions/655010/how-to-update-and-order-by-using-ms-sql
 	 */
 	public function statement($terminated = TRUE) {
-		$alias = ($this->data['table'] == 't0') ? 't1' : 't0';
+		$sql = 'SELECT';
 
-		$sql = "WITH {$alias} AS (";
-
-		$sql .= 'SELECT';
-
-		if ($this->data['limit'] > 0) {
-			$sql .= " TOP {$this->data['limit']}";
+		if ($this->data['distinct']) {
+			$sql .= ' DISTINCT';
 		}
 
-		$sql .= " * FROM {$this->data['table']}";
+		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+
+		if ( ! is_null($this->data['from'])) {
+			$sql .= " FROM {$this->data['from']}";
+		}
+
+		foreach ($this->data['join'] as $join) {
+			$sql .= " {$join[0]}";
+			if ( ! empty($join[1])) {
+				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
+			}
+			else if ( ! empty($join[2])) {
+				$sql .= ' USING ' . implode(', ', $join[2]);
+			}
+		}
 
 		if ( ! empty($this->data['where'])) {
 			$do_append = FALSE;
@@ -64,18 +72,36 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 			}
 		}
 
+		if ( ! empty($this->data['group_by'])) {
+			$sql .= ' GROUP BY ' . implode(', ', $this->data['group_by']);
+		}
+
+		if ( ! empty($this->data['having'])) {
+			$do_append = FALSE;
+			$sql .= ' HAVING ';
+			foreach ($this->data['having'] as $having) {
+				if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					$sql .= " {$having[0]} ";
+				}
+				$sql .= $having[1];
+				$do_append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+			}
+		}
+
 		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
-		//if ($this->data['offset'] > 0) {
-		//    $sql .= " OFFSET {$this->data['offset']}";
-		//}
+		if ($this->data['limit'] > 0) {
+			$sql .= " LIMIT {$this->data['limit']}";
+		}
 
-		$sql .= ") UPDATE {$alias}";
+		if ($this->data['offset'] > 0) {
+			$sql .= " OFFSET {$this->data['offset']}";
+		}
 
-		if ( ! empty($this->data['column'])) {
-			$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
+		foreach ($this->data['combine'] as $combine) {
+			$sql .= " {$combine}";
 		}
 
 		if ($terminated) {

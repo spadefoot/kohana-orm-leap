@@ -17,11 +17,11 @@
  */
 
 /**
- * This class builds a MS SQL update statement.
+ * This class builds a Drizzle delete statement.
  *
  * @package Leap
- * @category MS SQL
+ * @category Drizzle
  * @version 2011-12-31
  */
-class DB_MsSQL_Update_Builder extends Base_DB_MsSQL_Update_Builder {}
+class DB_Drizzle_Delete_Builder extends Base_DB_Drizzle_Delete_Builder {}
 ?>

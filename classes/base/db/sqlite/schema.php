@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-06-23
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -44,7 +44,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$sql = "PRAGMA table_info({$table});";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -120,10 +120,10 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	public function indexes($table) {
 		$sql = "PRAGMA INDEX_LIST('" . $table . "');";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$results = $connection->query($sql);
 
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -145,10 +145,10 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$sql .= ' ORDER BY LOWER([tbl_name])';
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$results = $connection->query($sql);
 
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -170,9 +170,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
+	 * @param string $type                  the SQL data type
+	 * @return array                        an associated array which describes the properties
+	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
 
@@ -182,8 +182,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * This function converts a like clause to a regular expression.
 	 *
 	 * @access protected
-	 * @param string $like						the like clause to be converted
-	 * @return string							the resulting regular expression
+	 * @param string $like					the like clause to be converted
+	 * @return string						the resulting regular expression
 	 *
 	 * @see http://www.regular-expressions.info/mysql.html
 	 */

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-06-23
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -35,7 +35,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @param string $type                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
+	 * @return DB_ResultSet 				an array of fields within the specified
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
@@ -50,7 +50,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -117,7 +117,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
+	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://www.dbforums.com/db2/1614810-how-see-indexes-db2-tables.html
@@ -140,10 +140,10 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 			TABSCHEMA NOT LIKE 'SYS%'
 			AND TABNAME = 'TABLE_NAME'";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$results = $connection->query($sql);
 
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -159,22 +159,19 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.selectorweb.com/db2.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_DB2_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('tabname', 'name')
 			->from('syscat.tables')
 			->where('tabschema', '=', 'SYSCAT')
-			->order_by(DB::expr('LOWER("tabname")'));
+			->order_by(DB_SQL::expr('LOWER("tabname")'));
 
 		if ( ! empty($like)) {
 			$builder->where('tabname', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -183,29 +180,26 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet 				an array of views within the database
 	 *
 	 * @see http://lpetr.org/blog/archives/find-a-list-of-views-marked-inoperative
 	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0411melnyk/
 	 */
 	public function views($like = '') {
-		$builder = DB_DB2_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('viewname', 'name')
 			->from('syscat.views')
 			->where('viewschema', '=', 'SYSCAT')
 			->where('valid', '<>', 'Y')
-			->order_by(DB::expr('LOWER("tabname")'));
-
+			->order_by(DB_SQL::expr('LOWER("tabname")'));
+		
 		if ( ! empty($like)) {
 			$builder->where('viewname', 'LIKE', $like);
 		}
+		
+		$results = $builder->query();
 
-		$sql = $builder->statement();
-
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
@@ -215,9 +209,9 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
+	 * @param string $type                  the SQL data type
+	 * @return array                        an associated array which describes the properties
+	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
 		static $types = array(

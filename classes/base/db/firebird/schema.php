@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-04
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -35,7 +35,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @param string $type                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
+	 * @return DB_ResultSet 				an array of fields within the specified
 	 * 										table
 	 *
 	 * @see http://wiert.wordpress.com/2009/08/13/interbasefirebird-query-to-show-which-fields-in-your-database-are-not-based-on-a-domain/
@@ -136,7 +136,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		// TODO get collation
 		// TODO add like condition
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql)->as_array();
 
 		$fields = array();
@@ -277,32 +277,29 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
+	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://www.felix-colibri.com/papers/db/interbase/using_interbase_system_tables/using_interbase_system_tables.html
 	 */
 	public function indexes($table) {
-		$builder = DB_Firebird_Select_Builder::factory()
-			->column(DB::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table_name')
-			->column(DB::expr('TRIM("RDB$INDEX_SEGMENTS"."RDB$FIELD_NAME")'), 'field_name')
-			->column(DB::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), 'index_name')
-			->column(DB::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'), 'sequence')
-			->column(DB::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'is_primary_key')
-			->column(DB::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'is_unique')
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table_name')
+			->column(DB_SQL::expr('TRIM("RDB$INDEX_SEGMENTS"."RDB$FIELD_NAME")'), 'field_name')
+			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), 'index_name')
+			->column(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'), 'sequence')
+			->column(DB_SQL::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'is_primary_key')
+			->column(DB_SQL::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'is_unique')
 			->from('RDB$INDICES')
 			->join('LEFT', 'RDB$INDEX_SEGMENTS')
 			->on('RDB$INDEX_SEGMENTS.RDB$INDEX_NAME', '=', 'RDB$INDICES.RDB$INDEX_NAME')
 			->join('LEFT', 'RDB$RELATION_CONSTRAINTS')
 			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', '=', 'RDB$INDICES.RDB$INDEX_NAME')
-			->where('RDB$INDICES.RDB$RELATION_NAME', '=', DB::expr("'" . $table . "'"));
+			->where('RDB$INDICES.RDB$RELATION_NAME', '=', DB_SQL::expr("'" . $table . "'"));
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -311,31 +308,28 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet 				an array of tables within the database
 	 *
 	 * @see http://www.firebirdfaq.org/faq174/
 	 */
 	public function tables($like = '') {
-		$builder = DB_Firebird_Select_Builder::factory()
-			->column(DB::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
 			->where('RDB$VIEW_BLR', 'IS', NULL)
 			->where_block('(')
 			->where('RDB$SYSTEM_FLAG', 'IS', NULL)
 			->where('RDB$SYSTEM_FLAG',  '=', 0, 'OR')
 			->where_block(')')
-			->order_by(DB::expr('UPPER("RDB$RELATION_NAME")'));
+			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -344,31 +338,28 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet 				an array of views within the database
 	 *
 	 * @see http://www.firebirdfaq.org/faq174/
 	 */
 	public function views($like = '') {
-		$builder = DB_Firebird_Select_Builder::factory()
-			->column(DB::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
 			->where('RDB$VIEW_BLR', 'IS NOT', NULL)
 			->where_block('(')
 			->where('RDB$SYSTEM_FLAG', 'IS', NULL)
 			->where('RDB$SYSTEM_FLAG',  '=', 0, 'OR')
 			->where_block(')')
-			->order_by(DB::expr('UPPER("RDB$RELATION_NAME")'));
+			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 }

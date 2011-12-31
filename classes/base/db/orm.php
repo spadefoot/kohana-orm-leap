@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-30
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -39,6 +39,21 @@ abstract class Base_DB_ORM extends Kohana_Object {
 		$proxy = new DB_ORM_Delete_Proxy($model);
 		return $proxy;
 	}
+
+    /**
+     * This function will wrap a string so that it can be processed by a query
+     * builder.
+     *
+     * @access public
+     * @static
+     * @param string $string                the expression to be wrapped
+     * @param array $parameters             the parameters to be use in conjunction
+     *                                      with the expression
+     * @return Database_Expression          the wrapped expression
+     */
+    public static function expr($string, $parameters = array()) {
+        return DB::expr($string, $parameters); // TODO remove dependency on database module
+    }
 
 	/**
 	 * This function returns an instance of the DB_ORM_Insert_Proxy.

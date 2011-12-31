@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MariaDB expression.
+ * This class provides a set of functions for preparing a Drizzle expression.
  *
  * @package Leap
- * @category MariaDB
+ * @category Drizzle
  * @version 2011-12-31
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -121,7 +121,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @see http://www.ispirer.com/wiki/sqlways/mysql/identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_MariaDB_Select_Builder) {
+		if ($expr instanceof DB_Drizzle_Select_Builder) {
 			return '(' . $expr->statement(FALSE) . ')';
 		}
 		else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
@@ -151,24 +151,15 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @param string $expr                      the expression string to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
+	 * @see http://docs.drizzle.org/join.html
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
 				case DB_SQL_JoinType::_CROSS_:
-				case DB_SQL_JoinType::_INNER_:
 				case DB_SQL_JoinType::_LEFT_:
-				case DB_SQL_JoinType::_LEFT_OUTER_:
 				case DB_SQL_JoinType::_RIGHT_:
-				case DB_SQL_JoinType::_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_:
-				case DB_SQL_JoinType::_NATURAL_LEFT_:
-				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_RIGHT_:
-				case DB_SQL_JoinType::_NATURAL_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_STRAIGHT_:
 					return $expr;
 				break;
 			}
@@ -314,7 +305,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 			return '(' . implode(', ', array_map(array($this, __FUNCTION__), $expr)) . ')';
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_MariaDB_Select_Builder) {
+			if ($expr instanceof DB_Drizzle_Select_Builder) {
 				return '(' . $expr->statement(FALSE) . ')';
 			}
 			else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
@@ -330,7 +321,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);
 		}
-		else if (is_string($expr) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
+		else if (is_string($expr) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) {
 			return "'{$expr}'";
 		}
 		else if (empty($expr)) {

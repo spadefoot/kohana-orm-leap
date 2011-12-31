@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-17
+ * @version 2011-12-31
  *
  * @see http://www.php.net/manual/en/ref.pdo-sqlite.php
  *
@@ -65,6 +65,8 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @access public
 	 * @param string $string                    the string to be escaped
 	 * @return string                           the escaped string
+	 *
+	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
 	 */
 	public function escape_string($string) {
 		// TODO improve this escaping method

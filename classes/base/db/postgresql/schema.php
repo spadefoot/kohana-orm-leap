@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-06-23
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -35,7 +35,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @param string $type                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
+	 * @return DB_ResultSet 				an array of fields within the specified
 	 * 										table
 	 *
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
@@ -75,37 +75,37 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
+	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
 	 *
 	 * @see http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
 	 * @see http://code.activestate.com/recipes/576557/
 	 */
 	public function indexes($table) {
-		$sql = "select
-			t.relname as table_name,
-			i.relname as index_name,
-			a.attname as column_name
-		from
+		$sql = "SELECT
+			t.relname AS table_name,
+			i.relname AS index_name,
+			a.attname AS column_name
+		FROM
 			pg_class t,
 			pg_class i,
 			pg_index ix,
 			pg_attribute a
-		where
+		WHERE
 			t.oid = ix.indrelid
-			and i.oid = ix.indexrelid
-			and a.attrelid = t.oid
-			and a.attnum = ANY(ix.indkey)
-			and t.relkind = 'r'
-			and t.relname like 'test%'
-		order by
+			AND i.oid = ix.indexrelid
+			AND a.attrelid = t.oid
+			AND a.attnum = ANY(ix.indkey)
+			AND t.relkind = 'r'
+			AND t.relname LIKE 'test%'
+		ORDER BY
 			t.relname,
 			i.relname;";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$results = $connection->query($sql);
 
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -114,30 +114,27 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet 				an array of tables within the database
 	 *
 	 * @see http://www.alberton.info/postgresql_meta_info.html
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_MsSQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			->from('information_schema.tables')
 			->where('table_type', '=', 'BASE TABLE')
 			->where('table_schema', 'NOT IN', array('pg_catalog', 'information_schema'))
-			->order_by(DB::expr('LOWER("table_name")'));
+			->order_by(DB_SQL::expr('LOWER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -146,31 +143,28 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 *
 	 * @access public
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet 				an array of views within the database
 	 *
 	 * @see http://www.alberton.info/postgresql_meta_info.html
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function views($like = '') {
-		$builder = DB_MsSQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			->from('information_schema.tables')
 			->where('table_type', '=', 'VIEW')
 			->where('table_schema', 'NOT IN', array('pg_catalog', 'information_schema'))
 			->where('table_name', 'NOT LIKE', 'pg_%')
-			->order_by(DB::expr('LOWER("table_name")'));
+			->order_by(DB_SQL::expr('LOWER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
@@ -180,9 +174,9 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
+	 * @param string $type                  the SQL data type
+	 * @return array                        an associated array which describes the properties
+	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
 		static $types = array(

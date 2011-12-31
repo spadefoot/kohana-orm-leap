@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2011-06-27
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 * @access protected
 	 * @var DB_DataSource
 	 */
-	protected $data_source = NULL;
+	protected $source = NULL;
 
 	/**
 	 * This variable stores a reference to the helper class that implements the expression
@@ -51,9 +51,8 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 * @param mixed $config                  the data source configurations
 	 */
 	public function __construct($config) {
-		$this->data_source = new DB_DataSource($config);
-		$dialect = $this->data_source->dialect;
-		$helper = 'DB_' . $dialect . '_Expression';
+		$this->source = new DB_DataSource($config);
+		$helper = 'DB_' . $this->source->dialect . '_Expression';
 		$this->helper = new $helper();
 	}
 

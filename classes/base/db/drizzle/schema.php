@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a way to access the scheme for a MariaDB database.
+ * This class provides a way to access the scheme for a Drizzle database.
  *
  * @package Leap
- * @category MariaDB
+ * @category Drizzle
  * @version 2011-12-31
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Schema extends DB_Schema {
+abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 
 	/**
 	 * This function returns a result set that contains an array of all fields in
@@ -163,12 +163,12 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		$sql = 'SHOW INDEX FROM ' . $table . ';';
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$records = $connection->query($sql)->as_array();
+		$results = $connection->query($sql);
 
 		$buffer = array();
 		$i = 0;
 
-		foreach ($records as $record) {
+		foreach ($results as $record) {
 			$buffer[$i]['table_name'] = $record['Table'];
 			$buffer[$i]['field_name'] = $record['Column_name'];
 			$buffer[$i]['index_name'] = $record['Key_name'];

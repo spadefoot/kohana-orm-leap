@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-18
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -65,13 +65,13 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as an alias.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	* @throws Kohana_InvalidArgument_Exception  indicates that there is a data type mismatch
-	*/
+	 * This function prepares the specified expression as an alias.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 * @throws Kohana_InvalidArgument_Exception indicates that there is a data type mismatch
+	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
@@ -80,23 +80,23 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as a boolean.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*/
+	 * This function prepares the specified expression as a boolean.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_boolean($expr) {
 		return (bool) $expr;
 	}
 
 	/**
-	* This function prepares the specified expression as a connector.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*/
+	 * This function prepares the specified expression as a connector.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_connector($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
@@ -111,14 +111,14 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as an identifier column.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*
-	* @see http://www.ispirer.com/wiki/sqlways/interbase-firebird/identifiers
-	*/
+	 * This function prepares the specified expression as an identifier column.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 *
+	 * @see http://www.ispirer.com/wiki/sqlways/interbase-firebird/identifiers
+	 */
 	public function prepare_identifier($expr) {
 		if ($expr instanceof DB_Firebird_Select_Builder) {
 			return '(' . $expr->statement(FALSE) . ')';
@@ -144,14 +144,14 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as a join type.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*
-	* @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
-	*/
+	 * This function prepares the specified expression as a join type.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 *
+	 * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
+	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
@@ -178,25 +178,25 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as a natural number.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*/
+	 * This function prepares the specified expression as a natural number.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_natural($expr) {
 		settype($expr, 'integer');
 		return abs($expr);
 	}
 
 	/**
-	* This function prepares the specified expression as a operator.
-	*
-	* @access public
-	* @param string $group                      the operator grouping
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*/
+	 * This function prepares the specified expression as a operator.
+	 *
+	 * @access public
+	 * @param string $group                     the operator grouping
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_operator($group, $expr) {
 		if (is_string($group) && is_string($expr)) {
 			$group = strtoupper($group);
@@ -273,12 +273,12 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as a parenthesis.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*/
+	 * This function prepares the specified expression as a parenthesis.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_parenthesis($expr) {
 		if (is_string($expr)) {
 			switch ($expr) {
@@ -292,14 +292,12 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	}
 
 	/**
-	* This function prepares the specified expression as a value.
-	*
-	* @access public
-	* @param string $expr                       the expression string to be prepared
-	* @return string                            the prepared expression
-	*
-	* @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
-	*/
+	 * This function prepares the specified expression as a value.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression string to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_value($expr) {
 		if ($expr === NULL) {
 			return 'NULL';

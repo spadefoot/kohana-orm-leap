@@ -1,7 +1,7 @@
 # LEAP ORM for Kohana PHP Framework
 
 LEAP is an ORM for the [Kohana PHP Framework](http://kohanaframework.org).  It also provides a powerful query builder.  More importantly, it
-works with the following databases: DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  This ORM has been completely built
+works with the following databases: DB2, Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  This ORM has been completely built
 from the ground up and therefore is NOT a hack implemetation.
 
 The Leap ORM is based on the active record design pattern.  It provides a way to model database tables using PHP objects.
@@ -24,7 +24,7 @@ handle.  The LEAP ORM for Kohana, on the other hand, is able to load models usin
 
 LEAP provides a number of features, such as:
 
-* Plugins for DB2, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
+* Plugins for DB2, Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
 * Designed to work in conjunction with other database tools for Kohana.
 * [Config file for designating the database driver (e.g. PDO) and connection strings](http://orm.spadefootcode.com/tutorials/setting-up-a-database-connection/).
 * Classes are easily extensible.
@@ -92,7 +92,7 @@ via email please send an email to spadefoot.oss@gmail.com.
 
 This project is constantly being improved and extended.  Here is a list of some of the features to come:
 
-* Plugins for CouchDB, Drizzle, MongoDB, and XML RDB.
+* Plugins for CouchDB, MongoDB, and XML RDB.
 * Master / Slave support.
 * More unit tests.
 

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MsSQL
- * @version 2011-06-27
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -93,17 +93,17 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->join('CROSS', 'sys.index_columns')
 			->join('CROSS', 'sys.columns')
 			->where_block('(')
-			->where('sys.tables.object_id', '=', DB::expr('[sys].[indexes].[object_id]'))
-			->where('sys.tables.object_id', '=', DB::expr('[sys].[index_columns].[object_id]'))
-			->where('sys.tables.object_id', '=', DB::expr('[sys].[columns].[object_id]'))
-			->where('sys.indexes.index_id', '=', DB::expr('[sys].[index_columns].[index_id]'))
-			->where('sys.index_columns.column_id', '=', DB::expr('[sys].[columns].[column_id]'))
+			->where('sys.tables.object_id', '=', DB_SQL::expr('[sys].[indexes].[object_id]'))
+			->where('sys.tables.object_id', '=', DB_SQL::expr('[sys].[index_columns].[object_id]'))
+			->where('sys.tables.object_id', '=', DB_SQL::expr('[sys].[columns].[object_id]'))
+			->where('sys.indexes.index_id', '=', DB_SQL::expr('[sys].[index_columns].[index_id]'))
+			->where('sys.index_columns.column_id', '=', DB_SQL::expr('[sys].[columns].[column_id]'))
 			->where_block(')')
-			->where('sys.tables.name', '=', DB::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
+			->where('sys.tables.name', '=', DB_SQL::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
 
 		$sql = $builder->statement();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql)->as_array();
 
 		return $records;
@@ -124,7 +124,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
 			->where('TABLE_TYPE', '=', 'BASE TABLE')
-			->order_by(DB::expr('LOWER([TABLE_NAME])'));
+			->order_by(DB_SQL::expr('LOWER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
@@ -132,7 +132,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 
 		$sql = $builder->statement();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql)->as_array();
 
 		return $records;
@@ -153,7 +153,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
 			->where('TABLE_TYPE', '=', 'VIEW')
-			->order_by(DB::expr('LOWER([TABLE_NAME])'));
+			->order_by(DB_SQL::expr('LOWER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
@@ -161,7 +161,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 
 		$sql = $builder->statement();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$records = $connection->query($sql)->as_array();
 
 		return $records;
@@ -174,9 +174,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
+	 * @param string $type                  the SQL data type
+	 * @return array                        an associated array which describes the properties
+	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
 		static $types = array(

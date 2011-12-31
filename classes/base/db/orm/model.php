@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-25
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -166,11 +166,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		}
 		$data_source = call_user_func(array($self, 'data_source'));
 		$table = call_user_func(array($self, 'table'));
-		$sql = DB_SQL::delete($data_source)->from($table);
+		$builder = DB_SQL::delete($data_source)->from($table);
 		foreach ($primary_key as $column) {
-			$sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
-		$sql->execute();
+		$builder->execute();
 		if ($reset) {
 			$this->reset();
 		}
@@ -280,11 +280,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			}
 			$data_source = call_user_func(array($self, 'data_source'));
 			$table = call_user_func(array($self, 'table'));
-			$sql = DB_SQL::select($data_source)->from($table)->limit(1);
+			$builder = DB_SQL::select($data_source)->from($table)->limit(1);
 			foreach ($primary_key as $column) {
-				$sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+				$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
-			$record = $sql->query();
+			$record = $builder->query();
 			if ( ! $record->is_loaded()) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}
@@ -347,13 +347,13 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if ( ! $do_insert) {
 			$do_insert = (is_null($this->metadata['saved']) || ($hash_code != $this->metadata['saved']));
 			if ($do_insert) {
-				$sql = DB_SQL::select($data_source)
-						->column(DB::expr(1), 'IsFound')
+				$builder = DB_SQL::select($data_source)
+						->column(DB_SQL::expr(1), 'IsFound')
 						->from($table);
 				foreach ($primary_key as $column) {
-					$sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+					$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 				}
-				$do_insert = !($sql->limit(1)->query()->is_loaded());
+				$do_insert = !($builder->limit(1)->query()->is_loaded());
 			}
 			if ( ! $do_insert) {
 				foreach ($primary_key as $column) {
@@ -363,21 +363,21 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 					}
 				}
 				if ( ! empty($columns)) {
-					$sql = DB_SQL::update($data_source)
+					$builder = DB_SQL::update($data_source)
 						->table($table);
 					$count = 0;
 					foreach ($columns as $column) {
 						if ($this->fields[$column]->savable && $this->fields[$column]->modified) {
-							$sql->set($column, $this->fields[$column]->value);
+							$builder->set($column, $this->fields[$column]->value);
 							$this->fields[$column]->modified = FALSE;
 							$count++;
 						}
 					}
 					if ($count > 0) {
 						foreach ($primary_key as $column) {
-							$sql->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+							$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 						}
-						$sql->execute();
+						$builder->execute();
 					}
 					$this->metadata['saved'] = $hash_code;
 				}
@@ -394,22 +394,22 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				}
 			}
 			if ( ! empty($columns)) {
-				$sql = DB_SQL::insert($data_source)
+				$builder = DB_SQL::insert($data_source)
 					->into($table);
 				$count = 0;
 				foreach ($columns as $column) {
 					if ($this->fields[$column]->savable) {
-						$sql->column($column, $this->fields[$column]->value);
+						$builder->column($column, $this->fields[$column]->value);
 						$this->fields[$column]->modified = FALSE;
 						$count++;
 					}
 				}
 				if ($count > 0) {
 					if ($is_auto_incremented && is_null($hash_code)) {
-						$this->fields[$primary_key[0]]->value = $sql->execute(TRUE);
+						$this->fields[$primary_key[0]]->value = $builder->execute(TRUE);
 					}
 					else {
-						$sql->execute();
+						$builder->execute();
 					}
 				}
 				$this->metadata['saved'] = $this->hash_code();

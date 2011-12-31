@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-12-18
+ * @version 2011-12-31
  *
  * @abstract
  */
@@ -304,8 +304,6 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @access public
 	 * @param string $expr                       the expression string to be prepared
 	 * @return string                            the prepared expression
-	 *
-	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
 	 */
 	public function prepare_value($expr) {
 		if ($expr === NULL) {
