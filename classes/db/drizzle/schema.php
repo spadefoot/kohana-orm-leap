@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a way to access the scheme for a Drizzle database.
+ * This class provides a way to access the scheme for a MS SQL database.
  *
  * @package Leap
- * @category Drizzle
+ * @category MS SQL
  * @version 2011-12-31
  */
-class DB_Drizzle_Schema extends Base_DB_Drizzle_Schema {}
+class DB_MsSQL_Schema extends Base_DB_MsSQL_Schema {}
 ?>

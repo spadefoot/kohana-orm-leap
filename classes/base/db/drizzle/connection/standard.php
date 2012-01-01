@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Copyright 2011 Spadefoot
+ * Copyright 2011-2012 Spadefoot
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2011-12-31
+ * @version 2012-01-01
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -31,13 +31,13 @@
  */
 abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Standard {
 
-    /**
-     * This variable stores the last insert id.
-     *
-     * @access protected
-     * @var integer
-     */
-    protected $insert_id = FALSE;
+	/**
+	 * This variable stores the last insert id.
+	 *
+	 * @access protected
+	 * @var integer
+	 */
+	protected $insert_id = FALSE;
 
 	/**
 	 * This function allows for the ability to open a connection using
@@ -103,16 +103,16 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		if ( ! @drizzle_result_buffer($resource_id)) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . drizzle_con_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
-	    }
+		}
 		$records = array();
 		$size = 0;
 		if (@drizzle_result_row_count($resource_id)) {
-    		while ($record = drizzle_row_next($resource_id)) {
-    			$records[] = DB_Connection::type_cast($type, $record);
-    			$size++;
-    		}
-        }
-        $this->insert_id = FALSE;
+			while ($record = drizzle_row_next($resource_id)) {
+				$records[] = DB_Connection::type_cast($type, $record);
+				$size++;
+			}
+		}
+		$this->insert_id = FALSE;
 		@drizzle_result_free($resource_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
 		$this->sql = $sql;
@@ -137,9 +137,9 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . drizzle_con_error($this->link_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
-	    $this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql)
-	        ? @drizzle_result_insert_id($resource_id)
-	        : FALSE;
+		$this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql))
+			? @drizzle_result_insert_id($resource_id)
+			: FALSE;
 		$this->sql = $sql;
 		@drizzle_result_free($resource_id);
 	}
@@ -156,7 +156,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$this->error = 'Message: Failed to fetch the last insert id. Reason: No insert id could be derived.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
 		}
-		return $insert_id;
+		return $this->insert_id;
 	}
 
 	/**
@@ -218,7 +218,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function __destruct() {
 		if (is_resource($this->link_id)) {
-		    @drizzle_con_close($this->link_id);
+			@drizzle_con_close($this->link_id);
 		}
 	}
 

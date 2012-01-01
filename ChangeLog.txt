@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-01-01
+* Added a missing parentheses in Base_DB_Drizzle_Connection_Standard and added missing $this in get_last_insert_id().
+* Minor edit to inline documentation.
+
 2011-12-31
 * Started to rework schema classes.
 * Adding a new plugin for Drizzle.

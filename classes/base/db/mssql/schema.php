@@ -50,7 +50,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		foreach ($results as $row) {
 			list($type, $length) = $this->_parse_type($row['DATA_TYPE']);
 
-			$column = $this->datatype($type);
+			$column = $this->data_type($type);
 
 			$column['column_name']      = $row['COLUMN_NAME'];
 			$column['column_default']   = $row['COLUMN_DEFAULT'];
@@ -81,7 +81,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
 	 */
 	public function indexes($table) {
-		$builder = DB_MsSQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('sys.tables.name', 'table_name')
 			->column('sys.columns.name', 'field_name')
 			->column('sys.indexes.name', 'index_name')
@@ -101,12 +101,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->where_block(')')
 			->where('sys.tables.name', '=', DB_SQL::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -120,7 +117,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_MsSQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
 			->where('TABLE_TYPE', '=', 'BASE TABLE')
@@ -130,12 +127,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	/**
@@ -149,7 +143,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function views($like = '') {
-		$builder = DB_MsSQL_Select_Builder::factory()
+		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
 			->where('TABLE_TYPE', '=', 'VIEW')
@@ -159,12 +153,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			$builder->where('TABLE_NAME', 'LIKE', $like);
 		}
 
-		$sql = $builder->statement();
+		$results = $builder->query();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$records = $connection->query($sql)->as_array();
-
-		return $records;
+		return $results;
 	}
 
 	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
