@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-01-03
+* Removed unneeded Base_DB_SQL_Tokenizer_Interface.
+* Minor edit in change log.
+
 2012-01-01
 * Added a missing parentheses in Base_DB_Drizzle_Connection_Standard and added missing $this in get_last_insert_id().
 * Minor edit to inline documentation.
@@ -7,7 +11,7 @@ Changelog for LEAP ORM
 2011-12-31
 * Started to rework schema classes.
 * Adding a new plugin for Drizzle.
-* Fixed class name captilization in Base_DB_MsSSQL_Update_Statement and DB_MsSSQL_Update_Statement.
+* Fixed class name captilization in Base_DB_MsSQL_Update_Builder and DB_MsSQL_Update_Builder.
 * Fixed a copy/paste bug in Base_DB_SQLite_Expression::prepare_identifier($expr).
 * Updated inline documentation.
 
