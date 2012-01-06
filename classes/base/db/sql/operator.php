@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Copyright 2011 Spadefoot
+ * Copyright 2011-2012 Spadefoot
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-08
+ * @version 2012-01-01
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
  * @see http://nimal.info/blog/2007/intersection-and-set-difference-in-mysql-a-workaround-for-except/
@@ -100,7 +100,7 @@ abstract class Base_DB_SQL_Operator extends Kohana_Object {
 
 	const _UNION_ = 'UNION'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
-	const _UNION_ALL_ = 'UNION_ALL'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
+	const _UNION_ALL_ = 'UNION ALL'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
 	const _UNION_DISTINCT_ = 'UNION DISTINCT'; // support by Firebird, MySQL
 

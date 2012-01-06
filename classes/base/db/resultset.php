@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-13
+ * @version 2012-01-02
  *
  * @abstract
  */
@@ -96,10 +96,10 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	}
 
 	/**
-	 * This function returns a record of the desired object type.
+	 * This function returns a record either at the current position or
+	 * the specified position.
 	 *
 	 * @access public
-	 * @abstract
 	 * @param integer $index                        the record's index
 	 * @return mixed                                the record
 	 */
@@ -193,7 +193,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 *
 	 * @access public
 	 * @param integer $offset                       the offset to be evaluated
-	 * @return boolean                              whether the requested index exists
+	 * @return boolean                              whether the requested offset exists
 	 */
 	public function offsetExists($offset) {
 		return isset($this->records[$offset]);
@@ -204,7 +204,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 *
 	 * @access public
 	 * @param integer $offset                       the offset to be fetched
-	 * @return mixed                                the value at the specified index
+	 * @return mixed                                the value at the specified offset
 	 */
 	public function offsetGet($offset) {
 		return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
@@ -261,10 +261,10 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 *                                              is out of bounds
 	 */
 	public function seek($position) {
-		$this->position = $position;
-		if ( ! $this->valid()) {
+		if ( ! isset($this->records[$position])) {
 			throw new Kohana_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
 		}
+		$this->position = $position;
 	}
 
 	/**

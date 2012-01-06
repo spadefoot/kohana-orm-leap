@@ -92,6 +92,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
+			$this->insert_id = FALSE;
 			$this->sql = $sql;
 			return $result_set;
 		}
@@ -112,9 +113,9 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 				$size++;
 			}
 		}
-		$this->insert_id = FALSE;
 		@drizzle_result_free($resource_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$this->insert_id = FALSE;
 		$this->sql = $sql;
 		return $result_set;
 	}

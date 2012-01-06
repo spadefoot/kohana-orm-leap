@@ -1,12 +1,18 @@
 Changelog for LEAP ORM
 
+2012-01-06
+* Fixed logic for Base_DB_Drizzle_Connection_Standard::get_last_insert_id().
+* Made change to logic in Base_DB_ResultSet::seek($position).
+* Fixed Base_DB_SQL_Operator::UNION_ALL.
+* Minor edits to inline documentation.
+
 2012-01-03
 * Removed unneeded Base_DB_SQL_Tokenizer_Interface.
 * Minor edit in change log.
 
 2012-01-01
 * Added a missing parentheses in Base_DB_Drizzle_Connection_Standard and added missing $this in get_last_insert_id().
-* Minor edit to inline documentation.
+* Minor edits to inline documentation.
 
 2011-12-31
 * Started to rework schema classes.
