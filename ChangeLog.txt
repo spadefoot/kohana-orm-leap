@@ -1,6 +1,7 @@
 Changelog for LEAP ORM
 
 2012-01-06
+* Major rewrite of SQL tokenizer.
 * Fixed logic for Base_DB_Drizzle_Connection_Standard::get_last_insert_id().
 * Made change to logic in Base_DB_ResultSet::seek($position).
 * Fixed Base_DB_SQL_Operator::UNION_ALL.
