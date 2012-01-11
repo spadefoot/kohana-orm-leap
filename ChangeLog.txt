@@ -1,5 +1,8 @@
 Changelog for LEAP ORM
 
+2012-01-11
+* Updated copyright notice.
+
 2012-01-06
 * Major rewrite of SQL tokenizer.
 * Fixed logic for Base_DB_Drizzle_Connection_Standard::get_last_insert_id().
