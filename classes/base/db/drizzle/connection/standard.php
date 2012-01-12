@@ -114,7 +114,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			}
 		}
 		@drizzle_result_free($resource_id);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->insert_id = FALSE;
 		$this->sql = $sql;
 		return $result_set;

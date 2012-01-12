@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-17
+ * @version 2012-01-11
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -102,7 +102,7 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 			$size++;
 		}
 		@mysql_free_result($resource_id);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}

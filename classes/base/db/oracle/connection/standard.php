@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-31
+ * @version 2012-01-11
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -124,7 +124,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$size++;
 		}
 		@oci_free_statement($resource_id);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}

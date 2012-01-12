@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-31
+ * @version 2012-01-11
  *
  * @abstract
  */
@@ -178,7 +178,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 			$i++;
 		}
 
-		return new DB_ResultSet($buffer, $i);
+		return new DB_ResultSet($buffer, $i, 'array');
 	}
 
 	/**

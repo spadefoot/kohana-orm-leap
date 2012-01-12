@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-17
+ * @version 2012-01-11
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -106,7 +106,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$size++;
 		}
 		@mysqli_free_result($resource_id);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}

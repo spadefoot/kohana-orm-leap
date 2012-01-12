@@ -17,12 +17,11 @@
  */
 
 /**
- * This class adds additional functionality to the underlying SimpleXMLElement
- * class.
+ * This class creates and parses CSV documents.
  *
  * @package Document
- * @category XML
- * @version 2012-01-11
+ * @category CSV
+ * @version 2012-01-12
  */
-class XML extends Base_XML {}
+class CSV extends Base_CSV {}
 ?>

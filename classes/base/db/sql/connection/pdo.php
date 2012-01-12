@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2011-12-17
+ * @version 2012-01-11
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -95,7 +95,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}

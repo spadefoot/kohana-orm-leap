@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-31
+ * @version 2012-01-11
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -122,7 +122,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$size++;
 		}
 		@ibase_free_result($resource_id);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}

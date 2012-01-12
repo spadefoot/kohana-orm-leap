@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-01-02
+ * @version 2012-01-11
  *
  * @abstract
  */
@@ -52,17 +52,27 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	protected $size;
 
 	/**
+	 * This variable stores the return type being used.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $type;
+
+	/**
 	 * This function initializes the class by wrapping the result set so that all database
 	 * result sets are accessible alike.
 	 *
 	 * @access public
 	 * @param array $records					    an array of records
 	 * @param integer $size						    the total number of records
+	 * @param string $type               		    the return type being used
 	 */
-	public function __construct(Array $records, $size) {
+	public function __construct(Array $records, $size, $type = 'array') {
 		$this->records = $records;
 		$this->position = 0;
 		$this->size = $size;
+		$this->type = $type;
 	}
 
 	/**
@@ -73,6 +83,52 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 */
 	public function as_array() {
 		return $this->records;
+	}
+
+	/**
+	 * This function will create an instance of the CSV class using the data contained
+	 * in the result set.
+	 *
+	 * @access public
+	 * @param array $config                         the configuration array
+	 * @return CSV                                  an instance of the CSV class
+	 */
+	public function as_csv(Array $config = array()) {
+		$csv = new CSV($config);
+		if ($this->is_loaded()) {
+			switch ($this->type) {
+				case 'array':
+				case 'object':
+					foreach ($this->records as $record) {
+						$csv->add_row( (array) $record);
+					}
+				break;
+				default:
+					if (class_exists($this->type)) {
+						if (($this->records[0] instanceof DB_ORM_Model) || method_exists($this->records[0], 'as_array')) {
+							foreach ($this->records as $record) {
+								$csv->add_row($record->as_array());
+							}
+						}
+						else if ($this->records[0] instanceof Iterator) {
+							foreach ($this->records as $record) {
+								$row = array();
+								foreach ($record as $column) {
+									$row[] = $column;
+								}
+								$csv->add_row($row);
+							}
+						}
+						else {
+							foreach ($this->records as $record) {
+								$csv->add_row(get_object_vars($record));
+							}
+						}
+					}
+				break;
+			}
+		}
+		return $csv;
 	}
 
 	/**
@@ -219,7 +275,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
-		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified.', array());
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array());
 	}
 
 	/**
@@ -230,7 +286,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Result set cannot be modified..', array());
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array());
 	}
 
 	/**
