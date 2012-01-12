@@ -1,6 +1,9 @@
 Changelog for LEAP ORM
 
-2012-01-12
+2011-01-12
+* Fixed some styling in Base_CSV.
+
+2012-01-11
 * Adding the ability to export a result set as a CSV.
 
 2012-01-10
