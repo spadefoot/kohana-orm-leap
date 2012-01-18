@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-31
+ * @version 2012-01-17
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -64,6 +64,35 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
 			}
 		}
+	}
+
+	/**
+	 * This function allows for the ability to process a query that will return data
+	 * using the passed string.
+	 *
+	 * @access public
+	 * @param string $sql						the SQL statement
+	 * @param string $type						the return type to be used
+	 * @return DB_ResultSet                     the result set
+	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 */
+	public function query($sql, $type = 'array') {
+		$sql = trim($sql, "; \t\n\r\0\x0B");
+		$result_set = parent::query($sql, $type);
+		return $result_set;
+	}
+
+	/**
+	 * This function allows for the ability to process a query that will not return
+	 * data using the passed string.
+	 *
+	 * @access public
+	 * @param string $sql						the SQL statement
+	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 */
+	public function execute($sql) {
+		$sql = trim($sql, "; \t\n\r\0\x0B");
+		parent::execute($sql);
 	}
 
 	/**

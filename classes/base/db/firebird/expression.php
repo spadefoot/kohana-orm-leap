@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-31
+ * @version 2012-01-17
  *
  * @abstract
  */
@@ -130,9 +130,7 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid identifier expression specified. Token: Token must be a string.', array(':expr' => $expr));
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
-			if ($expr[count($expr - 1)] == ';') {
-				$expr = substr($expr, 0, -1);
-			}
+			$expr = rtrim($expr, "; \t\n\r\0\x0B");
 			return "({$expr})";
 		}
 		$parts = explode('.', $expr);

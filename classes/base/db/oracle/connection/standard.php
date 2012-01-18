@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-11
+ * @version 2012-01-17
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -106,13 +106,14 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
+		$sql = trim($sql, "; \t\n\r\0\x0B");
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
 			$this->sql = $sql;
 			return $result_set;
 		}
 		$resource_id = @oci_parse($this->link_id, $sql);
-		if (($resource_id === FALSE) || !oci_execute($resource_id, $this->execution_mode)) {
+		if (($resource_id === FALSE) || ! oci_execute($resource_id, $this->execution_mode)) {
 			$oci_error = oci_error($resource_id);
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . $oci_error['message'];
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
@@ -142,8 +143,9 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
 		}
+		$sql = trim($sql, "; \t\n\r\0\x0B");
 		$resource_id = @oci_parse($this->link_id, $sql);
-		if (($resource_id === FALSE) || !oci_execute($resource_id, $this->execution_mode)) {
+		if (($resource_id === FALSE) || ! oci_execute($resource_id, $this->execution_mode)) {
 			$oci_error = oci_error($resource_id);
 			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . $oci_error['message'];
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));

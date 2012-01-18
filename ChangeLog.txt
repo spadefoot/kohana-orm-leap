@@ -1,6 +1,10 @@
 Changelog for LEAP ORM
 
-2011-01-12
+2012-01-17
+* Added logic to remove the semicolon in Oracle SQL statements (Issue #11).
+* Changed how semicolons are removed in the expression classes.
+
+2012-01-12
 * Fixed some styling in Base_CSV.
 
 2012-01-11
