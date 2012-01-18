@@ -1,8 +1,8 @@
 Changelog for LEAP ORM
 
 2012-01-18
-* Added support to use just 'database' key without a host in the Oracle connection configuration settings per ekarlso's request (Issue #13).
-* The host property in the Base_DB_DataSource now defaults to an empty string rather than to localhost per ekarlso's request (Issue #13).
+* Added support to use just 'database' key without a host in the Oracle connection configuration settings per ekarlso's request (Issue #12).
+* The host property in the Base_DB_DataSource now defaults to an empty string rather than to localhost per ekarlso's request (Issue #12).
 * Reworked the Base_DB_SQL_Expression class.
 * Added XML config files for MySQL and SQLite so that the Base_DB_SQL_Tokenizer can detect keywords.
 * Modified the way XML files are loaded so that XML can be stored in more places than just in an xml folder.
