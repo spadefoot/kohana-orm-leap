@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-12
+ * @version 2012-01-18
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -47,10 +47,8 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
 			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
 		}
-		else if ($statement[count($statement - 1)] == ';') {
-			$statement = substr($statement, 0, -1);
-		}
-		$operator = $this->helper->prepare_operator('SET', $operator);
+		$statement = trim($statement, "; \t\n\r\0\x0B");
+		$operator = $this->compiler->prepare_operator('SET', $operator);
 		$this->data['combine'][] = "{$operator} ({$statement})";
 		return $this;
 	}

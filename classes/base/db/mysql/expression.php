@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-01-17
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -124,7 +124,10 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 		if ($expr instanceof DB_MySQL_Select_Builder) {
 			return '(' . $expr->statement(FALSE) . ')';
 		}
-		else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
+		else if ($expr instanceof DB_SQL_Expression) {
+			return $expr->value($this);
+		}
+		else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
@@ -315,7 +318,10 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 			if ($expr instanceof DB_MySQL_Select_Builder) {
 				return '(' . $expr->statement(FALSE) . ')';
 			}
-			else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
+			else if ($expr instanceof DB_SQL_Expression) {
+				return $expr->value($this);
+			}
+			else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
 				return $expr->value();
 			}
 			else {
@@ -337,6 +343,36 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 		else {
 			return DB_Connection_Pool::instance()->get_connection($this->source)->escape_string($expr);
 		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * This variable stores the compiler's XML config file.
+	 *
+	 * @access protected
+	 * @static
+	 * @var XML
+	 */
+	protected static $xml = NULL;
+
+	/**
+	 * This function checks whether the specified token is a reserved keyword.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $token                     the token to be cross-referenced
+	 * @return boolean                          whether the token is a reserved keyword
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.6/en/reserved-words.html
+	 */
+	public static function is_keyword($token) {
+		if (is_null(self::$xml)) {
+			self::$xml = XML::load('config/mysql.xml');
+		}
+		$token = strtoupper($token);
+		$nodes = self::$xml->xpath("/sql/dialect[@name='mysql' and @version='5.6']/keywords[keyword = '{$token}']");
+		return ! empty($nodes);
 	}
 
 }

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2011-12-31
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -42,7 +42,7 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 * @access protected
 	 * @var DB_SQL_Expression_Interface
 	 */
-	protected $helper = NULL;
+	protected $compiler = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -52,8 +52,8 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 */
 	public function __construct($config) {
 		$this->source = new DB_DataSource($config);
-		$helper = 'DB_' . $this->source->dialect . '_Expression';
-		$this->helper = new $helper();
+		$compiler = 'DB_' . $this->source->dialect . '_Expression';
+		$this->compiler = new $compiler();
 	}
 
 	/**
@@ -102,7 +102,7 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 */
 	public abstract function views($like = '');
 
-	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function returns an associated array which describes the properties
@@ -173,12 +173,6 @@ abstract class Base_DB_Schema extends Kohana_Object {
 
 		return array();
 	}
-
-	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
-
-	//protected function get_php_type($type) {
-	//	return
-	//}
 
 }
 ?>

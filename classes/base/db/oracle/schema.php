@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-31
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -48,12 +48,12 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		AND column_name LIKE '%CALLREF%';
 		*/
 
-		$table = $this->helper->prepare_identifier($table);
+		$table = $this->compiler->prepare_identifier($table);
 
 		$sql = 'SHOW FULL COLUMNS FROM ' . $table;
 
 		if ( ! empty($like)) {
-			$like = $this->helper->prepare_value($like);
+			$like = $this->compiler->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
 
@@ -196,7 +196,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		return $results;
 	}
 
-	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function returns an associated array which describes the properties

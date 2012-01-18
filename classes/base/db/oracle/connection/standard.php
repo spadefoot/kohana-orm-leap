@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-17
+ * @version 2012-01-18
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -50,12 +50,22 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$connection_string = '//'. $this->data_source->host;
-			$port = $this->data_source->port; // default port is 1521
-			if ( ! empty($port)) {
-				$connection_string .= ':' . $port;
+		    $host = $this->data_source->host;
+            $database = $this->data_source->database;
+		    if ( ! empty($host) ) {
+			    $connection_string = '//'. $host;
+			    $port = $this->data_source->port; // default port is 1521
+			    if ( ! empty($port)) {
+				    $connection_string .= ':' . $port;
+			    }
+			    $connection_string .= '/' . $database;
 			}
-			$connection_string .= '/' . $this->data_source->database;
+            else if (isset($database)) {
+                $connection_string = $database;
+            }
+            else {
+                throw new Kohana_Database_Exception('Message: Bad configuration. Reason: Data source needs to define either a //host[:port][/database] or a database name scheme.', array(':dsn' => $this->data_source->id));
+            }
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
 			$this->link_id = ($this->data_source->is_persistent())

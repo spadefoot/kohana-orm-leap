@@ -637,9 +637,6 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// TODO remove
-	protected static $keywords = array();
-
 	/**
 	 * This function returns the character at the specified position.
 	 *
@@ -655,7 +652,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 	}
 
 	/**
-	 * This function checks whether the specified token is reserved keyword.
+	 * This function checks whether the specified token is a reserved keyword.
 	 *
 	 * @access public
 	 * @static
@@ -664,11 +661,10 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 	 *
 	 * @see http://drupal.org/node/141051
 	 */
-	public static function is_keyword($token, $dialect) { // TODO implement list of keywords
-		//$tokenizer = 'DB_' . $dialect . '_Tokenizer';
-		//$result = call_user_func(array($tokenizer, 'is_keyword'), $token);
-		//return $result;
-		return isset(self::$keywords[$token]);
+	public static function is_keyword($token, $dialect) {
+		$compiler = 'DB_' . $dialect . '_Expression';
+		$result = call_user_func(array($compiler, 'is_keyword'), $token);
+		return $result;
 	}
 
 }

@@ -28,6 +28,15 @@
 abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 
 	/**
+	 * This variable stores a reference to the compiler class that implements the expression
+	 * interface.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Expression_Interface
+	 */
+	protected $compiler = NULL;
+
+	/**
 	 * This variable stores the build data for the SQL statement.
 	 *
 	 * @access protected
@@ -44,15 +53,6 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	protected $dialect = NULL;
 
 	/**
-	 * This variable stores a reference to the helper class that implements the expression
-	 * interface.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Expression_Interface
-	 */
-	protected $helper = NULL;
-
-	/**
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
@@ -60,8 +60,8 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 */
 	public function __construct(DB_DataSource $source) {
 		$this->dialect = $source->dialect;
-		$helper = 'DB_' . $this->dialect . '_Expression';
-		$this->helper = new $helper($source);
+		$compiler = 'DB_' . $this->dialect . '_Expression';
+		$this->compiler = new $compiler($source);
 		$this->data = array();
 		$this->data['from'] = NULL;
 		$this->data['where'] = array();
@@ -78,7 +78,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function from($table) {
-		$this->data['from'] = $this->helper->prepare_identifier($table);
+		$this->data['from'] = $this->compiler->prepare_identifier($table);
 		return $this;
 	}
 
@@ -91,8 +91,8 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
-		$parenthesis = $this->helper->prepare_parenthesis($parenthesis);
-		$connector = $this->helper->prepare_connector($connector);
+		$parenthesis = $this->compiler->prepare_parenthesis($parenthesis);
+		$connector = $this->compiler->prepare_connector($connector);
 		$this->data['where'][] = array($connector, $parenthesis);
 		return $this;
 	}
@@ -109,15 +109,15 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
-		$operator = $this->helper->prepare_operator('COMPARISON', $operator);
+		$operator = $this->compiler->prepare_operator('COMPARISON', $operator);
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
-			$column = $this->helper->prepare_identifier($column);
-			$value0 = $this->helper->prepare_value($value[0]);
-			$value1 = $this->helper->prepare_value($value[1]);
-			$connector = $this->helper->prepare_connector($connector);
+			$column = $this->compiler->prepare_identifier($column);
+			$value0 = $this->compiler->prepare_value($value[0]);
+			$value1 = $this->compiler->prepare_value($value[1]);
+			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
@@ -134,9 +134,9 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 					break;
 				}
 			}
-			$column = $this->helper->prepare_identifier($column);
-			$value = $this->helper->prepare_value($value);
-			$connector = $this->helper->prepare_connector($connector);
+			$column = $this->compiler->prepare_identifier($column);
+			$value = $this->compiler->prepare_value($value);
+			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
 		}
 		return $this;
@@ -154,7 +154,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder        a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
-		$this->data['order_by'][] = $this->helper->prepare_ordering($column, $ordering, $nulls);
+		$this->data['order_by'][] = $this->compiler->prepare_ordering($column, $ordering, $nulls);
 		return $this;
 	}
 
@@ -166,7 +166,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function limit($limit) {
-		$this->data['limit'] = $this->helper->prepare_natural($limit);
+		$this->data['limit'] = $this->compiler->prepare_natural($limit);
 		return $this;
 	}
 
@@ -178,7 +178,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function offset($offset) {
-		$this->data['offset'] = $this->helper->prepare_natural($offset);
+		$this->data['offset'] = $this->compiler->prepare_natural($offset);
 		return $this;
 	}
 

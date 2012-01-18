@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-01-17
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -123,7 +123,10 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 		if ($expr instanceof DB_Firebird_Select_Builder) {
 			return '(' . $expr->statement(FALSE) . ')';
 		}
-		else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
+		else if ($expr instanceof DB_SQL_Expression) {
+			return $expr->value($this);
+		}
+		else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
@@ -313,7 +316,10 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 			if ($expr instanceof DB_Firebird_Select_Builder) {
 				return '(' . $expr->statement(FALSE) . ')';
 			}
-			else if (($expr instanceof Database_Expression) || ($expr instanceof DB_SQL_Expression)) {
+			else if ($expr instanceof DB_SQL_Expression) {
+				return $expr->value($this);
+			}
+			else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
 				return $expr->value();
 			}
 			else {
@@ -335,6 +341,30 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 		else {
 			return DB_Connection_Pool::instance()->get_connection($this->source)->escape_string($expr);
 		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * This variable stores a list of reserved keywords that this specific dialect
+	 * utilizes.
+	 *
+	 * @access protected
+	 * @static
+	 * @var array
+	 */
+	protected static $keywords = array();
+
+	/**
+	 * This function checks whether the specified token is a reserved keyword.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $token                     the token to be cross-referenced
+	 * @return boolean                          whether the token is a reserved keyword
+	 */
+	public static function is_keyword($token) {
+		return in_array($token, self::$keywords);
 	}
 
 }

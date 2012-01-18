@@ -92,7 +92,7 @@ via email please send an email to spadefoot.oss@gmail.com.
 
 This project is constantly being improved and extended.  Here is a list of some of the features to come:
 
-* Plugins for CouchDB, MongoDB, and XML RDB.
+* Plugins for NoSQL databases: e.g. [CouchDB](http://couchdb.apache.org/), [DynamoDB](http://aws.amazon.com/dynamodb/), [MongoDB](http://www.mongodb.org/), and XML RDB.
 * Master / Slave support.
 * More unit tests.
 

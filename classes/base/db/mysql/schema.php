@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-31
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -39,10 +39,10 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
-		$sql = 'SHOW FULL COLUMNS FROM ' . $this->helper->prepare_identifier($table);
+		$sql = 'SHOW FULL COLUMNS FROM ' . $this->compiler->prepare_identifier($table);
 
 		if ( ! empty($like)) {
-			$like = $this->helper->prepare_value($like);
+			$like = $this->compiler->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
 
@@ -158,7 +158,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function indexes($table) {
-		$table = $this->helper->prepare_identifier($table);
+		$table = $this->compiler->prepare_identifier($table);
 
 		$sql = 'SHOW INDEX FROM ' . $table . ';';
 
@@ -178,7 +178,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			$i++;
 		}
 
-		return new DB_ResultSet($buffer, $i);
+		return new DB_ResultSet($buffer, $i, 'array');
 	}
 
 	/**
@@ -235,7 +235,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		return $results;
 	}
 
-	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function returns an associated array which describes the properties

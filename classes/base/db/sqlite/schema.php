@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-31
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -39,7 +39,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
-		$table = $this->helper->prepare_value($table);
+		$table = $this->compiler->prepare_value($table);
 		$regex = $this->like_to_regex($like);
 
 		$sql = "PRAGMA table_info({$table});";
@@ -138,7 +138,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$sql = "SELECT [tbl_name] AS [name] FROM [sqlite_master] WHERE [type] = 'table' AND [tbl_name] NOT IN ('sqlite_sequence')";
 
 		if ( ! empty($like)) {
-			$like = $this->helper->prepare_value($like);
+			$like = $this->compiler->prepare_value($like);
 			$sql .= ' AND [tbl_name] LIKE ' . $like;
 		}
 
@@ -163,7 +163,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		return array();
 	}
 
-	///////////////////////////////////////////////////////////////HELPERS//////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function returns an associated array which describes the properties

@@ -22,7 +22,7 @@
  *
  * @package Document
  * @category XML
- * @version 2012-01-11
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -132,20 +132,20 @@ abstract class Base_XML extends SimpleXMLElement {
 			return $file;
 		}
 
-		$uri = APPPATH . 'xml' . DIRECTORY_SEPARATOR . $file;
+		$uri = APPPATH . $file;
 		if (file_exists($uri)) {
 			return $uri;
 		}
 
 		$modules = Kohana::modules();
 		foreach($modules as $module) {
-			$uri = $module . 'xml' . DIRECTORY_SEPARATOR . $file;
+			$uri = $module . $file;
 			if (file_exists($uri)) {
 				return $uri;
 			}
 		}
 
-		$uri = SYSPATH . 'xml' . DIRECTORY_SEPARATOR . $file;
+		$uri = SYSPATH . $file;
 		if (file_exists($uri)) {
 			return $uri;
 		}

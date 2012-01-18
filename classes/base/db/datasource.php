@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-22
+ * @version 2012-01-18
  *
  * @abstract
  */
@@ -152,7 +152,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 
 		$this->settings['host'] = (isset($settings['connection']['hostname']))
 			? (string) $settings['connection']['hostname']
-			: 'localhost';
+			: '';
 
 		$this->settings['persistent'] = (isset($settings['connection']['persistent']))
 			? (bool) $settings['connection']['persistent']
