@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2011-12-12
+ * @version 2012-01-19
  *
  * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/statements_8005.htm
  * @see http://download.oracle.com/docs/cd/B12037_01/appdev.101/b10807/13_elems014.htm
@@ -59,13 +59,13 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
-		if ($this->data['limit'] > 0) {
-			$sql .= " LIMIT {$this->data['limit']}";
-		}
+		//if ($this->data['limit'] > 0) {
+		//	$sql .= " LIMIT {$this->data['limit']}";
+		//}
 
-		if ($this->data['offset'] > 0) {
-			$sql .= " OFFSET {$this->data['offset']}";
-		}
+		//if ($this->data['offset'] > 0) {
+		//	$sql .= " OFFSET {$this->data['offset']}";
+		//}
 
 		if ($terminated) {
 			$sql .= ';';

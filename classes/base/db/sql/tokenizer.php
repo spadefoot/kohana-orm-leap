@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-06
+ * @version 2012-01-19
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c

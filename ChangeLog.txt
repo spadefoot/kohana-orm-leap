@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-01-19
+* Adding limit and offset support for Oracle select statements per ekarlso's request (Issue #13).
+* Now allows array configs to be used with Base_DB_SQL_Expression.
+
 2012-01-18
 * Added support to use just 'database' key without a host in the Oracle connection configuration settings per ekarlso's request (Issue #12).
 * The host property in the Base_DB_DataSource now defaults to an empty string rather than to localhost per ekarlso's request (Issue #12).

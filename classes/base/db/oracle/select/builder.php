@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-18
+ * @version 2012-01-19
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -60,6 +60,9 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
+	 *
+	 * @see http://www.oracle.com/technetwork/issue-archive/2006/06-sep/o56asktom-086197.html
+	 * @see http://stackoverflow.com/questions/470542/how-do-i-limit-the-number-of-rows-returned-by-an-oracle-query
 	 */
 	public function statement($terminated = TRUE) {
 		$sql = 'SELECT';
@@ -112,20 +115,24 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			}
 		}
 
-		//if ($this->data['limit'] > 0) {
-		//    $sql .= " LIMIT {$this->data['limit']}";
-		//}
-
-		//if ($this->data['offset'] > 0) {
-		//    $sql .= " OFFSET {$this->data['offset']}";
-		//}
-
 		foreach ($this->data['combine'] as $combine) {
 			$sql .= " {$combine}";
 		}
 
 		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+		}
+
+		if (($this->data['limit'] > 0) && ($this->data['offset'] > 0)) {
+		    $max_row_to_fetch = $this->data['offset'] + $this->data['limit'];
+		    $min_row_to_fetch = $this->data['offset'];
+		    $sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM <= {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";
+		}
+		else if ($this->data['limit'] > 0) {
+		    $sql = "SELECT * FROM ({$sql}) WHERE ROWNUM <= {$this->data['limit']}";
+		}
+		else if ($this->data['offset'] > 0) {
+		    $sql = "SELECT * FROM ({$sql}) WHERE ROWNUM >= {$this->data['offset']}";
 		}
 
 		if ($terminated) {

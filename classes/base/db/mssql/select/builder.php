@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-12-12
+ * @version 2012-01-19
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -96,9 +96,9 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
-		if ($this->data['offset'] > 0) {
-			$sql .= " OFFSET {$this->data['offset']}";
-		}
+		//if ($this->data['offset'] > 0) {
+		//	$sql .= " OFFSET {$this->data['offset']}";
+		//}
 
 		foreach ($this->data['combine'] as $combine) {
 			$sql .= " {$combine}";

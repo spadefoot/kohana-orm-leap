@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-18
+ * @version 2012-01-19
  *
  * @abstract
  */
@@ -105,7 +105,7 @@ abstract class Base_DB_SQL_Expression extends Kohana_Object {
 	 * @return string                               the compiled SQL expression
 	 */
 	public function value($compiler = NULL) {
-		if (is_string($compiler) || ($compiler instanceof DB_DataSource)) {
+		if (is_string($compiler) || is_array($compiler) || ($compiler instanceof DB_DataSource)) {
 			$source = new DB_DataSource($compiler);
 			$compiler = 'DB_' . $source->dialect . '_Expression';
 			$compiler = new $compiler($source);
