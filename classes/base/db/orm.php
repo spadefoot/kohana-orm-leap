@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-31
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -46,13 +46,14 @@ abstract class Base_DB_ORM extends Kohana_Object {
      *
      * @access public
      * @static
-     * @param string $string                the expression to be wrapped
-     * @param array $parameters             the parameters to be use in conjunction
-     *                                      with the expression
-     * @return Database_Expression          the wrapped expression
+	 * @param string $expr                          the raw SQL expression
+	 * @param array $params                         an associated array of parameter
+	 *                                              key/values pairs
+     * @return DB_SQL_Expression                    the wrapped expression
      */
-    public static function expr($string, $parameters = array()) {
-        return DB::expr($string, $parameters); // TODO remove dependency on database module
+    public static function expr($expr, Array $params = array()) {
+        $expression = new DB_SQL_Expression($expr, $params);
+        return $expression;
     }
 
 	/**

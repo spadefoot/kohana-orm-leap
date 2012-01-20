@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-01-18
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -348,14 +348,13 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This variable stores a list of reserved keywords that this specific dialect
-	 * utilizes.
+	 * This variable stores the compiler's XML config file.
 	 *
 	 * @access protected
 	 * @static
-	 * @var array
+	 * @var XML
 	 */
-	protected static $keywords = array();
+	protected static $xml = NULL;
 
 	/**
 	 * This function checks whether the specified token is a reserved keyword.
@@ -364,9 +363,17 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @static
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.6/en/reserved-words.html
+	 * @see http://books.google.com/books?id=cKSgkT8AAkwC&pg=PT270&lpg=PT270&dq=mariadb+reserved+keywords&source=bl&ots=S58RmNOK4N&sig=wHm0cKwcNUho8EghBgPlvH0BiPo&hl=en&sa=X&ei=7fsYT6mMF-qTiQKp6u3NCA&sqi=2&ved=0CDUQ6AEwAw#v=onepage&q=mariadb%20reserved%20keywords&f=false
 	 */
 	public static function is_keyword($token) {
-		return in_array($token, self::$keywords);
+		if (is_null(self::$xml)) {
+			self::$xml = XML::load('config/mysql.xml');
+		}
+		$token = strtoupper($token);
+		$nodes = self::$xml->xpath("/sql/dialect[@name='mysql' and @version='5.6']/keywords[keyword = '{$token}']");
+		return ! empty($nodes);
 	}
 
 }

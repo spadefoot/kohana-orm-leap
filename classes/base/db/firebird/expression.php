@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-01-18
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -346,14 +346,13 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This variable stores a list of reserved keywords that this specific dialect
-	 * utilizes.
+	 * This variable stores the compiler's XML config file.
 	 *
 	 * @access protected
 	 * @static
-	 * @var array
+	 * @var XML
 	 */
-	protected static $keywords = array();
+	protected static $xml = NULL;
 
 	/**
 	 * This function checks whether the specified token is a reserved keyword.
@@ -362,9 +361,16 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	 * @static
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
+	 *
+	 * @see http://www.firebirdsql.org/file/documentation/reference_manuals/reference_material/html/langrefupd25-reskeywords-full-reswords.html
 	 */
 	public static function is_keyword($token) {
-		return in_array($token, self::$keywords);
+		if (is_null(self::$xml)) {
+			self::$xml = XML::load('config/firebird.xml');
+		}
+		$token = strtoupper($token);
+		$nodes = self::$xml->xpath("/sql/dialect[@name='firebird' and @version='2.5']/keywords[keyword = '{$token}']");
+		return ! empty($nodes);
 	}
 
 }

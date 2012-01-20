@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sql>
+  <dialect name="postgresql" version="7.3">
+    <keywords link="http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html">
+
+    </keywords>
+  </dialect>
+</sql>

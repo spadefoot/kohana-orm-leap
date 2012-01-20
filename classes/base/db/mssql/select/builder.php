@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-01-19
+ * @version 2012-01-20
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -36,6 +36,8 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
+	 *
+	 * @see http://www.leghumped.com/blog/2007/12/09/limit-and-offset-clauses-in-mssql/
 	 */
 	public function statement($terminated = TRUE) {
 		$sql = 'SELECT';

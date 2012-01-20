@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-18
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -355,14 +355,13 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This variable stores a list of reserved keywords that this specific dialect
-	 * utilizes.
+	 * This variable stores the compiler's XML config file.
 	 *
 	 * @access protected
 	 * @static
-	 * @var array
+	 * @var XML
 	 */
-	protected static $keywords = array();
+	protected static $xml = NULL;
 
 	/**
 	 * This function checks whether the specified token is a reserved keyword.
@@ -371,9 +370,16 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @static
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
+	 *
+	 * @see http://docs.oracle.com/cd/B28359_01/appdev.111/b31231/appb.htm
 	 */
 	public static function is_keyword($token) {
-		return in_array($token, self::$keywords);
+		if (is_null(self::$xml)) {
+			self::$xml = XML::load('config/oracle.xml');
+		}
+		$token = strtoupper($token);
+		$nodes = self::$xml->xpath("/sql/dialect[@name='oracle' and @version='11.1']/keywords[keyword = '{$token}']");
+		return ! empty($nodes);
 	}
 
 }

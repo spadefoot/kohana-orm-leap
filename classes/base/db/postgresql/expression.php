@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-01-18
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -358,14 +358,13 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This variable stores a list of reserved keywords that this specific dialect
-	 * utilizes.
+	 * This variable stores the compiler's XML config file.
 	 *
 	 * @access protected
 	 * @static
-	 * @var array
+	 * @var XML
 	 */
-	protected static $keywords = array();
+	protected static $xml = NULL;
 
 	/**
 	 * This function checks whether the specified token is a reserved keyword.
@@ -374,9 +373,16 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 * @static
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
+	 *
+	 * @see http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html
 	 */
 	public static function is_keyword($token) {
-		return in_array($token, self::$keywords);
+		if (is_null(self::$xml)) {
+			self::$xml = XML::load('config/postgresql.xml');
+		}
+		$token = strtoupper($token);
+		$nodes = self::$xml->xpath("/sql/dialect[@name='postgresql' and @version='7.3']/keywords[keyword = '{$token}']");
+		return ! empty($nodes);
 	}
 
 }

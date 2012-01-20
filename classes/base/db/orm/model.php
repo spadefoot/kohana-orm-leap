@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-31
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -152,7 +152,8 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @access public
 	 * @param boolean $reset                        whether to reset each column's value back
 	 *                                              to its original value
-	 * @throws Kohana_Marshalling_Exception
+	 * @throws Kohana_Marshalling_Exception         indicates that the record could not be
+	 *                                              deleted
 	 */
 	public function delete($reset = FALSE) {
 		$self = get_class($this);
@@ -353,7 +354,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				foreach ($primary_key as $column) {
 					$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 				}
-				$do_insert = !($builder->limit(1)->query()->is_loaded());
+				$do_insert = ! ($builder->limit(1)->query()->is_loaded());
 			}
 			if ( ! $do_insert) {
 				foreach ($primary_key as $column) {

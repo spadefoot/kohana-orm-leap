@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-01-18
+ * @version 2012-01-20
  *
  * @abstract
  */

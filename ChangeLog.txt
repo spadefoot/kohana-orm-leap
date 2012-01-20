@@ -1,5 +1,11 @@
 Changelog for LEAP ORM
 
+2012-01-20
+* Adding limit and offset support for Oracle delete/update statements.
+* Adding database config files with reserved keywords.
+* Adding logic to xquery the reserved keywords.
+* Minor style updates.
+
 2012-01-19
 * Adding limit and offset support for Oracle select statements per ekarlso's request (Issue #13).
 * Now allows array configs to be used with Base_DB_SQL_Expression.

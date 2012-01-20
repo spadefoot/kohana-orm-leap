@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-01-11
+ * @version 2012-01-20
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -106,7 +106,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			return $result_set;
 		}
 		$resource_id = @db2_prepare($this->link_id, $sql);
-		if (($resource_id === FALSE) || !db2_execute($resource_id)) {
+		if (($resource_id === FALSE) || ! db2_execute($resource_id)) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);
 			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
 		}
