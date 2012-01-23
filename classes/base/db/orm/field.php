@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-01-20
  *
  * @abstract
  *
@@ -125,20 +125,6 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
-	}
-
-	/**
-	 * This function will trigger a filter on the specified value.
-	 *
-	 * @access protected
-	 * @param mixed $value                          the value to be filtered
-	 * @return boolean                              whether the value was filtered
-	 */
-	protected function filter($value) {
-		if (isset($this->metadata['filter']) && call_user_func(array($this->model, $this->metadata['filter']), $value)) {
-			return FALSE;
-		}
-		return TRUE;
 	}
 
 	/**

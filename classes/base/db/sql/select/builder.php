@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-18
+ * @version 2012-01-23
  *
  * @abstract
  */
@@ -386,6 +386,21 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		$this->data['offset'] = $this->compiler->prepare_natural($offset);
 		return $this;
 	}
+
+    /**
+     * This function sets both the "offset" constraint and the "limit" constraint on
+     * the statement.
+     *
+     * @access public
+	 * @param integer $offset                   the "offset" constraint
+	 * @param integer $limit                    the "limit" constraint
+	 * @return DB_SQL_Select_Builder            a reference to the current instance
+     */
+    public function page($offset, $limit) {
+        $this->offset($offset);
+        $this->limit($limit);
+        return $this;
+    }
 
 	/**
 	 * This function combines another SQL statement using the specified operator.

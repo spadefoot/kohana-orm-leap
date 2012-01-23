@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-01-20
  *
  * @abstract
  */
@@ -53,7 +53,7 @@ abstract class Base_DB_ORM_Field_Alias extends Kohana_Object {
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, $field) {
-		if ( ! is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || !$model->is_field($field) || $model->is_relation($field)) {
+		if ( ! is_string($field) || $model->is_adaptor($field) || $model->is_alias($field) || ! $model->is_field($field) || $model->is_relation($field)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
 		}
 		$this->model = $model;
