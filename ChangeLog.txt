@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-01-28
+* Fixed limit bug in Oracle statements per ekarlso's request (Issue #17).
+* Adding a new datatime field adaptor (Issue #16).
+
 2012-01-23
 * Added a page function to builder/proxy classes per ekarlso's request (Issue #14).
 * Fixed limit bug in Oracle statements per ekarlso's request (Issue #15).

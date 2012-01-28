@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-23
+ * @version 2012-01-28
  *
  * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/statements_8005.htm
  * @see http://download.oracle.com/docs/cd/B12037_01/appdev.101/b10807/13_elems014.htm
@@ -42,53 +42,53 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * @see http://docs.oracle.com/cd/B12037_01/appdev.101/b10807/13_elems014.htm
 	 */
 	public function statement($terminated = TRUE) {
-        if ( ! empty($this->data['order_by']) || ($this->data['limit'] > 0) || ($this->data['offset'] > 0)) {
-            $sql = "SELECT * FROM {$this->data['from']}";
+		if ( ! empty($this->data['order_by']) || ($this->data['limit'] > 0) || ($this->data['offset'] > 0)) {
+			$sql = "SELECT * FROM {$this->data['from']}";
 
-    		if ( ! empty($this->data['where'])) {
-    			$do_append = FALSE;
-    			$sql .= ' WHERE ';
-    			foreach ($this->data['where'] as $where) {
-    				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-    					$sql .= " {$where[0]} ";
-    				}
-    				$sql .= $where[1];
-    				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-    			}
-    		}
+			if ( ! empty($this->data['where'])) {
+				$do_append = FALSE;
+				$sql .= ' WHERE ';
+				foreach ($this->data['where'] as $where) {
+					if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+						$sql .= " {$where[0]} ";
+					}
+					$sql .= $where[1];
+					$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				}
+			}
 
-            if ( ! empty($this->data['order_by'])) {
-    			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
-    		}
-            
-            if (($this->data['limit'] > 0) && ($this->data['offset'] > 0)) {
-    		    $max_row_to_fetch = $this->data['offset'] + $this->data['limit'];
-    		    $min_row_to_fetch = $this->data['offset'];
-    		    $sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM < {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";
-    		}
-    		else if ($this->data['limit'] > 0) {
-    		    $sql = "SELECT * FROM ({$sql}) WHERE ROWNUM < {$this->data['limit']}";
-    		}
-    		else if ($this->data['offset'] > 0) {
-    		    $sql = "SELECT * FROM ({$sql}) WHERE ROWNUM >= {$this->data['offset']}";
-    		}
-    		
-    		$sql = "DELETE FROM ({$sql})";
-        }
-        else {
-    		$sql = "DELETE FROM {$this->data['from']}";
+			if ( ! empty($this->data['order_by'])) {
+				$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+			}
 
-    		if ( ! empty($this->data['where'])) {
-    			$do_append = FALSE;
-    			$sql .= ' WHERE ';
-    			foreach ($this->data['where'] as $where) {
-    				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-    					$sql .= " {$where[0]} ";
-    				}
-    				$sql .= $where[1];
-    				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
-    			}
-    		}
+			if (($this->data['limit'] > 0) && ($this->data['offset'] > 0)) {
+				$max_row_to_fetch = $this->data['offset'] + ($this->data['limit'] - 1);
+				$min_row_to_fetch = $this->data['offset'];
+				$sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM <= {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";
+			}
+			else if ($this->data['limit'] > 0) {
+				$sql = "SELECT * FROM ({$sql}) WHERE ROWNUM <= {$this->data['limit']}";
+			}
+			else if ($this->data['offset'] > 0) {
+				$sql = "SELECT * FROM ({$sql}) WHERE ROWNUM >= {$this->data['offset']}";
+			}
+
+			$sql = "DELETE FROM ({$sql})";
+		}
+		else {
+			$sql = "DELETE FROM {$this->data['from']}";
+
+			if ( ! empty($this->data['where'])) {
+				$do_append = FALSE;
+				$sql .= ' WHERE ';
+				foreach ($this->data['where'] as $where) {
+					if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+						$sql .= " {$where[0]} ";
+					}
+					$sql .= $where[1];
+					$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				}
+			}
 		}
 
 		if ($terminated) {

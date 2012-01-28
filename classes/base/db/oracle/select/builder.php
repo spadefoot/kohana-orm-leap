@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-23
+ * @version 2012-01-28
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -124,15 +124,15 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 		}
 
 		if (($this->data['limit'] > 0) && ($this->data['offset'] > 0)) {
-		    $max_row_to_fetch = $this->data['offset'] + $this->data['limit'];
-		    $min_row_to_fetch = $this->data['offset'];
-		    $sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM < {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";
+			$max_row_to_fetch = $this->data['offset'] + ($this->data['limit'] - 1);
+			$min_row_to_fetch = $this->data['offset'];
+			$sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM <= {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";
 		}
 		else if ($this->data['limit'] > 0) {
-		    $sql = "SELECT * FROM ({$sql}) WHERE ROWNUM < {$this->data['limit']}";
+			$sql = "SELECT * FROM ({$sql}) WHERE ROWNUM <= {$this->data['limit']}";
 		}
 		else if ($this->data['offset'] > 0) {
-		    $sql = "SELECT * FROM ({$sql}) WHERE ROWNUM >= {$this->data['offset']}";
+			$sql = "SELECT * FROM ({$sql}) WHERE ROWNUM >= {$this->data['offset']}";
 		}
 
 		if ($terminated) {
