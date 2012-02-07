@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -37,9 +37,15 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'double');
 
-		$this->metadata['max_digits'] = (int) $metadata['max_digits']; // the total number of digits that are stored
+        $max_digits = 1;
+        if (isset($metadata['max_decimals'])) {
+		    $this->metadata['max_decimals'] = abs( (int) $metadata['max_decimals']); // the number of digits that may be after the decimal point
+		    $max_digits = $this->metadata['max_decimals'] + 1;
+        }
 
-		$this->metadata['max_decimals'] = (int) $metadata['max_decimals']; // the number of digits that may be after the decimal point
+        if (isset($metadata['max_digits'])) {
+		    $this->metadata['max_digits'] = max(abs( (int) $metadata['max_digits']), $max_digits); // the total number of digits that may be stored
+        }
 
 		$this->metadata['unsigned'] = (isset($metadata['unsigned'])) ? (bool) $metadata['unsigned'] : FALSE;
 
@@ -102,18 +108,20 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 					return FALSE;
 				}
 			}
-			$parts = preg_split('/\./', "{$value}");
-			$digits = strlen("{$parts[0]}");
-			if (count($parts) > 1) {
-				$decimals = strlen("{$parts[1]}");
-				if ($decimals > $this->metadata['max_decimals']) {
-					return FALSE;
-				}
-				$digits += $decimals;
-			}
-			if ($digits > $this->metadata['max_digits']) {
-				return FALSE;
-			}
+			if (isset($this->metadata['max_digits']) {
+    			$parts = preg_split('/\./', "{$value}");
+    			$digits = strlen("{$parts[0]}");
+    			if (isset($this->metadata['max_decimals']) && (count($parts) > 1)) {
+    				$decimals = strlen("{$parts[1]}");
+    				if ($decimals > $this->metadata['max_decimals']) {
+    					return FALSE;
+    				}
+    				$digits += $decimals;
+    			}
+    			if ($digits > $this->metadata['max_digits']) {
+    				return FALSE;
+    			}
+		    }
 		}
 		return parent::validate($value);
 	}

@@ -8,6 +8,7 @@ Changelog for LEAP ORM
 * Cleaned-up close function in connection classes.
 * Implemented ArrayAccess and SeekableIterator interfaces in Base_CSV.
 * Added Base_CSV::as_array().
+* Made the Double field's metadata 'max_digits' and 'max_decimals' optional.
 * Fixed some minor styling.
 * Updated some inline documentation.
 
