@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-01-11
+ * @version 2012-02-06
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -81,9 +81,9 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
-		    $this->sql = $sql;
-	        return $result_set;
-	    }
+			$this->sql = $sql;
+			return $result_set;
+		}
 		$result = @$this->connection->query($sql);
 		if ($result === FALSE) {
 			$this->error = 'Message: Failed to query SQL statement. Reason: ' . $this->connection->errorInfo();
@@ -192,10 +192,18 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
+	 * @param boolean $like                     whether the string is for a like clause
 	 * @return string                           the escaped string
 	 */
-	public function escape_string($string) {
-		return $this->connection->quote($string);
+	public function quote($string, $like = FALSE) {
+		$string = $this->connection->quote($string);
+
+		if ($like) {
+			$string = substr($string, 1, -1);
+			$string = "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'";
+		}
+
+		return $string;
 	}
 
 	/**

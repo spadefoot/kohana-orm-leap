@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -39,6 +39,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
+		/*
 		if (is_string($like)) {
 			$results = $this->query(Database::SELECT,'SELECT * FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME LIKE '.$this->quote($table), FALSE);
 		}
@@ -66,6 +67,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		}
 
 		return $result;
+		*/
 	}
 
 	/**
@@ -81,6 +83,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
 	 */
 	public function indexes($table) {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('sys.tables.name', 'table_name')
 			->column('sys.columns.name', 'field_name')
@@ -104,6 +107,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -117,6 +121,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function tables($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
@@ -130,6 +135,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -143,6 +149,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function views($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
@@ -156,6 +163,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,6 +178,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
+		/*
 		static $types = array(
 			'nvarchar'  => array('type' => 'string'),
 			'ntext'     => array('type' => 'string'),
@@ -181,6 +190,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		}
 
 		return parent::data_type($type);
+		*/
 	}
 
 }

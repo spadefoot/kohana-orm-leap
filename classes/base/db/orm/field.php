@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-01-20
+ * @version 2012-02-01
  *
  * @abstract
  *
@@ -135,7 +135,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected function validate($value) {
-		if (isset($this->metadata['enum']) && !in_array($value, $this->metadata['enum'])) {
+		if (isset($this->metadata['enum']) && ! in_array($value, $this->metadata['enum'])) {
 			return FALSE;
 		}
 		if (isset($this->metadata['callback']) && call_user_func(array($this->model, $this->metadata['callback']), $value)) {

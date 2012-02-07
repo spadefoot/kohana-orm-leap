@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -39,6 +39,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
+		/*
 		$sql = 'SHOW FULL COLUMNS FROM ' . $this->compiler->prepare_identifier($table);
 
 		if ( ! empty($like)) {
@@ -145,6 +146,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		}
 
 		return $fields;
+		*/
 	}
 
 	/**
@@ -158,6 +160,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function indexes($table) {
+		/*
 		$table = $this->compiler->prepare_identifier($table);
 
 		$sql = 'SHOW INDEX FROM ' . $table . ';';
@@ -179,6 +182,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		}
 
 		return new DB_ResultSet($buffer, $i, 'array');
+		*/
 	}
 
 	/**
@@ -192,6 +196,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function tables($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
@@ -206,6 +211,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -219,6 +225,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function views($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
@@ -233,6 +240,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,6 +255,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
+		/*
 		case 'blob':
 			$type[0] = 'string';
 			$type[2] = '65535';
@@ -294,6 +303,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		}
 
 		return parent::data_type($type);
+		*/
 	}
 
 	/**
@@ -307,6 +317,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://kohanaframework.org/3.1/guide/api/Database#_parse_type
 	 */
 	protected static function parse_type($type) {
+		/*
 		$open = strpos($type, '(');
 
 		if ($open === FALSE) {
@@ -324,6 +335,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		$info[3] = array(); // attributes
 
 		return $info;
+		*/
 	}
 
 }

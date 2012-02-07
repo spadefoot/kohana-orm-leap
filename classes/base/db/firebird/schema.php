@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -45,6 +45,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://tech.dir.groups.yahoo.com/group/firebird-support/message/94553
 	 */
 	public function fields($table, $like = '') {
+		/*
 		$sql = 'SELECT
 			TRIM("RDB$RELATION_FIELDS"."RDB$RELATION_NAME") AS "table_name",
 			TRIM("RDB$RELATION_FIELDS"."RDB$FIELD_NAME") AS "field_name",
@@ -268,6 +269,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		}
 
 		return $fields;
+		*/
 	}
 
 	/**
@@ -283,6 +285,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.felix-colibri.com/papers/db/interbase/using_interbase_system_tables/using_interbase_system_tables.html
 	 */
 	public function indexes($table) {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table_name')
 			->column(DB_SQL::expr('TRIM("RDB$INDEX_SEGMENTS"."RDB$FIELD_NAME")'), 'field_name')
@@ -300,6 +303,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -313,6 +317,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.firebirdfaq.org/faq174/
 	 */
 	public function tables($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
@@ -330,6 +335,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -343,6 +349,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.firebirdfaq.org/faq174/
 	 */
 	public function views($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
@@ -360,6 +367,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 }

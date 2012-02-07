@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-01-20
+ * @version 2012-02-06
  *
  * @abstract
  */
@@ -68,7 +68,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as an alias.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 * @throws Kohana_InvalidArgument_Exception indicates that there is a data type mismatch
 	 */
@@ -83,7 +83,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as a boolean.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */
 	public function prepare_boolean($expr) {
@@ -94,7 +94,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as a connector.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */
 	public function prepare_connector($expr) {
@@ -114,7 +114,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as an identifier column.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
@@ -122,7 +122,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 */
 	public function prepare_identifier($expr) {
 		if ($expr instanceof DB_SQLite_Select_Builder) {
-			return '(' . $expr->statement(FALSE) . ')';
+			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
 			return $expr->value($this);
@@ -149,7 +149,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as a join type.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
@@ -178,7 +178,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as a natural number.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */
 	public function prepare_natural($expr) {
@@ -191,7 +191,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 *
 	 * @access public
 	 * @param string $group                      the operator grouping
-	 * @param string $expr                       the expression string to be prepared
+	 * @param string $expr                       the expression to be prepared
 	 * @return string                            the prepared expression
 	 *
 	 * @see http://www.sqlite.org/lang_select.html
@@ -288,7 +288,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as a parenthesis.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */
 	public function prepare_parenthesis($expr) {
@@ -307,10 +307,11 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * This function prepares the specified expression as a value.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression string to be prepared
+	 * @param string $expr                      the expression to be prepared
+	 * @param boolean $like                     whether the string is for a like clause
 	 * @return string                           the prepared expression
 	 */
-	public function prepare_value($expr) {
+	public function prepare_value($expr, $like = FALSE) {
 		if ($expr === NULL) {
 			return 'NULL';
 		}
@@ -321,11 +322,15 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			return "'0'";
 		}
 		else if (is_array($expr)) {
-			return '(' . implode(', ', array_map(array($this, __FUNCTION__), $expr)) . ')';
+			$buffer = array();
+			foreach ($expr as $value) {
+				$buffer[] = call_user_func_array(array($this, __FUNCTION__), array($value, $like));
+			}
+			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
 			if ($expr instanceof DB_SQLite_Select_Builder) {
-				return '(' . $expr->statement(FALSE) . ')';
+				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
 				return $expr->value($this);
@@ -350,7 +355,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			return "''";
 		}
 		else {
-			return DB_Connection_Pool::instance()->get_connection($this->source)->escape_string($expr);
+			return DB_Connection_Pool::instance()->get_connection($this->source)->quote($expr, $like);
 		}
 	}
 

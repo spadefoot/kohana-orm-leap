@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -41,6 +41,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 */
 	public function fields($table, $like = '') {
+		/*
 		$this->_connection or $this->connect();
 
 		$sql = 'SELECT column_name, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale, datetime_precision'
@@ -66,6 +67,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		}
 
 		return $result;
+		*/
 	}
 
 	/**
@@ -82,6 +84,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @see http://code.activestate.com/recipes/576557/
 	 */
 	public function indexes($table) {
+		/*
 		$sql = "SELECT
 			t.relname AS table_name,
 			i.relname AS index_name,
@@ -106,6 +109,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$results = $connection->query($sql);
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -121,6 +125,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function tables($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			->from('information_schema.tables')
@@ -135,6 +140,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -150,6 +156,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function views($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			->from('information_schema.tables')
@@ -165,6 +172,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,6 +187,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
+		/*
 		static $types = array(
 			// PostgreSQL >= 7.4
 			'box'       => array('type' => 'string'),
@@ -210,6 +219,7 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		}
 
 		return parent::data_type($type);
+		*/
 	}
 
 }

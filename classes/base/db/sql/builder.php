@@ -44,6 +44,16 @@ abstract class Base_DB_SQL_Builder extends Kohana_Object implements DB_SQL_State
 	const _CLOSING_PARENTHESIS_ = ')';
 
 	/**
+	 * This function returns the raw SQL statement.
+	 *
+	 * @access public
+	 * @return string                               the raw SQL statement
+	 */
+	public function __toString() {
+		return $this->statement(TRUE);
+	}
+
+	/**
 	 * This function returns a new instance of the calling class.
 	 *
 	 * @access public

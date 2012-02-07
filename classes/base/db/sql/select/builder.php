@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-23
+ * @version 2012-02-06
  *
  * @abstract
  */
@@ -243,7 +243,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && !is_array($value)) {
+			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if (is_null($value)) {
@@ -258,6 +258,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$value = $this->compiler->prepare_value($value);
+			//$value = $this->compiler->prepare_value($value, in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)));
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
 		}
@@ -341,6 +342,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$value = $this->compiler->prepare_value($value);
+			//$value = $this->compiler->prepare_value($value, in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)));
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['having'][] = array($connector, "{$column} {$operator} {$value}");
 		}
@@ -387,20 +389,20 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		return $this;
 	}
 
-    /**
-     * This function sets both the "offset" constraint and the "limit" constraint on
-     * the statement.
-     *
-     * @access public
+	/**
+	 * This function sets both the "offset" constraint and the "limit" constraint on
+	 * the statement.
+	 *
+	 * @access public
 	 * @param integer $offset                   the "offset" constraint
 	 * @param integer $limit                    the "limit" constraint
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-     */
-    public function page($offset, $limit) {
-        $this->offset($offset);
-        $this->limit($limit);
-        return $this;
-    }
+	 */
+	public function page($offset, $limit) {
+		$this->offset($offset);
+		$this->limit($limit);
+		return $this;
+	}
 
 	/**
 	 * This function combines another SQL statement using the specified operator.

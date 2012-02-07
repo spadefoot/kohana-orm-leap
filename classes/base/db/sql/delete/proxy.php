@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-18
+ * @version 2012-02-05
  *
  * @abstract
  */
@@ -145,6 +145,16 @@ abstract class Base_DB_SQL_Delete_Proxy extends Kohana_Object implements DB_SQL_
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);
+	}
+
+	/**
+	 * This function returns the raw SQL statement.
+	 *
+	 * @access public
+	 * @return string                               the raw SQL statement
+	 */
+	public function __toString() {
+		return $this->builder->statement();
 	}
 
 	/**

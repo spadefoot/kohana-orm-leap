@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -39,6 +39,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
+		/*
 		$table = $this->compiler->prepare_value($table);
 		$regex = $this->like_to_regex($like);
 
@@ -103,6 +104,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		}
 
 		return $records;
+		*/
 	}
 
 	/**
@@ -118,12 +120,14 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://stackoverflow.com/questions/157392/how-do-i-find-out-if-a-sqlite-index-is-unique-with-sql
 	 */
 	public function indexes($table) {
+		/*
 		$sql = "PRAGMA INDEX_LIST('" . $table . "');";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$results = $connection->query($sql);
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -135,6 +139,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @return array 						an array of tables within the database
 	 */
 	public function tables($like = '') {
+		/*
 		$sql = "SELECT [tbl_name] AS [name] FROM [sqlite_master] WHERE [type] = 'table' AND [tbl_name] NOT IN ('sqlite_sequence')";
 
 		if ( ! empty($like)) {
@@ -149,6 +154,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$results = $connection->query($sql);
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -160,7 +166,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @return array 						an array of views within the database
 	 */
 	public function views($like = '') {
+		/*
 		return array();
+		*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,6 +196,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://www.regular-expressions.info/mysql.html
 	 */
 	protected function like_to_regex($like) {
+		/*
 		if ( ! empty($like)) {
 			$length = strlen($like);
 			if (preg_match('/^%.*%$/' , $like)) {
@@ -204,6 +213,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 			}
 		}
 		return '';
+		*/
 	}
 
 }

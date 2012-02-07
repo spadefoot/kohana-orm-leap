@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-13
+ * @version 2012-02-05
  *
  * @abstract
  */
@@ -108,7 +108,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 			else if ($this->data_source->cache->lifetime !== NULL) {
 				$this->cache_key = 'DB_Connection::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
 				$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
-				if (($results !== NULL) && !$this->data_source->cache->force) {
+				if (($results !== NULL) && ! $this->data_source->cache->force) {
 					return $results;
 				}
 			}
@@ -219,9 +219,10 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $string                    the string to be escaped
+	 * @param boolean $like                     whether the string is for a like clause
 	 * @return string                           the escaped string
 	 */
-	public abstract function escape_string($string);
+	public abstract function quote($string, $like = FALSE);
 
 	/**
 	 * This function allows for the ability to close the connection that was opened.
@@ -262,8 +263,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	public static function factory($config = array()) {
 		$source = new DB_DataSource($config);
-		$dialect = $source->dialect;
-		$driver = 'DB_' . $dialect . '_Connection_' . $source->driver;
+		$driver = 'DB_' . $source->dialect . '_Connection_' . $source->driver;
 		$connection = new $driver($source);
 		return $connection;
 	}

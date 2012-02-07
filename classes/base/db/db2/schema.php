@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -39,6 +39,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * 										table
 	 */
 	public function fields($table, $like = '') {
+		/*
 		$table = $this->compiler->prepare_identifier($table);
 
 		$sql = 'SHOW FULL COLUMNS FROM ' . $table;
@@ -108,6 +109,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		}
 
 		return $fields;
+		*/
 	}
 
 	/**
@@ -125,6 +127,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.tek-tips.com/viewthread.cfm?qid=128876&page=108
 	 */
 	public function indexes($table) {
+		/*
 		$sql = "SELECT
 			INDNAME,
 			DEFINER,
@@ -144,6 +147,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		$results = $connection->query($sql);
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -159,6 +163,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.selectorweb.com/db2.html
 	 */
 	public function tables($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('tabname', 'name')
 			->from('syscat.tables')
@@ -172,6 +177,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -186,20 +192,22 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0411melnyk/
 	 */
 	public function views($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('viewname', 'name')
 			->from('syscat.views')
 			->where('viewschema', '=', 'SYSCAT')
 			->where('valid', '<>', 'Y')
 			->order_by(DB_SQL::expr('LOWER("tabname")'));
-		
+
 		if ( ! empty($like)) {
 			$builder->where('viewname', 'LIKE', $like);
 		}
-		
+
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +222,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
+		/*
 		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
 			'bool'                      => array('type' => 'bool'),
@@ -257,6 +266,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		}
 
 		return parent::data_type($type);
+		*/
 	}
 
 }

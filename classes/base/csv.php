@@ -21,9 +21,9 @@
  *
  * @package Document
  * @category CSV
- * @version 2012-01-12
+ * @version 2012-01-30
  */
-class Base_CSV extends Kohana_Object implements Countable, Iterator {
+class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
 	/**
 	 * This variable stores the file name for the CSV, which will only be used
@@ -136,8 +136,6 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 		switch ($key) {
 			case 'file_name':
 				return $this->file_name;
-			case 'data':
-				return $this->data;
 			case 'default_headers':
 				return $this->default_headers;
 			case 'delimiter':
@@ -161,7 +159,7 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 	 *
 	 * @access public
 	 * @param string $key                           the name of the property
-	 * @return mixed                                the value of the property
+	 * @param mixed $value                          the value of the property
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
@@ -170,9 +168,6 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 			case 'file_name':
 				$this->file_name = (is_string($value)) ? $value : '';
 			break;
-			//case 'data':
-			//    $this->data = (is_array($value)) ? $value : array();
-			//break;
 			case 'default_headers':
 				$this->default_headers = (boolean) $value;
 			break;
@@ -206,6 +201,16 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 			$this->data[] = $row;
 		}
 	}
+
+	/**
+	 * This function returns the contents as an array.
+	 *
+	 * @access public
+	 * @return array                                an array of the contents
+	 */
+	 public function as_array() {
+		 return $this->data;
+	 }
 
 	/**
 	 * This function removes all rows from the data array.
@@ -277,12 +282,10 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 			$buffer .= $this->implode($this->header);
 			$buffer .= $this->eol;
 		}
-		else if ($this->default_headers) {
-			if ( ! empty($this->data)) {
-				$keys = array_keys($this->current());
-				$buffer .= $this->implode($keys);
-				$buffer .= $this->eol;
-			}
+		else if ($this->default_headers && ! empty($this->data)) {
+			$header = array_keys($this->current());
+			$buffer .= $this->implode($header);
+			$buffer .= $this->eol;
 		}
 
 		foreach ($this->data as $row) {
@@ -343,6 +346,58 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 	}
 
 	/**
+	 * This function determines whether a offset exists.
+	 *
+	 * @access public
+	 * @param integer $offset                       the offset to be evaluated
+	 * @return boolean                              whether the requested offset exists
+	 */
+	public function offsetExists($offset) {
+		return isset($this->data[$offset]);
+	}
+
+	/**
+	 * This functions gets value at the specified offset.
+	 *
+	 * @access public
+	 * @param integer $offset                       the offset to be fetched
+	 * @return mixed                                the value at the specified offset
+	 */
+	public function offsetGet($offset) {
+		return isset($this->data[$offset]) ? $this->data[$offset] : NULL;
+	}
+
+	/**
+	 * This functions sets the specified value at the specified offset.
+	 *
+	 * @access public
+	 * @param integer $offset                       the offset to be set
+	 * @param mixed $value                          the value to be set
+	 */
+	public function offsetSet($offset, $value) {
+		if ( ! is_array($value)) {
+			throw new Kohana_InvalidArgument_Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
+		}
+		else if (is_null($offset)) {
+			$this->data[] = $value;
+		}
+		else {
+			$this->data[$offset] = $value;
+		}
+	}
+
+	/**
+	 * This functions allows for the specified offset to be unset.
+	 *
+	 * @access public
+	 * @param integer $offset                       the offset to be unset
+	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
+	 */
+	public function offsetUnset($offset) {
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: CSV class cannot be modified.', array());
+	}
+
+	/**
 	 * This function returns the current iterator position.
 	 *
 	 * @access public
@@ -359,6 +414,21 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 	 */
 	public function rewind() {
 		$this->position = 0;
+	}
+
+	/**
+	 * This function sets the position pointer to the seeked position.
+	 *
+	 * @access public
+	 * @param integer $position                     the seeked position
+	 * @throws Kohana_OutOfBounds_Exception         indicates that the seeked position
+	 *                                              is out of bounds
+	 */
+	public function seek($position) {
+		if ( ! isset($this->data[$position])) {
+			throw new Kohana_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->count()));
+		}
+		$this->position = $position;
 	}
 
 	/**
@@ -406,10 +476,10 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 	 * @see http://www.php.net/manual/en/function.fgetcsv.php
 	 */
 	public static function load($config = array()) {
-		$CSV = new CSV($config);
-		if (file_exists($CSV->file_name)) {
-		   if (($fp = fopen($CSV->file_name, 'r')) !== FALSE) {
-				$eol = ($CSV->eol == "\r\n") ? array(13, 10) : array(ord($CSV->eol)); // 13 => cr, 10 => lf
+		$csv = new CSV($config);
+		if (file_exists($csv->file_name)) {
+		   if (($fp = fopen($csv->file_name, 'r')) !== FALSE) {
+				$eol = ($csv->eol == "\r\n") ? array(13, 10) : array(ord($csv->eol)); // 13 => cr, 10 => lf
 				$buffer = '';
 				while (($char = fgetc($fp)) !== FALSE) { // load char by char, to replace line endings
 					if (in_array(ord($char), $eol)) {
@@ -421,8 +491,8 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 				}
 				fclose($fp);
 				$rows = explode("\r\n", $buffer);
-				$enclosure = $CSV->enclosure;
-				$delimiter = $enclosure . $CSV->delimiter . $enclosure;
+				$enclosure = $csv->enclosure;
+				$delimiter = $enclosure . $csv->delimiter . $enclosure;
 				if (empty($enclosure)) {
 					$enclosure = " \t\n\r\0\x0B";
 				}
@@ -431,11 +501,11 @@ class Base_CSV extends Kohana_Object implements Countable, Iterator {
 					$row = trim($row, $enclosure);
 					//$columns = explode($delimiter, $row);
 					$columns = preg_split($regex, $row);
-					$CSV->add_row($columns);
+					$csv->add_row($columns);
 				}
 			}
 		}
-		return $CSV;
+		return $csv;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

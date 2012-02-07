@@ -1,5 +1,16 @@
 Changelog for LEAP ORM
 
+2012-02-07
+* Fixed a bug in how Oracle escapes strings per ekarlso's request (Issue #18).
+* Improved how strings are escaped.
+* Renamed Base_DB_Connection::escape_string($string) to Base_DB_Connection::quote($string, $like = FALSE).
+* Commented out code in schema.php files so that API guide can be generated per nyunyu95's request (Issue #21).
+* Cleaned-up close function in connection classes.
+* Implemented ArrayAccess and SeekableIterator interfaces in Base_CSV.
+* Added Base_CSV::as_array().
+* Fixed some minor styling.
+* Updated some inline documentation.
+
 2012-01-28
 * Fixed limit bug in Oracle statements per ekarlso's request (Issue #17).
 * Adding a new datatime field adaptor (Issue #16).

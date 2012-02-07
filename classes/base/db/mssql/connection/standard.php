@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-01-11
+ * @version 2012-02-06
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -183,22 +183,6 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	}
 
 	/**
-	 * This function escapes a string to be used in an SQL statement.
-	 *
-	 * @access public
-	 * @param string $string                    the string to be escaped
-	 * @return string                           the escaped string
-	 *
-	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
-	 */
-	public function escape_string($string) {
-		// TODO improve this escaping method
-		$unpacked = unpack('H*hex', $string);
-		$string = '0x' . $unpacked['hex'];
-		return $string;
-	}
-
-	/**
 	 * This function allows for the ability to close the connection that was opened.
 	 *
 	 * @access public
@@ -206,11 +190,10 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@mssql_close($this->link_id)) {
-				$this->link_id = NULL;
-				return TRUE;
+			if ( ! @mssql_close($this->link_id)) {
+				return FALSE;
 			}
-			return FALSE;
+			$this->link_id = NULL;
 		}
 		return TRUE;
 	}

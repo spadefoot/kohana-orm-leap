@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-18
+ * @version 2012-02-06
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -50,22 +50,22 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-		    $host = $this->data_source->host;
-            $database = $this->data_source->database;
-		    if ( ! empty($host) ) {
-			    $connection_string = '//'. $host;
-			    $port = $this->data_source->port; // default port is 1521
-			    if ( ! empty($port)) {
-				    $connection_string .= ':' . $port;
-			    }
-			    $connection_string .= '/' . $database;
+			$host = $this->data_source->host;
+			$database = $this->data_source->database;
+			if ( ! empty($host) ) {
+				$connection_string = '//'. $host;
+				$port = $this->data_source->port; // default port is 1521
+				if ( ! empty($port)) {
+					$connection_string .= ':' . $port;
+				}
+				$connection_string .= '/' . $database;
 			}
-            else if (isset($database)) {
-                $connection_string = $database;
-            }
-            else {
-                throw new Kohana_Database_Exception('Message: Bad configuration. Reason: Data source needs to define either a //host[:port][/database] or a database name scheme.', array(':dsn' => $this->data_source->id));
-            }
+			else if (isset($database)) {
+				$connection_string = $database;
+			}
+			else {
+				throw new Kohana_Database_Exception('Message: Bad configuration. Reason: Data source needs to define either a //host[:port][/database] or a database name scheme.', array(':dsn' => $this->data_source->id));
+			}
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
 			$this->link_id = ($this->data_source->is_persistent())
@@ -178,7 +178,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		try {
 			$sql = $this->sql;
 			if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
-				$table = Arr::get($matches, 1);
+				$table = Arr::get($matches, 1, '');
 				$query = "SELECT MAX(ID) FROM {$table};";
 				$result = $this->query($query);
 				$insert_id = ($result->is_loaded()) ? ( (int)  Arr::get($result->fetch(0), 'ID')) : 0;
@@ -238,22 +238,6 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function escapes a string to be used in an SQL statement.
-	 *
-	 * @access public
-	 * @param string $string                    the string to be escaped
-	 * @return string                           the escaped string
-	 *
-	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
-	 */
-	public function escape_string($string) {
-		// TODO improve this escaping method
-		$unpacked = unpack('H*hex', $string);
-		$string = '0x' . $unpacked['hex'];
-		return $string;
-	}
-
-	/**
 	 * This function allows for the ability to close the connection that was opened.
 	 *
 	 * @access public
@@ -263,11 +247,10 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@oci_close($this->link_id)) {
-				$this->link_id = NULL;
-				return TRUE;
+			if ( ! @oci_close($this->link_id)) {
+				return FALSE;
 			}
-			return FALSE;
+			$this->link_id = NULL;
 		}
 		return TRUE;
 	}

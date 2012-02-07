@@ -21,9 +21,43 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-11
+ * @version 2012-02-06
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {}
+abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                    the string to be escaped
+	 * @param boolean $like                     whether the string is for a like clause
+	 * @return string                           the escaped string
+	 *
+	 * @license http://codeigniter.com/user_guide/license.html
+	 *
+	 * @see http://codeigniter.com/forums/viewthread/179202/
+	 */
+	public function quote($string, $like = FALSE) {
+		$removables = array(
+			'/%0[0-8bcef]/',
+			'/%1[0-9a-f]/',
+			'/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S',
+		);
+		do {
+			$string = preg_replace($removables, '', $string, -1, $count);
+		}
+		while ($count);
+
+		$string = str_replace("'", "''", $string);
+
+		$string = ($like)
+			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
+			: "'" . $string . "'";
+
+		return $string;
+	}
+
+}
 ?>

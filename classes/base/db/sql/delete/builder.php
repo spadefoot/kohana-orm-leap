@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-18
+ * @version 2012-02-06
  *
  * @abstract
  */
@@ -121,7 +121,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && !is_array($value)) {
+			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if (is_null($value)) {
@@ -136,6 +136,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$value = $this->compiler->prepare_value($value);
+			//$value = $this->compiler->prepare_value($value, in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)));
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
 		}

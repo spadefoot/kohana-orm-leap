@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-01
+ * @version 2012-02-06
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
  * @see http://nimal.info/blog/2007/intersection-and-set-difference-in-mysql-a-workaround-for-except/
@@ -48,7 +48,7 @@ abstract class Base_DB_SQL_Operator extends Kohana_Object {
 
 	const _LIKE_ = 'LIKE';
 
-	const _NOT_LIKE_ = 'NOT_LIKE';
+	const _NOT_LIKE_ = 'NOT LIKE';
 
 	const _LESS_THAN_ = '<';
 

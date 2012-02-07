@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-01-20
+ * @version 2012-02-07
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -213,12 +213,19 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
+	 * @param boolean $like                     whether the string is for a like clause
 	 * @return string                           the escaped string
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-escape-string.php
 	 */
-	public function escape_string($string) {
-		return "'" . db2_escape_string($string) . "'";
+	public function quote($string, $like = FALSE) {
+		$string = db2_escape_string($string);
+
+		$string = ($like)
+			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
+			: "'" . $string . "'";
+
+		return $string;
 	}
 
 	/**
@@ -231,11 +238,10 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@db2_close($this->link_id)) {
-				$this->link_id = NULL;
-				return TRUE;
+			if ( ! @db2_close($this->link_id)) {
+				return FALSE;
 			}
-			return FALSE;
+			$this->link_id = NULL;
 		}
 		return TRUE;
 	}

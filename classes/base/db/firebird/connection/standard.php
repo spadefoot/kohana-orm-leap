@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-01-11
+ * @version 2012-02-06
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -213,22 +213,6 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	}
 
 	/**
-	 * This function escapes a string to be used in an SQL statement.
-	 *
-	 * @access public
-	 * @param string $string                    the string to be escaped
-	 * @return string                           the escaped string
-	 *
-	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
-	 */
-	public function escape_string($string) {
-		// TODO improve this escaping method
-		$unpacked = unpack('H*hex', $string);
-		$string = 'x\'' . $unpacked['hex'] . '\'';
-		return $string;
-	}
-
-	/**
 	 * This function allows for the ability to close the connection that was opened.
 	 *
 	 * @access public
@@ -236,11 +220,10 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if (@ibase_close($this->link_id)) {
-				$this->link_id = NULL;
-				return TRUE;
+			if ( ! @ibase_close($this->link_id)) {
+				return FALSE;
 			}
-			return FALSE;
+			$this->link_id = NULL;
 		}
 		return TRUE;
 	}

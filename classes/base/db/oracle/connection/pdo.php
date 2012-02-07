@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-17
+ * @version 2012-02-06
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -93,22 +93,6 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	public function execute($sql) {
 		$sql = trim($sql, "; \t\n\r\0\x0B");
 		parent::execute($sql);
-	}
-
-	/**
-	 * This function escapes a string to be used in an SQL statement.
-	 *
-	 * @access public
-	 * @param string $string                    the string to be escaped
-	 * @return string                           the escaped string
-	 *
-	 * @see http://stackoverflow.com/questions/574805/how-to-escape-strings-in-mssql-using-php
-	 */
-	public function escape_string($string) {
-		// TODO improve this escaping method
-		$unpacked = unpack('H*hex', $string);
-		$string = '0x' . $unpacked['hex'];
-		return $string;
 	}
 
 }

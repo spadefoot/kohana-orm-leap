@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-18
+ * @version 2012-02-07
  *
  * @abstract
  */
@@ -47,7 +47,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		WHERE table_name LIKE 'EST%'
 		AND column_name LIKE '%CALLREF%';
 		*/
-
+		/*
 		$table = $this->compiler->prepare_identifier($table);
 
 		$sql = 'SHOW FULL COLUMNS FROM ' . $table;
@@ -117,6 +117,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		}
 
 		return $fields;
+		*/
 	}
 
 	/**
@@ -133,12 +134,14 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://forums.oracle.com/forums/thread.jspa?threadID=424532
 	 */
 	public function indexes($table) {
+		/*
 		$sql = "SELECT INDEX_NAME, TABLE_NAME, TABLE_OWNER FROM SYS.ALL_INDEXES ORDER BY TABLE_OWNER, TABLE_NAME, INDEX_NAME;";
 
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$results = $connection->query($sql);
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -153,6 +156,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
 	 */
 	public function tables($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			//->from('dba_tables')
@@ -167,6 +171,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	/**
@@ -180,6 +185,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
 	 */
 	public function views($like = '') {
+		/*
 		$builder = DB_SQL::select($this->source)
 			->column('view_name', 'name')
 			//->from('dba_views')
@@ -194,6 +200,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		$results = $builder->query();
 
 		return $results;
+		*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,6 +215,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 *                                      for the specified data type
 	 */
 	protected function data_type($type) {
+		/*
 		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
 			'bool'                      => array('type' => 'bool'),
@@ -251,6 +259,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		}
 
 		return parent::data_type($type);
+		*/
 	}
 
 }
