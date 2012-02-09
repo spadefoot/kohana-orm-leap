@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -192,15 +192,14 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 */
-	public function quote($string, $like = FALSE) {
+	public function quote($string, $escape = NULL) {
 		$string = $this->connection->quote($string);
 
-		if ($like) {
-			$string = substr($string, 1, -1);
-			$string = "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'";
+		if (is_string($escape) || ! empty($escape)) {
+			$string .= " ESCAPE '{$escape[0]}'";
 		}
 
 		return $string;

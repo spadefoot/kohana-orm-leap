@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-07
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -108,7 +108,7 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 					return FALSE;
 				}
 			}
-			if (isset($this->metadata['max_digits']) {
+			if (isset($this->metadata['max_digits'])) {
     			$parts = preg_split('/\./', "{$value}");
     			$digits = strlen("{$parts[0]}");
     			if (isset($this->metadata['max_decimals']) && (count($parts) > 1)) {

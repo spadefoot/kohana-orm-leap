@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -308,10 +308,10 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 *
 	 * @access public
 	 * @param string $expr                      the expression to be prepared
-	 * @param boolean $like                     whether the string is for a like clause
+	 * @param char $escape                      the escape character
 	 * @return string                           the prepared expression
 	 */
-	public function prepare_value($expr, $like = FALSE) {
+	public function prepare_value($expr, $escape = NULL) {
 		if ($expr === NULL) {
 			return 'NULL';
 		}
@@ -324,7 +324,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 		else if (is_array($expr)) {
 			$buffer = array();
 			foreach ($expr as $value) {
-				$buffer[] = call_user_func_array(array($this, __FUNCTION__), array($value, $like));
+				$buffer[] = call_user_func_array(array($this, __FUNCTION__), array($value, $escape));
 			}
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
@@ -355,7 +355,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			return "''";
 		}
 		else {
-			return DB_Connection_Pool::instance()->get_connection($this->source)->quote($expr, $like);
+			return DB_Connection_Pool::instance()->get_connection($this->source)->quote($expr, $escape);
 		}
 	}
 

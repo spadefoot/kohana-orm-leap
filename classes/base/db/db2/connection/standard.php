@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-02-07
+ * @version 2012-02-09
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -213,17 +213,17 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-escape-string.php
 	 */
-	public function quote($string, $like = FALSE) {
-		$string = db2_escape_string($string);
+	public function quote($string, $escape = NULL) {
+		$string = "'" . db2_escape_string($string) . "'";
 
-		$string = ($like)
-			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
-			: "'" . $string . "'";
+		if (is_string($escape) || ! empty($escape)) {
+			$string .= " ESCAPE '{$escape[0]}'";
+		}
 
 		return $string;
 	}

@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-02-09
+* Fixed the missing parentheses in Base_DB_ORM_Field_Double.
+* Redid the quote function in connection classes.
+
 2012-02-07
 * Fixed a bug in how Oracle escapes strings per ekarlso's request (Issue #18).
 * Improved how strings are escaped.

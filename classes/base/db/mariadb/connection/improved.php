@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -198,15 +198,15 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 */
-	public function quote($string, $like = FALSE) {
-		$string = mysqli_real_escape_string($this->link_id, $string);
+	public function quote($string, $escape = NULL) {
+		$string = "'" . mysqli_real_escape_string($this->link_id, $string) . "'";
 
-		$string = ($like)
-			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
-			: "'" . $string . "'";
+		if (is_string($escape) || ! empty($escape)) {
+			$string .= " ESCAPE '{$escape[0]}'";
+		}
 
 		return $string;
 	}

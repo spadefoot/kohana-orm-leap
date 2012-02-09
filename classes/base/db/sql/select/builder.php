@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -257,8 +257,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 				}
 			}
 			$column = $this->compiler->prepare_identifier($column);
-			$value = $this->compiler->prepare_value($value);
-			//$value = $this->compiler->prepare_value($value, in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)));
+			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
+			    ? '\\'
+			    : NULL;
+			$value = $this->compiler->prepare_value($value, $escape);
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
 		}
@@ -341,8 +343,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 				}
 			}
 			$column = $this->compiler->prepare_identifier($column);
-			$value = $this->compiler->prepare_value($value);
-			//$value = $this->compiler->prepare_value($value, in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)));
+			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
+			    ? '\\'
+			    : NULL;
+			$value = $this->compiler->prepare_value($value, $escape);
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['having'][] = array($connector, "{$column} {$operator} {$value}");
 		}

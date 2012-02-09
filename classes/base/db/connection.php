@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-02-05
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -219,10 +219,10 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 */
-	public abstract function quote($string, $like = FALSE);
+	public abstract function quote($string, $escape = NULL);
 
 	/**
 	 * This function allows for the ability to close the connection that was opened.

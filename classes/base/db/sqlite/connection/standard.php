@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -170,17 +170,17 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 *
 	 * @see http://www.php.net/manual/en/function.sqlite-escape-string.php
 	 */
-	public function quote($string, $like = FALSE) {
-		$string = sqlite_escape_string($string);
+	public function quote($string, $escape = NULL) {
+		$string = "'" . sqlite_escape_string($string) . "'";
 
-		$string = ($like)
-			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
-			: "'" . $string . "'";
+		if (is_string($escape) || ! empty($escape)) {
+			$string .= " ESCAPE '{$escape[0]}'";
+		}
 
 		return $string;
 	}

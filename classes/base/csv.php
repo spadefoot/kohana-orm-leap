@@ -21,7 +21,7 @@
  *
  * @package Document
  * @category CSV
- * @version 2012-01-30
+ * @version 2012-02-09
  */
 class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
@@ -108,7 +108,7 @@ class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator
 	public function __construct(Array $config = array()) {
 		$this->file_name = (isset($config['file_name']) && is_string($config['file_name'])) ? $config['file_name'] : '';
 		$this->data = array();
-		$this->default_headers = (isset($config['default_headers'])) ? (boolean) $config['default_headers'] : FALSE;
+		$this->default_headers = (isset($config['default_headers'])) ? (bool) $config['default_headers'] : FALSE;
 		$this->delimiter = (isset($config['delimiter']) && is_string($config['delimiter'])) ? $config['delimiter'] : ',';
 		$this->header = (isset($config['header']) && is_array($config['header'])) ? $config['header'] : array() ;
 		$this->mime = ($this->delimiter == "\t") ? 'text/tab-separated-values' : 'text/csv';
@@ -169,7 +169,7 @@ class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator
 				$this->file_name = (is_string($value)) ? $value : '';
 			break;
 			case 'default_headers':
-				$this->default_headers = (boolean) $value;
+				$this->default_headers = (bool) $value;
 			break;
 			case 'delimiter':
 				$this->delimiter = (is_string($value)) ? $value : ',';

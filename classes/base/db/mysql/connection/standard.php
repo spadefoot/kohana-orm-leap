@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -175,15 +175,15 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 */
-	public function quote($string, $like = FALSE) {
-		$string = mysql_real_escape_string($string, $this->link_id);
+	public function quote($string, $escape = NULL) {
+		$string = "'" . mysql_real_escape_string($string, $this->link_id) . "'";
 
-		$string = ($like)
-			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
-			: "'" . $string . "'";
+		if (is_string($escape) || ! empty($escape)) {
+			$string .= " ESCAPE '{$escape[0]}'";
+		}
 
 		return $string;
 	}

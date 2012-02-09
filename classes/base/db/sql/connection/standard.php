@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-06
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -32,14 +32,14 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 	 *
 	 * @access public
 	 * @param string $string                    the string to be escaped
-	 * @param boolean $like                     whether the string is for a like clause
-	 * @return string                           the escaped string
+	 * @param char $escape                      the escape character
+	 * @return string                           the quoted string
 	 *
 	 * @license http://codeigniter.com/user_guide/license.html
 	 *
 	 * @see http://codeigniter.com/forums/viewthread/179202/
 	 */
-	public function quote($string, $like = FALSE) {
+	public function quote($string, $escape = NULL) {
 		$removables = array(
 			'/%0[0-8bcef]/',
 			'/%1[0-9a-f]/',
@@ -50,11 +50,11 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 		}
 		while ($count);
 
-		$string = str_replace("'", "''", $string);
-
-		$string = ($like)
-			? "'" . str_replace(array('%', '_', '!'), array('!%', '!_', '!!'), $string) . "' ESCAPE '!'"
-			: "'" . $string . "'";
+		$string = "'" . str_replace("'", "''", $string) . "'";
+		
+		if (is_string($escape) || ! empty($escape)) {
+			$string .= " ESCAPE '{$escape[0]}'";
+	    }
 
 		return $string;
 	}
