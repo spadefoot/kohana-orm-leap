@@ -21,7 +21,7 @@
  * 
  * @package Leap
  * @category SQL
- * @version 2011-12-18
+ * @version 2012-02-10
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
  */
@@ -36,68 +36,69 @@ interface Base_DB_SQL_Expression_Interface {
 	public function __construct($source);
 
 	/**
-	* This function prepares the specified token as an alias.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as an alias.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 * @throws Kohana_InvalidArgument_Exception indicates that there is a data type mismatch
+	 */
 	public function prepare_alias($expr);
 
 	/**
-	* This function prepares the specified token as a boolean.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as a boolean.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_boolean($expr);
 
 	/**
-	* This function prepares the specified token as a connector.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as a connector.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_connector($expr);
 
 	/**
-	* This function prepares the specified token as an identifier column.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as an identifier column.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_identifier($expr);
 
 	/**
-	* This function prepares the specified token as a join type.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as a join type.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_join($expr);
 
 	/**
-	* This function prepares the specified token as a natural number.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as a natural number.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_natural($expr);
 
 	/**
-	* This function prepares the specified token as a operator.
-	*
-	* @access public
-	* @param string $group                      the operator grouping
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
-	public function prepare_operator($group, $expr);
+	 * This function prepares the specified expression as a operator.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @param string $group                     the operator grouping
+	 * @return string                           the prepared expression
+	 */
+	public function prepare_operator($expr, $group);
 
 	/**
 	 * This function prepare the specified expression as a ordering token.
@@ -113,22 +114,23 @@ interface Base_DB_SQL_Expression_Interface {
 	public function prepare_ordering($column, $ordering, $nulls);
 
 	/**
-	* This function prepares the specified token as a parenthesis.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
+	 * This function prepares the specified expression as a parenthesis.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
 	public function prepare_parenthesis($expr);
 
 	/**
-	* This function prepares the specified token as a value.
-	*
-	* @access public
-	* @param string $expr                       the token string to be prepared
-	* @return string                            the prepared token
-	*/
-	public function prepare_value($expr);
+	 * This function prepares the specified expression as a value.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @param char $escape                      the escape character
+	 * @return string                           the prepared expression
+	 */
+	public function prepare_value($expr, $escape = NULL);
 
 }
 ?>

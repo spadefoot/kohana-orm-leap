@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-09
+ * @version 2012-02-10
  *
  * @abstract
  */
@@ -170,7 +170,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
 			}
 			$column0 = $this->compiler->prepare_identifier($column0);
-			$operator = $this->compiler->prepare_operator('COMPARISON', $operator);
+			$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 			$column1 = $this->compiler->prepare_identifier($column1);
 			$this->data['join'][$index][1][] = "{$column0} {$operator} {$column1}";
 		}
@@ -231,7 +231,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
-		$operator = $this->compiler->prepare_operator('COMPARISON', $operator);
+		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
@@ -317,7 +317,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		if (empty($this->data['group_by'])) {
 			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 		}
-		$operator = $this->compiler->prepare_operator('COMPARISON', $operator);
+		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
@@ -427,7 +427,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
 		}
 		$statement = trim($statement, "; \t\n\r\0\x0B");
-		$operator = $this->compiler->prepare_operator('SET', $operator);
+		$operator = $this->compiler->prepare_operator($operator, 'SET');
 		$this->data['combine'][] = "{$operator} {$statement}";
 		return $this;
 	}

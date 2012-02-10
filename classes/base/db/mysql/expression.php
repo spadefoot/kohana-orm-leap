@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-02-09
+ * @version 2012-02-10
  *
  * @abstract
  */
@@ -135,7 +135,7 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
 			$expr = rtrim($expr, "; \t\n\r\0\x0B");
-			return "({$expr})";
+			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		$parts = explode('.', $expr);
 		foreach ($parts as &$part) {
@@ -193,11 +193,11 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a operator.
 	 *
 	 * @access public
-	 * @param string $group                     the operator grouping
 	 * @param string $expr                      the expression to be prepared
+	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
 	 */
-	public function prepare_operator($group, $expr) {
+	public function prepare_operator($expr, $group) {
 		if (is_string($group) && is_string($expr)) {
 			$group = strtoupper($group);
 			$expr = strtoupper($expr);

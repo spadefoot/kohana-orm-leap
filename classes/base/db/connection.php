@@ -188,7 +188,6 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * This function returns the last error reported.
 	 *
 	 * @access public
-	 * @abstract
 	 * @return string                            the error message
 	 */
 	public function get_error() {

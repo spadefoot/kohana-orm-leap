@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-02-10
+* Changed the method signature to Base_DB_SQL_Expression_Interface::prepare_operator() and updated implementing classes.
+* Updated some inline documentation.
+
 2012-02-09
 * Fixed the missing parentheses in Base_DB_ORM_Field_Double.
 * Redid the quote function in connection classes.

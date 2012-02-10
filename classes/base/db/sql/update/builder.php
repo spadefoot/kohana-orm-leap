@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-09
+ * @version 2012-02-10
  *
  * @abstract
  */
@@ -125,7 +125,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
-		$operator = $this->compiler->prepare_operator('COMPARISON', $operator);
+		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
