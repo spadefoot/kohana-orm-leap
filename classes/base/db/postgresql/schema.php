@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-02-07
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -32,9 +32,8 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * the specified database table/view.
 	 *
 	 * @access public
-	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @param string $type                  a like constraint on the query
+	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet 				an array of fields within the specified
 	 * 										table
 	 *
@@ -75,7 +74,6 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 	 * the specified table.
 	 *
 	 * @access public
-	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table

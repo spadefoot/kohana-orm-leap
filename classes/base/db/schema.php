@@ -63,7 +63,7 @@ abstract class Base_DB_Schema extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @param string $type                  a like constraint on the query
+	 * @param string $like                  a like constraint on the query
 	 * @return array 						an array of fields within the specified
 	 * 										table
 	 */

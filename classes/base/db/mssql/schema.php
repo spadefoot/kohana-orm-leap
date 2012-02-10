@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-02-07
+ * @version 2012-02-09
  *
  * @abstract
  */
@@ -32,9 +32,8 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * the specified database table/view.
 	 *
 	 * @access public
-	 * @abstract
 	 * @param string $table					the table/view to evaluated
-	 * @param string $type                  a like constraint on the query
+	 * @param string $like                  a like constraint on the query
 	 * @return array 						an array of fields within the specified
 	 * 										table
 	 */
@@ -75,7 +74,6 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * the specified table.
 	 *
 	 * @access public
-	 * @abstract
 	 * @param string $table					the table/view to evaluated
 	 * @return array 						an array of indexes from the specified
 	 * 										table

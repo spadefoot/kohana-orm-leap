@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-19
+ * @version 2012-02-09
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -155,6 +155,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 	 *
 	 * @access public
 	 * @param string $statement                     the SQL statement to be tokenized
+	 * @param string $dialect                       the SQL dialect
 	 */
 	public function __construct($statement, $dialect) {
 		$position = 0;
