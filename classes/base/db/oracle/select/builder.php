@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-02-10
+ * @version 2012-02-22
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -65,13 +65,15 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 * @see http://stackoverflow.com/questions/470542/how-do-i-limit-the-number-of-rows-returned-by-an-oracle-query
 	 */
 	public function statement($terminated = TRUE) {
-		$sql = 'SELECT';
+		$sql = 'SELECT ';
 
 		if ($this->data['distinct']) {
-			$sql .= ' DISTINCT';
+			$sql .= 'DISTINCT ';
 		}
 
-		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		$sql .= ( ! empty($this->data['column']))
+			? implode(', ', $this->data['column'])
+			: $this->data['wildcard'];
 
 		if ( ! is_null($this->data['from'])) {
 			$sql .= " FROM {$this->data['from']}";

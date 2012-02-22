@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-12
+ * @version 2012-02-22
  *
  * @see http://dev.mysql.com/doc/refman/5.0/en/select.html
  *
@@ -38,13 +38,15 @@ abstract class Base_DB_MySQL_Select_Builder extends DB_SQL_Select_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-		$sql = 'SELECT';
+		$sql = 'SELECT ';
 
 		if ($this->data['distinct']) {
-			$sql .= ' DISTINCT';
+			$sql .= 'DISTINCT ';
 		}
 
-		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		$sql .= ( ! empty($this->data['column']))
+			? implode(', ', $this->data['column'])
+			: $this->data['wildcard'];
 
 		if ( ! is_null($this->data['from'])) {
 			$sql .= " FROM {$this->data['from']}";

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-05
+ * @version 2012-02-22
  *
  * @abstract
  */
@@ -62,10 +62,22 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param boolean $distinct             whether to constrain the SQL statement to only
 	 *                                      distinct records
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function distinct($distinct = TRUE) {
 		$this->builder->distinct($distinct);
+		return $this;
+	}
+
+	/**
+	 * This function sets the wildcard to be used.
+	 *
+	 * @access public
+	 * @param $wildcard                     the wildcard to be used
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 */
+	public function all($wildcard = '*') {
+		$this->builder->all($wildcard);
 		return $this;
 	}
 
@@ -75,7 +87,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $column                the column to be selected
 	 * @param string $alias                 the alias to used for the specified table
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
 		$this->builder->column($column, $alias);
@@ -88,7 +100,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $table                 the table to be accessed
 	 * @param string $alias                 the alias to used for the specified table
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
 		$this->builder->from($table, $alias);
@@ -102,7 +114,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $type                  the type of join
 	 * @param string $table                 the table to be joined
 	 * @param string $alias                 the alias to used for the specified table
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
 		$this->builder->join($type, $table, $alias);
@@ -116,7 +128,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $column0               the column to be constrained on
 	 * @param string $operator              the operator to be used
 	 * @param string $column1               the constraint column
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 * @throws Kohana_SQL_Exception         indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
@@ -129,7 +141,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param string $column                the column to be constrained
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function using($column) {
 		$this->builder->using($column);
@@ -142,7 +154,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $parenthesis           the parenthesis to be used
 	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);
@@ -157,7 +169,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $operator              the operator to be used
 	 * @param string $value                 the value the column is constrained with
 	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -169,7 +181,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param string $column                the column to be grouped
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function group_by($column) {
 		$this->builder->group_by($column);
@@ -182,7 +194,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $parenthesis           the parenthesis to be used
 	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function having_block($parenthesis, $connector = 'AND') {
 		$this->builder->having_block($parenthesis, $connector);
@@ -197,7 +209,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $operator              the operator to be used
 	 * @param string $value                 the value the column is constrained with
 	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function having($column, $operator, $value, $connector = 'AND') {
 		$this->builder->having($column, $operator, $value, $connector);
@@ -225,7 +237,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param integer $limit                the "limit" constraint
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -237,26 +249,26 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param integer $offset               the "offset" constraint
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
 		return $this;
 	}
 
-    /**
-     * This function sets both the "offset" constraint and the "limit" constraint on
-     * the statement.
-     *
-     * @access public
-	 * @param integer $offset                   the "offset" constraint
-	 * @param integer $limit                    the "limit" constraint
-	 * @return DB_SQL_Select_Builder            a reference to the current instance
-     */
-    public function page($offset, $limit) {
-        $this->builder->page($offset, $limit);
-        return $this;
-    }
+	/**
+	 * This function sets both the "offset" constraint and the "limit" constraint on
+	 * the statement.
+	 *
+	 * @access public
+	 * @param integer $offset               the "offset" constraint
+	 * @param integer $limit                the "limit" constraint
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 */
+	public function page($offset, $limit) {
+		$this->builder->page($offset, $limit);
+		return $this;
+	}
 
 	/**
 	 * This function combines another SQL statement using the specified operator.
@@ -265,7 +277,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $operator              the operator to be used to append
 	 *                                      the specified SQL statement
 	 * @param string $statement             the SQL statement to be appended
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function combine($operator, $statement) {
 		$this->builder->combine($operator, $statement);

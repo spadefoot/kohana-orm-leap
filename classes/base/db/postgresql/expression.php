@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-02-10
+ * @version 2012-02-22
  *
  * @abstract
  */
@@ -358,6 +358,31 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 		else {
 			return DB_Connection_Pool::instance()->get_connection($this->source)->quote($expr, $escape);
 		}
+	}
+
+	/**
+	 * This function prepares the specified expression as a wildcard.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
+	public function prepare_wildcard($expr) {
+		if ( ! is_string($expr)) {
+			throw new Kohana_InvalidArgument_Exception('Message: Invalid wildcard token specified. Reason: Token must be a string.', array(':expr' => $expr));
+		}
+		$parts = explode('.', $expr);
+		$count = count($parts);
+		for ($i = 0; $i < $count; $i++) {
+			$parts[$i] = (trim($parts[$i]) != '*')
+				? self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $parts[$i])) . self::_CLOSING_QUOTE_CHARACTER_
+				: '*';
+		}
+		if (isset($parts[$count - 1]) && ($parts[$count - 1] != '*')) {
+			$parts[] = '*';
+		}
+		$expr = implode('.', $parts);
+		return $expr;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@
  * 
  * @package Leap
  * @category SQL
- * @version 2012-02-10
+ * @version 2012-02-22
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
  */
@@ -131,6 +131,15 @@ interface Base_DB_SQL_Expression_Interface {
 	 * @return string                           the prepared expression
 	 */
 	public function prepare_value($expr, $escape = NULL);
+
+	/**
+	 * This function prepares the specified expression as a wildcard.
+	 *
+	 * @access public
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
+	 */
+	public function prepare_wildcard($expr);
 
 }
 ?>

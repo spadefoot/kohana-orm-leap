@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-10
+ * @version 2012-02-22
  *
  * @abstract
  */
@@ -65,6 +65,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		$this->compiler = new $compiler($source);
 		$this->data = array();
 		$this->data['distinct'] = FALSE;
+		$this->data['wildcard'] = '*';
 		$this->data['column'] = array();
 		$this->data['from'] = NULL;
 		$this->data['join'] = array();
@@ -90,6 +91,19 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 */
 	public function distinct($distinct = TRUE) {
 		$this->data['distinct'] = $this->compiler->prepare_boolean($distinct);
+		return $this;
+	}
+
+	/**
+	 * This function sets the wildcard to be used.
+	 *
+	 * @access public
+	 * @param $wildcard                         the wildcard to be used
+	 * @return DB_SQL_Select_Builder            a reference to the current instance
+	 */
+	public function all($wildcard = '*') {
+		$this->data['wildcard'] = $this->compiler->prepare_wildcard($wildcard);
+		$this->data['column'] = array();
 		return $this;
 	}
 
@@ -258,8 +272,8 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
-			    ? '\\'
-			    : NULL;
+				? '\\'
+				: NULL;
 			$value = $this->compiler->prepare_value($value, $escape);
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
@@ -344,8 +358,8 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
-			    ? '\\'
-			    : NULL;
+				? '\\'
+				: NULL;
 			$value = $this->compiler->prepare_value($value, $escape);
 			$connector = $this->compiler->prepare_connector($connector);
 			$this->data['having'][] = array($connector, "{$column} {$operator} {$value}");

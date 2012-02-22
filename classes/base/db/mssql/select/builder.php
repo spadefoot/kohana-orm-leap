@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-01-20
+ * @version 2012-02-22
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -40,17 +40,19 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 	 * @see http://www.leghumped.com/blog/2007/12/09/limit-and-offset-clauses-in-mssql/
 	 */
 	public function statement($terminated = TRUE) {
-		$sql = 'SELECT';
+		$sql = 'SELECT ';
 
 		if ($this->data['distinct']) {
-			$sql .= ' DISTINCT';
+			$sql .= 'DISTINCT ';
 		}
 
 		if ($this->data['limit'] > 0) {
-			$sql .= " TOP {$this->data['limit']}";
+			$sql .= "TOP {$this->data['limit']} ";
 		}
 
-		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		$sql .= ( ! empty($this->data['column']))
+			? implode(', ', $this->data['column'])
+			: $this->data['wildcard'];
 
 		if ( ! is_null($this->data['from'])) {
 			$sql .= " FROM {$this->data['from']}";

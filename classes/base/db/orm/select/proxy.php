@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-01
+ * @version 2012-02-22
  *
  * @abstract
  */
@@ -60,6 +60,14 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	protected $source = NULL;
 
 	/**
+	 * This variable stores the name of the model's table.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $table = NULL;
+
+	/**
 	 * This constructor instantiates this class using the specified model's name.
 	 *
 	 * @access public
@@ -71,13 +79,16 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 		$model = DB_ORM_Model::model_name($name);
 		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
 		$builder = 'DB_' . $this->source->dialect . '_Select_Builder';
+		$this->table = call_user_func(array($model, 'table'));
 		$this->builder = new $builder($this->source, $columns);
+		if (empty($columns)) {
+			$this->builder->all("{$this->table}.*");
+		}
+		$this->builder->from($this->table);
 		$extension = DB_ORM_Model::builder_name($name);
 		if (class_exists($extension)) {
 			$this->extension = new $extension($this->builder);
 		}
-		$table = call_user_func(array($model, 'table'));
-		$this->builder->from($table);
 		$this->model = $model;
 	}
 
@@ -115,6 +126,18 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 */
 	public function distinct($distinct = TRUE) {
 		$this->builder->distinct($distinct);
+		return $this;
+	}
+
+	/**
+	 * This function sets the wildcard to be used.
+	 *
+	 * @access public
+	 * @param $wildcard                     the wildcard to be used
+	 * @return DB_ORM_Select_Proxy          a reference to the current instance
+	 */
+	public function all($wildcard = '*') {
+		$this->builder->all("{$this->table}.*");
 		return $this;
 	}
 
@@ -280,19 +303,19 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 		return $this;
 	}
 
-    /**
-     * This function sets both the "offset" constraint and the "limit" constraint on
-     * the statement.
-     *
-     * @access public
+	/**
+	 * This function sets both the "offset" constraint and the "limit" constraint on
+	 * the statement.
+	 *
+	 * @access public
 	 * @param integer $offset                   the "offset" constraint
 	 * @param integer $limit                    the "limit" constraint
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-     */
-    public function page($offset, $limit) {
-        $this->builder->page($offset, $limit);
-        return $this;
-    }
+	 */
+	public function page($offset, $limit) {
+		$this->builder->page($offset, $limit);
+		return $this;
+	}
 
 	/**
 	 * This function combines another SQL statement using the specified operator.

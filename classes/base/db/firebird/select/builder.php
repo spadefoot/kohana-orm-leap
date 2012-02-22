@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-12
+ * @version 2012-02-22
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd20-select.html
  *
@@ -38,21 +38,23 @@ abstract class Base_DB_Firebird_Select_Builder extends DB_SQL_Select_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-		$sql = 'SELECT';
+		$sql = 'SELECT ';
 
 		if ($this->data['distinct']) {
-			$sql .= ' DISTINCT';
+			$sql .= 'DISTINCT ';
 		}
 
 		if ($this->data['limit'] > 0) {
-			$sql .= " FIRST {$this->data['limit']}";
+			$sql .= "FIRST {$this->data['limit']} ";
 		}
 
 		if ($this->data['offset'] > 0) {
-			$sql .= " SKIP {$this->data['offset']}";
+			$sql .= "SKIP {$this->data['offset']} ";
 		}
 
-		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		$sql .= ( ! empty($this->data['column']))
+			? implode(', ', $this->data['column'])
+			: $this->data['wildcard'];
 
 		if ( ! is_null($this->data['from'])) {
 			$sql .= " FROM {$this->data['from']}";

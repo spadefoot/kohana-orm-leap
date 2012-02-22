@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-12-12
+ * @version 2012-02-22
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
@@ -39,13 +39,15 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 	 * @return string                       the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
-		$sql = 'SELECT';
+		$sql = 'SELECT ';
 
 		if ($this->data['distinct']) {
-			$sql .= ' DISTINCT';
+			$sql .= 'DISTINCT ';
 		}
 
-		$sql .= ' ' . (( ! empty($this->data['column'])) ? implode(', ', $this->data['column']) : '*');
+		$sql .= ( ! empty($this->data['column']))
+			? implode(', ', $this->data['column'])
+			: $this->data['wildcard'];
 
 		if ( ! is_null($this->data['from'])) {
 			$sql .= " FROM {$this->data['from']}";
