@@ -133,7 +133,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * This function sets the wildcard to be used.
 	 *
 	 * @access public
-	 * @param $wildcard                     the wildcard to be used
+	 * @param string $wildcard              the wildcard to be used
 	 * @return DB_ORM_Select_Proxy          a reference to the current instance
 	 */
 	public function all($wildcard = '*') {

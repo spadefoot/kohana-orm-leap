@@ -4,6 +4,7 @@ Changelog for LEAP ORM
 * Added all function to Base_DB_SQL_Select Builder, Base_DB_SQL_Select_Proxy, and Base_DB_ORM_Select_Proxy.
 * Added prepare_wildcard($expr) to expression classes.
 * DB_ORM now adds table prefix to wildcard to avoid problems when joining.
+* Updated inline documentation.
 
 2012-02-10
 * Changed the method signature to Base_DB_SQL_Expression_Interface::prepare_operator() and updated implementing classes.

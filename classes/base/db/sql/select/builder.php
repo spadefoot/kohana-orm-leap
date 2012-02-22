@@ -98,7 +98,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * This function sets the wildcard to be used.
 	 *
 	 * @access public
-	 * @param $wildcard                         the wildcard to be used
+	 * @param string $wildcard                  the wildcard to be used
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function all($wildcard = '*') {
