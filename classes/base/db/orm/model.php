@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-01-20
+ * @version 2012-03-05
  *
  * @abstract
  */
@@ -137,13 +137,30 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public function as_array() {
 		$buffer = array();
-		foreach ($this->relations as $key => $relation) {
-			$buffer[$key] = $relation->result;
+		foreach ($this->relations as $name => $relation) {
+			$buffer[$name] = $relation->result;
 		}
-		foreach ($this->fields as $key => $field) {
-			$buffer[$key] = $field->value;
+		foreach ($this->fields as $name => $field) {
+			$buffer[$name] = $field->value;
 		}
 		return $buffer;
+	}
+
+	/**
+	 * This function will return the associated HTML form control for the specified
+	 * field.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the field/alias
+	 * @param array $attributes                     the HTML form tag's attributes
+	 * @return string                               the HTML form control
+	 */
+	public function control($name, Array $attributes = NULL) {
+		if ( ! is_array($attributes)) {
+			$attributes = array();
+		}
+		$control = $this->fields[$name]->control($name, $attributes);
+		return $control;
 	}
 
 	/**
@@ -263,6 +280,23 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			return sha1($buffer);
 		}
 		throw new Kohana_EmptyCollection_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
+	}
+
+	/**
+	 * This function will return the associated HTML form label for the specified
+	 * field.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the field/alias
+	 * @param array $attributes                     the HTML form tag's attributes
+	 * @return string                               the HTML form label
+	 */
+	public function label($name, Array $attributes = NULL) {
+		$key = $name;
+		if ($this->is_alias($key)) {
+			$key = $this->aliases[$name]->field;
+		}
+		return $this->fields[$key]->label($name, $attributes);
 	}
 
 	/**

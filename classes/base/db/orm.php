@@ -40,21 +40,21 @@ abstract class Base_DB_ORM extends Kohana_Object {
 		return $proxy;
 	}
 
-    /**
-     * This function will wrap a string so that it can be processed by a query
-     * builder.
-     *
-     * @access public
-     * @static
+	/**
+	 * This function will wrap a string so that it can be processed by a query
+	 * builder.
+	 *
+	 * @access public
+	 * @static
 	 * @param string $expr                          the raw SQL expression
 	 * @param array $params                         an associated array of parameter
 	 *                                              key/values pairs
-     * @return DB_SQL_Expression                    the wrapped expression
-     */
-    public static function expr($expr, Array $params = array()) {
-        $expression = new DB_SQL_Expression($expr, $params);
-        return $expression;
-    }
+	 * @return DB_SQL_Expression                    the wrapped expression
+	 */
+	public static function expr($expr, Array $params = array()) {
+		$expression = new DB_SQL_Expression($expr, $params);
+		return $expression;
+	}
 
 	/**
 	 * This function returns an instance of the DB_ORM_Insert_Proxy.

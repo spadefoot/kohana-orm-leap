@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-01
+ * @version 2012-03-05
  *
  * @abstract
  *
@@ -67,11 +67,12 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	public function __construct(DB_ORM_Model $model, $type) {
 		$this->model = $model;
 		$this->metadata = array();
-		$this->metadata['type'] = $type;
-		$this->metadata['savable'] = TRUE;
+		$this->metadata['control'] = 'auto';
+		$this->metadata['default'] = NULL;
 		$this->metadata['modified'] = FALSE;
 		$this->metadata['nullable'] = TRUE;
-		$this->metadata['default'] = NULL;
+		$this->metadata['savable'] = TRUE;
+		$this->metadata['type'] = $type;
 		$this->value = NULL;
 	}
 
@@ -128,6 +129,78 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	}
 
 	/**
+	 * This function generates an HTML form control using the field's metadata.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the field
+	 * @param array $attributes                     the HTML form tag's attributes
+	 * @return string                               the HTML form control
+	 */
+	public function control($name, Array $attributes) {
+		if ( ! $this->metadata['savable'] && ($this->metadata['control'] != 'label')) {
+			$attributes['disabled'] = 'disabled';
+			//$attributes['readonly'] = 'readonly';
+		}
+		switch ($this->metadata['control']) {
+			case 'auto':
+				if (isset($this->metadata['enum'])) {
+					return Form::select($name, $this->metadata['enum'], $this->value, $attributes);
+				}
+				return Form::input($name, $this->value, $attributes);
+			case 'button':
+				return Form::button($name, $this->value, $attributes);
+			case 'checkbox':
+				return Form::checkbox($name, 1, $this->value, $attributes);
+			case 'file':
+				return Form::file($name, $attributes);
+			case 'hidden':
+				return Form::hidden($name, $this->value, $attributes);
+			case 'image':
+				return Form::image($name, $this->value, $attributes);
+			case 'label':
+				return Form::label($name, $this->value, $attributes);
+			case 'password':
+				return Form::password($name, '', $attributes); // Note: Don't set password for security reasons
+			case 'select':
+				return Form::select($name, $this->metadata['enum'], $this->value, $attributes);
+			case 'submit':
+				return Form::submit($name, $this->value, $attributes);
+			case 'textarea':
+				return Form::textarea($name, $this->value, $attributes);
+			case 'text':
+				return Form::input($name, $this->value, $attributes);
+			default:
+				throw new Kohana_Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
+			break;
+		}
+	}
+
+	/**
+	 * This function generates an HTML form control using the field's metadata.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the field/alias
+	 * @param array $attributes                     the HTML form tag's attributes
+	 * @return string                               the HTML form label
+	 */
+	public function label($name, Array $attributes) {
+		$text = (isset($this->metadata['label']))
+			? $this->metadata['label']
+			: $name;
+		return Form::label($name, $text, $attributes);
+	}
+
+	/**
+	 * This function resets the field's value.
+	 *
+	 * @access public
+	 */
+	public function reset() {
+		$this->value = $this->metadata['default'];
+		$this->metadata['modified'] = FALSE;
+	}
+
+	/**
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
@@ -142,16 +215,6 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 			return FALSE;
 		}
 		return TRUE;
-	}
-
-	/**
-	 * This function resets the field's value.
-	 *
-	 * @access public
-	 */
-	public function reset() {
-		$this->value = $this->metadata['default'];
-		$this->metadata['modified'] = FALSE;
 	}
 
 }

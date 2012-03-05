@@ -1,5 +1,8 @@
 Changelog for LEAP ORM
 
+2012-03-05
+* Models can now generate HTML form labels and controls using field data.
+
 2012-02-22
 * Added all function to Base_DB_SQL_Select Builder, Base_DB_SQL_Select_Proxy, and Base_DB_ORM_Select_Proxy.
 * Added prepare_wildcard($expr) to expression classes.
