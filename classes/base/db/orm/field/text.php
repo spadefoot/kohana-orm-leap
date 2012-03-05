@@ -53,9 +53,7 @@ abstract class Base_DB_ORM_Field_Text extends DB_ORM_Field {
 			$this->metadata['callback'] = (string) $metadata['callback'];
 		}
 
-		if (isset($metadata['control'])) {
-			$this->metadata['control'] = (string) $metadata['control'];
-		}
+		$this->metadata['control'] = 'textarea';
 
 		if (isset($metadata['label'])) {
 			$this->metadata['label'] = (string) $metadata['label'];
