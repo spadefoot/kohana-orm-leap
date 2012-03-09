@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-03-08
  *
  * @abstract
  */
@@ -269,15 +269,18 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	protected function hash_code() {
 		$self = get_class($this);
 		$primary_key = call_user_func(array($self, 'primary_key'));
-		if (is_array($primary_key) && !empty($primary_key)) {
+		if (is_array($primary_key) && ! empty($primary_key)) {
 			$buffer = '';
 			foreach ($primary_key as $column) {
 				if ( ! isset($this->fields[$column])) {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
-				$buffer .= "{$column}={$this->fields[$column]->value}";
+				$value = $this->fields[$column]->value;
+				if ( ! is_null($value)) {
+                    $buffer .= "{$column}={$value}";
+                }
 			}
-			return sha1($buffer);
+			return ($buffer != '') ? sha1($buffer) : NULL;
 		}
 		throw new Kohana_EmptyCollection_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
 	}
@@ -324,6 +327,8 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}
 			$columns = $record->fetch(0);
+		    $this->metadata['loaded'] = TRUE;
+    		$this->metadata['saved'] = $this->hash_code();
 		}
 		foreach ($columns as $column => $value) {
 			if ($this->is_field($column)) {
@@ -337,8 +342,6 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				$this->adaptors[$column]->value = $value;
 			}
 		}
-		$this->metadata['loaded'] = TRUE;
-		$this->metadata['saved'] = $this->hash_code();
 	}
 
 	/**

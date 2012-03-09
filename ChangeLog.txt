@@ -1,5 +1,9 @@
 Changelog for LEAP ORM
 
+2012-03-08
+* Fixed a bug in Base_DB_ORM_Model::hash_code() per matesko's request (Issue #25).
+* Fixed a bug in Base_DB_ORM_Model::load() per matesko's request (Issue #25).
+
 2012-03-05
 * Models can now generate HTML form labels and controls using field data.
 
