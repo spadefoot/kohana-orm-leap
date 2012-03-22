@@ -247,6 +247,24 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 
 	/**
+	 * Checks whether the record exists in the table
+	 *
+	 * @return bool
+	 */
+	public function is_saved() {
+		$self = get_class($this);
+		$data_source = call_user_func(array($self, 'data_source'));
+		$table = call_user_func(array($self, 'table'));
+		$primary_key = call_user_func(array($self, 'primary_key'));
+		$builder = DB_SQL::select($data_source)->from($table);
+		foreach ($primary_key as $column) {
+			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+		}
+		$record = $builder->query();
+		return $record->is_loaded();
+	}
+
+	/**
 	 * This function checks whether this model defines the specified name as
 	 * a relation.
 	 *
