@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-08
+ * @version 2012-03-26
  *
  * @abstract
  */
@@ -247,16 +247,18 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 
 	/**
-	 * Checks whether the record exists in the table
+	 * This function checks whether the record exists in the database table.
 	 *
-	 * @return bool
+	 * @access public
+	 * @return boolean                              whether the record exists in the database
+	 *                                              table
 	 */
 	public function is_saved() {
 		$self = get_class($this);
 		$data_source = call_user_func(array($self, 'data_source'));
 		$table = call_user_func(array($self, 'table'));
 		$primary_key = call_user_func(array($self, 'primary_key'));
-		$builder = DB_SQL::select($data_source)->from($table);
+		$builder = DB_SQL::select($data_source)->from($table)->limit(1);
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
