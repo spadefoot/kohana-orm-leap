@@ -10,7 +10,6 @@ return array(
 	'users' => array(),
 	
 	'activation' => TRUE,
-	'email_activation' => TRUE,
 	'login_with_email' => TRUE,
 	'login_with_username' => TRUE,
 	'models' => array(
