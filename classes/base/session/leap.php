@@ -182,7 +182,7 @@ class Base_Session_Leap extends Session
 	
 	protected function _restart()
 	{
-		//$this->_regenerate();
+		$this->_regenerate();
 
 		return TRUE;
 	}

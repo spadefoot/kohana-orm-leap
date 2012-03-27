@@ -141,10 +141,9 @@ class Base_Auth_Leap extends Auth
 			{
 				if($user->banned == 1){
 					$errors['banned'] = $user->ban_reason;	
+				}elseif($user->activated == 0 and !empty($this->_config['activation'])){
+					$errors['not_activated'] = '';
 				}else{
-					if($user->activated == 0 and !empty($this->_config['activation']))
-						$errors['not_activated'] = '';
-					
 					if($remember === TRUE)
 					{		
 						$token = DB_ORM::model($this->models['token']);
@@ -155,12 +154,12 @@ class Base_Auth_Leap extends Auth
 						
 						Cookie::set('authautologin', $token->token, $this->_config['lifetime']);	
 					}
-				}
 					
-				// Finish the login
-				$this->complete_login($user);
-	
-				return TRUE;
+					// Finish the login
+					$this->complete_login($user);
+		
+					return TRUE;
+				}
 			}
 	
 			// Login failed

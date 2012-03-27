@@ -74,12 +74,6 @@ class Base_Model_Leap_User extends DB_ORM_Model
 				'nullable' => FALSE,
 				'default' => 0,
 			)),
-			'uDateCreated' => new DB_ORM_Field_DateTime($this, array(
-				'nullable' => TRUE, //Set by database on insert
-			)),
-			'uDateUpdated' => new DB_ORM_Field_DateTime($this, array(
-				'nullable' => TRUE, //Set by database on update
-			)),
 		);
 		
 		$this->aliases = array(
@@ -103,15 +97,6 @@ class Base_Model_Leap_User extends DB_ORM_Model
 		$this->adaptors = array(
 			'last_login' => new DB_ORM_Field_Adaptor_DateTime($this, array(
 				'field' => 'uLastLogin',
-				'format' => L10N::date_format().' '.L10N::time_format(),
-			)),
-			'date_created' => new DB_ORM_Field_Adaptor_DateTime($this, array(
-				'field' => 'uDateCreated',
-				'format' => L10N::date_format().' '.L10N::time_format(),
-			)),
-			'date_updated' => new DB_ORM_Field_Adaptor_DateTime($this, array(
-				'field' => 'uDateUpdated',
-				'format' => L10N::date_format().' '.L10N::time_format(),
 			)),
 		);
 		
@@ -148,12 +133,12 @@ class Base_Model_Leap_User extends DB_ORM_Model
 	{
 		$this->logins++;
 		$this->last_login = time();
+		$this->last_ip = Request::current()->$client_ip;
 		$this->save();
 	}
 	
 	public function save($reload = FALSE)
 	{
-		$this->date_updated = time();
 		parent::save($reload);	
 	}
 }
