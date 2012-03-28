@@ -36,6 +36,7 @@ LEAP provides a number of features, such as:
 * Enforces strong data types on [database fields](http://orm.spadefootcode.com/tutorials/mapping-a-model/#fields).
 * Allows [field aliases](http://orm.spadefootcode.com/tutorials/mapping-a-model/#aliases) to be declared.
 * Makes working with certain database fields easy with [field adaptors](http://orm.spadefootcode.com/tutorials/mapping-a-model/#adaptors).
+* A set of Auth classes for authenticating user logins.
 * A toolkit of useful functions.
 * [Leap's API](http://orm.spadefootcode.com/api/annotated.html) that documents each class.
 * Lots of [tutorials](http://orm.spadefootcode.com/tutorials/index/).

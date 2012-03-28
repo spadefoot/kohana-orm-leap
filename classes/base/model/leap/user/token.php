@@ -1,7 +1,30 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Base_Model_Leap_User_Token extends DB_ORM_Model
-{
+/**
+ * Copyright 2012 CubedEye
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * This class represents a record in the "user_tokens" table.
+ *
+ * @package Leap
+ * @category Model
+ * @version 2012-03-27
+ */
+class Base_Model_Leap_User_Token extends DB_ORM_Model {
+
 	public function __construct()
 	{
 		parent::__construct();

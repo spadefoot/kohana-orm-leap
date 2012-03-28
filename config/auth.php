@@ -25,3 +25,4 @@ return array(
 		'user_email' => 'uEmail',
 	),
 );
+?>

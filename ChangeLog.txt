@@ -1,5 +1,11 @@
 Changelog for LEAP ORM
 
+2012-03-27
+* Merged pull request from CubedEye (Issues #10 & #27)
+
+2012-03-22
+* Added new Base_DB_ORM_Model::is_saved() method.
+
 2012-03-08
 * Fixed a bug in Base_DB_ORM_Model::hash_code() per matesko's request (Issue #25).
 * Fixed a bug in Base_DB_ORM_Model::load() per matesko's request (Issue #25).
