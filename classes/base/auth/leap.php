@@ -190,8 +190,8 @@ class Base_Auth_Leap extends Auth
 		{
 			$token = DB_ORM::select($this->models['token'])
 				->where($this->columns['token'], DB_SQL_Operator::_EQUAL_TO_, $token)
-				->query();
-			if ($token->is_loaded() AND $token->fetch(0)->user->is_loaded())
+				->query(1)->fetch(0);
+			if ($token->is_loaded() AND $token->user->is_loaded())
 			{
 				if ($token->user_agent === sha1(Request::$user_agent))
 				{
@@ -202,14 +202,14 @@ class Base_Auth_Leap extends Auth
 					Cookie::set('authautologin', $token->token, $token->expires - time());
 
 					// Complete the login with the found data
-					$this->complete_login($token->fetch(0)->user);
+					$this->complete_login($token->user);
 
 					// Automatic login was successful
-					return $token->fetch(0)->user;
+					return $token->user;
 				}
 
 				// Token is invalid
-				$token->fetch(0)->delete();
+				$token->delete();
 			}
 		}
 
@@ -242,17 +242,17 @@ class Base_Auth_Leap extends Auth
 			// Clear the autologin token from the database
 			$token = DB_ORM::select($this->models['token'])
 				->where($this->columns['token'], DB_SQL_Operator::_EQUAL_TO_, $token)
-				->query();
+				->query(1)->fetch(0);
 
 			if ($token->is_loaded() AND $logout_all)
 			{
 				$token = DB_ORM::delete($this->models['token'])
-				->where($this->columns['user_id'], DB_SQL_Operator::_EQUAL_TO_, $token->fetch(0)->user)
+				->where($this->columns['user_id'], DB_SQL_Operator::_EQUAL_TO_, $token->user)
 				->execute();
 			}
 			elseif ($token->is_loaded())
 			{
-				$token->fetch(0)->delete();
+				$token->delete();
 			}
 		}
 
