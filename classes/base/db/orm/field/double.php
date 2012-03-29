@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-09
+ * @version 2012-03-05
  *
  * @abstract
  */
@@ -37,15 +37,15 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'double');
 
-        $max_digits = 1;
-        if (isset($metadata['max_decimals'])) {
-		    $this->metadata['max_decimals'] = abs( (int) $metadata['max_decimals']); // the number of digits that may be after the decimal point
-		    $max_digits = $this->metadata['max_decimals'] + 1;
-        }
+		$max_digits = 1;
+		if (isset($metadata['max_decimals'])) {
+			$this->metadata['max_decimals'] = abs( (int) $metadata['max_decimals']); // the number of digits that may be after the decimal point
+			$max_digits = $this->metadata['max_decimals'] + 1;
+		}
 
-        if (isset($metadata['max_digits'])) {
-		    $this->metadata['max_digits'] = max(abs( (int) $metadata['max_digits']), $max_digits); // the total number of digits that may be stored
-        }
+		if (isset($metadata['max_digits'])) {
+			$this->metadata['max_digits'] = max(abs( (int) $metadata['max_digits']), $max_digits); // the total number of digits that may be stored
+		}
 
 		$this->metadata['unsigned'] = (isset($metadata['unsigned'])) ? (bool) $metadata['unsigned'] : FALSE;
 
@@ -74,6 +74,14 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 
 		if (isset($metadata['enum'])) {
 			$this->metadata['enum'] = (array) $metadata['enum'];
+		}
+
+		if (isset($metadata['control'])) {
+			$this->metadata['control'] = (string) $metadata['control'];
+		}
+
+		if (isset($metadata['label'])) {
+			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
 		if (isset($metadata['default'])) {
@@ -109,19 +117,19 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 				}
 			}
 			if (isset($this->metadata['max_digits'])) {
-    			$parts = preg_split('/\./', "{$value}");
-    			$digits = strlen("{$parts[0]}");
-    			if (isset($this->metadata['max_decimals']) && (count($parts) > 1)) {
-    				$decimals = strlen("{$parts[1]}");
-    				if ($decimals > $this->metadata['max_decimals']) {
-    					return FALSE;
-    				}
-    				$digits += $decimals;
-    			}
-    			if ($digits > $this->metadata['max_digits']) {
-    				return FALSE;
-    			}
-		    }
+				$parts = preg_split('/\./', "{$value}");
+				$digits = strlen("{$parts[0]}");
+				if (isset($this->metadata['max_decimals']) && (count($parts) > 1)) {
+					$decimals = strlen("{$parts[1]}");
+					if ($decimals > $this->metadata['max_decimals']) {
+						return FALSE;
+					}
+					$digits += $decimals;
+				}
+				if ($digits > $this->metadata['max_digits']) {
+					return FALSE;
+				}
+			}
 		}
 		return parent::validate($value);
 	}

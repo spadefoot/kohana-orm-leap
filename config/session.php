@@ -1,12 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access');
-  return array(
-      'leap' => array(
-          'name' => 'session_leap',
-          'group' => 'default',
-		  'lifetime' => 43200,
-          'table' => 'Session',
-      ),
-  );
 
-  
+$config = array();
+
+$config['leap'] => array(
+    'group' => 'default',
+    'lifetime' => 43200,
+    'name' => 'session_leap',
+    'table' => 'Session',
+);
+
+return $config;
 ?>

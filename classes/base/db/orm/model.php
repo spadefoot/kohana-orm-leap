@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-01-20
+ * @version 2012-03-26
  *
  * @abstract
  */
@@ -137,13 +137,30 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public function as_array() {
 		$buffer = array();
-		foreach ($this->relations as $key => $relation) {
-			$buffer[$key] = $relation->result;
+		foreach ($this->relations as $name => $relation) {
+			$buffer[$name] = $relation->result;
 		}
-		foreach ($this->fields as $key => $field) {
-			$buffer[$key] = $field->value;
+		foreach ($this->fields as $name => $field) {
+			$buffer[$name] = $field->value;
 		}
 		return $buffer;
+	}
+
+	/**
+	 * This function will return the associated HTML form control for the specified
+	 * field.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the field/alias
+	 * @param array $attributes                     the HTML form tag's attributes
+	 * @return string                               the HTML form control
+	 */
+	public function control($name, Array $attributes = NULL) {
+		if ( ! is_array($attributes)) {
+			$attributes = array();
+		}
+		$control = $this->fields[$name]->control($name, $attributes);
+		return $control;
 	}
 
 	/**
@@ -230,6 +247,26 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 
 	/**
+	 * This function checks whether the record exists in the database table.
+	 *
+	 * @access public
+	 * @return boolean                              whether the record exists in the database
+	 *                                              table
+	 */
+	public function is_saved() {
+		$self = get_class($this);
+		$data_source = call_user_func(array($self, 'data_source'));
+		$table = call_user_func(array($self, 'table'));
+		$primary_key = call_user_func(array($self, 'primary_key'));
+		$builder = DB_SQL::select($data_source)->from($table)->limit(1);
+		foreach ($primary_key as $column) {
+			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+		}
+		$record = $builder->query();
+		return $record->is_loaded();
+	}
+
+	/**
 	 * This function checks whether this model defines the specified name as
 	 * a relation.
 	 *
@@ -252,17 +289,37 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	protected function hash_code() {
 		$self = get_class($this);
 		$primary_key = call_user_func(array($self, 'primary_key'));
-		if (is_array($primary_key) && !empty($primary_key)) {
+		if (is_array($primary_key) && ! empty($primary_key)) {
 			$buffer = '';
 			foreach ($primary_key as $column) {
 				if ( ! isset($this->fields[$column])) {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
-				$buffer .= "{$column}={$this->fields[$column]->value}";
+				$value = $this->fields[$column]->value;
+				if ( ! is_null($value)) {
+                    $buffer .= "{$column}={$value}";
+                }
 			}
-			return sha1($buffer);
+			return ($buffer != '') ? sha1($buffer) : NULL;
 		}
 		throw new Kohana_EmptyCollection_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
+	}
+
+	/**
+	 * This function will return the associated HTML form label for the specified
+	 * field.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the field/alias
+	 * @param array $attributes                     the HTML form tag's attributes
+	 * @return string                               the HTML form label
+	 */
+	public function label($name, Array $attributes = NULL) {
+		$key = $name;
+		if ($this->is_alias($key)) {
+			$key = $this->aliases[$name]->field;
+		}
+		return $this->fields[$key]->label($name, $attributes);
 	}
 
 	/**
@@ -290,6 +347,8 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}
 			$columns = $record->fetch(0);
+		    $this->metadata['loaded'] = TRUE;
+    		$this->metadata['saved'] = $this->hash_code();
 		}
 		foreach ($columns as $column => $value) {
 			if ($this->is_field($column)) {
@@ -303,8 +362,6 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				$this->adaptors[$column]->value = $value;
 			}
 		}
-		$this->metadata['loaded'] = TRUE;
-		$this->metadata['saved'] = $this->hash_code();
 	}
 
 	/**

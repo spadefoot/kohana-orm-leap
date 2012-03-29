@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-05
+ * @version 2012-03-05
  *
  * @abstract
  */
@@ -67,6 +67,14 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 
 		if (isset($metadata['enum'])) {
 			$this->metadata['enum'] = (array) $metadata['enum'];
+		}
+
+		if (isset($metadata['control'])) {
+			$this->metadata['control'] = (string) $metadata['control'];
+		}
+
+		if (isset($metadata['label'])) {
+			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
 		if (isset($metadata['default'])) {

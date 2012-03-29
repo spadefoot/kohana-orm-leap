@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-02
+ * @version 2012-03-05
  *
  * @abstract
  */
@@ -53,6 +53,12 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 
 		if (isset($metadata['callback'])) {
 			$this->metadata['callback'] = (string) $metadata['callback'];
+		}
+
+		$this->metadata['control'] = 'textarea';
+
+		if (isset($metadata['label'])) {
+			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
 		if (isset($metadata['default'])) {
