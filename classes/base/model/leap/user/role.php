@@ -21,13 +21,13 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-27
+ * @version 2012-03-28
  */
 class Base_Model_Leap_User_Role extends DB_ORM_Model {
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
+
 		$this->fields = array(
 			'uID' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
@@ -38,12 +38,12 @@ class Base_Model_Leap_User_Role extends DB_ORM_Model {
 				'nullable' => FALSE,
 			)),
 		);
-		
+
 		$this->aliases = array(
 			'user_id' => new DB_ORM_Field_Alias($this, 'uID'),
 			'role_id' => new DB_ORM_Field_Alias($this, 'rID'),
 		);
-		
+
 		$this->relations = array(
 			'user' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('uID'),
@@ -58,23 +58,21 @@ class Base_Model_Leap_User_Role extends DB_ORM_Model {
 		);
 	}
 	
-	public static function data_source()
-	{
+	public static function data_source() {
 		return 'default';
 	}
 	
-	public static function table()
-	{
+	public static function table() {
 		return 'user_roles';
 	}
 	
-	public static function primary_key()
-	{
+	public static function primary_key() {
 		return array('uID', 'rID');	
 	}
 	
-	public static function is_auto_incremented()
-	{
+	public static function is_auto_incremented() {
 		return FALSE;	
 	}
+
 }
+?>

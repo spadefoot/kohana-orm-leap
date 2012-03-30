@@ -21,12 +21,13 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-27
+ * @version 2012-03-28
  */
 class Base_Model_Leap_Session extends DB_ORM_Model {
 
 	public function __construct() {
 		parent::__construct();
+
 		$this->fields = array(
 			'sesID' => new DB_ORM_Field_String($this, array(
 				'max_length' => 24,
@@ -40,7 +41,7 @@ class Base_Model_Leap_Session extends DB_ORM_Model {
 				'nullable' => FALSE,
 			)),
 		);
-		
+
 		$this->aliases = array(
 			'id' => new DB_ORM_Field_Alias($this, 'sesID'),
 			'last_active' => new DB_ORM_Field_Alias($this, 'sesLastActive'),
@@ -48,23 +49,21 @@ class Base_Model_Leap_Session extends DB_ORM_Model {
 		);
 	}
 	
-	public static function data_source()
-	{
+	public static function data_source() {
 		return 'default';	
 	}
 	
-	public static function table()
-	{
+	public static function table() {
 		return 'sessions';
 	}
 	
-	public static function primary_key()
-	{
+	public static function primary_key() {
 		return array('sesID');	
 	}
 	
-	public static function is_auto_incremented()
-	{
+	public static function is_auto_incremented() {
 		return FALSE;	
 	}
+
 }
+?>

@@ -21,13 +21,13 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-27
+ * @version 2012-03-28
  */
 class Base_Model_Leap_User extends DB_ORM_Model {
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
+
 		$this->fields = array(
 			'uID' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
@@ -45,7 +45,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
-// Personal Details
+            // Personal Details
 			'uFirstName' => new DB_ORM_Field_String($this, array(
 				'max_length' => 100,
 				'nullable' => FALSE,
@@ -54,8 +54,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 100,
 				'nullable' => FALSE,
 			)),
-
-// Account Status Details
+            // Account Status Details
 			'uActivated' => new DB_ORM_Field_Boolean($this, array(
 				'default' => TRUE,
 				'nullable' => FALSE,
@@ -68,7 +67,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
-// Account Utility Details
+            // Account Utility Details
 			'uNewPasswordKey' => new DB_ORM_Field_String($this, array(
 				'max_length' => 64,
 				'nullable' => TRUE,
@@ -84,13 +83,13 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
-//Account Metrics Details
+            // Account Metrics Details
 			'uLastIp' => new DB_ORM_Field_String($this, array(
 				'max_length' => 40,
 				'nullable' => TRUE
 			)),
 			'uLastLogin' => new DB_ORM_Field_DateTime($this, array(
-				'nullable' => TRUE, //Default set in database
+				'nullable' => TRUE, // Default set in database
 			)),
 			'uLogins' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
@@ -98,7 +97,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'default' => 0,
 			)),
 		);
-		
+
 		$this->aliases = array(
 			'id' => new DB_ORM_Field_Alias($this, 'uID'),
 			'username' => new DB_ORM_Field_Alias($this, 'uUsername'),
@@ -116,13 +115,13 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 			'last_ip' => new DB_ORM_Field_Alias($this, 'uLastIp'),
 			'logins' => new DB_ORM_Field_Alias($this, 'uLogins'),
 		);
-		
+
 		$this->adaptors = array(
 			'last_login' => new DB_ORM_Field_Adaptor_DateTime($this, array(
 				'field' => 'uLastLogin',
 			)),
 		);
-		
+
 		$this->relations = array(
 			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
 				'child_key' => array('uID'),
@@ -137,31 +136,28 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 		);
 	}
 	
-	public static function data_source()
-	{
+	public static function data_source() {
 		return 'default';	
 	}
 	
-	public static function table()
-	{
+	public static function table() {
 		return 'users';	
 	}
 	
-	public static function primary_key()
-	{
+	public static function primary_key() {
 		return array('uID');	
 	}
 	
-	public function complete_login()
-	{
+	public function complete_login() {
 		$this->logins++;
 		$this->last_login = time();
 		$this->last_ip = Request::current()->$client_ip;
 		$this->save();
 	}
 	
-	public function save($reload = FALSE)
-	{
+	public function save($reload = FALSE) {
 		parent::save($reload);	
 	}
+
 }
+?>
