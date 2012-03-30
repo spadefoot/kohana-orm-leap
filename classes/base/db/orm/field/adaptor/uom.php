@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-03-29
  *
  * @abstract
  */
@@ -33,6 +33,8 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
+	 * @throws Kohana_Exception                     indicates that error occurred when loading
+	 *                                              a configuration
 	 * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
 	 *                                              was specified
 	 */
@@ -44,7 +46,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][0]);
 
 		if (($unit = Kohana::$config->load($group)) === NULL) {
-			throw new Kohana_InvalidProperty_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+			throw new Kohana_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
 		$this->metadata['units'][0] = $unit; // field's unit
@@ -52,7 +54,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][1]);
 
 		if (($unit = Kohana::$config->load($group)) === NULL) {
-			throw new Kohana_InvalidProperty_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+			throw new Kohana_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
 		$this->metadata['units'][1] = $unit; // adaptor's unit
