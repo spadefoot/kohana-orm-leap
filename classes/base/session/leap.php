@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-03-27
+ * @version 2012-03-29
  */
 class Base_Session_Leap extends Session {
 
@@ -31,9 +31,9 @@ class Base_Session_Leap extends Session {
 	protected $_columns = array(
 		'session_id'  => 'sesID',
 		'last_active' => 'sesLastActive',
-		'contents'    => 'sesContents'
+		'contents'    => 'sesContents',
 	);
-	
+
 	// Garbage collection requests
 	protected $_gc = 500;
 
@@ -42,56 +42,60 @@ class Base_Session_Leap extends Session {
 
 	// The old session id
 	protected $_update_id;
-	
-	public function __construct(array $config = NULL, $id = NULL)
-	{
+
+	public function __construct(array $config = NULL, $id = NULL) {
 		/*
 		// Use the default group
-		if ( !isset($config['group']) )
+		if ( ! isset($config['group']))
 			$config['group'] = 'default';
 		*/
 
 		// Load the database
-		//$this->_db = Doctrine::em();
+		// $this->_db = Doctrine::em();
 
 		// Set the table name
-		if (isset($config['table']))
+		if (isset($config['table'])) {
 			$this->_table = (string) $config['table'];
+		}
 
 		// Set the gc chance
-		if (isset($config['gc']))
+		if (isset($config['gc'])) {
 			$this->_gc = (int) $config['gc'];
+		}
 
 		// Overload column names
-		if (isset($config['columns']))
+		if (isset($config['columns'])) {
 			$this->_columns = $config['columns'];
+		}
 
 		parent::__construct($config, $id);
 
 		// Run garbage collection
 		// This will average out to run once every X requests
-		if (mt_rand(0, $this->_gc) === $this->_gc)
+		if (mt_rand(0, $this->_gc) === $this->_gc) {
 			$this->_gc();
+		}
 	}
-	
-	public function id()
-	{
+
+	public function id() {
 		return $this->_session_id;
 	}
-	
-	protected function _read($id = NULL)
-	{
-		if ($id OR $id = Cookie::get($this->_name))
-		{
+
+	protected function _read($id = NULL) {
+		if ($id || $id = Cookie::get($this->_name)) {
 			try {
 				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
-					->where($this->_columns['session_id'],'=',$id)
+					->where($this->_columns['session_id'], '=', $id)
+					->limit(1)
 					->query()
-					->fetch(0)->contents;
-			} catch (ErrorException $e) { $contents = FALSE; }
+					->fetch(0)
+					->contents;
+			}
+			catch (ErrorException $ex) {
+				$contents = FALSE;
+			}
 
-			if ( $contents !== FALSE )
-			{
+			if ($contents !== FALSE) {
 				// Set the current session id
 				$this->_session_id = $this->_update_id = $id;
 
@@ -105,47 +109,45 @@ class Base_Session_Leap extends Session {
 
 		return NULL;
 	}
-	
-	protected function _regenerate()
-	{
-		do
-		{
+
+	protected function _regenerate() {
+		do {
 			// Create a new session id
 			$id = str_replace('.', '-', uniqid(NULL, TRUE));
 
 			try {
 				$result = DB_ORM::select($this->_table, array($this->_columns['session_id']))
-				->where($this->_columns['session_id'], '=', $id)
-				->query()
-				->fetch(0)->id;
-				
-			} catch (ErrorException $e) { $result = false; }
+					->where($this->_columns['session_id'], '=', $id)
+					->limit(1)
+					->query()
+					->fetch(0)
+					->id;
+			}
+			catch (ErrorException $ex) {
+				$result = FALSE;
+			}
 		}
-		while( $result !== false );
+		while ($result !== FALSE);
 
 		return $this->_session_id = $id;
 	}
 
-	protected function _write()
-	{
-		if ($this->_update_id === NULL)
-		{
+	protected function _write() {
+		if ($this->_update_id === NULL) {
 			// Insert a new row
 			$query = DB_ORM::insert($this->_table)
 				->column($this->_columns['last_active'], $this->_data['last_active'])
 				->column($this->_columns['contents'], $this->__toString())
 				->column($this->_columns['session_id'], $this->_session_id); 
 		}
-		else
-		{
+		else {
 			// Update the row
 			$query = DB_ORM::update($this->_table)
 				->set($this->_columns['last_active'], $this->_data['last_active'])
 				->set($this->_columns['contents'], $this->__toString())
 				->where($this->_columns['session_id'], '=', $this->_update_id);
 
-			if ($this->_update_id !== $this->_session_id)
-			{
+			if ($this->_update_id !== $this->_session_id) {
 				// Also update the session id
 				$query->set($this->_columns['session_id'], $this->_session_id);
 			}
@@ -162,51 +164,45 @@ class Base_Session_Leap extends Session {
 
 		return TRUE;
 	}
-	
-	protected function _destroy()
-	{
+
+	protected function _destroy() {
 		// Session has not been created yet
-		if ( $this->_update_id === NULL )
+		if ($this->_update_id === NULL) {
 			return TRUE;
+		}
 
 		// Delete the current session
 		DB_ORM::delete($this->_table)
-			->where($this->_columns['session_id'],'='.$this->_update_id)
+			->where($this->_columns['session_id'], '=', $this->_update_id)
 			->execute();
-			
-		try
-		{
+
+		try {
 			// Delete the cookie
 			Cookie::delete($this->_name);
 		}
-		catch ( Exception $e )
-		{
+		catch (Exception $ex) {
 			// An error occurred, the session has not been deleted
 			return FALSE;
 		}
 
 		return TRUE;
 	}
-	
-	protected function _gc()
-	{
-		// Expire sessions when their lifetime is up
-		if ($this->_lifetime)
-			$expires = $this->_lifetime;
-		// Expire sessions after one month
-		else
-			$expires = Date::MONTH;
+
+	protected function _gc() {
+		$expires = ($this->_lifetime)
+			? $this->_lifetime	// Expire sessions when their lifetime is up
+			: Date::MONTH; 		// Expire sessions after one month
 
 		// Delete all sessions that have expired
 		DB_ORM::delete($this->_table)
-			->where($this->_columns['last_active'], '<', time()-$expires)
+			->where($this->_columns['last_active'], '<', time() - $expires)
 			->execute();
 	}
-	
-	protected function _restart()
-	{
-		$this->_regenerate();
 
+	protected function _restart() {
+		$this->_regenerate();
 		return TRUE;
 	}
+
 }
+?>
