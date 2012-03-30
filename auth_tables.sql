@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 27, 2012 at 11:17 PM
+-- Generation Time: Mar 30, 2012 at 08:34 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `lauth test`
+-- Database: `test`
 --
 
 -- --------------------------------------------------------
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   `utExpires` int(11) DEFAULT NULL,
   `uID` int(11) NOT NULL,
   PRIMARY KEY (`utID`),
-  UNIQUE KEY `uID` (`uID`)
+  KEY `uID` (`uID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
 
 --
