@@ -21,13 +21,13 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-27
+ * @version 2012-03-28
  */
 class Base_Model_Leap_User_Token extends DB_ORM_Model {
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
+
 		$this->fields = array(
 			'utID' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
@@ -78,34 +78,30 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 		);
 	}
 	
-	public static function data_source()
-	{
+	public static function data_source() {
 		return 'default';
 	}
 	
-	public static function table()
-	{
+	public static function table() {
 		return 'user_tokens';
 	}
-	
-	public static function primary_key()
-	{
+
+	public static function primary_key() {
 		return array('utID');	
 	}
-	
-	public function save($reload = FALSE)
-	{
+
+	public function save($reload = FALSE) {
 		$this->token = $this->create_token();
 		parent::save($reload);
 	}
-	
-	public function create_token()
-	{
-		do
-		{
-			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
-		}while(DB_SQL::select($this->data_source())->from($this->table())->where('utToken','=',$token)->query()->is_loaded());
 
+	public function create_token() {
+		do {
+			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
+		}
+		while(DB_SQL::select($this->data_source())->from($this->table())->where('utToken','=',$token)->query()->is_loaded());
 		return $token;
 	}
+
 }
+?>
