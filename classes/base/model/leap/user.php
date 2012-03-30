@@ -151,7 +151,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 	public function complete_login() {
 		$this->logins++;
 		$this->last_login = time();
-		$this->last_ip = Request::current()->$client_ip;
+		$this->last_ip = Request::$client_ip;
 		$this->save();
 	}
 	
