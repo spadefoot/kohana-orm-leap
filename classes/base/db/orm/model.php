@@ -297,8 +297,8 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				}
 				$value = $this->fields[$column]->value;
 				if ( ! is_null($value)) {
-                    $buffer .= "{$column}={$value}";
-                }
+					$buffer .= "{$column}={$value}";
+				}
 			}
 			return ($buffer != '') ? sha1($buffer) : NULL;
 		}
@@ -347,8 +347,8 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}
 			$columns = $record->fetch(0);
-		    $this->metadata['loaded'] = TRUE;
-    		$this->metadata['saved'] = $this->hash_code();
+			$this->metadata['loaded'] = TRUE;
+			$this->metadata['saved'] = $this->hash_code();
 		}
 		foreach ($columns as $column => $value) {
 			if ($this->is_field($column)) {

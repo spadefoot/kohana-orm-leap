@@ -50,7 +50,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
-            // Personal Details
+			// Personal Details
 			'uFirstName' => new DB_ORM_Field_String($this, array(
 				'max_length' => 100,
 				'nullable' => FALSE,
@@ -59,7 +59,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 100,
 				'nullable' => FALSE,
 			)),
-            // Account Status Details
+			// Account Status Details
 			'uActivated' => new DB_ORM_Field_Boolean($this, array(
 				'default' => TRUE,
 				'nullable' => FALSE,
@@ -72,7 +72,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
-            // Account Utility Details
+			// Account Utility Details
 			'uNewPasswordKey' => new DB_ORM_Field_String($this, array(
 				'max_length' => 64,
 				'nullable' => TRUE,
@@ -88,7 +88,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
-            // Account Metrics Details
+			// Account Metrics Details
 			'uLastIp' => new DB_ORM_Field_String($this, array(
 				'max_length' => 40,
 				'nullable' => TRUE
@@ -174,11 +174,11 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 		return array('uID');	
 	}
 
-    /**
-     * This function completes the user's login.
-     *
-     * @access public
-     */
+	/**
+	 * This function completes the user's login.
+	 *
+	 * @access public
+	 */
 	public function complete_login() {
 		$this->logins++;
 		$this->last_login = time();
