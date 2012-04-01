@@ -63,7 +63,7 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 				'nullable' => TRUE,
 			)),
 		);
-		
+
 		$this->aliases = array(
 			'id' => new DB_ORM_Field_Alias($this, 'utID'),
 			'user_agent' => new DB_ORM_Field_Alias($this, 'utUserAgent'),
@@ -73,7 +73,7 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 			'expires' => new DB_ORM_Field_Alias($this, 'utExpires'),
 			'user_id' => new DB_ORM_Field_Alias($this, 'uID'),
 		);
-		
+
 		$this->relations = array(
 			'user' => new DB_ORM_Relation_BelongsTo($this, array(
 				'child_key' => array('uID'),
@@ -128,12 +128,12 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 		parent::save($reload);
 	}
 
-    /**
-     * This function returns a new token.
-     *
-     * @access public
-     * @return string                               a new token
-     */
+	/**
+	 * This function returns a new token.
+	 *
+	 * @access public
+	 * @return string                               a new token
+	 */
 	public function create_token() {
 		do {
 			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-30
+ * @version 2012-04-01
  *
  * @abstract
  */
@@ -42,8 +42,8 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 
 		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
 		$this->metadata['parent_key'] = (isset($metadata['parent_key']))
-		    ? (array) $metadata['parent_key']
-		    : call_user_func(array($this->metadata['parent_model'], 'primary_key'));
+			? (array) $metadata['parent_key']
+			: call_user_func(array($this->metadata['parent_model'], 'primary_key'));
 
 		// the child model is the referencing table
 		$this->metadata['child_model'] = get_class($model);
@@ -53,34 +53,39 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 	}
 
 	/**
-	 * This function loads the corresponding model(s).
+	 * This function loads the corresponding model.
 	 *
 	 * @access protected
-	 * @return mixed								the corresponding model(s)
+	 * @return DB_ORM_Model							the corresponding model
 	 */
 	protected function load() {
 		$parent_model = $this->metadata['parent_model'];
+		$parent_table = call_user_func(array($parent_model, 'table'));
 		$parent_key = $this->metadata['parent_key'];
+		$parent_source = call_user_func(array($parent_model, 'data_source'));
 
 		$child_key = $this->metadata['child_key'];
 
+		$builder = DB_SQL::select($parent_source)
+			->all("{$parent_table}.*")
+			->from($parent_table);
+
 		$field_count = count($child_key);
-
-		$builder = DB_ORM::select($parent_model);
 		for ($i = 0; $i < $field_count; $i++) {
-			$builder->where($parent_key[$i], DB_SQL_Operator::_EQUAL_TO_, $this->model->{$child_key[$i]});
-		}
-		$result = $builder->limit(1)->query();
-
-		if ( ! $result->is_loaded()) {
-			$record = new $parent_model();
-			for ($i = 0; $i < $field_count; $i++) {
-				$record->{$parent_key[$i]} = $this->model->{$child_key[$i]};
-			}
-			return $record;
+			$builder->where("{$parent_table}.{$parent_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$child_key[$i]});
 		}
 
-		return $result->fetch();
+		$result = $builder->limit(1)->query($parent_model);
+
+		if ($result->is_loaded()) {
+			return $result->fetch(0);
+		}
+
+		$record = new $parent_model();
+		for ($i = 0; $i < $field_count; $i++) {
+			$record->{$parent_key[$i]} = $this->model->{$child_key[$i]};
+		}
+		return $record;
 	}
 
 }
