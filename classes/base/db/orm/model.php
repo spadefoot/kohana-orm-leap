@@ -514,11 +514,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 
 	/**
-	 * This function returns the data source.
+	 * This function returns the data source name.
 	 *
 	 * @access public
 	 * @static
-	 * @return string                               the data source
+	 * @return string                               the data source name
 	 */
 	public static function data_source() {
 		return 'default'; // the key used in config/database.php

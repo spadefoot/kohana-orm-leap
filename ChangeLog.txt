@@ -1,5 +1,10 @@
 Changelog for LEAP ORM
 
+2012-03-31
+* Moved "auth_table.sql" to a new folder and renamed it to "auth-mysql.sql".
+* Fixed a bug with the method signature for Base_DB_ORM_Proxy::column().
+* Commented class methods in all auth classes.
+
 2012-03-27
 * Merged pull request from CubedEye (Issues #10 & #27)
 

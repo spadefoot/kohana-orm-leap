@@ -17,20 +17,34 @@
  */
 
 /**
- * This class handles authentication.
+ * This class is a driver that handles authentication.
  *
  * @package Leap
  * @category Model
- * @version 2012-03-29
+ * @version 2012-03-31
  */
 class Base_Auth_Leap extends Auth {
 
+    /**
+     * This variable stores a list of the models and their respective database
+     * tables.
+     *
+     * @access protected
+     * @var array
+     */
 	protected $models = array(
 		'role' => 'Role',
 		'user' => 'User',
 		'token' => 'User_Token',
 	);
 
+    /**
+     * This variable stores a list column aliases and their respective database
+     * column names.
+     *
+     * @access protected
+     * @var array
+     */
 	protected $columns = array(
 		'role_id' => 'rID',
 		'role_name' => 'rName',
@@ -40,8 +54,21 @@ class Base_Auth_Leap extends Auth {
 		'user_email' => 'uEmail',
 	);
 
-	private $errors = array();
+    /**
+     * This variable stores a list of errors that of which have been encountered
+     * during the authentication process.
+     *
+     * @access protected
+     * @var array
+     */
+	protected $errors = array();
 
+    /**
+     * This constructor initializes the class using the specified config information.
+     *
+     * @access public
+     * @param mixed $config                     the config information to be used
+     */
 	public function __construct($config = NULL) {	
 		parent::__construct($config);	
 
@@ -83,6 +110,15 @@ class Base_Auth_Leap extends Auth {
 		}
 	}
 
+    /**
+     * This function determines whether the session is active.
+     *
+     * @access public
+     * @param mixed $roles                      either an ORM role object or an
+     *                                          array of roles
+     * @param boolean $all_required             whether all roles are required
+     * @return boolean                          whether the session is active
+     */
 	public function logged_in($roles = NULL, $all_required = TRUE) {
 		$user = $this->get_user();
 
@@ -128,7 +164,7 @@ class Base_Auth_Leap extends Auth {
 			else { // Single Role
 				if ( ! is_object($roles)) { // || ! ($role instanceof Model_Leap_Role)) {
 					$role = DB_ORM::select($this->models['role'])
-						->where($this->columns['role_name'],DB_SQL_Operator::_EQUAL_TO_,$roles)
+						->where($this->columns['role_name'], DB_SQL_Operator::_EQUAL_TO_, $roles)
 						->limit(1)
 						->query();
 
@@ -146,6 +182,15 @@ class Base_Auth_Leap extends Auth {
 		return FALSE;
 	}
 
+    /**
+     * This function attempts to log a user in.
+     *
+     * @access protected
+     * @param mixed $user                       the user's name or object
+     * @param string $password                  the user's password
+     * @param boolean $remember                 enables auto-login
+     * @return boolean                          whether the login was successful
+     */
 	protected function _login($user, $password, $remember) {
 		if ( ! is_object($user)) {
 			$user = $this->get_user_by_login($user);
@@ -188,6 +233,15 @@ class Base_Auth_Leap extends Auth {
 		}
 	}
 
+    /**
+     * This function forces a user to be logged in without a password.
+     *
+     * @access public
+     * @param mixed $user                       the user's name or object
+     * @param boolean $mark_session_as_forced   whether to mark the session as
+     *                                          forced
+     * @return boolean                          whether the login was successful
+     */
 	public function force_login($user, $mark_session_as_forced = TRUE) {
 		if ( ! is_object($user)) {
 			$user = $this->get_user_by_login($user);
@@ -199,9 +253,17 @@ class Base_Auth_Leap extends Auth {
 		}
 
 		// Run the standard completion
-		$this->complete_login($user);
+		$success = (bool) $this->complete_login($user);
+		
+		return $success;
 	}
 
+    /**
+     * This function attempts to log the user in based on the "authautologin" cookie.
+     *
+     * @access public
+     * @return mixed                            either a user object or false
+     */
 	public function auto_login() {
 		if ($token = Cookie::get('authautologin')) {
 			$token = DB_ORM::select($this->models['token'])
@@ -231,6 +293,15 @@ class Base_Auth_Leap extends Auth {
 		return FALSE;
 	}
 
+    /**
+     * This function gets the current user's object.
+     *
+     * @access public
+     * @param mixed $default                    the default value should no user
+     *                                          be logged in
+     * @return mixed                            either the current user's object
+     *                                          or the specified default value
+     */
 	public function get_user($default = NULL) {
 		$user = parent::get_user($default);
 
@@ -242,6 +313,15 @@ class Base_Auth_Leap extends Auth {
 		return $user;
 	}
 
+    /**
+     * This function logs the current user out.
+     *
+     * @access public
+	 * @param boolean $destroy                  whether the session is to be to completely
+	 *                                          destroyed
+	 * @param boolean $logout_all               whether all tokens for user are to be removed
+	 * @param boolean                           whether the logout was successful
+     */
 	public function logout($destroy = FALSE, $logout_all = FALSE) {
 		// Set by force_login()
 		$this->_session->delete('auth_forced');
@@ -270,6 +350,13 @@ class Base_Auth_Leap extends Auth {
 		return parent::logout($destroy);
 	}
 
+    /**
+     * This function gets the user's password.
+     *
+     * @access public
+     * @param mixed $user                       the user's name or object
+     * @return string                           the user's password
+     */
 	public function password($user) {
 		if ( ! is_object($user)) {
 			$user = $this->get_user_by_login($user);
@@ -277,11 +364,27 @@ class Base_Auth_Leap extends Auth {
 		return $user->password;
 	}
 
+    /**
+     * This function completes the login by incrementing the logins and setting
+     * session data: user_id, username, roles.
+     *
+     * @access public
+     * @param mixed $user                       the user's name or object
+     * @return boolean                          whether the login was completed
+     */
 	protected function complete_login($user) {
 		$user->complete_login();
 		return parent::complete_login($user);
 	}
 
+    /**
+     * This function checks whether the specified password matches the user's defined
+     * password.
+     *
+     * @access public
+     * @param string $password                  the user's password
+     * @return boolean                          whether the password is valid
+     */
 	public function check_password($password) {
 		$user = $this->get_user();
 
@@ -292,10 +395,25 @@ class Base_Auth_Leap extends Auth {
 		return ($this->hash($password) === $user->password);
 	}
 
+    /**
+     * This function return an array of errors encountered during the authentication
+     * process.
+     *
+     * @access public
+     * @return array                            an array of errors encountered during
+     *                                          the authentication process
+     */
 	public function get_errors() {
 		return $this->errors;	
 	}
 
+    /**
+     * This function gets a user matching the login configuration information.
+     *
+     * @access protected
+     * @param string $user                      the user's name
+     * @return Model_Leap_User                  the user's object
+     */
 	protected function get_user_by_login($user) {
 		$builder = DB_ORM::select('user');
 		if ( ! empty($this->_config['login_with_email']) && ! empty($this->_config['login_with_username'])) {

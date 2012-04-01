@@ -21,10 +21,15 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-28
+ * @version 2012-03-31
  */
 class Base_Model_Leap_User_Token extends DB_ORM_Model {
 
+	/**
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -77,24 +82,58 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 			)),
 		);
 	}
-	
+
+	/**
+	 * This function returns the data source name.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the data source name
+	 */
 	public static function data_source() {
 		return 'default';
 	}
-	
+
+	/**
+	 * This function returns the database table's name.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the database table's name
+	 */
 	public static function table() {
 		return 'user_tokens';
 	}
 
+	/**
+	 * This function returns the primary key for the database table.
+	 *
+	 * @access public
+	 * @static
+	 * @return array                                the primary key
+	 */
 	public static function primary_key() {
 		return array('utID');	
 	}
 
+	/**
+	 * This function saves the record matching using the primary key.
+	 *
+	 * @access public
+	 * @param boolean $reload                       whether the model should be reloaded
+	 *                                              after the save is done
+	 */
 	public function save($reload = FALSE) {
 		$this->token = $this->create_token();
 		parent::save($reload);
 	}
 
+    /**
+     * This function returns a new token.
+     *
+     * @access public
+     * @return string                               a new token
+     */
 	public function create_token() {
 		do {
 			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
