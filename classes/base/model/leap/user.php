@@ -21,10 +21,15 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-28
+ * @version 2012-03-31
  */
 class Base_Model_Leap_User extends DB_ORM_Model {
 
+	/**
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -135,28 +140,50 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 			)),
 		);
 	}
-	
+
+	/**
+	 * This function returns the data source name.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the data source name
+	 */
 	public static function data_source() {
 		return 'default';	
 	}
-	
+
+	/**
+	 * This function returns the database table's name.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the database table's name
+	 */
 	public static function table() {
 		return 'users';	
 	}
-	
+
+	/**
+	 * This function returns the primary key for the database table.
+	 *
+	 * @access public
+	 * @static
+	 * @return array                                the primary key
+	 */
 	public static function primary_key() {
 		return array('uID');	
 	}
-	
+
+    /**
+     * This function completes the user's login.
+     *
+     * @access public
+     */
 	public function complete_login() {
 		$this->logins++;
 		$this->last_login = time();
 		$this->last_ip = Request::$client_ip;
 		$this->save();
-	}
-	
-	public function save($reload = FALSE) {
-		parent::save($reload);	
 	}
 
 }

@@ -21,10 +21,15 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-28
+ * @version 2012-03-31
  */
 class Base_Model_Leap_Session extends DB_ORM_Model {
 
+	/**
+	 * This constructor instantiates this class.
+	 *
+	 * @access public
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -48,19 +53,47 @@ class Base_Model_Leap_Session extends DB_ORM_Model {
 			'contents' => new DB_ORM_Field_Alias($this, 'sesContents'),
 		);
 	}
-	
+
+	/**
+	 * This function returns the data source name.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the data source name
+	 */
 	public static function data_source() {
 		return 'default';	
 	}
-	
+
+	/**
+	 * This function returns the database table's name.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the database table's name
+	 */
 	public static function table() {
 		return 'sessions';
 	}
-	
+
+	/**
+	 * This function returns the primary key for the database table.
+	 *
+	 * @access public
+	 * @static
+	 * @return array                                the primary key
+	 */
 	public static function primary_key() {
 		return array('sesID');	
 	}
-	
+
+	/**
+	 * This function returns whether the primary key auto increments.
+	 *
+	 * @access public
+	 * @static
+	 * @return boolean                              whether the primary key auto increments
+	 */
 	public static function is_auto_incremented() {
 		return FALSE;	
 	}

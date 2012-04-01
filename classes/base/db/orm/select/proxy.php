@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-22
+ * @version 2012-03-30
  *
  * @abstract
  */
@@ -149,7 +149,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @param string $alias                         the alias to used for the specified table
 	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
-	public function column($column, $alias) {
+	public function column($column, $alias = NULL) {
 		$this->builder->column($column, $alias);
 		return $this;
 	}

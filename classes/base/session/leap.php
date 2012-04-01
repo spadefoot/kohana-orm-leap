@@ -21,28 +21,63 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-03-29
+ * @version 2012-03-31
  */
 class Base_Session_Leap extends Session {
 
+    /**
+     * This variable stores the name of the session model.
+     *
+     * @access protected
+     * @var string
+     */
 	protected $_table = 'Session'; // Session Model
 
-	// Database column names
+    /**
+     * This variable stores a list column aliases and their respective database
+     * column names.
+     *
+     * @access protected
+     * @var array
+     */
 	protected $_columns = array(
 		'session_id'  => 'sesID',
 		'last_active' => 'sesLastActive',
 		'contents'    => 'sesContents',
 	);
 
-	// Garbage collection requests
+	/**
+	 * This variable stores how often a garbage collection request is made.
+	 *
+	 * @access protected
+	 * @var integer
+	 */
 	protected $_gc = 500;
 
-	// The current session id
+	/**
+	 * This variable stores the current session id.
+	 *
+	 * @access protected
+	 * @var string
+	 */
 	protected $_session_id;
 
-	// The old session id
+	/**
+	 * This variable stores the old session id.
+	 *
+	 * @access protected
+	 * @var string
+	 */
 	protected $_update_id;
 
+    /**
+     * This constructor initializes the class using the specified config
+     * information and/or session id.
+     *
+     * @access public
+     * @param mixed $config                     the config information to be used
+     * @param string $id                        the session id
+     */
 	public function __construct(array $config = NULL, $id = NULL) {
 		/*
 		// Use the default group
@@ -77,10 +112,23 @@ class Base_Session_Leap extends Session {
 		}
 	}
 
+    /**
+     * This function returns the current session id.
+     *
+     * @access public
+     * @return string                           the current session id
+     */
 	public function id() {
 		return $this->_session_id;
 	}
 
+    /**
+     * This function returns the raw session data string.
+     *
+     * @access protected
+     * @param string $id                        the session id
+     * @return string                           the raw session data string
+     */
 	protected function _read($id = NULL) {
 		if ($id || $id = Cookie::get($this->_name)) {
 			try {
@@ -110,6 +158,12 @@ class Base_Session_Leap extends Session {
 		return NULL;
 	}
 
+    /**
+     * This function generates a new session.
+     *
+     * @access protected
+     * @return string                           the new session id
+     */
 	protected function _regenerate() {
 		do {
 			// Create a new session id
@@ -132,6 +186,13 @@ class Base_Session_Leap extends Session {
 		return $this->_session_id = $id;
 	}
 
+    /**
+     * This function saves the current session to the database.
+     *
+     * @access protected
+     * @return boolean                          whether the current session was
+     *                                          successfully saved
+     */
 	protected function _write() {
 		if ($this->_update_id === NULL) {
 			// Insert a new row
@@ -165,6 +226,13 @@ class Base_Session_Leap extends Session {
 		return TRUE;
 	}
 
+    /**
+     * This function destroys the current session.
+     *
+     * @access protected
+     * @return boolean                          whether the current session was
+     *                                          successfully destoryed
+     */
 	protected function _destroy() {
 		// Session has not been created yet
 		if ($this->_update_id === NULL) {
@@ -188,6 +256,11 @@ class Base_Session_Leap extends Session {
 		return TRUE;
 	}
 
+    /**
+     * This function handles garbage collection.
+     *
+     * @access protected
+     */
 	protected function _gc() {
 		$expires = ($this->_lifetime)
 			? $this->_lifetime	// Expire sessions when their lifetime is up
@@ -199,6 +272,13 @@ class Base_Session_Leap extends Session {
 			->execute();
 	}
 
+    /**
+     * This function restarts the current session.
+     *
+     * @access protected
+     * @return boolean                          whether the current session was
+     *                                          successfully restarted
+     */
 	protected function _restart() {
 		$this->_regenerate();
 		return TRUE;

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
   `rName` varchar(255) COLLATE utf8_bin NOT NULL,
   `rDescription` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`rID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`uID`),
   UNIQUE KEY `uEmail` (`uEmail`),
   UNIQUE KEY `uUsername` (`uUsername`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   `uID` int(11) NOT NULL,
   PRIMARY KEY (`utID`),
   KEY `uID` (`uID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
 
 --
 -- Constraints for dumped tables
