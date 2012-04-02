@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die('No direct script access.');
+<?php defined("SYSPATH") OR die('No direct script access.');
 
 /**
  * Copyright 2012 CubedEye
@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-31
+ * @version 2012-04-01
  */
 class Base_Auth_Leap extends Auth {
 
@@ -368,7 +368,7 @@ class Base_Auth_Leap extends Auth {
 	 * This function completes the login by incrementing the logins and setting
 	 * session data: user_id, username, roles.
 	 *
-	 * @access public
+	 * @access protected
 	 * @param mixed $user                       the user's name or object
 	 * @return boolean                          whether the login was completed
 	 */
