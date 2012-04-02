@@ -2,7 +2,7 @@
 
 $config = array();
 
-$config['leap'] => array(
+$config['leap'] = array(
     'group' => 'default',
     'lifetime' => 43200,
     'name' => 'session_leap',
