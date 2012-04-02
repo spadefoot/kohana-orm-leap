@@ -1,5 +1,8 @@
 Changelog for LEAP ORM
 
+2012-04-01
+* Added a new "Has Many Through" relation (Issues #22).
+
 2012-03-31
 * Moved "auth_table.sql" to a new folder and renamed it to "auth-mysql.sql".
 * Fixed a bug with the method signature for Base_DB_ORM_Proxy::column().

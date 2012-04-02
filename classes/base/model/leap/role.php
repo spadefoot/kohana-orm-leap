@@ -61,7 +61,7 @@ class Base_Model_Leap_Role extends DB_ORM_Model {
 				'child_model' => 'User_Role',
 				'parent_key' => array('rID'),
 			)),	 
-		);	
+		);
 	}
 
 	/**
