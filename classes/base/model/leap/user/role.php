@@ -34,30 +34,25 @@ class Base_Model_Leap_User_Role extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'uID' => new DB_ORM_Field_Integer($this, array(
+			'user_id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 			)),
-			'rID' => new DB_ORM_Field_Integer($this, array(
+			'role_id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
 		);
 
-		$this->aliases = array(
-			'user_id' => new DB_ORM_Field_Alias($this, 'uID'),
-			'role_id' => new DB_ORM_Field_Alias($this, 'rID'),
-		);
-
 		$this->relations = array(
 			'user' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('uID'),
-				'parent_key' => array('uID'),
+				'child_key' => array('user_id'),
+				'parent_key' => array('id'),
 				'parent_model' => 'User',
 			)),
 			'role' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('rID'),
-				'parent_key' => array('rID'),
+				'child_key' => array('role_id'),
+				'parent_key' => array('id'),
 				'parent_model' => 'Role',			
 			)),
 		);
@@ -93,7 +88,7 @@ class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * @return array                                the primary key
 	 */
 	public static function primary_key() {
-		return array('uID', 'rID');	
+		return array('user_id', 'role_id');	
 	}
 
 	/**

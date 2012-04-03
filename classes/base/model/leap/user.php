@@ -34,96 +34,78 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'uID' => new DB_ORM_Field_Integer($this, array(
+			'id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 			)),
-			'uUsername' => new DB_ORM_Field_String($this, array(
+			'username' => new DB_ORM_Field_String($this, array(
 				'max_length' => 50,
 				'nullable' => FALSE,
 			)),
-			'uEmail' => new DB_ORM_Field_String($this, array(
+			'email' => new DB_ORM_Field_String($this, array(
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
-			'uPassword' => new DB_ORM_Field_String($this, array(
+			'passoord' => new DB_ORM_Field_String($this, array(
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
 			// Personal Details
-			'uFirstName' => new DB_ORM_Field_String($this, array(
+			'firstname' => new DB_ORM_Field_String($this, array(
 				'max_length' => 100,
 				'nullable' => FALSE,
 			)),
-			'uLastName' => new DB_ORM_Field_String($this, array(
+			'lastname' => new DB_ORM_Field_String($this, array(
 				'max_length' => 100,
 				'nullable' => FALSE,
 			)),
 			// Account Status Details
-			'uActivated' => new DB_ORM_Field_Boolean($this, array(
+			'activated' => new DB_ORM_Field_Boolean($this, array(
 				'default' => TRUE,
 				'nullable' => FALSE,
 			)),
-			'uBanned' => new DB_ORM_Field_Boolean($this, array(
+			'banned' => new DB_ORM_Field_Boolean($this, array(
 				'default' => FALSE,
 				'nullable' => FALSE,
 			)),
-			'uBanReason' => new DB_ORM_Field_String($this, array(
+			'ban_reason' => new DB_ORM_Field_String($this, array(
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
 			// Account Utility Details
-			'uNewPasswordKey' => new DB_ORM_Field_String($this, array(
+			'new_password_key' => new DB_ORM_Field_String($this, array(
 				'max_length' => 64,
 				'nullable' => TRUE,
 			)),
-			'uNewPasswordRequested' => new DB_ORM_Field_DateTime($this, array(
+			'new_password_requested' => new DB_ORM_Field_DateTime($this, array(
 				'nullable' => TRUE,
 			)),
-			'uNewEmail' => new DB_ORM_Field_String($this, array(
+			'new_email' => new DB_ORM_Field_String($this, array(
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
-			'uNewEmailKey' => new DB_ORM_Field_String($this, array(
+			'new_email_key' => new DB_ORM_Field_String($this, array(
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
 			// Account Metrics Details
-			'uLastIp' => new DB_ORM_Field_String($this, array(
+			'last_ip' => new DB_ORM_Field_String($this, array(
 				'max_length' => 40,
 				'nullable' => TRUE
 			)),
-			'uLastLogin' => new DB_ORM_Field_DateTime($this, array(
+			'last_login' => new DB_ORM_Field_DateTime($this, array(
 				'nullable' => TRUE, // Default set in database
 			)),
-			'uLogins' => new DB_ORM_Field_Integer($this, array(
+			'logins' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'default' => 0,
 			)),
 		);
 
-		$this->aliases = array(
-			'id' => new DB_ORM_Field_Alias($this, 'uID'),
-			'username' => new DB_ORM_Field_Alias($this, 'uUsername'),
-			'email' => new DB_ORM_Field_Alias($this, 'uEmail'),
-			'password' => new DB_ORM_Field_Alias($this, 'uPassword'),
-			'first_name' => new DB_ORM_Field_Alias($this, 'uFirstName'),
-			'last_name' => new DB_ORM_Field_Alias($this, 'uLastName'),
-			'activated' => new DB_ORM_Field_Alias($this, 'uActivated'),
-			'banned' => new DB_ORM_Field_Alias($this, 'uBanned'),
-			'ban_reason' => new DB_ORM_Field_Alias($this, 'uBanReason'),
-			'new_password_key' => new DB_ORM_Field_Alias($this, 'uNewPasswordKey'),
-			'new_password_requested' => new DB_ORM_Field_Alias($this, 'uNewPasswordRequested'),
-			'new_email' => new DB_ORM_Field_Alias($this, 'uNewEmail'),
-			'new_email_key' => new DB_ORM_Field_Alias($this, 'uNewEmailKey'),
-			'last_ip' => new DB_ORM_Field_Alias($this, 'uLastIp'),
-			'logins' => new DB_ORM_Field_Alias($this, 'uLogins'),
-		);
-
 		$this->adaptors = array(
-			'last_login' => new DB_ORM_Field_Adaptor_DateTime($this, array(
-				'field' => 'uLastLogin',
+			'last_login_formatted' => new DB_ORM_Field_Adaptor_DateTime($this, array(
+				'field' => 'last_login',
 			)),
 		);
 
@@ -171,7 +153,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 	 * @return array                                the primary key
 	 */
 	public static function primary_key() {
-		return array('uID');	
+		return array('id');	
 	}
 
 	/**
