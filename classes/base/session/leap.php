@@ -41,9 +41,9 @@ class Base_Session_Leap extends Session {
 	 * @var array
 	 */
 	protected $_columns = array(
-		'session_id'  => 'sesID',
-		'last_active' => 'sesLastActive',
-		'contents'    => 'sesContents',
+		'session_id'  => 'id',
+		'last_active' => 'last_active',
+		'contents'    => 'contents',
 	);
 
 	/**

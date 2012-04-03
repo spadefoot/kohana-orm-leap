@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 30, 2012 at 08:34 AM
+-- Generation Time: Apr 03, 2012 at 08:25 AM
 -- Server version: 5.5.16
 -- PHP Version: 5.3.8
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `test`
+-- Database: `ipad_api`
 --
 
 -- --------------------------------------------------------
@@ -27,11 +27,11 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `roles` (
-  `rID` int(11) NOT NULL AUTO_INCREMENT,
-  `rName` varchar(255) COLLATE utf8_bin NOT NULL,
-  `rDescription` varchar(255) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`rID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -40,11 +40,11 @@ CREATE TABLE IF NOT EXISTS `roles` (
 --
 
 CREATE TABLE IF NOT EXISTS `sessions` (
-  `sesID` varchar(24) COLLATE utf8_bin NOT NULL,
-  `sesLastActive` int(11) NOT NULL,
-  `sesContents` longtext COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`sesID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `id` varchar(24) COLLATE utf8_unicode_ci NOT NULL,
+  `last_active` int(11) NOT NULL,
+  `contents` longtext COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -53,26 +53,26 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
-  `uID` int(11) NOT NULL AUTO_INCREMENT,
-  `uUsername` varchar(50) CHARACTER SET latin1 NOT NULL,
-  `uEmail` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `uPassword` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `uFirstName` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `uLastName` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `uActivated` tinyint(1) NOT NULL DEFAULT '1',
-  `uBanned` tinyint(1) NOT NULL DEFAULT '0',
-  `uBanReason` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `uNewPasswordKey` varchar(64) CHARACTER SET latin1 DEFAULT NULL,
-  `uNewPasswordRequested` int(11) DEFAULT NULL,
-  `uNewEmail` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `uNewEmailKey` varchar(64) CHARACTER SET latin1 DEFAULT NULL,
-  `uLastIp` varchar(40) CHARACTER SET latin1 DEFAULT NULL,
-  `uLastLogin` int(11) DEFAULT NULL,
-  `uLogins` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`uID`),
-  UNIQUE KEY `uEmail` (`uEmail`),
-  UNIQUE KEY `uUsername` (`uUsername`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=7 ;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `firstname` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `lastname` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `activated` tinyint(1) NOT NULL DEFAULT '1',
+  `banned` tinyint(1) NOT NULL DEFAULT '0',
+  `ban_reason` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `new_password_key` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `new_password_requested` int(11) DEFAULT NULL,
+  `new_email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `new_email_key` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `last_ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `last_login` int(11) DEFAULT NULL,
+  `logins` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uEmail` (`email`),
+  UNIQUE KEY `uUsername` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -81,11 +81,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 CREATE TABLE IF NOT EXISTS `user_roles` (
-  `uID` int(11) NOT NULL,
-  `rID` int(11) NOT NULL,
-  PRIMARY KEY (`uID`,`rID`),
-  KEY `rID` (`rID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `user_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY `rID` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -94,16 +94,16 @@ CREATE TABLE IF NOT EXISTS `user_roles` (
 --
 
 CREATE TABLE IF NOT EXISTS `user_tokens` (
-  `utID` int(11) NOT NULL AUTO_INCREMENT,
-  `utUserAgent` varchar(40) COLLATE utf8_bin NOT NULL,
-  `utToken` varchar(40) COLLATE utf8_bin NOT NULL,
-  `utType` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `utCreated` int(11) DEFAULT NULL,
-  `utExpires` int(11) DEFAULT NULL,
-  `uID` int(11) NOT NULL,
-  PRIMARY KEY (`utID`),
-  KEY `uID` (`uID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=6 ;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_agent` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created` int(11) DEFAULT NULL,
+  `expires` int(11) DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `uID` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 --
 -- Constraints for dumped tables
@@ -113,14 +113,14 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 -- Constraints for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  ADD CONSTRAINT `user_roles_ibfk_3` FOREIGN KEY (`uID`) REFERENCES `users` (`uID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `user_roles_ibfk_4` FOREIGN KEY (`rID`) REFERENCES `roles` (`rID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `user_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_tokens`
 --
 ALTER TABLE `user_tokens`
-  ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`uID`) REFERENCES `users` (`uID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
