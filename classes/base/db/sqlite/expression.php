@@ -407,7 +407,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 */
 	public static function is_keyword($token) {
 		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/sqlite.xml');
+			self::$xml = XML::load('config/sql/sqlite.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = self::$xml->xpath("/sql/dialect[@name='sqlite' and @version='3.0']/keywords[keyword = '{$token}']");

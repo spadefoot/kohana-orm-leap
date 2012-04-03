@@ -393,7 +393,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 */
 	public static function is_keyword($token) {
 		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/mssql.xml');
+			self::$xml = XML::load('config/sql/mssql.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = self::$xml->xpath("/sql/dialect[@name='mssql' and @version='2008.R2']/keywords[keyword = '{$token}']");

@@ -2,6 +2,8 @@ Changelog for LEAP ORM
 
 2012-04-03
 * Standardized column names in auth tables/classes to make migrating over to LEAP easier (Issues #31).
+* Moved table schema files into subfolders.
+* Moved SQL dialect config files into a subfolder.
 
 2012-04-01
 * Added a new "Has Many Through" relation (Issues #22).
