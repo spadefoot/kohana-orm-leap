@@ -396,7 +396,7 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	 */
 	public static function is_keyword($token) {
 		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/firebird.xml');
+			self::$xml = XML::load('config/sql/firebird.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = self::$xml->xpath("/sql/dialect[@name='firebird' and @version='2.5']/keywords[keyword = '{$token}']");

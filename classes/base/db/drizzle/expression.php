@@ -387,7 +387,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 */
 	public static function is_keyword($token) {
 		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/mysql.xml');
+			self::$xml = XML::load('config/sql/mysql.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = self::$xml->xpath("/sql/dialect[@name='mysql' and @version='5.6']/keywords[keyword = '{$token}']");
