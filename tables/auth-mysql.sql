@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `ipad_api`
+-- Database: `leap_auth`
 --
 
 -- --------------------------------------------------------
