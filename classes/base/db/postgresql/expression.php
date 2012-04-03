@@ -408,7 +408,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 */
 	public static function is_keyword($token) {
 		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/postgresql.xml');
+			self::$xml = XML::load('config/sql/postgresql.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = self::$xml->xpath("/sql/dialect[@name='postgresql' and @version='7.3']/keywords[keyword = '{$token}']");

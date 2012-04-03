@@ -403,7 +403,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 */
 	public static function is_keyword($token) {
 		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/db2.xml');
+			self::$xml = XML::load('config/sql/db2.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = self::$xml->xpath("/sql/dialect[@name='db2' and @version='10']/keywords[keyword = '{$token}']");
