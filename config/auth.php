@@ -17,12 +17,5 @@ return array(
 		'user' => 'User',
 		'token' => 'User_Token',
 	),
-	'columns' => array(
-		'role_name' => 'rName',
-		'token' => 'utToken',
-		'user_id' => 'uID',
-		'user_username' => 'uUsername',
-		'user_email' => 'uEmail',
-	),
 );
 ?>

@@ -46,12 +46,12 @@ class Base_Auth_Leap extends Auth {
 	 * @var array
 	 */
 	protected $columns = array(
-		'role_id' => 'rID',
-		'role_name' => 'rName',
-		'token' => 'utToken',
-		'user_id' => 'uID',
-		'user_username' => 'uUsername',
-		'user_email' => 'uEmail',
+		'role_id' => 'id',
+		'role_name' => 'name',
+		'token' => 'token',
+		'user_id' => 'id',
+		'user_username' => 'username',
+		'user_email' => 'email',
 	);
 
 	/**
