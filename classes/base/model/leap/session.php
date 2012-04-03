@@ -34,23 +34,17 @@ class Base_Model_Leap_Session extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'sesID' => new DB_ORM_Field_String($this, array(
+			'id' => new DB_ORM_Field_String($this, array(
 				'max_length' => 24,
 				'nullable' => FALSE,
 			)),
-			'sesLastActive' => new DB_ORM_Field_Integer($this, array(
+			'last_active' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 			)),
-			'sesContents' => new DB_ORM_Field_Text($this, array(
+			'contents' => new DB_ORM_Field_Text($this, array(
 				'nullable' => FALSE,
 			)),
-		);
-
-		$this->aliases = array(
-			'id' => new DB_ORM_Field_Alias($this, 'sesID'),
-			'last_active' => new DB_ORM_Field_Alias($this, 'sesLastActive'),
-			'contents' => new DB_ORM_Field_Alias($this, 'sesContents'),
 		);
 	}
 
@@ -84,7 +78,7 @@ class Base_Model_Leap_Session extends DB_ORM_Model {
 	 * @return array                                the primary key
 	 */
 	public static function primary_key() {
-		return array('sesID');	
+		return array('id');	
 	}
 
 	/**
