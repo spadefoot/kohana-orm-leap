@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-31
+ * @version 2012-04-05
  */
 class Base_Model_Leap_Session extends DB_ORM_Model {
 
@@ -36,7 +36,7 @@ class Base_Model_Leap_Session extends DB_ORM_Model {
 		$this->fields = array(
 			'id' => new DB_ORM_Field_String($this, array(
 				'max_length' => 24,
-				'nullable' => FALSE,
+				'nullable' => TRUE, // TODO Known bug: must be "true"
 			)),
 			'last_active' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,

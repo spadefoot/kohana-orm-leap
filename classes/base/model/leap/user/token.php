@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-31
+ * @version 2012-04-05
  */
 class Base_Model_Leap_User_Token extends DB_ORM_Model {
 
@@ -36,7 +36,13 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 		$this->fields = array(
 			'id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
+				'nullable' => TRUE, // TODO Known bug: must be "true"
+				'unsigned' => TRUE,
+			)),
+			'user_id' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
 				'nullable' => FALSE,
+				'unsigned' => TRUE,
 			)),
 			'user_agent' => new DB_ORM_Field_String($this, array(
 				'max_length' => 40,
@@ -48,19 +54,17 @@ class Base_Model_Leap_User_Token extends DB_ORM_Model {
 			)),
 			'type' => new DB_ORM_Field_String($this, array(
 				'max_length' => 100,
-				'nullable' => TRUE,
+				'nullable' => FALSE,
 			)),
 			'created' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
-				'nullable' => TRUE,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
 			)),
 			'expires' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
-				'nullable' => TRUE,
-			)),
-			'user_id' => new DB_ORM_Field_Integer($this, array(
-				'max_length' => 11,
-				'nullable' => TRUE,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
 			)),
 		);
 
