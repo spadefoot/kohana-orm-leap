@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-03-31
+ * @version 2012-04-05
  */
 class Base_Model_Leap_User extends DB_ORM_Model {
 
@@ -46,7 +46,7 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
-			'passoord' => new DB_ORM_Field_String($this, array(
+			'password' => new DB_ORM_Field_String($this, array(
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
