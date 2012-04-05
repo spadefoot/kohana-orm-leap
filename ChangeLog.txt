@@ -1,7 +1,12 @@
 Changelog for LEAP ORM
 
+2012-04-05
+* Fixed misspelling in model class pre Samnan's request (Issue #32).
+* Updated auth models.
+* Reworked table schema files for mysql.
+
 2012-04-03
-* Standardized column names in auth tables/classes to make migrating over to LEAP easier (Issues #31).
+* Standardized column names in auth tables/classes to make migrating over to LEAP easier (Issue #31).
 * Moved table schema files into subfolders.
 * Moved SQL dialect config files into a subfolder.
 

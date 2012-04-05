@@ -36,28 +36,32 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 		$this->fields = array(
 			'id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 11,
+				'nullable' => TRUE, // TODO Known bug: must be "true"
+				'unsigned' => TRUE,
+			)),
+			'email' => new DB_ORM_Field_String($this, array(
+				'max_length' => 254,
 				'nullable' => FALSE,
 			)),
 			'username' => new DB_ORM_Field_String($this, array(
-				'max_length' => 50,
-				'nullable' => FALSE,
-			)),
-			'email' => new DB_ORM_Field_String($this, array(
-				'max_length' => 255,
+				'default' => '',
+				'max_length' => 32,
 				'nullable' => FALSE,
 			)),
 			'password' => new DB_ORM_Field_String($this, array(
-				'max_length' => 255,
+				'max_length' => 64,
 				'nullable' => FALSE,
 			)),
 			// Personal Details
 			'firstname' => new DB_ORM_Field_String($this, array(
-				'max_length' => 100,
-				'nullable' => FALSE,
+				'default' => NULL,
+				'max_length' => 35,
+				'nullable' => TRUE,
 			)),
 			'lastname' => new DB_ORM_Field_String($this, array(
-				'max_length' => 100,
-				'nullable' => FALSE,
+				'default' => NULL,
+				'max_length' => 50,
+				'nullable' => TRUE,
 			)),
 			// Account Status Details
 			'activated' => new DB_ORM_Field_Boolean($this, array(
@@ -69,37 +73,48 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 				'nullable' => FALSE,
 			)),
 			'ban_reason' => new DB_ORM_Field_String($this, array(
+				'default' => NULL,
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
 			// Account Utility Details
 			'new_password_key' => new DB_ORM_Field_String($this, array(
+				'default' => NULL,
 				'max_length' => 64,
 				'nullable' => TRUE,
 			)),
-			'new_password_requested' => new DB_ORM_Field_DateTime($this, array(
+			'new_password_requested' => new DB_ORM_Field_Integer($this, array(
+				'default' => NULL,
+				'max_length' => 11,
 				'nullable' => TRUE,
 			)),
 			'new_email' => new DB_ORM_Field_String($this, array(
-				'max_length' => 255,
+				'default' => NULL,
+				'max_length' => 254,
 				'nullable' => TRUE,
 			)),
 			'new_email_key' => new DB_ORM_Field_String($this, array(
-				'max_length' => 255,
+				'default' => NULL,
+				'max_length' => 64,
 				'nullable' => TRUE,
 			)),
 			// Account Metrics Details
-			'last_ip' => new DB_ORM_Field_String($this, array(
-				'max_length' => 40,
-				'nullable' => TRUE
-			)),
-			'last_login' => new DB_ORM_Field_DateTime($this, array(
-				'nullable' => TRUE, // Default set in database
-			)),
 			'logins' => new DB_ORM_Field_Integer($this, array(
-				'max_length' => 11,
-				'nullable' => FALSE,
 				'default' => 0,
+				'max_length' => 10,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+			'last_login' => new DB_ORM_Field_Integer($this, array(
+				'default' => NULL,
+				'max_length' => 10,
+				'nullable' => TRUE,
+				'unsigned' => TRUE,
+			)),
+			'last_ip' => new DB_ORM_Field_String($this, array(
+				'default' => NULL,
+				'max_length' => 39,
+				'nullable' => TRUE,
 			)),
 		);
 
@@ -107,18 +122,21 @@ class Base_Model_Leap_User extends DB_ORM_Model {
 			'last_login_formatted' => new DB_ORM_Field_Adaptor_DateTime($this, array(
 				'field' => 'last_login',
 			)),
+			'new_password_requested_formatted' => new DB_ORM_Field_Adaptor_DateTime($this, array(
+				'field' => 'new_password_requested',
+			)),
 		);
 
 		$this->relations = array(
 			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
-				'child_key' => array('uID'),
+				'child_key' => array('user_id'),
 				'child_model' => 'User_Role',
-				'parent_key' => array('uID'),
+				'parent_key' => array('id'),
 			)),
 			'user_token' => new DB_ORM_Relation_HasMany($this, array(
-				'child_key' => array('uID'),
+				'child_key' => array('user_id'),
 				'child_model' => 'User_Token',
-				'parent_key' => array('uID'),
+				'parent_key' => array('id'),
 			)),
 		);
 	}
