@@ -1,35 +1,26 @@
--- --------------------------------------------------------
--- phpMyAdmin SQL Dump
--- version 3.4.5
--- http://www.phpmyadmin.net
+----
+-- Copyright 2012 CubedEye
 --
--- Host: localhost
--- Generation Time: Apr 03, 2012 at 08:25 AM
--- Server version: 5.5.16
--- PHP Version: 5.3.8
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
 --
--- Database: `leap_session`
+--      http://www.apache.org/licenses/LICENSE-2.0
 --
--- --------------------------------------------------------
---
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+----
+
+----
 -- Table structure for table `sessions`
---
+----
 
 CREATE TABLE IF NOT EXISTS `sessions` (
-  `id` varchar(24) COLLATE utf8_unicode_ci NOT NULL,
-  `last_active` int(11) NOT NULL,
-  `contents` longtext COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
+	`id` varchar(24) NOT NULL,
+	`last_active` int(11) NOT NULL,
+	`contents` longtext NOT NULL,
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
