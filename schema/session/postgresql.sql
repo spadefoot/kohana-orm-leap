@@ -1,5 +1,5 @@
 ----
--- Copyright 2012 CubedEye
+-- Copyright 2012 Spadefoot
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@
 -- Table structure for table "sessions"
 ----
 
-CREATE TABLE IF NOT EXISTS `sessions` (
-	`id` varchar(24) NOT NULL,
-	`last_active` int(11) NOT NULL,
-	`contents` longtext NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE "sessions" (
+	"id" varchar(24) NOT NULL,
+	"last_active" integer NOT NULL,
+	"contents" text NOT NULL,
+	PRIMARY KEY ("id")
+);

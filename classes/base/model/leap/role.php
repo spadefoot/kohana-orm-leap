@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-04-05
+ * @version 2012-04-07
  */
 class Base_Model_Leap_Role extends DB_ORM_Model {
 
@@ -50,7 +50,7 @@ class Base_Model_Leap_Role extends DB_ORM_Model {
 		);
 
 		$this->relations = array(
-			'role_users' => new DB_ORM_Relation_HasMany($this, array(
+			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
 				'child_key' => array('id'),
 				'child_model' => 'User_Role',
 				'parent_key' => array('id'),
