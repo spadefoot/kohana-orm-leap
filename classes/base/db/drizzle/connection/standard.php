@@ -21,11 +21,12 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
  * @see http://plugins.svn.wordpress.org/drizzle/trunk/db.php
+ * @see http://ronaldbradford.com/blog/a-beginners-look-at-drizzle-datatypes-and-tables-2009-04-01/
  *
  * @abstract
  */
@@ -46,6 +47,8 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
 	 *                                          the database connection
+	 *
+	 * @see http://wiki.drizzle.org/MySQL_Differences
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -57,9 +60,9 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$password = $this->data_source->password;
 			$this->link_id = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . drizzle_error($handle);
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => drizzle_error($handle)));
 			}
+			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
 		}
 	}
 
@@ -87,8 +90,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
@@ -98,12 +100,10 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		}
 		$resource_id = @drizzle_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . drizzle_con_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->link_id)));
 		}
 		if ( ! @drizzle_result_buffer($resource_id)) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . drizzle_con_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->link_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -130,13 +130,11 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$resource_id = @drizzle_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . drizzle_con_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->link_id)));
 		}
 		$this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql))
 			? @drizzle_result_insert_id($resource_id)
@@ -153,9 +151,11 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		if ($this->insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: No insert id could be derived.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
 		}
 		return $this->insert_id;
 	}
@@ -191,8 +191,18 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 */
 	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
+		//if (function_exists('mb_convert_encoding')) {
+		//    $string = mb_convert_encoding($string, $this->data_source->charset);
+		//}
+
 		$string = "'" . drizzle_escape_string($this->link_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {

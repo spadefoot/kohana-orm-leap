@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -38,6 +38,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *                                          the database connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-oci.php
+	 * @see http://docs.oracle.com/cd/B10501_01/server.920/a96529/ch2.htm#100150
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -49,19 +50,19 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 					$connection_string .= ':' . $port;
 				}
 				$connection_string .= '/' . $this->data_source->database;
-				$username = $this->data_source->username;
-				$password = $this->data_source->password;
+				//if ( ! empty($this->data_source->charset)) {
+				//    $connection_string .= ';charset=' . $this->data_source->charset;
+				//}
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, $username, $password, $attributes);
+				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 				$this->link_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 		}
 	}

@@ -21,9 +21,11 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-04-07
+ * @version 2012-04-08
+ *
+ * @abstract
  */
-class Base_Model_Leap_Role extends DB_ORM_Model {
+abstract class Base_Model_Leap_Role extends DB_ORM_Model {
 
 	/**
 	 * This constructor instantiates this class.

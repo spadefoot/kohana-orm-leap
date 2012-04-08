@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -47,6 +47,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @see http://www.php.net/manual/en/function.oci-connect.php
 	 * @see http://download.oracle.com/docs/cd/E11882_01/network.112/e10836/naming.htm
+	 * @see http://docs.oracle.com/cd/B10501_01/server.920/a96529/ch2.htm#100150
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -68,13 +69,20 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			}
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
-			$this->link_id = ($this->data_source->is_persistent())
-				? @oci_pconnect($username, $password, $connection_string)
-				: @oci_connect($username, $password, $connection_string);
+			if ( ! empty($this->data_source->charset)) {
+				$charset = strtoupper($this->data_source->charset);
+				$this->link_id = ($this->data_source->is_persistent())
+					? @oci_pconnect($username, $password, $connection_string, $charset)
+					: @oci_connect($username, $password, $connection_string, $charset);
+			}
+			else {
+				$this->link_id = ($this->data_source->is_persistent())
+					? @oci_pconnect($username, $password, $connection_string)
+					: @oci_connect($username, $password, $connection_string);
+			}
 			if ($this->link_id === FALSE) {
 				$oci_error = oci_error();
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $oci_error['message'];
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $oci_error['message']));
 			}
 			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 		}
@@ -92,8 +100,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
 			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		// Use OCI_DEFAULT as the flag for PHP 5.3.1 <=
 		$this->execution_mode = OCI_DEFAULT;
@@ -113,8 +120,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$sql = trim($sql, "; \t\n\r\0\x0B");
 		$result_set = $this->cache($sql, $type);
@@ -125,8 +131,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		$resource_id = @oci_parse($this->link_id, $sql);
 		if (($resource_id === FALSE) || ! oci_execute($resource_id, $this->execution_mode)) {
 			$oci_error = oci_error($resource_id);
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . $oci_error['message'];
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 		$records = array();
 		$size = 0;
@@ -150,15 +155,13 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$sql = trim($sql, "; \t\n\r\0\x0B");
 		$resource_id = @oci_parse($this->link_id, $sql);
 		if (($resource_id === FALSE) || ! oci_execute($resource_id, $this->execution_mode)) {
 			$oci_error = oci_error($resource_id);
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . $oci_error['message'];
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 		$this->sql = $sql;
 		@oci_free_statement($resource_id);
@@ -175,6 +178,9 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @see http://stackoverflow.com/questions/3558433/php-oracle-take-the-autogenerated-id-after-an-insert
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		try {
 			$sql = $this->sql;
 			if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
@@ -188,8 +194,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			return 0;
 		}
 		catch (Exception $ex) {
-			$this->error = preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage());
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception(preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage()));
 		}
 	}
 
@@ -204,14 +209,12 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	public function rollback() {
 		$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$resource_id = @oci_rollback($this->link_id);
 		if ($resource_id === FALSE) {
 			$oci_error = oci_error($this->link_id);
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . $oci_error['message'];
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 	}
 
@@ -226,14 +229,12 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	public function commit() {
 		$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
+			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
 		$resource_id = @oci_commit($this->link_id);
 		if ($resource_id === FALSE) {
 			$oci_error = oci_error($this->link_id);
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . $oci_error['message'];
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
+			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 	}
 

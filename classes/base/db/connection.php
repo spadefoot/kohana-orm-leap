@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @abstract
  */
@@ -42,14 +42,6 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @var DB_DataSource
 	 */
 	protected $data_source = NULL;
-
-	/**
-	 * This variable stores the last error message reported.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $error = '';
 
 	/**
 	 * This variable is used to store the connection's link identifier.
@@ -185,16 +177,6 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	}
 
 	/**
-	 * This function returns the last error reported.
-	 *
-	 * @access public
-	 * @return string                            the error message
-	 */
-	public function get_error() {
-		return $this->error;
-	}
-
-	/**
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
@@ -220,6 +202,8 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 */
 	public abstract function quote($string, $escape = NULL);
 

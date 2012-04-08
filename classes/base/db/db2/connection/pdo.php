@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
  *
@@ -38,6 +38,8 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *                                          the database connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
+	 * @see http://www.zinox.com/node/132
+	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0505furlong/
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -48,20 +50,18 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 				$connection_string .= 'HOSTNAME=' . $this->data_source->host . ';';
 				$connection_string .= 'PORT=' . $this->data_source->port . ';';
 				$connection_string .= 'PROTOCOL=TCPIP;';
-				$username = $this->data_source->username;
-				$password = $this->data_source->password;
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, $username, $password, $attributes);
+				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 				$this->link_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
+			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
 		}
 	}
 

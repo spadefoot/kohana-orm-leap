@@ -21,9 +21,10 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/book.mysql.php
+ * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
  *
  * @abstract
  */
@@ -36,6 +37,8 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
 	 *                                          the database connection
+	 *
+	 * @see http://kb.askmonty.org/en/character-sets-and-collations
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -46,13 +49,13 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 				? @mysql_pconnect($host, $username, $password)
 				: @mysql_connect($host, $username, $password, TRUE);
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . mysql_error();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => mysql_error()));
 			}
-			$database = @mysql_select_db($this->data_source->database, $this->link_id);
-			if ($database === FALSE) {
-				$this->error = 'Message: Failed to connect to database. Reason: ' . mysql_error($this->link_id);
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+			if ( ! @mysql_select_db($this->data_source->database, $this->link_id)) {
+				throw new Kohana_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => mysql_error($this->link_id)));
+			}
+			if ( ! empty($this->data_source->charset) && ! @mysql_set_charset(strtolower($this->data_source->charset), $this->link_id)) {
+				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => mysql_error($this->link_id)));
 			}
 		}
 	}
@@ -82,8 +85,7 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
@@ -92,8 +94,7 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 		}
 		$resource_id = @mysql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mysql_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mysql_error($this->link_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -117,13 +118,11 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$resource_id = @mysql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . mysql_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mysql_error($this->link_id)));
 		}
 		$this->sql = $sql;
 		@mysql_free_result($resource_id);
@@ -137,10 +136,12 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		$insert_id = @mysql_insert_id($this->link_id);
 		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . mysql_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => mysql_error($this->link_id)));
 		}
 		return $insert_id;
 	}
@@ -177,8 +178,14 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 */
 	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
 		$string = "'" . mysql_real_escape_string($string, $this->link_id) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
