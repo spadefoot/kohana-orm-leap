@@ -1,5 +1,5 @@
 ----
--- Copyright 2012 CubedEye
+-- Copyright 2012 Spadefoot
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 
 CREATE TABLE IF NOT EXISTS `sessions` (
 	`id` VARCHAR(24) NOT NULL,
-	`last_active` INT(11) NOT NULL,
-	`contents` LONGTEXT NOT NULL,
+	`last_active` INT NOT NULL,
+	`contents` TEXT NOT NULL,
 	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;

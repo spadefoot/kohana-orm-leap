@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -36,6 +36,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
 	 *                                          the database connection
+	 *
+	 * @see http://stackoverflow.com/questions/1322421/php-sql-server-how-to-set-charset-for-connection
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -52,13 +54,14 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 					: mssql_connect($connection_string, $username, $password, TRUE);
 			}
 			catch (ErrorException $ex) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			$database = @mssql_select_db($this->data_source->database, $this->link_id);
 			if ($database === FALSE) {
-				$this->error = 'Message: Failed to connect to database. Reason: ' . mssql_get_last_message();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => mssql_get_last_message()));
+			}
+			if ( ! empty($this->data_source->charset)) {
+				ini_set('mssql.charset', $this->data_source->charset);
 			}
 		}
 	}
@@ -87,8 +90,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
@@ -97,8 +99,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 		}
 		$resource_id = @mssql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . mssql_get_last_message();
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mssql_get_last_message()));
 		}
 		$records = array();
 		$size = 0;
@@ -122,13 +123,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$resource_id = @mssql_query($sql, $this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . mssql_get_last_message();
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mssql_get_last_message()));
 		}
 		@mssql_free_result($resource_id);
 		$this->sql = $sql;
@@ -142,6 +141,9 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		try {
 			$sql = $this->sql;
 			if (preg_match('/^INSERT\s+(TOP.+\s+)?INTO\s+(.*?)\s+/i', $sql, $matches)) {
@@ -155,8 +157,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 			return 0;
 		}
 		catch (Exception $ex) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . $ex->getMessage();
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 

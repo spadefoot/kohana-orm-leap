@@ -21,9 +21,11 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-04-05
+ * @version 2012-04-08
+ *
+ * @abstract
  */
-class Base_Model_Leap_User_Token extends DB_ORM_Model {
+abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 
 	/**
 	 * This constructor instantiates this class.

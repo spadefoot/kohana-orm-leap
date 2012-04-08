@@ -21,9 +21,11 @@
  *
  * @package Document
  * @category CSV
- * @version 2012-02-09
+ * @version 2012-04-08
+ *
+ * @abstract
  */
-class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
 	/**
 	 * This variable stores the file name for the CSV, which will only be used

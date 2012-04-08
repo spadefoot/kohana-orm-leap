@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -36,6 +36,9 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
 	 *                                          the database connection
+	 *
+	 * @see http://www.sqlite.org/pragma.html#pragma_encoding
+	 * @see http://stackoverflow.com/questions/263056/how-to-change-character-encoding-of-a-pdo-sqlite-connection-in-php
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -45,9 +48,9 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 				? @sqlite_popen($connection_string, 0666, $error)
 				: @sqlite_open($connection_string, 0666, $error);
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $error;
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $error));
 			}
+			// "Once an encoding has been set for a database, it cannot be changed."
 		}
 	}
 
@@ -76,8 +79,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
@@ -86,8 +88,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 		}
 		$resource_id = @sqlite_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . sqlite_error_string(sqlite_last_error($this->link_id));
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => sqlite_error_string(sqlite_last_error($this->link_id))));
 		}
 		$records = array();
 		$size = 0;
@@ -111,14 +112,12 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$sqlite_error = NULL;
-		$resource_id = @sqlite_exec($this->link_id, $sql, $sqlite_error);
+		$error = NULL;
+		$resource_id = @sqlite_exec($this->link_id, $sql, $error);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . $sqlite_error;
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $error));
 		}
 		$this->sql = $sql;
 	}
@@ -131,10 +130,12 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		$insert_id = @sqlite_last_insert_rowid($this->link_id);
 		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . sqlite_error_string(sqlite_last_error($this->link_id));
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->link_id))));
 		}
 		return $insert_id;
 	}
@@ -172,10 +173,20 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 *
 	 * @see http://www.php.net/manual/en/function.sqlite-escape-string.php
 	 */
 	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
+		//if (function_exists('mb_convert_encoding')) {
+		//    $string = mb_convert_encoding($string, $this->data_source->charset);
+		//}
+
 		$string = "'" . sqlite_escape_string($string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {

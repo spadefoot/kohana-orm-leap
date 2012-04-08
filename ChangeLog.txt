@@ -1,4 +1,12 @@
-Changelog for LEAP ORM
+Change Log for LEAP ORM
+
+2012-04-08
+* Made base auth classes abstract.
+* Added new table schema files for Drizzle and MariaDB.
+* Simplified error handling in database connection classes.
+* Added a connection check in quote methods and get_last_insert_id methods.
+* Added the ability to set a database's character set pre matesko's request (Issue #24).
+* Changed the default value of Base_DB_DataSource::$charset.
 
 2012-04-07
 * Added new table schema files for PostgreSQL and SQLite.

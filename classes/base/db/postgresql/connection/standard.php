@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -49,12 +49,17 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$connection_string .= ' dbname=' . $this->data_source->database;
 			$connection_string .= ' user=' . $this->data_source->username;
 			$connection_string .= ' password=' . $this->data_source->password;
+			//if ( ! empty($this->data_source->charset)) {
+			//    $connection_string .= " options='--client_encoding=" . strtoupper($this->data_source->charset) . "'";
+			//}
 			$this->link_id = ($this->data_source->is_persistent())
 				? @pg_pconnect($connection_string)
 				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . pg_last_error();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => pg_last_error()));
+			}
+			if ( ! empty($this->data_source->charset) && abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
+				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
 			}
 		}
 	}
@@ -86,8 +91,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
@@ -96,8 +100,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		}
 		$resource_id = @pg_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . pg_last_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -123,13 +126,11 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	*/
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$resource_id = @pg_query($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . pg_last_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
 		}
 		$this->sql = $sql;
 		@pg_free_result($resource_id);
@@ -145,10 +146,12 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		$insert_id = pg_last_oid($this->link_id);
 		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . pg_last_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
 		}
 		return $insert_id;
 	}
@@ -180,10 +183,20 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-escape-string.php
 	 */
 	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
+		//if (function_exists('mb_convert_encoding')) {
+		//    $string = mb_convert_encoding($string, $this->data_source->charset);
+		//}
+
 		$string = "'" . pg_escape_string($this->link_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {

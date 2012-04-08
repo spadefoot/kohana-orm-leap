@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -39,6 +39,8 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-connect.php
 	 * @see http://www.php.net/manual/en/function.db2-conn-error.php
+	 * @see http://www.zinox.com/node/132
+	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0505furlong/
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -53,9 +55,9 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 				? @db2_pconnect($connection_string, '', '')
 				: @db2_connect($connection_string, '', '');
 			if ($this->link_id === FALSE) {
-				$this->error = 'Message: Failed to establish connection. Reason: ' . db2_conn_error();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => db2_conn_error()));
 			}
+			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
 		}
 	}
 
@@ -69,13 +71,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to begin SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
+			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
 		$resource_id = @db2_autocommit($this->link_id, DB2_AUTOCOMMIT_OFF);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to begin SQL transaction. Reason: ' . db2_conn_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'BEGIN TRANSACTION;'));
+			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => db2_conn_error($this->link_id)));
 		}
 	}
 
@@ -97,8 +97,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ( ! is_null($result_set)) {
@@ -107,8 +106,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		}
 		$resource_id = @db2_prepare($this->link_id, $sql);
 		if (($resource_id === FALSE) || ! db2_execute($resource_id)) {
-			$this->error = 'Message: Failed to query SQL statement. Reason: ' . db2_stmt_error($resource_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql, ':type' => $type));
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => db2_stmt_error($resource_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -135,13 +133,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$resource_id = @db2_exec($this->link_id, $sql);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to execute SQL statement. Reason: ' . db2_stmt_error($resource_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $sql));
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => db2_stmt_error($resource_id)));
 		}
 		$this->sql = $sql;
 		@db2_free_result($resource_id);
@@ -157,10 +153,12 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * @see http://www.php.net/manual/en/function.db2-last-insert-id.php
 	 */
 	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
 		$insert_id = @db2_last_insert_id($this->link_id);
 		if ($insert_id === FALSE) {
-			$this->error = 'Message: Failed to fetch the last insert id. Reason: ' . db2_conn_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => $this->sql));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => db2_conn_error($this->link_id)));
 		}
 		settype($insert_id, 'integer');
 		return $insert_id;
@@ -176,13 +174,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function rollback() {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$resource_id = @db2_rollback($this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to rollback SQL transaction. Reason: ' . db2_conn_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'ROLLBACK;'));
+			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => db2_conn_error($this->link_id)));
 		}
 		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
 	}
@@ -197,13 +193,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function commit() {
 		if ( ! $this->is_connected()) {
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: Unable to find connection.';
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
+			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
 		$resource_id = @db2_commit($this->link_id);
 		if ($resource_id === FALSE) {
-			$this->error = 'Message: Failed to commit SQL transaction. Reason: ' . db2_conn_error($this->link_id);
-			throw new Kohana_SQL_Exception($this->error, array(':sql' => 'COMMIT;'));
+			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => db2_conn_error($this->link_id)));
 		}
 		@db2_autocommit($this->link_id, DB2_AUTOCOMMIT_ON);
 	}
@@ -215,10 +209,22 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-escape-string.php
+	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/c0010966.htm
+	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
 	 */
 	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
+		//if (function_exists('mb_convert_encoding')) {
+		//    $string = mb_convert_encoding($string, $this->data_source->charset);
+		//}
+
 		$string = "'" . db2_escape_string($string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {

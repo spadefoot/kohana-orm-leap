@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
  *
@@ -60,8 +60,10 @@ abstract class Base_DB_MySQL_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+			}
+			if ( ! empty($this->data_source->charset)) {
+				$this->execute('SET NAMES ' . $this->quote(strtolower($this->data_source->charset)));
 			}
 		}
 	}
