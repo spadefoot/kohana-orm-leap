@@ -20,7 +20,7 @@
 
 CREATE TABLE IF NOT EXISTS [sessions] (
 	[id] VARCHAR(24) NOT NULL,
-	[last_active] INTEGER(11) NOT NULL,
+	[last_active] INTEGER NOT NULL,
 	[contents] TEXT NOT NULL,
 	PRIMARY KEY ([id])
 );

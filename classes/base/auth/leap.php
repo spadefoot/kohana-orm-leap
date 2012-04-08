@@ -21,9 +21,11 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-04-01
+ * @version 2012-04-08
+ *
+ * @abstract
  */
-class Base_Auth_Leap extends Auth {
+abstract class Base_Auth_Leap extends Auth {
 
 	/**
 	 * This variable stores a list of the models and their respective database

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.pdo-dblib.php
  *
@@ -47,23 +47,24 @@ abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 				$port = $this->data_source->port;
 				if ( ! empty($port)) {
 					$connection_string .= ':' . $port;
+					// $connection_string .= ',' . $port;
 				}
 				$connection_string .= ';';
 				$connection_string .= 'dbname=' . $this->data_source->database;
-				$username = $this->data_source->username;
-				$password = $this->data_source->password;
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, $username, $password, $attributes);
+				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 				$this->link_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
+			//if ( ! empty($this->data_source->charset)) {
+			//    ini_set('mssql.charset', $this->data_source->charset);
+			//}
 		}
 	}
 

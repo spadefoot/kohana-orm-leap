@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-09
+ * @version 2012-04-08
  *
  * @abstract
  */
@@ -34,12 +34,23 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
+	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 *                                          be found
 	 *
 	 * @license http://codeigniter.com/user_guide/license.html
 	 *
 	 * @see http://codeigniter.com/forums/viewthread/179202/
+	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
 	 */
 	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
+        //if (function_exists('mb_convert_encoding')) {
+        //    $string = mb_convert_encoding($string, $this->data_source->charset);
+        //}
+
 		$removables = array(
 			'/%0[0-8bcef]/',
 			'/%1[0-9a-f]/',

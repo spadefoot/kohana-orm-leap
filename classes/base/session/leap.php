@@ -21,9 +21,11 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-03-31
+ * @version 2012-04-08
+ *
+ * @abstract
  */
-class Base_Session_Leap extends Session {
+abstract class Base_Session_Leap extends Session {
 
 	/**
 	 * This variable stores the name of the session model.

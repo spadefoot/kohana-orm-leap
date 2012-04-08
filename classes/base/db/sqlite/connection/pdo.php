@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-02-06
+ * @version 2012-04-08
  *
  * @see http://www.php.net/manual/en/ref.pdo-sqlite.php
  *
@@ -38,6 +38,8 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *                                          the database connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-sqlite.php
+	 * @see http://www.sqlite.org/pragma.html#pragma_encoding
+	 * @see http://stackoverflow.com/questions/263056/how-to-change-character-encoding-of-a-pdo-sqlite-connection-in-php
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -53,9 +55,9 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				$this->error = 'Message: Failed to establish connection. Reason: ' . $ex->getMessage();
-				throw new Kohana_Database_Exception($this->error, array(':dsn' => $this->data_source->id));
+				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
+			// "Once an encoding has been set for a database, it cannot be changed."
 		}
 	}
 

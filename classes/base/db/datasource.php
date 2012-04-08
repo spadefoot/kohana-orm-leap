@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-01-18
+ * @version 2012-04-08
  *
  * @abstract
  */
@@ -135,8 +135,8 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 		$this->settings['cache'] = (object) $cache;
 
 		$this->settings['charset'] = (isset($settings['charset']))
-			? (string) $settings['charset']
-			: 'utf8';
+			? (string) $settings['charset'] // e.g. utf8
+			: '';
 
 		$this->settings['database'] = (isset($settings['connection']['database']))
 			? (string) $settings['connection']['database']
