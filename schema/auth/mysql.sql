@@ -34,15 +34,15 @@ CREATE TABLE IF NOT EXISTS `roles` (
 	`name` VARCHAR(32) NOT NULL,
 	`description` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `uniq_name` (`name`)
+	UNIQUE KEY `roles_name_ukey` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ----
 -- Roles for the "roles" table 
 ----
 
--- INSERT INTO `roles` (`id`, `name`, `description`) VALUES (1, 'login', 'Login privileges, granted after account confirmation.');
--- INSERT INTO `roles` (`id`, `name`, `description`) VALUES (2, 'admin', 'Administrative user, has access to everything.');
+-- INSERT INTO `roles` (`name`, `description`) VALUES ('login', 'Login privileges, granted after account confirmation.');
+-- INSERT INTO `roles` (`name`, `description`) VALUES ('admin', 'Administrative user, has access to everything.');
 
 ----
 -- Table structure for the "users" table
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`last_login` INT(10) UNSIGNED DEFAULT NULL,
 	`last_ip` VARCHAR(39) DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `uniq_username` (`username`),
-	UNIQUE KEY `uniq_email` (`email`)
+	UNIQUE KEY `users_username_ukey` (`username`),
+	UNIQUE KEY `users_email_ukey` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ----
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 	`created` INT(11) UNSIGNED NOT NULL,
 	`expires` INT(11) UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `uniq_token` (`token`),
+	UNIQUE KEY `user_tokens_token_ukey` (`token`),
 	KEY `fk_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -103,12 +103,12 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 ----
 
 ALTER TABLE `user_roles`
-	ADD CONSTRAINT `user_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-	ADD CONSTRAINT `user_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+	ADD CONSTRAINT `user_roles_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+	ADD CONSTRAINT `user_roles_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
 ----
 -- Constraints for the "user_tokens" table
 ----
 
 ALTER TABLE `user_tokens`
-	ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+	ADD CONSTRAINT `user_tokens_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

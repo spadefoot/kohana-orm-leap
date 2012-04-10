@@ -22,5 +22,5 @@ CREATE TABLE "sessions" (
 	"id" varchar(24) NOT NULL,
 	"last_active" integer NOT NULL,
 	"contents" text NOT NULL,
-	PRIMARY KEY ("id")
+	CONSTRAINT "sessions_id_pkey" PRIMARY KEY ("id")
 );

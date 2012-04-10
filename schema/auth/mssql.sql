@@ -26,19 +26,13 @@
 ----
 
 ----
--- Enables foreign key constraints
-----
-
-PRAGMA foreign_keys = ON;
-
-----
 -- Table structure for the "roles" table
 ----
 
 CREATE TABLE IF NOT EXISTS [roles] (
-	[id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	[name] VARCHAR(32) NOT NULL UNIQUE,
-	[description] VARCHAR(255) NOT NULL
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[name] [varchar](32) NOT NULL UNIQUE,
+	[description] [varchar](255) NOT NULL
 );
 
 ----
@@ -53,22 +47,22 @@ CREATE TABLE IF NOT EXISTS [roles] (
 ----
 
 CREATE TABLE IF NOT EXISTS [users] (
-	[id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	[email] VARCHAR(254) NOT NULL UNIQUE,
-	[username] VARCHAR(32) NOT NULL DEFAULT '' UNIQUE,
-	[password] VARCHAR(64) NOT NULL,
-	[firstname] VARCHAR(35) DEFAULT NULL,
-	[lastname] VARCHAR(50) DEFAULT NULL,
-	[activated] BOOLEAN NOT NULL DEFAULT 1,
-	[banned] BOOLEAN NOT NULL DEFAULT 0,
-	[ban_reason] VARCHAR(255) DEFAULT NULL,
-	[new_password_key] VARCHAR(64) DEFAULT NULL,
-	[new_password_requested] INTEGER DEFAULT NULL,
-	[new_email] VARCHAR(254) DEFAULT NULL,
-	[new_email_key] VARCHAR(64) DEFAULT NULL,
-	[logins] INTEGER NOT NULL DEFAULT 0,
-	[last_login] INTEGER DEFAULT NULL,
-	[last_ip] VARCHAR(39) DEFAULT NULL
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[email] [varchar](254) NOT NULL UNIQUE,
+	[username] [varchar](32) NOT NULL DEFAULT ('') UNIQUE,
+	[password] [varchar](64) NOT NULL,
+	[firstname] [varchar](35) DEFAULT NULL,
+	[lastname] [varchar](50) DEFAULT NULL,
+	[activated] [tinyint] NOT NULL DEFAULT 1,
+	[banned] [tinyint] NOT NULL DEFAULT 0,
+	[ban_reason] [varchar](255) DEFAULT NULL,
+	[new_password_key] [varchar](64) DEFAULT NULL,
+	[new_password_requested] [int] DEFAULT NULL,
+	[new_email] [varchar](254) DEFAULT NULL,
+	[new_email_key] [varchar](64) DEFAULT NULL,
+	[logins] [int] NOT NULL DEFAULT 0,
+	[last_login] [int] DEFAULT NULL,
+	[last_ip] [varchar](39) DEFAULT NULL
 );
 
 ----
@@ -76,8 +70,8 @@ CREATE TABLE IF NOT EXISTS [users] (
 ----
 
 CREATE TABLE IF NOT EXISTS [user_roles] (
-	[user_id] INTEGER NOT NULL,
-	[role_id] INTEGER NOT NULL,
+	[user_id] [int] NOT NULL,
+	[role_id] [int] NOT NULL,
 	PRIMARY KEY ([user_id],[role_id]),
 	FOREIGN KEY ([user_id]) REFERENCES [users] ON DELETE CASCADE,
 	FOREIGN KEY ([role_id]) REFERENCES [roles] ON DELETE CASCADE
@@ -88,12 +82,12 @@ CREATE TABLE IF NOT EXISTS [user_roles] (
 ----
 
 CREATE TABLE IF NOT EXISTS [user_tokens] (
-	[id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-	[user_id] INTEGER NOT NULL,
-	[user_agent] VARCHAR(40) NOT NULL,
-	[token] VARCHAR(40) NOT NULL UNIQUE,
-	[type] VARCHAR(100) NOT NULL,
-	[created] INTEGER NOT NULL,
-	[expires] INTEGER NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[user_id] [int] NOT NULL,
+	[user_agent] [varchar](40) NOT NULL,
+	[token] [varchar](40) NOT NULL UNIQUE,
+	[type] [varchar](100) NOT NULL,
+	[created] [int] NOT NULL,
+	[expires] [int] NOT NULL,
 	FOREIGN KEY([user_id]) REFERENCES [users] ON DELETE CASCADE
 );

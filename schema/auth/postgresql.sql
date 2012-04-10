@@ -32,9 +32,9 @@
 CREATE TABLE "roles" (
 	"id" serial,
 	"name" varchar(32) NOT NULL,
-	"description" text NOT NULL,
+	"description" varchar(255) NOT NULL,
 	CONSTRAINT "roles_id_pkey" PRIMARY KEY ("id"),
-	CONSTRAINT "roles_name_key" UNIQUE ("name")
+	CONSTRAINT "roles_name_ukey" UNIQUE ("name")
 );
 
 ----
@@ -60,14 +60,14 @@ CREATE TABLE "users" (
 	"ban_reason" varchar(255) DEFAULT NULL,
 	"new_password_key" varchar(64) DEFAULT NULL,
 	"new_password_requested" integer DEFAULT NULL,
-	"new_email varchar(254)" DEFAULT NULL,
+	"new_email" varchar(254) DEFAULT NULL,
 	"new_email_key" varchar(64) DEFAULT NULL,
 	"logins" integer NOT NULL DEFAULT 0,
 	"last_login" integer,
 	"last_ip" varchar(39) DEFAULT NULL,
 	CONSTRAINT "users_id_pkey" PRIMARY KEY ("id"),
 	CONSTRAINT "users_username_key" UNIQUE ("username"),
-	CONSTRAINT "users_email_key" UNIQUE ("email"),
+	CONSTRAINT "users_email_ukey" UNIQUE ("email"),
 	CONSTRAINT "users_logins_check" CHECK ("logins" >= 0)
 );
 
@@ -94,7 +94,7 @@ CREATE TABLE "user_tokens" (
 	"created" integer NOT NULL,
 	"expires" integer NOT NULL,
 	CONSTRAINT "user_tokens_id_pkey" PRIMARY KEY ("id"),
-	CONSTRAINT "user_tokens_token_key" UNIQUE ("token")
+	CONSTRAINT "user_tokens_token_ukey" UNIQUE ("token")
 );
 
 ----
@@ -105,12 +105,12 @@ CREATE INDEX "user_id_idx" ON "user_roles" ("user_id");
 CREATE INDEX "role_id_idx" ON "user_roles" ("role_id");
 
 ALTER TABLE "user_roles"
-	ADD CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE,
-	ADD CONSTRAINT "role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles" ("id") ON DELETE CASCADE;
+	ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE,
+	ADD CONSTRAINT "user_roles_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles" ("id") ON DELETE CASCADE;
 
 ----
 -- Constraints for the "user_tokens" table
 ----
 
 ALTER TABLE "user_tokens"
-	ADD CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+	ADD CONSTRAINT "user_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
