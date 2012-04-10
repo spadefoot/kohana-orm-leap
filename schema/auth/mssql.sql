@@ -29,7 +29,7 @@
 -- Table structure for the "roles" table
 ----
 
-CREATE TABLE IF NOT EXISTS [roles] (
+CREATE TABLE [roles] (
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](32) NOT NULL UNIQUE,
 	[description] [varchar](255) NOT NULL
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS [roles] (
 -- Table structure for the "users" table
 ----
 
-CREATE TABLE IF NOT EXISTS [users] (
+CREATE TABLE [users] (
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[email] [varchar](254) NOT NULL UNIQUE,
 	[username] [varchar](32) NOT NULL DEFAULT ('') UNIQUE,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS [users] (
 -- Table structure for the "user_roles" table
 ----
 
-CREATE TABLE IF NOT EXISTS [user_roles] (
+CREATE TABLE [user_roles] (
 	[user_id] [int] NOT NULL,
 	[role_id] [int] NOT NULL,
 	PRIMARY KEY ([user_id],[role_id]),
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS [user_roles] (
 -- Table structure for the "user_tokens" table
 ----
 
-CREATE TABLE IF NOT EXISTS [user_tokens] (
+CREATE TABLE [user_tokens] (
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[user_id] [int] NOT NULL,
 	[user_agent] [varchar](40) NOT NULL,

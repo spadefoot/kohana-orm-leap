@@ -18,7 +18,7 @@
 -- Table structure for table "sessions"
 ----
 
-CREATE TABLE [dbo].[sessions] (
+CREATE TABLE [sessions] (
 	[id] [varchar](24) NOT NULL PRIMARY KEY,
 	[last_active] [int] NOT NULL,
 	[contents] [text] NOT NULL
