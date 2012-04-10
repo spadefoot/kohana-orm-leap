@@ -1,5 +1,9 @@
 Change Log for LEAP ORM
 
+2012-04-09
+* Added new table schema files for MS SQL and Oracle.
+* Made a few minor changes to some of the other schema files.
+
 2012-04-08
 * Made base auth classes abstract.
 * Added new table schema files for Drizzle and MariaDB.

@@ -30,44 +30,44 @@
 ----
 
 CREATE TABLE IF NOT EXISTS `roles` (
-	`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`name` varchar(32) NOT NULL,
-	`description` varchar(255) NOT NULL,
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(32) NOT NULL,
+	`description` VARCHAR(255) NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `uniq_name` (`name`)
+	UNIQUE KEY `roles_name_ukey` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ----
 -- Roles for the "roles" table 
 ----
 
--- INSERT INTO `roles` (`id`, `name`, `description`) VALUES (1, 'login', 'Login privileges, granted after account confirmation.');
--- INSERT INTO `roles` (`id`, `name`, `description`) VALUES (2, 'admin', 'Administrative user, has access to everything.');
+-- INSERT INTO `roles` (`name`, `description`) VALUES ('login', 'Login privileges, granted after account confirmation.');
+-- INSERT INTO `roles` (`name`, `description`) VALUES ('admin', 'Administrative user, has access to everything.');
 
 ----
 -- Table structure for the "users" table
 ----
 
 CREATE TABLE IF NOT EXISTS `users` (
-	`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`email` varchar(254) NOT NULL,
-	`username` varchar(32) NOT NULL DEFAULT '',
-	`password` varchar(64) NOT NULL,
-	`firstname` varchar(35) DEFAULT NULL,
-	`lastname` varchar(50) DEFAULT NULL,
-	`activated` tinyint(1) NOT NULL DEFAULT 1,
-	`banned` tinyint(1) NOT NULL DEFAULT 0,
-	`ban_reason` varchar(255) DEFAULT NULL,
-	`new_password_key` varchar(64) DEFAULT NULL,
-	`new_password_requested` int(11) DEFAULT NULL,
-	`new_email` varchar(254) DEFAULT NULL,
-	`new_email_key` varchar(64) DEFAULT NULL,
-	`logins` int(10) UNSIGNED NOT NULL DEFAULT 0,
-	`last_login` int(10) UNSIGNED DEFAULT NULL,
-	`last_ip` varchar(39) DEFAULT NULL,
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`email` VARCHAR(254) NOT NULL,
+	`username` VARCHAR(32) NOT NULL DEFAULT '',
+	`password` VARCHAR(64) NOT NULL,
+	`firstname` VARCHAR(35) DEFAULT NULL,
+	`lastname` VARCHAR(50) DEFAULT NULL,
+	`activated` TINYINT(1) NOT NULL DEFAULT 1,
+	`banned` TINYINT(1) NOT NULL DEFAULT 0,
+	`ban_reason` VARCHAR(255) DEFAULT NULL,
+	`new_password_key` VARCHAR(64) DEFAULT NULL,
+	`new_password_requested` INT(11) DEFAULT NULL,
+	`new_email` VARCHAR(254) DEFAULT NULL,
+	`new_email_key` VARCHAR(64) DEFAULT NULL,
+	`logins` INT(10) UNSIGNED NOT NULL DEFAULT 0,
+	`last_login` INT(10) UNSIGNED DEFAULT NULL,
+	`last_ip` VARCHAR(39) DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `uniq_username` (`username`),
-	UNIQUE KEY `uniq_email` (`email`)
+	UNIQUE KEY `users_username_ukey` (`username`),
+	UNIQUE KEY `users_email_ukey` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ----
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 ----
 
 CREATE TABLE IF NOT EXISTS `user_roles` (
-	`user_id` int(10) UNSIGNED NOT NULL,
-	`role_id` int(10) UNSIGNED NOT NULL,
+	`user_id` INT(10) UNSIGNED NOT NULL,
+	`role_id` INT(10) UNSIGNED NOT NULL,
 	PRIMARY KEY (`user_id`,`role_id`),
 	KEY `fk_role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -86,15 +86,15 @@ CREATE TABLE IF NOT EXISTS `user_roles` (
 ----
 
 CREATE TABLE IF NOT EXISTS `user_tokens` (
-	`id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`user_id` int(11) UNSIGNED NOT NULL,
-	`user_agent` varchar(40) NOT NULL,
-	`token` varchar(40) NOT NULL,
-	`type` varchar(100) NOT NULL,
-	`created` int(11) UNSIGNED NOT NULL,
-	`expires` int(11) UNSIGNED NOT NULL,
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id` INT(11) UNSIGNED NOT NULL,
+	`user_agent` VARCHAR(40) NOT NULL,
+	`token` VARCHAR(40) NOT NULL,
+	`type` VARCHAR(100) NOT NULL,
+	`created` INT(11) UNSIGNED NOT NULL,
+	`expires` INT(11) UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `uniq_token` (`token`),
+	UNIQUE KEY `user_tokens_token_ukey` (`token`),
 	KEY `fk_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -103,12 +103,12 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 ----
 
 ALTER TABLE `user_roles`
-	ADD CONSTRAINT `user_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-	ADD CONSTRAINT `user_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+	ADD CONSTRAINT `user_roles_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+	ADD CONSTRAINT `user_roles_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
 ----
 -- Constraints for the "user_tokens" table
 ----
 
 ALTER TABLE `user_tokens`
-	ADD CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+	ADD CONSTRAINT `user_tokens_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

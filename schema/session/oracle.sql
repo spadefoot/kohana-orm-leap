@@ -18,9 +18,9 @@
 -- Table structure for table "sessions"
 ----
 
-CREATE TABLE IF NOT EXISTS `sessions` (
-	`id` VARCHAR(24) NOT NULL,
-	`last_active` INT(11) NOT NULL,
-	`contents` LONGTEXT NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE "sessions" (
+	"id" VARCHAR2(24) NOT NULL,
+	"last_active" NUMBER(11) NOT NULL,
+	"contents" VARCHAR2(255) NOT NULL,
+	CONSTRAINT "sessions_id_pkey" PRIMARY KEY ("id")
+);
