@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") OR die('No direct script access.');
 
-return array(
+$config = array(
 	'driver' => 'leap',
 	'hash_method' => 'sha256',
 	'hash_key' => '',
@@ -18,4 +18,6 @@ return array(
 		'token' => 'User_Token',
 	),
 );
+
+return $config;
 ?>
