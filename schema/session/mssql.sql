@@ -18,9 +18,8 @@
 -- Table structure for table "sessions"
 ----
 
-CREATE TABLE IF NOT EXISTS `sessions` (
-	`id` VARCHAR(24) NOT NULL,
-	`last_active` INT(11) NOT NULL,
-	`contents` LONGTEXT NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE [dbo].[sessions] (
+	[id] [varchar](24) NOT NULL PRIMARY KEY,
+	[last_active] [int] NOT NULL,
+	[contents] [text] NOT NULL
+);
