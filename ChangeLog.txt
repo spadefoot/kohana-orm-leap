@@ -1,5 +1,10 @@
 Change Log for LEAP ORM
 
+2012-05-10
+* Renamed Base_DB_DataSource::setup($settings, $id = NULL) to Base_DB_DataSource::init($settings, $id = NULL).
+* Made "dialect" and "type" synonymous in Base_DB_DataSource so that "type" can be defined differently (e.g. PDO) in the connection config for Kohana's ORM.
+* Fixed a bug with Leap's Auth login/logout when User Tokens were manually removed from database, merging CubedEye's pull request (Issue #35).
+
 2012-04-09
 * Added new table schema files for MS SQL and Oracle.
 * Made a few minor changes to some of the other schema files.
