@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-04-08
+ * @version 2012-05-10
  *
  * @abstract
  */
@@ -49,17 +49,17 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			if (($config = Kohana::$config->load($id)) === NULL) {
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
-			$this->setup($config, $id);
+			$this->init($config, $id);
 		}
 		else if (is_string($config)) {
 			$id = 'database.' . $config;
 			if (($config = Kohana::$config->load($id)) === NULL) {
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
-			$this->setup($config, $id);
+			$this->init($config, $id);
 		}
 		else if (is_array($config)) {
-			$this->setup($config);
+			$this->init($config);
 		}
 		else if (is_object($config) && ($config instanceof DB_DataSource)) {
 			$this->settings = $config->settings;
@@ -100,23 +100,13 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	}
 
 	/**
-	 * This function determines whether the connection is persistent.
-	 *
-	 * @access public
-	 * @return boolean                              whether the connection is persistent
-	 */
-	public function is_persistent() {
-		return $this->settings['persistent'];
-	}
-
-	/**
 	 * This function handles the initialization of the data source's settings.
 	 *
 	 * @access protected
 	 * @param array $settings                           the settings to be used
 	 * @param string $id                                the data source's id
 	 */
-	protected function setup($settings, $id = NULL) {
+	protected function init($settings, $id = NULL) {
 		$this->settings = array();
 
 		if (is_null($id)) {
@@ -142,9 +132,15 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			? (string) $settings['connection']['database']
 			: '';
 
-		$this->settings['dialect'] = (isset($settings['type']))
-			? (string) $settings['type']
-			: 'mysql';
+		if (isset($settings['dialect'])) {
+			$this->settings['dialect'] = (string) $settings['dialect'];
+		}
+		else if (isset($settings['type'])) {
+			$this->settings['dialect'] = (string) $settings['type'];
+		}
+		else {
+			$this->settings['dialect'] = 'mysql';
+		}
 
 		$this->settings['driver'] = (isset($settings['driver']))
 			? (string) $settings['driver']
@@ -171,6 +167,16 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 		$this->settings['username'] = (isset($settings['connection']['username']))
 			? (string) $settings['connection']['username']
 			: '';
+	}
+
+	/**
+	 * This function determines whether the connection is persistent.
+	 *
+	 * @access public
+	 * @return boolean                              whether the connection is persistent
+	 */
+	public function is_persistent() {
+		return $this->settings['persistent'];
 	}
 
 }
