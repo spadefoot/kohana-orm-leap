@@ -290,6 +290,19 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		$self = get_class($this);
 		$primary_key = call_user_func(array($self, 'primary_key'));
 		if (is_array($primary_key) && ! empty($primary_key)) {
+			if (self::is_auto_incremented()) {
+				$column = $primary_key[0];
+
+				if ( ! isset($this->fields[$column])) {
+					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
+				}
+				$value = $this->fields[$column]->value;
+				if (empty($value)) {
+					return NULL;
+				}
+				$buffer = "{$column}={$value}";
+				return sha1($buffer);
+			}
 			$buffer = '';
 			foreach ($primary_key as $column) {
 				if ( ! isset($this->fields[$column])) {
