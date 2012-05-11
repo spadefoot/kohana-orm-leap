@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-09
+ * @version 2012-05-10
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -548,7 +548,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 	}
 
 	/**
-	 * This function determines whether a offset exists.
+	 * This function determines whether an offset exists.
 	 *
 	 * @access public
 	 * @param integer $offset                       the offset to be evaluated

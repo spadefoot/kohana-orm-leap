@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-05-10
  *
  * @abstract
  */
@@ -86,7 +86,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 	 */
 	protected function validate($value) {
 		if ( ! is_null($value)) {
-			if (strlen($value) > $this->metadata['max_length']) {
+			if (strlen($value) > $this->metadata['max_length'] && ! preg_match('/^(0|1)*$/', $value)) {
 				return FALSE;
 			}
 		}

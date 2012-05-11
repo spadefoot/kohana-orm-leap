@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-05-10
  *
  * @abstract
  */
@@ -48,8 +48,8 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 		$this->metadata['range']['upper_bound'] = 2147483647;
 
 		if (isset($metadata['range'])) {
-			$this->metadata['range']['lower_bound'] = max( (int)  $metadata['range'][0], $this->metadata['range']['lower_bound']);
-			$this->metadata['range']['upper_bound'] = min( (int)  $metadata['range'][1], $this->metadata['range']['upper_bound']);
+			$this->metadata['range']['lower_bound'] = max( (int) $metadata['range'][0], $this->metadata['range']['lower_bound']);
+			$this->metadata['range']['upper_bound'] = min( (int) $metadata['range'][1], $this->metadata['range']['upper_bound']);
 		}
 
 		if (isset($metadata['savable'])) {

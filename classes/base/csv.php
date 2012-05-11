@@ -21,7 +21,7 @@
  *
  * @package Document
  * @category CSV
- * @version 2012-04-08
+ * @version 2012-05-10
  *
  * @abstract
  */
@@ -348,7 +348,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	}
 
 	/**
-	 * This function determines whether a offset exists.
+	 * This function determines whether an offset exists.
 	 *
 	 * @access public
 	 * @param integer $offset                       the offset to be evaluated

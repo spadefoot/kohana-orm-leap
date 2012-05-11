@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-02-22
+ * @version 2012-05-10
  *
  * @abstract
  */
@@ -328,6 +328,9 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 			}
 			else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
 				return $expr->value();
+			}
+			else if ($expr instanceof Data) {
+				return "x'" . $expr->as_hexcode() . "'";
 			}
 			else {
 				return self::prepare_value( (string) $expr); // Convert the object to a string

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-01-11
+ * @version 2012-05-10
  *
  * @abstract
  */
@@ -245,7 +245,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	}
 
 	/**
-	 * This function determines whether a offset exists.
+	 * This function determines whether an offset exists.
 	 *
 	 * @access public
 	 * @param integer $offset                       the offset to be evaluated
@@ -275,7 +275,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
-		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array());
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset, ':value' => $value));
 	}
 
 	/**
@@ -286,7 +286,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array());
+		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset));
 	}
 
 	/**
