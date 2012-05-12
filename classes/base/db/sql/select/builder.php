@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-22
+ * @version 2012-05-11
  *
  * @abstract
  */
@@ -272,7 +272,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
-				? '\\'
+				? '\\\\'
 				: NULL;
 			$value = $this->compiler->prepare_value($value, $escape);
 			$connector = $this->compiler->prepare_connector($connector);
@@ -358,7 +358,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
-				? '\\'
+				? '\\\\'
 				: NULL;
 			$value = $this->compiler->prepare_value($value, $escape);
 			$connector = $this->compiler->prepare_connector($connector);

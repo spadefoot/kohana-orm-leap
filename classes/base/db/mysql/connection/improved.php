@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -203,7 +203,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 		$string = "'" . mysqli_real_escape_string($this->link_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 		}
 
 		return $string;

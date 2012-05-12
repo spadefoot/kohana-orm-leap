@@ -1,5 +1,8 @@
 Change Log for LEAP ORM
 
+2012-05-11
+* Fixing a bug with like statement's escape clause.
+
 2012-05-10
 * Added a new class to handle binary data.
 * Renamed Base_DB_DataSource::setup($settings, $id = NULL) to Base_DB_DataSource::init($settings, $id = NULL).

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -200,7 +200,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		$string = "'" . pg_escape_string($this->link_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 		}
 
 		return $string;

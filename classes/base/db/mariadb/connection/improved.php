@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -207,7 +207,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		$string = "'" . mysqli_real_escape_string($this->link_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 		}
 
 		return $string;

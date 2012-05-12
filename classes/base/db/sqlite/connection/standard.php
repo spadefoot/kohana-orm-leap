@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -190,7 +190,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 		$string = "'" . sqlite_escape_string($string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 		}
 
 		return $string;

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @abstract
  */
@@ -64,7 +64,7 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 		$string = "'" . str_replace("'", "''", $string) . "'";
 		
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 	    }
 
 		return $string;

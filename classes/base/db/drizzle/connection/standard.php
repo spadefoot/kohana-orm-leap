@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -206,7 +206,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		$string = "'" . drizzle_escape_string($this->link_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 		}
 
 		return $string;
