@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-26
+ * @version 2012-05-11
  *
  * @abstract
  */
@@ -292,7 +292,6 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if (is_array($primary_key) && ! empty($primary_key)) {
 			if (self::is_auto_incremented()) {
 				$column = $primary_key[0];
-
 				if ( ! isset($this->fields[$column])) {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
@@ -300,8 +299,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				if (empty($value)) {
 					return NULL;
 				}
-				$buffer = "{$column}={$value}";
-				return sha1($buffer);
+				return sha1("{$column}={$value}");
 			}
 			$buffer = '';
 			foreach ($primary_key as $column) {
