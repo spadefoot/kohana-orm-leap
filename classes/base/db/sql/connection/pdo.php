@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-04-08
+ * @version 2012-05-11
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -205,7 +205,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 		$string = $this->connection->quote($string);
 
 		if (is_string($escape) || ! empty($escape)) {
-			$string .= " ESCAPE '{$escape[0]}'";
+			$string .= " ESCAPE '{$escape}'";
 		}
 
 		return $string;
