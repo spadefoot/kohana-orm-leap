@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-04-08
+ * @version 2012-05-15
  *
  * @abstract
  */
@@ -38,12 +38,12 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 		$this->fields = array(
 			'user_id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 10,
-				'nullable' => TRUE, // TODO Known bug: must be "true"
+				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
 			'role_id' => new DB_ORM_Field_Integer($this, array(
 				'max_length' => 10,
-				'nullable' => TRUE, // TODO Known bug: must be "true"
+				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
 		);
