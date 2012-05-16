@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-05-15
  *
  * @abstract
  */
@@ -107,7 +107,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 		switch ($key) {
 			case 'value':
 				if ( ! is_null($value)) {
-					$value = number_format( (float) $this->value, $this->metadata['scale']);
+					$value = number_format( (float) $value, $this->metadata['scale']);
 					settype($value, $this->metadata['type']);
 					$this->validate($value);
 					$this->value = $value;

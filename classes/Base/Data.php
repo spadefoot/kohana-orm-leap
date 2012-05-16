@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-05-10
+ * @version 2012-05-15
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -54,7 +54,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	const STRING_DATA = 2;
 
 	/**
-	 * This variable stores the hexcode.
+	 * This variable stores the data as a hexadecimal.
 	 *
 	 * @access protected
 	 * @var string
@@ -62,7 +62,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	protected $hexcode;
 
 	/**
-	 * This variable stores the length of the hexcode.
+	 * This variable stores the length of the data as a byte string.
 	 *
 	 * @access protected
 	 * @var integer
@@ -78,11 +78,11 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	 */
 	public function __construct($data, $type = 0) {
 		$this->hexcode = Data::unpack($data, $type);
-		$this->length = strlen(base_convert($this->hexcode, 16, 2));
+		$this->length = -1;
 	}
 
 	/**
-	 * This function returns the hexcode.
+	 * This function returns the data as a hexadecimal.
 	 *
 	 * @access public
 	 * @return string							the data as a hexadecimal
@@ -122,12 +122,16 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	}
 
 	/**
-	 * This function return the length of the hexcode.
+	 * This function return the length of the data as a byte string.
 	 *
 	 * @access public
-	 * @return integer							the length of the hexcode
+	 * @return integer							the length of the data as a byte
+	 *											string
 	 */
 	public function count() {
+		if ($this->length < 0) {
+			$this->length = strlen($this->as_bytes());
+		}
 		return $this->length;
 	}
 
