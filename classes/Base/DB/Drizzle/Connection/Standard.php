@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-05-11
+ * @version 2012-05-20
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -58,8 +58,8 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$database = $this->data_source->database;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
-			$this->link_id = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
-			if ($this->link_id === FALSE) {
+			$this->resource_id = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
+			if ($this->resource_id === FALSE) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => drizzle_error($handle)));
 			}
 			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
@@ -98,22 +98,22 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$resource_id = @drizzle_query($this->link_id, $sql);
-		if ($resource_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->link_id)));
+		$command_id = @drizzle_query($this->resource_id, $sql);
+		if ($command_id === FALSE) {
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
 		}
-		if ( ! @drizzle_result_buffer($resource_id)) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->link_id)));
+		if ( ! @drizzle_result_buffer($command_id)) {
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
 		}
 		$records = array();
 		$size = 0;
-		if (@drizzle_result_row_count($resource_id)) {
-			while ($record = drizzle_row_next($resource_id)) {
+		if (@drizzle_result_row_count($command_id)) {
+			while ($record = drizzle_row_next($command_id)) {
 				$records[] = DB_Connection::type_cast($type, $record);
 				$size++;
 			}
 		}
-		@drizzle_result_free($resource_id);
+		@drizzle_result_free($command_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->insert_id = FALSE;
 		$this->sql = $sql;
@@ -132,15 +132,15 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$resource_id = @drizzle_query($this->link_id, $sql);
-		if ($resource_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->link_id)));
+		$command_id = @drizzle_query($this->resource_id, $sql);
+		if ($command_id === FALSE) {
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
 		}
 		$this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql))
-			? @drizzle_result_insert_id($resource_id)
+			? @drizzle_result_insert_id($command_id)
 			: FALSE;
 		$this->sql = $sql;
-		@drizzle_result_free($resource_id);
+		@drizzle_result_free($command_id);
 	}
 
 	/**
@@ -203,7 +203,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		//    $string = mb_convert_encoding($string, $this->data_source->charset);
 		//}
 
-		$string = "'" . drizzle_escape_string($this->link_id, $string) . "'";
+		$string = "'" . drizzle_escape_string($this->resource_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -220,10 +220,10 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @drizzle_con_close($this->link_id)) {
+			if ( ! @drizzle_con_close($this->resource_id)) {
 				return FALSE;
 			}
-			$this->link_id = NULL;
+			$this->resource_id = NULL;
 		}
 		return TRUE;
 	}
@@ -234,8 +234,8 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @access public
 	 */
 	public function __destruct() {
-		if (is_resource($this->link_id)) {
-			@drizzle_con_close($this->link_id);
+		if (is_resource($this->resource_id)) {
+			@drizzle_con_close($this->resource_id);
 		}
 	}
 

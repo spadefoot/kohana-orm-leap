@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-04-08
+ * @version 2012-05-20
  *
  * @abstract
  */
@@ -44,12 +44,12 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	protected $data_source = NULL;
 
 	/**
-	 * This variable is used to store the connection's link identifier.
+	 * This variable is used to store the connection's resource identifier.
 	 *
 	 * @access protected
 	 * @var resource
 	 */
-	protected $link_id = NULL;
+	protected $resource_id = NULL;
 
 	/**
 	 * This variable stores the last SQL statement executed.
@@ -163,7 +163,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 		if ( ! $this->is_connected()) {
 			throw new Kohana_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
 		}
-		return $this->link_id;
+		return $this->resource_id;
 	}
 
 	/**
@@ -173,7 +173,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @return boolean                          whether a connection is established
 	 */
 	public function is_connected() {
-		return is_resource($this->link_id);
+		return is_resource($this->resource_id);
 	}
 
 	/**

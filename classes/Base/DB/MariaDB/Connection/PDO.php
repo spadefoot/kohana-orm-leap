@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-04-08
+ * @version 2012-05-20
  *
  * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -58,7 +58,7 @@ abstract class Base_DB_MariaDB_Connection_PDO extends DB_SQL_Connection_PDO {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->connection = new PDO($connection_string, $username, $password, $attributes);
-				$this->link_id = self::$counter++;
+				$this->resource_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;

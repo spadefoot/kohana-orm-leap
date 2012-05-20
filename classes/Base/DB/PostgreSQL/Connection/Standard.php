@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-05-11
+ * @version 2012-05-20
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -52,14 +52,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			//if ( ! empty($this->data_source->charset)) {
 			//    $connection_string .= " options='--client_encoding=" . strtoupper($this->data_source->charset) . "'";
 			//}
-			$this->link_id = ($this->data_source->is_persistent())
+			$this->resource_id = ($this->data_source->is_persistent())
 				? @pg_pconnect($connection_string)
 				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
-			if ($this->link_id === FALSE) {
+			if ($this->resource_id === FALSE) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => pg_last_error()));
 			}
 			if ( ! empty($this->data_source->charset) && abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
-				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
+				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 			}
 		}
 	}
@@ -98,17 +98,17 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$resource_id = @pg_query($this->link_id, $sql);
-		if ($resource_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
+		$command_id = @pg_query($this->resource_id, $sql);
+		if ($command_id === FALSE) {
+			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		$records = array();
 		$size = 0;
-		while ($record = pg_fetch_assoc($resource_id)) {
+		while ($record = pg_fetch_assoc($command_id)) {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		@pg_free_result($resource_id);
+		@pg_free_result($command_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
@@ -128,12 +128,12 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$resource_id = @pg_query($this->link_id, $sql);
-		if ($resource_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
+		$command_id = @pg_query($this->resource_id, $sql);
+		if ($command_id === FALSE) {
+			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		$this->sql = $sql;
-		@pg_free_result($resource_id);
+		@pg_free_result($command_id);
 	}
 
 	/**
@@ -149,9 +149,9 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = pg_last_oid($this->link_id);
+		$insert_id = pg_last_oid($this->resource_id);
 		if ($insert_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->link_id)));
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		return $insert_id;
 	}
@@ -197,7 +197,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		//    $string = mb_convert_encoding($string, $this->data_source->charset);
 		//}
 
-		$string = "'" . pg_escape_string($this->link_id, $string) . "'";
+		$string = "'" . pg_escape_string($this->resource_id, $string) . "'";
 
 		if (is_string($escape) || ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -216,10 +216,10 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @pg_close($this->link_id)) {
+			if ( ! @pg_close($this->resource_id)) {
 				return FALSE;
 			}
-			$this->link_id = NULL;
+			$this->resource_id = NULL;
 		}
 		return TRUE;
 	}
@@ -232,8 +232,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @see http://www.php.net/manual/en/function.pg-close.php
 	 */
 	public function __destruct() {
-		if (is_resource($this->link_id)) {
-			@pg_close($this->link_id);
+		if (is_resource($this->resource_id)) {
+			@pg_close($this->resource_id);
 		}
 	}
 

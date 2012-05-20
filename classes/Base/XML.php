@@ -22,7 +22,7 @@
  *
  * @package Document
  * @category XML
- * @version 2012-01-18
+ * @version 2012-05-20
  *
  * @abstract
  */
@@ -61,7 +61,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
 	 */
 	public static function load($file) {
-		if (!is_string($file)) {
+		if ( ! is_string($file)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
 		}
 

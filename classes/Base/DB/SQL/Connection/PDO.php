@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-05-11
+ * @version 2012-05-20
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -82,13 +82,13 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$result = @$this->connection->query($sql);
-		if ($result === FALSE) {
+		$command = @$this->connection->query($sql);
+		if ($command === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $this->connection->errorInfo()));
 		}
 		$records = array();
 		$size = 0;
-		while ($record = $result->fetch(PDO::FETCH_ASSOC)) {
+		while ($record = $command->fetch(PDO::FETCH_ASSOC)) {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
@@ -109,8 +109,8 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$result = @$this->connection->exec($sql);
-		if ($result === FALSE) {
+		$command = @$this->connection->exec($sql);
+		if ($command === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $this->connection->errorInfo()));
 		}
 		$this->sql = $sql;

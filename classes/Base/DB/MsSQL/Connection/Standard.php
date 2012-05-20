@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-04-08
+ * @version 2012-05-20
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -49,14 +49,14 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 				}
 				$username = $this->data_source->username;
 				$password = $this->data_source->password;
-				$this->link_id = ($this->data_source->is_persistent())
+				$this->resource_id = ($this->data_source->is_persistent())
 					? mssql_pconnect($connection_string, $username, $password)
 					: mssql_connect($connection_string, $username, $password, TRUE);
 			}
 			catch (ErrorException $ex) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
-			$database = @mssql_select_db($this->data_source->database, $this->link_id);
+			$database = @mssql_select_db($this->data_source->database, $this->resource_id);
 			if ($database === FALSE) {
 				throw new Kohana_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => mssql_get_last_message()));
 			}
@@ -97,17 +97,17 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$resource_id = @mssql_query($sql, $this->link_id);
-		if ($resource_id === FALSE) {
+		$command_id = @mssql_query($sql, $this->resource_id);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mssql_get_last_message()));
 		}
 		$records = array();
 		$size = 0;
-		while ($record = mssql_fetch_assoc($resource_id)) {
+		while ($record = mssql_fetch_assoc($command_id)) {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		@mssql_free_result($resource_id);
+		@mssql_free_result($command_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
@@ -125,11 +125,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$resource_id = @mssql_query($sql, $this->link_id);
-		if ($resource_id === FALSE) {
+		$command_id = @mssql_query($sql, $this->resource_id);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mssql_get_last_message()));
 		}
-		@mssql_free_result($resource_id);
+		@mssql_free_result($command_id);
 		$this->sql = $sql;
 	}
 
@@ -191,10 +191,10 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @mssql_close($this->link_id)) {
+			if ( ! @mssql_close($this->resource_id)) {
 				return FALSE;
 			}
-			$this->link_id = NULL;
+			$this->resource_id = NULL;
 		}
 		return TRUE;
 	}
@@ -205,8 +205,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * @access public
 	 */
 	public function __destruct() {
-		if (is_resource($this->link_id)) {
-			@mssql_close($this->link_id);
+		if (is_resource($this->resource_id)) {
+			@mssql_close($this->resource_id);
 		}
 	}
 

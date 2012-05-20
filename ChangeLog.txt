@@ -1,5 +1,8 @@
 Change Log for LEAP ORM
 
+2012-05-20
+* Renamed some variables to better describe their usage in connection classes.
+
 2012-05-15
 * Fixed bug in Base_DB_ORM_Field_Decimal::validate().
 * Cleaned-up and improved Base_DB_ORM_Model::hash_code() (Issue #25 & #26).
