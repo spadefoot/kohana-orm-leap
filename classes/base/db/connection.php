@@ -152,10 +152,10 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	public abstract function get_last_insert_id();
 
 	/**
-	 * This function returns the connection's link identifier.
+	 * This function returns the connection's resource identifier.
 	 *
 	 * @access public
-	 * @return resource                         the link identifier
+	 * @return resource                         the resource identifier
 	 * @throws Kohana_Database_Exception        indicates that no connection has been
 	 *                                          established
 	 */
