@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-04-08
+ * @version 2012-05-20
  *
  * @see http://www.php.net/manual/en/ref.pdo-sqlite.php
  *
@@ -51,7 +51,7 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->connection = new PDO($connection_string, '', '', $attributes);
-				$this->link_id = self::$counter++;
+				$this->resource_id = self::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;

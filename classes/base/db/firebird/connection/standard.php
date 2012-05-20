@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-04-08
+ * @version 2012-05-20
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -66,16 +66,16 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$password = $this->data_source->password;
 			if ( ! empty($this->data_source->charset)) {
 				$charset = strtoupper($this->data_source->charset);
-				$this->link_id = ($this->data_source->is_persistent())
+				$this->resource_id = ($this->data_source->is_persistent())
 					? @ibase_pconnect($connection_string, $username, $password, $charset)
 					: @ibase_connect($connection_string, $username, $password, $charset);
 			}
 			else {
-				$this->link_id = ($this->data_source->is_persistent())
+				$this->resource_id = ($this->data_source->is_persistent())
 					? @ibase_pconnect($connection_string, $username, $password)
 					: @ibase_connect($connection_string, $username, $password);
 			}
-			if ($this->link_id === FALSE) {
+			if ($this->resource_id === FALSE) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => ibase_errmsg()));
 			}
 		}
@@ -91,8 +91,8 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
-		$resource_id = @ibase_trans($this->link_id, IBASE_READ | IBASE_WRITE);
-		if ($resource_id === FALSE) {
+		$command_id = @ibase_trans($this->resource_id, IBASE_READ | IBASE_WRITE);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':sql' => ibase_errmsg()));
 		}
 	}
@@ -116,17 +116,17 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$resource_id = @ibase_query($this->link_id, $sql);
-		if ($resource_id === FALSE) {
+		$command_id = @ibase_query($this->resource_id, $sql);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 		$records = array();
 		$size = 0;
-		while ($record = ibase_fetch_assoc($resource_id)) {
+		while ($record = ibase_fetch_assoc($command_id)) {
 			$records[] = DB_Connection::type_cast($type, $record);
 			$size++;
 		}
-		@ibase_free_result($resource_id);
+		@ibase_free_result($command_id);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
@@ -144,9 +144,9 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$stmt = ibase_prepare($this->link_id, $sql);
-		$resource_id = @ibase_execute($stmt);
-		if ($resource_id === FALSE) {
+		$stmt = ibase_prepare($this->resource_id, $sql);
+		$command_id = @ibase_execute($stmt);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 		$this->sql = $sql;
@@ -191,8 +191,8 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
-		$resource_id = @ibase_rollback($this->link_id);
-		if ($resource_id === FALSE) {
+		$command_id = @ibase_rollback($this->resource_id);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 	}
@@ -207,8 +207,8 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
-		$resource_id = @ibase_commit($this->link_id);
-		if ($resource_id === FALSE) {
+		$command_id = @ibase_commit($this->resource_id);
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 	}
@@ -221,10 +221,10 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @ibase_close($this->link_id)) {
+			if ( ! @ibase_close($this->resource_id)) {
 				return FALSE;
 			}
-			$this->link_id = NULL;
+			$this->resource_id = NULL;
 		}
 		return TRUE;
 	}
@@ -235,8 +235,8 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * @access public
 	 */
 	public function __destruct() {
-		if (is_resource($this->link_id)) {
-			@ibase_close($this->link_id);
+		if (is_resource($this->resource_id)) {
+			@ibase_close($this->resource_id);
 		}
 	}
 
