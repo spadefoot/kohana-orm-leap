@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-10
+ * @version 2012-05-20
  *
  * @abstract
  */
@@ -135,7 +135,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 		if (isset($settings['dialect'])) {
 			$this->settings['dialect'] = (string) $settings['dialect'];
 		}
-		else if (isset($settings['type'])) {
+		else if (isset($settings['type'])) { // deprecated
 			$this->settings['dialect'] = (string) $settings['type'];
 		}
 		else {
@@ -162,7 +162,9 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			? (string) $settings['connection']['port']
 			: '';
 
-		$this->settings['type'] = $this->settings['dialect'];
+		$this->settings['type'] = (isset($settings['type']))
+			? (string) $this->settings['type']
+			: 'sql'; // e.g. sql, nosql, ldap
 
 		$this->settings['username'] = (isset($settings['connection']['username']))
 			? (string) $settings['connection']['username']
