@@ -2,6 +2,7 @@ Change Log for LEAP ORM
 
 2012-05-20
 * Renamed some variables to better describe their usage in connection classes.
+* Changed how "type" property is handled in data source.
 
 2012-05-15
 * Fixed bug in Base_DB_ORM_Field_Decimal::validate().

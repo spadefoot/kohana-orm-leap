@@ -3,10 +3,10 @@
 $config = array();
 
 $config['leap'] = array(
-    'group' => 'default',
-    'lifetime' => 43200,
-    'name' => 'session_leap',
-    'table' => 'Session',
+	'group'         => 'default',       // string
+	'lifetime'      => 43200,           // integer
+	'name'          => 'session_leap',  // string
+	'table'         => 'Session',       // string
 );
 
 return $config;

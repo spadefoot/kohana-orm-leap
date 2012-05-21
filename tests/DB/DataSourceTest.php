@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB
- * @version 2011-12-26
+ * @version 2012-05-20
  *
  * @group spadefoot.leap
  */
@@ -34,7 +34,8 @@ class DB_DataSourceTest extends Unittest_Testcase {
 	 */
 	public function provider_constructor() {
 		$expected = array(
-			'type' => 'mysql',
+			'type' => 'sql',
+			'dialect' => 'mysql',
 			'driver' => 'standard',
 			'connection' => array(
 				'persistent' => FALSE,
@@ -77,7 +78,7 @@ class DB_DataSourceTest extends Unittest_Testcase {
 		$this->assertRegExp('/^(database|unique_id)\.[a-zA-Z0-9_]+$/', $source->id, 'Failed when testing "id" property.');
 		$this->assertSame($expected['connection']['password'], $source->password, 'Failed when testing "password" property.');
 		$this->assertSame($expected['connection']['port'], $source->port, 'Failed when testing "port" property.');
-		$this->assertSame($expected['type'], $source->dialect, 'Failed when testing "dialect" property.');
+		$this->assertSame($expected['dialect'], $source->dialect, 'Failed when testing "dialect" property.');
 		$this->assertSame($expected['type'], $source->type, 'Failed when testing "type" property.');
 		$this->assertSame($expected['connection']['username'], $source->username, 'Failed when testing "username" property.');
 		$this->assertSame($expected['connection']['persistent'], $source->is_persistent(), 'Failed when testing is_persistent().');
