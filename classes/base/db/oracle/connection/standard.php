@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -38,12 +38,11 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	protected $execution_mode;
 
 	/**
-	 * This function allows for the ability to open a connection using
-	 * the configurations provided.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
-	 *                                          the database connection
+	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/function.oci-connect.php
 	 * @see http://download.oracle.com/docs/cd/E11882_01/network.112/e10836/naming.htm
@@ -242,7 +241,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function allows for the ability to close the connection that was opened.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @return boolean                          whether an open connection was closed
@@ -260,7 +259,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This destructor will ensure that the connection is closed.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 *

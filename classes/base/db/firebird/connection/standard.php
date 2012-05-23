@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -43,12 +43,11 @@
 abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function allows for the ability to open a connection using
-	 * the configurations provided.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
-	 *                                          the database connection
+	 *                                          opening the connection
 	 *
 	 * @see http://www.destructor.de/firebird/charsets.htm
 	 */
@@ -214,7 +213,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	}
 
 	/**
-	 * This function allows for the ability to close the connection that was opened.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @return boolean                          whether an open connection was closed
@@ -230,7 +229,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	}
 
 	/**
-	 * This destructor will ensure that the connection is closed.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 */

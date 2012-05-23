@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a shortcut way to get the various database builder class.
+ * This class provides a shortcut way to get the appropriate SQL builder class.
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-07
+ * @version 2012-05-20
  */
 class DB_SQL extends Base_DB_SQL {}
 ?>
