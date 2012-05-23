@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-29
+ * @version 2012-05-22
  *
  * @abstract
  */
@@ -45,7 +45,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][0]);
 
-		if (($unit = Kohana::$config->load($group)) === NULL) {
+		if (($unit = Kohana::config($group)) === NULL) {
 			throw new Kohana_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
@@ -53,7 +53,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][1]);
 
-		if (($unit = Kohana::$config->load($group)) === NULL) {
+		if (($unit = Kohana::config($group)) === NULL) {
 			throw new Kohana_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 

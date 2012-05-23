@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @abstract
  */
@@ -46,14 +46,14 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	public function __construct($config) {
 		if (empty($config)) {
 			$id = 'database.default';
-			if (($config = Kohana::$config->load($id)) === NULL) {
+			if (($config = Kohana::config($id)) === NULL) {
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
 		}
 		else if (is_string($config)) {
 			$id = 'database.' . $config;
-			if (($config = Kohana::$config->load($id)) === NULL) {
+			if (($config = Kohana::config($id)) === NULL) {
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
