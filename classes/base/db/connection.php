@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @abstract
  */
@@ -70,13 +70,11 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	}
 
 	/**
-	 * This function allows for the ability to open a connection using the data source
-	 * provided.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @abstract
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
-	 *                                          the database connection
+	 *                                          opening the connection
 	 */
 	public abstract function open();
 
