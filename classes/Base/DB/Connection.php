@@ -208,7 +208,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	public abstract function quote($string, $escape = NULL);
 
 	/**
-	 * This function allows for the ability to close the connection that was opened.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @abstract
@@ -217,7 +217,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	public abstract function close();
 
 	/**
-	 * This destructor will ensure that the connection is closed.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @abstract

@@ -17,11 +17,11 @@
  */
 
 /**
- * This interface provides the contract for an expression class.
- * 
+ * This interface provides the contract for a class representing an SQL statement.
+ *
  * @package Leap
  * @category SQL
- * @version 2011-06-15
+ * @version 2012-05-22
  */
 interface Base_DB_SQL_Statement {
 
