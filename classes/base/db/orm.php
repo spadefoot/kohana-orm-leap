@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a shortcut way to get the various database builder class.
+ * This class provides a shortcut way to get the appropriate ORM builder class.
  *
  * @package Leap
  * @category ORM
- * @version 2012-01-20
+ * @version 2012-05-20
  *
  * @abstract
  */

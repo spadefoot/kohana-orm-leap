@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -41,12 +41,11 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	protected $insert_id = FALSE;
 
 	/**
-	 * This function allows for the ability to open a connection using
-	 * the configurations provided.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
-	 *                                          the database connection
+	 *                                          opening the connection
 	 *
 	 * @see http://wiki.drizzle.org/MySQL_Differences
 	 */
@@ -213,7 +212,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function allows for the ability to close the connection that was opened.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @return boolean                          whether an open connection was closed
@@ -229,7 +228,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This destructor will ensure that the connection is closed.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 */

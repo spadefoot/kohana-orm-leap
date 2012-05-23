@@ -21,7 +21,7 @@
  *
  * @package Document
  * @category CSV
- * @version 2012-05-10
+ * @version 2012-05-20
  *
  * @abstract
  */
@@ -126,7 +126,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	}
 
 	/**
-	 * This function provides read-only access to certain properties.
+	 * This function gets the value of the specified property.
 	 *
 	 * @access public
 	 * @param string $key                         	the name of the property

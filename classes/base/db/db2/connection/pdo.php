@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
  *
@@ -30,12 +30,11 @@
 abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 
 	/**
-	 * This function allows for the ability to open a connection using
-	 * the configurations provided.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
-	 *                                          the database connection
+	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
 	 * @see http://www.zinox.com/node/132
