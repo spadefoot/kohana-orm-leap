@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-05-20
+ * @version 2012-05-22
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -30,12 +30,11 @@
 abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function allows for the ability to open a connection using
-	 * the configurations provided.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @throws Kohana_Database_Exception        indicates that there is problem with
-	 *                                          the database connection
+	 *                                          opening the connection
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
@@ -210,7 +209,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	}
 
 	/**
-	 * This function allows for the ability to close the connection that was opened.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @return boolean                          whether an open connection was closed
@@ -226,7 +225,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	}
 
 	/**
-	 * This destructor will ensure that the connection is closed.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 */
