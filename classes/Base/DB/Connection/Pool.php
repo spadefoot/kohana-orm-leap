@@ -43,13 +43,12 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	protected static $instance = NULL;
 
 	/**
-	 * This variable stores the connection pool.
+	 * This variable stores the pooled connections.
 	 *
 	 * @access protected
-	 * @static
 	 * @var array
 	 */
-	protected static $pool = array();
+	protected $pool = array();
 
 	/**
 	 * This variable stores the lookup table.
@@ -136,9 +135,9 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
 			$source = new DB_DataSource($source);
 		}
-		if (isset(self::$pool[$source->id]) && ! empty(self::$pool[$source->id])) {
+		if (isset($this->pool[$source->id]) && ! empty($this->pool[$source->id])) {
 			if ($new) {
-				foreach (self::$pool[$source->id] as $connection) {
+				foreach ($this->pool[$source->id] as $connection) {
 					if ( ! $connection->is_connected()) {
 						$connection->open();
 						return $connection;
@@ -146,13 +145,13 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 				}
 			}
 			else {
-				foreach (self::$pool[$source->id] as $connection) {
+				foreach ($this->pool[$source->id] as $connection) {
 					if ($connection->is_connected()) {
 						return $connection;
 					}
 				}
-				$connection = end(self::$pool[$source->id]);
-				reset(self::$pool[$source->id]);
+				$connection = end($this->pool[$source->id]);
+				reset($this->pool[$source->id]);
 				$connection->open();
 				return $connection;
 			}
@@ -162,7 +161,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 		}
 		$connection = DB_Connection::factory($source);
 		$connection_id = spl_object_hash($connection);
-		self::$pool[$source->id][$connection_id] = $connection;
+		$this->pool[$source->id][$connection_id] = $connection;
 		$this->lookup[$connection_id] = $source->id;
 		return $connection;
 	}
@@ -179,13 +178,13 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 			$connection_id = spl_object_hash($connection);
 			if (isset($this->lookup[$connection_id])) {
 				$source_id = $this->lookup[$connection_id];
-				unset(self::$pool[$source_id][$connection_id]);
+				unset($this->pool[$source_id][$connection_id]);
 				unset($this->lookup[$connection_id]);
 			}
 		}
 		else if ( ! is_null($this->connection_id)) {
 			$source_id = $this->lookup[$this->connection_id];
-			unset(self::$pool[$source_id][$this->connection_id]);
+			unset($this->pool[$source_id][$this->connection_id]);
 			unset($this->lookup[$this->connection_id]);
 		}
 	}
@@ -193,16 +192,17 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This function is automatically called at the time of shutdown and releases all
+	 * This function is automatically called at the time of shutdown to release all
 	 * connections within the connection pool.
 	 *
 	 * @access public
 	 * @static
 	 */
 	public static function autorelease() {
-		$connections = self::$pool;
+		$instance = DB_Connection_Pool::instance();
+		$connections = $instance->pool;
 		foreach ($connections as $connection) {
-			DB_Connection_Pool::instance()->release($connection);
+			$instance->release($connection);
 		}
 	}
 
