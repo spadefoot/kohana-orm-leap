@@ -1,5 +1,8 @@
 Change Log for LEAP ORM
 
+2012-05-25
+* Reworked the internal workings of the connection pool, adding the ability to create new connections and to limit the number of connections.
+
 2012-05-20
 * Renamed some variables to better describe their usage in connection classes.
 * Changed how "type" property is handled in data source.

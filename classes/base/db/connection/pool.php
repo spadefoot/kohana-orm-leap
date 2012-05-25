@@ -21,11 +21,13 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-09
+ * @version 2012-05-25
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
  * @see http://sourcemaking.com/design_patterns/object_pool
+ * @see http://www.snaq.net/java/DBPool/
+ * @see http://www.koders.com/java/fid4840DD8CBE361AA355537C8C9332D92F226F19C1.aspx?s=Q
  *
  * @abstract
  */
@@ -50,19 +52,29 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	protected static $pool = array();
 
 	/**
-	* This variable stores the id of the current connection.
-	*
-	* @access protected
-	* @var string
-	*/
-	protected $id = NULL;
+	 * This variable stores the lookup table.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $lookup = array();
+
+	/**
+	 * This variable stores the settings for the connection pool.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $settings = array();
 
 	/**
 	 * This constructor creates an instance of this class.
 	 *
 	 * @access protected
 	 */
-	protected function __construct() {}
+	protected function __construct() {
+		$this->settings['max_size'] = PHP_INT_MAX; // the maximum number of connections that may be held in the pool
+	}
 
 	/**
 	 * This function prevents the class from being cloned.
@@ -72,57 +84,125 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	protected function __clone() {}
 
 	/**
-	 * This function returns the appropriate connection from the pool.
+	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
-	 * @param DB_DataSource $source             the data source configurations
-	 * @return DB_Connection			        the appropriate connection
+	 * @param string $key          	                the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
 	 */
-	public function get_connection($source = 'default') {
-		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
-			$source = new DB_DataSource($source);
+	public function __get($key) {
+		switch ($key) {
+			case 'max_size':
+				return $this->settings[$key];
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+			break;
 		}
-		$id = $source->id;
-		if ($id != $this->id) {
-			if ( ! is_null($this->id)) {
-				self::$pool[$this->id]->close();
-			}
-			if ( ! isset(self::$pool[$id]))	{
-				self::$pool[$id] = DB_Connection::factory($source);
-			}
-			$this->id = $id;
-		}
-		if ( ! self::$pool[$id]->is_connected()) {
-			self::$pool[$id]->open();
-		}
-		return self::$pool[$id];
 	}
 
 	/**
-	* This function frees the current connection by closing it.
-	*
-	* @access public
-	*/
-	public function release() {
-		if ( ! is_null($this->id)) {
-			self::$pool[$this->id]->close();
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'max_size':
+				$this->settings[$key] = abs( (int) $value);
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+			break;
+		}
+	}
+
+	/**
+	 * This function returns the appropriate connection from the pool. When there are
+	 * multiple connections created from the same data source, the last opened connection
+	 * will be used when $new is set to "FALSE."
+	 *
+	 * @access public
+	 * @param DB_DataSource $source        		the data source configurations
+	 * @param boolean $new						whether to create a new connection
+	 * @return DB_Connection			        the appropriate connection
+	 */
+	public function get_connection($source = 'default', $new = FALSE) {
+		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
+			$source = new DB_DataSource($source);
+		}
+		if (isset(self::$pool[$source->id]) && ! empty(self::$pool[$source->id])) {
+			if ($new) {
+				foreach (self::$pool[$source->id] as $connection) {
+					if ( ! $connection->is_connected()) {
+						$connection->open();
+						return $connection;
+					}
+				}
+			}
+			else {
+				foreach (self::$pool[$source->id] as $connection) {
+					if ($connection->is_connected()) {
+						return $connection;
+					}
+				}
+				$connection = end(self::$pool[$source->id]);
+				reset(self::$pool[$source->id]);
+				$connection->open();
+				return $connection;
+			}
+		}
+		if (count($this->lookup) >= $this->settings['max_size']) {
+			throw new Kohana_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
+		}
+		$connection = DB_Connection::factory($source);
+		$connection_id = spl_object_hash($connection);
+		self::$pool[$source->id][$connection_id] = $connection;
+		$this->lookup[$connection_id] = $source->id;
+		return $connection;
+	}
+
+	/**
+	 * This function releases a connection within the connection pool.  A connection
+	 * should close via its destructor when unset.
+	 *
+	 * @access public
+	 * @param DB_Connection $connection				the connection to be released
+	 */
+	public function release(DB_Connection $connection = NULL) {
+		if ( ! is_null($connection)) {
+			$connection_id = spl_object_hash($connection);
+			if (isset($this->lookup[$connection_id])) {
+				$source_id = $this->lookup[$connection_id];
+				unset(self::$pool[$source_id][$connection_id]);
+				unset($this->lookup[$connection_id]);
+			}
+		}
+		else if ( ! is_null($this->connection_id)) {
+			$source_id = $this->lookup[$this->connection_id];
+			unset(self::$pool[$source_id][$this->connection_id]);
+			unset($this->lookup[$this->connection_id]);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This function is automatically called at the time of shutdown and closes any
-	 * open connections.
+	 * This function is automatically called at the time of shutdown and releases all
+	 * connections within the connection pool.
 	 *
 	 * @access public
 	 * @static
 	 */
 	public static function autorelease() {
-		foreach (self::$pool as $connection) {
-			if ($connection->is_connected()) {
-				$connection->close();
-			}
+		$connections = self::$pool;
+		foreach ($connections as $connection) {
+			DB_Connection_Pool::instance()->release($connection);
 		}
 	}
 
