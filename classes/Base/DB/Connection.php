@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-22
+ * @version 2012-05-25
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access protected
 	 * @var string
 	 */
-	protected $cache_key = NULL;
+	protected $cache_key;
 
 	/**
 	 * This variable stores the connection configurations.
@@ -41,7 +41,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access protected
 	 * @var DB_DataSource
 	 */
-	protected $data_source = NULL;
+	protected $data_source;
 
 	/**
 	 * This variable is used to store the connection's resource identifier.
@@ -49,7 +49,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access protected
 	 * @var resource
 	 */
-	protected $resource_id = NULL;
+	protected $resource_id;
 
 	/**
 	 * This variable stores the last SQL statement executed.
@@ -57,7 +57,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access protected
 	 * @var string
 	 */
-	protected $sql = '';
+	protected $sql;
 
 	/**
 	 * This function initializes the class with the specified data source.
@@ -66,7 +66,28 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @param DB_DataSource $data_source	the connection's configurations
 	 */
 	public function __construct(DB_DataSource $data_source) {
+		$this->cache_key = NULL;
 		$this->data_source = $data_source;
+		$this->resource_id = NULL;
+		$this->sql = '';
+	}
+
+	/**
+	 * This function returns the value associated with the specified property.
+	 *
+	 * @access public
+	 * @param string $key							the name of the property
+	 * @return mixed								the value of the property
+	 * @throws Kohana_InvalidProperty_Exception		indicates that the specified property is
+	 * 												either inaccessible or undefined
+	 */
+	public function __get($key) {
+		switch ($key) {
+			case 'data_source':
+				return new $this->data_source;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		}
 	}
 
 	/**
