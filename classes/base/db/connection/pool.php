@@ -59,6 +59,14 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	protected $lookup = array();
 
 	/**
+	 * This variable stores the id of the current connection.
+	 *
+ 	 * @access protected
+ 	 * @var string
+	 */
+	protected $connection_id = NULL;
+
+	/**
 	 * This variable stores the settings for the connection pool.
 	 *
 	 * @access protected
@@ -140,6 +148,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 				foreach ($this->pool[$source->id] as $connection) {
 					if ( ! $connection->is_connected()) {
 						$connection->open();
+						$this->connection_id = spl_object_hash($connection);
 						return $connection;
 					}
 				}
@@ -147,12 +156,14 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 			else {
 				foreach ($this->pool[$source->id] as $connection) {
 					if ($connection->is_connected()) {
+						$this->connection_id = spl_object_hash($connection);
 						return $connection;
 					}
 				}
 				$connection = end($this->pool[$source->id]);
 				reset($this->pool[$source->id]);
 				$connection->open();
+				$this->connection_id = spl_object_hash($connection);
 				return $connection;
 			}
 		}
@@ -160,9 +171,9 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 			throw new Kohana_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
 		}
 		$connection = DB_Connection::factory($source);
-		$connection_id = spl_object_hash($connection);
-		$this->pool[$source->id][$connection_id] = $connection;
-		$this->lookup[$connection_id] = $source->id;
+		$this->connection_id = spl_object_hash($connection);
+		$this->pool[$source->id][$this->connection_id] = $connection;
+		$this->lookup[$this->connection_id] = $source->id;
 		return $connection;
 	}
 
@@ -180,12 +191,16 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 				$source_id = $this->lookup[$connection_id];
 				unset($this->pool[$source_id][$connection_id]);
 				unset($this->lookup[$connection_id]);
+				if ($connection_id == $this->connection_id) {
+					$this->connection_id = NULL;
+				}
 			}
 		}
 		else if ( ! is_null($this->connection_id)) {
 			$source_id = $this->lookup[$this->connection_id];
 			unset($this->pool[$source_id][$this->connection_id]);
 			unset($this->lookup[$this->connection_id]);
+			$this->connection_id = NULL;
 		}
 	}
 
