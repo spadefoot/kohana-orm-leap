@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-05-22
+ * @version 2012-05-25
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -197,10 +197,6 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
-
-		//if (function_exists('mb_convert_encoding')) {
-		//    $string = mb_convert_encoding($string, $this->data_source->charset);
-		//}
 
 		$string = "'" . drizzle_escape_string($this->resource_id, $string) . "'";
 
