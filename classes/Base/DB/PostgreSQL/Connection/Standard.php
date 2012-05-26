@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-05-22
+ * @version 2012-05-25
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -191,10 +191,6 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
-
-		//if (function_exists('mb_convert_encoding')) {
-		//    $string = mb_convert_encoding($string, $this->data_source->charset);
-		//}
 
 		$string = "'" . pg_escape_string($this->resource_id, $string) . "'";
 

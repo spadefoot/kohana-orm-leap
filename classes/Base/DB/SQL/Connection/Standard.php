@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-11
+ * @version 2012-05-25
  *
  * @abstract
  */
@@ -46,10 +46,6 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
-
-        //if (function_exists('mb_convert_encoding')) {
-        //    $string = mb_convert_encoding($string, $this->data_source->charset);
-        //}
 
 		$removables = array(
 			'/%0[0-8bcef]/',
