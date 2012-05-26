@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-05-20
+ * @version 2012-05-25
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -197,10 +197,6 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
-
-        //if (function_exists('mb_convert_encoding')) {
-        //    $string = mb_convert_encoding($string, $this->data_source->charset);
-        //}
 
 		$string = $this->connection->quote($string);
 
