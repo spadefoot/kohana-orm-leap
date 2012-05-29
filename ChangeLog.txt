@@ -1,5 +1,9 @@
 Change Log for LEAP ORM
 
+2012-05-25
+* Reworked the internal workings of the connection pool, adding the ability to create new connections and to limit the number of connections.
+* Removed some unneeded, commented code.
+
 2012-05-20
 * Renamed some variables to better describe their usage in connection classes.
 * Changed how "type" property is handled in data source.
@@ -149,7 +153,7 @@ Change Log for LEAP ORM
 2011-12-31
 * Started to rework schema classes.
 * Adding a new plugin for Drizzle.
-* Fixed class name captilization in Base_DB_MsSQL_Update_Builder and DB_MsSQL_Update_Builder.
+* Fixed class name capitalization in Base_DB_MsSQL_Update_Builder and DB_MsSQL_Update_Builder.
 * Fixed a copy/paste bug in Base_DB_SQLite_Expression::prepare_identifier($expr).
 * Updated inline documentation.
 
@@ -207,7 +211,7 @@ Change Log for LEAP ORM
 * Added logic to increment/decrement size in Base_DB_ResultSet::offsetSet() and Base_DB_ResultSet::offsetUnset().
 * Standardized some code in accordance with Kohana's Conventions and Coding Style.
 	- Replaced all { } with {}.
-	- Standandized type casts.
+	- Standardized type casts.
 	- Added space around !.
 * Changed connection classes from std to standard.
 * Added MySQLi driver classes for MySQL.
