@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-25
+ * @version 2012-05-26
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -61,8 +61,8 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	/**
 	 * This variable stores the id of the current connection.
 	 *
- 	 * @access protected
- 	 * @var string
+	 * @access protected
+	 * @var string
 	 */
 	protected $connection_id = NULL;
 
@@ -132,7 +132,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	/**
 	 * This function returns the appropriate connection from the pool. When there are
 	 * multiple connections created from the same data source, the last opened connection
-	 * will be used when $new is set to "FALSE."
+	 * will be returned when $new is set to "FALSE."
 	 *
 	 * @access public
 	 * @param DB_DataSource $source        		the data source configurations
