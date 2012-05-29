@@ -163,7 +163,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			: '';
 
 		$this->settings['type'] = (isset($settings['type']))
-			? (string) $this->settings['type']
+			? (string) $settings['type']
 			: 'sql'; // e.g. sql, nosql, ldap
 
 		$this->settings['username'] = (isset($settings['connection']['username']))
