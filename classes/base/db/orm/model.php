@@ -76,6 +76,31 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		$this->metadata['loaded'] = FALSE;
 		$this->metadata['saved'] = NULL;
 	}
+	
+	/**
+	 * Magic method, determines if a property is set.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the property
+	 * @return boolean
+	 */
+	public function __isset($name) {
+		if ($this->is_field($name)) {
+			return true;
+		}
+		else if ($this->is_alias($name)) {
+			return true;
+		}
+		else if ($this->is_adaptor($name)) {
+			return true;
+		}
+		else if ($this->is_relation($name)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	/**
 	 * This function returns the value associated with the specified property.
