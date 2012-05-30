@@ -126,6 +126,8 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @access public
 	 * @param DB_Connection $connection				the connection to be added
 	 * @return boolean								whether the connection was added
+	 * @throws Kohana_Database_Exception			indicates that no new connections
+	 *												can be added
 	 */
 	public function add_connection(DB_Connection $connection) {
 		if ( ! is_null($connection)) {
@@ -160,9 +162,11 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * will be returned when $new is set to "FALSE."
 	 *
 	 * @access public
-	 * @param DB_DataSource $source        		the data source configurations
-	 * @param boolean $new						whether to create a new connection
-	 * @return DB_Connection			        the appropriate connection
+	 * @param DB_DataSource $source        			the data source configurations
+	 * @param boolean $new							whether to create a new connection
+	 * @return DB_Connection			        	the appropriate connection
+	 * @throws Kohana_Database_Exception			indicates that no new connections
+	 *												can be added
 	 */
 	public function get_connection($source = 'default', $new = FALSE) {
 		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
@@ -262,7 +266,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 *
 	 * @access public
 	 * @static
-	 * @return DB_Connection_Pool               a singleton instance of this class
+	 * @return DB_Connection_Pool               	a singleton instance of this class
 	 */
 	public static function instance() {
 		if (is_null(self::$instance)) {
