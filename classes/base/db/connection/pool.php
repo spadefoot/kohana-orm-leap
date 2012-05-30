@@ -31,7 +31,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Pool extends Kohana_Object {
+abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countable {
 
 	/**
 	 * This variable stores the id of the current connection.
@@ -121,6 +121,40 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	}
 
 	/**
+	 * This function adds an existing connection to the connection pool.
+	 *
+	 * @access public
+	 * @param DB_Connection $connection				the connection to be added
+	 * @return boolean								whether the connection was added
+	 */
+	public function add_connection(DB_Connection $connection) {
+		if ( ! is_null($connection)) {
+			if ($this->count() >= $this->settings['max_size']) {
+				throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
+			}
+			$this->connection_id = spl_object_hash($connection);
+			if ( ! isset($this->lookup[$this->connection_id])) {
+				$source_id = $connection->data_source->id;
+				$this->pool[$source_id][$this->connection_id] = $connection;
+				$this->lookup[$this->connection_id] = $source_id;
+			}
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	/**
+	 * This function returns the number of connections in the connection pool.
+	 *
+	 * @access public
+	 * @return integer								the number of connections in the
+	 *												connection pool
+	 */
+	public function count() {
+		return count($this->lookup);
+	}
+
+	/**
 	 * This function returns the appropriate connection from the pool. When there are
 	 * multiple connections created from the same data source, the last opened connection
 	 * will be returned when $new is set to "FALSE."
@@ -161,7 +195,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 				return $connection;
 			}
 		}
-		if (count($this->lookup) >= $this->settings['max_size']) {
+		if ($this->count() >= $this->settings['max_size']) {
 			throw new Kohana_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
 		}
 		$connection = DB_Connection::factory($source);
