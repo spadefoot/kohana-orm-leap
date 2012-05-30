@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-05-15
+ * @version 2012-05-28
  *
  * @abstract
  */
@@ -78,28 +78,17 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 	
 	/**
-	 * Magic method, determines if a property is set.
+	 * This function returns whether a property is set.
 	 *
 	 * @access public
 	 * @param string $name                          the name of the property
-	 * @return boolean
+	 * @return boolean								whether the property is set
 	 */
 	public function __isset($name) {
-		if ($this->is_field($name)) {
-			return true;
+		if ($this->is_field($name) || $this->is_alias($name) || $this->is_adaptor($name) || $this->is_relation($name)) {
+			return TRUE;
 		}
-		else if ($this->is_alias($name)) {
-			return true;
-		}
-		else if ($this->is_adaptor($name)) {
-			return true;
-		}
-		else if ($this->is_relation($name)) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return FALSE;
 	}
 
 	/**
