@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-26
+ * @version 2012-05-29
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -154,12 +154,15 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 				}
 			}
 			else {
-				foreach ($this->pool[$source->id] as $connection) {
+				$conection = end($this->pool[$source->id]);
+				do {
 					if ($connection->is_connected()) {
+						reset($this->pool[$source->id]);
 						$this->connection_id = spl_object_hash($connection);
 						return $connection;
 					}
 				}
+				while ($conection = prev($this->pool[$source->id]));
 				$connection = end($this->pool[$source->id]);
 				reset($this->pool[$source->id]);
 				$connection->open();
