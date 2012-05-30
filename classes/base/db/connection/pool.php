@@ -130,7 +130,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	public function add_connection(DB_Connection $connection) {
 		if ( ! is_null($connection)) {
 			if ($this->count() >= $this->settings['max_size']) {
-				throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
+				throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
 			}
 			$this->connection_id = spl_object_hash($connection);
 			if ( ! isset($this->lookup[$this->connection_id])) {
