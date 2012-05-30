@@ -124,19 +124,19 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * This function adds an existing connection to the connection pool.
 	 *
 	 * @access public
-	 * @param DB_Connection $connection				the connection to be added
-	 * @return boolean								whether the connection was added
-	 * @throws Kohana_Database_Exception			indicates that no new connections
-	 *												can be added
+	 * @param DB_Connection $connection             the connection to be added
+	 * @return boolean                              whether the connection was added
+	 * @throws Kohana_Database_Exception            indicates that no new connections
+	 *                                              can be added
 	 */
 	public function add_connection(DB_Connection $connection) {
 		if ( ! is_null($connection)) {
-			if ($this->count() >= $this->settings['max_size']) {
-				throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
-			}
 			$this->connection_id = spl_object_hash($connection);
 			if ( ! isset($this->lookup[$this->connection_id])) {
-				$source_id = $connection->data_source->id;
+                if ($this->count() >= $this->settings['max_size']) {
+                    throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
+                }
+                $source_id = $connection->data_source->id;
 				$this->pool[$source_id][$this->connection_id] = $connection;
 				$this->lookup[$this->connection_id] = $source_id;
 			}
@@ -162,11 +162,11 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * will be returned when $new is set to "FALSE."
 	 *
 	 * @access public
-	 * @param DB_DataSource $source        			the data source configurations
-	 * @param boolean $new							whether to create a new connection
-	 * @return DB_Connection			        	the appropriate connection
-	 * @throws Kohana_Database_Exception			indicates that no new connections
-	 *												can be added
+	 * @param DB_DataSource $source                 the data source configurations
+	 * @param boolean $new                          whether to create a new connection
+	 * @return DB_Connection                        the appropriate connection
+	 * @throws Kohana_Database_Exception            indicates that no new connections
+	 *                                              can be added
 	 */
 	public function get_connection($source = 'default', $new = FALSE) {
 		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
@@ -214,7 +214,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * should close via its destructor when unset.
 	 *
 	 * @access public
-	 * @param DB_Connection $connection				the connection to be released
+	 * @param DB_Connection $connection             the connection to be released
 	 */
 	public function release(DB_Connection $connection = NULL) {
 		if ( ! is_null($connection)) {
