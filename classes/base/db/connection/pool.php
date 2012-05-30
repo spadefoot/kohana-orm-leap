@@ -34,21 +34,12 @@
 abstract class Base_DB_Connection_Pool extends Kohana_Object {
 
 	/**
-	 * This variable stores a singleton instance of this class.
+	 * This variable stores the id of the current connection.
 	 *
 	 * @access protected
-	 * @static
-	 * @var DB_Connection_Pool
+	 * @var string
 	 */
-	protected static $instance = NULL;
-
-	/**
-	 * This variable stores the pooled connections.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $pool = array();
+	protected $connection_id = NULL;
 
 	/**
 	 * This variable stores the lookup table.
@@ -59,12 +50,12 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	protected $lookup = array();
 
 	/**
-	 * This variable stores the id of the current connection.
+	 * This variable stores the pooled connections.
 	 *
 	 * @access protected
-	 * @var string
+	 * @var array
 	 */
-	protected $connection_id = NULL;
+	protected $pool = array();
 
 	/**
 	 * This variable stores the settings for the connection pool.
@@ -210,6 +201,15 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * This variable stores a singleton instance of this class.
+	 *
+	 * @access protected
+	 * @static
+	 * @var DB_Connection_Pool
+	 */
+	protected static $instance = NULL;
+
+	/**
 	 * This function is automatically called at the time of shutdown to release all
 	 * connections within the connection pool.
 	 *
@@ -218,10 +218,9 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 	 */
 	public static function autorelease() {
 		$instance = DB_Connection_Pool::instance();
-		$connections = $instance->pool;
-		foreach ($connections as $connection) {
-			$instance->release($connection);
-		}
+		$instance->connection_id = NULL;
+		$instance->lookup = array();
+		$instance->pool = array();
 	}
 
 	/**
