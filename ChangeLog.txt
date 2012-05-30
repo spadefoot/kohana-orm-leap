@@ -1,5 +1,9 @@
 Change Log for LEAP ORM
 
+2012-05-29
+* Changed "foreach" loop to a "do/while" loop in Base_DB_Connection_Pool.
+* Merged pull requests #38 and #39 per nexeck's request.
+
 2012-05-25
 * Reworked the internal workings of the connection pool, adding the ability to create new connections and to limit the number of connections.
 * Removed some unneeded, commented code.
