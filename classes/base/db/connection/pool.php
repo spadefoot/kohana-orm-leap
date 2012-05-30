@@ -154,7 +154,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 				}
 			}
 			else {
-				$conection = end($this->pool[$source->id]);
+				$connection = end($this->pool[$source->id]);
 				do {
 					if ($connection->is_connected()) {
 						reset($this->pool[$source->id]);
@@ -162,7 +162,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object {
 						return $connection;
 					}
 				}
-				while ($conection = prev($this->pool[$source->id]));
+				while ($connection = prev($this->pool[$source->id]));
 				$connection = end($this->pool[$source->id]);
 				reset($this->pool[$source->id]);
 				$connection->open();
