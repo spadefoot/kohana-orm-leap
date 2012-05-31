@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-29
+ * @version 2012-05-30
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -133,10 +133,10 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 		if ( ! is_null($connection)) {
 			$this->connection_id = spl_object_hash($connection);
 			if ( ! isset($this->lookup[$this->connection_id])) {
-                if ($this->count() >= $this->settings['max_size']) {
-                    throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
-                }
-                $source_id = $connection->data_source->id;
+				if ($this->count() >= $this->settings['max_size']) {
+					throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
+				}
+				$source_id = $connection->data_source->id;
 				$this->pool[$source_id][$this->connection_id] = $connection;
 				$this->lookup[$this->connection_id] = $source_id;
 			}
@@ -149,8 +149,8 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * This function returns the number of connections in the connection pool.
 	 *
 	 * @access public
-	 * @return integer								the number of connections in the
-	 *												connection pool
+	 * @return integer                              the number of connections in the
+	 *                                              connection pool
 	 */
 	public function count() {
 		return count($this->lookup);
@@ -203,6 +203,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 			throw new Kohana_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
 		}
 		$connection = DB_Connection::factory($source);
+		$connection->open();
 		$this->connection_id = spl_object_hash($connection);
 		$this->pool[$source->id][$this->connection_id] = $connection;
 		$this->lookup[$this->connection_id] = $source->id;
