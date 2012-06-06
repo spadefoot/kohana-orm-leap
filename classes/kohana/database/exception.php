@@ -19,8 +19,8 @@
 /**
  * This class indicates there is an SQL problem.
  *
- * @package Exception
- * @version 2011-12-11
+ * @package Leap
+ * @version 2012-05-31
  */
 class Kohana_Database_Exception extends Kohana_Exception {}
 ?>

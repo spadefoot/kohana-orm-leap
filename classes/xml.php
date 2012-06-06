@@ -20,9 +20,9 @@
  * This class adds additional functionality to the underlying SimpleXMLElement
  * class.
  *
- * @package Document
+ * @package Leap
  * @category XML
- * @version 2012-01-11
+ * @version 2012-05-31
  */
 class XML extends Base_XML {}
 ?>
