@@ -19,8 +19,8 @@
 /**
  * This class indicates that an argument does not match with the expected value.
  *
- * @package Exception
- * @version 2011-12-11
+ * @package Leap
+ * @version 2012-05-31
  */
 class Kohana_InvalidArgument_Exception extends InvalidArgumentException {
 

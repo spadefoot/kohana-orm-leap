@@ -1,5 +1,11 @@
 Change Log for LEAP ORM
 
+2012-06-06
+* Merging pull request #41 as per nyunyu95's request.
+
+2012-05-31
+* Fixed an issue with the connection pool, where the connection was not being openned.
+
 2012-05-29
 * Changed "foreach" loop to a "do/while" loop in Base_DB_Connection_Pool.
 * Merged pull requests #38 and #39 per nexeck's request.
