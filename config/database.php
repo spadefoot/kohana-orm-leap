@@ -3,8 +3,8 @@
 $config = array();
 
 $config['default'] = array(
-	'type'			=> 'sql',		// string (e.g. sql, nosql, or ldap)
-	'dialect'		=> 'mysql',     // string (e.g. db2, drizzle, firebird, mariadb, mssql, mysql, oracle, postgresql, or sqlite)
+	'type'          => 'sql',       // string (e.g. sql, nosql, or ldap)
+	'dialect'       => 'mysql',     // string (e.g. db2, drizzle, firebird, mariadb, mssql, mysql, oracle, postgresql, or sqlite)
 	'driver'        => 'standard',  // string (e.g. standard, improved, or pdo)
 	'connection'    => array(
 		'persistent'    => FALSE,       // boolean
@@ -16,8 +16,6 @@ $config['default'] = array(
 	),
 	'caching'       => FALSE,       // boolean
 	'charset'       => 'utf8',      // string
-	'profiling'     => FALSE,       // boolean
-	'table_prefix'  => '',          // string
 );
 
 return $config;

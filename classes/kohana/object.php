@@ -19,9 +19,9 @@
 /**
  * This class acts as the base class for any Kohana object.
  *
- * @package System-Ext
+ * @package Leap
  * @category Object
- * @version 2011-11-18
+ * @version 2012-05-31
  *
  * @abstract
  */
