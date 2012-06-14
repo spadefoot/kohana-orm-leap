@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-05-15
+ * @version 2012-06-14
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -30,12 +30,12 @@
 abstract class Base_Data extends Kohana_Object implements Countable {
 
 	/**
-	 * This constant represents binary data.
+	 * This constant represents byte data.
 	 *
 	 * @access public
 	 * @const integer
 	 */
-	const BINARY_DATA = 0;
+	const BYTE_DATA = 0;
 
 	/**
 	 * This constant represents hexadecimal data.
@@ -164,7 +164,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	protected static function unpack($data, $type) {
 		if (is_string($data)) {
 			switch ($type) {
-				case Data::BINARY_DATA:
+				case Data::BYTE_DATA:
 					return base_convert($data, 2, 16);
 				break;
 				case Data::STRING_DATA:
