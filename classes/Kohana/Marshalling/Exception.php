@@ -19,8 +19,8 @@
 /**
  * This class indicates that data could not be marshalled.
  *
- * @package Exception
- * @version 2011-06-07
+ * @package Leap
+ * @version 2012-05-31
  */
 class Kohana_Marshalling_Exception extends Kohana_Exception {}
 ?>

@@ -19,9 +19,9 @@
 /**
  * This class creates and parses CSV documents.
  *
- * @package Document
+ * @package Leap
  * @category CSV
- * @version 2012-05-20
+ * @version 2012-05-31
  *
  * @abstract
  */

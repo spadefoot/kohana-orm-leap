@@ -19,8 +19,8 @@
 /**
  * This class indicates that no property with the specified key was found.
  *
- * @package Exception
- * @version 2011-06-07
+ * @package Leap
+ * @version 2012-05-31
  */
 class Kohana_InvalidProperty_Exception extends Kohana_Exception {}
 ?>
