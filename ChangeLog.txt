@@ -1,5 +1,8 @@
 Change Log for LEAP ORM
 
+2014-06-14
+* Changing Data::BINARY_DATA to Data::BYTE_DATA.
+
 2012-06-06
 * Merging pull request #41 as per nyunyu95's request.
 
