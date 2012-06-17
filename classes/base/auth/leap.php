@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-06-14
+ * @version 2012-06-16
  *
  * @abstract
  */
@@ -423,7 +423,7 @@ abstract class Base_Auth_Leap extends Auth {
 	 * @return Model_Leap_User                  the user's object
 	 */
 	protected function get_user_by_login($user) {
-		$builder = DB_ORM::select('user');
+		$builder = DB_ORM::select($this->models['user']);
 		if ( ! empty($this->_config['login_with_email']) && ! empty($this->_config['login_with_username'])) {
 			$builder->where($this->columns['user_username'], DB_SQL_Operator::_EQUAL_TO_, $user);
 			$builder->where($this->columns['user_email'], DB_SQL_Operator::_EQUAL_TO_, $user, 'OR');
