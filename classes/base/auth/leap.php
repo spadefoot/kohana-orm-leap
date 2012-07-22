@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-06-16
+ * @version 2012-07-22
  *
  * @abstract
  */
@@ -212,10 +212,10 @@ abstract class Base_Auth_Leap extends Auth {
 			if ($user->password === $password) { // Authentication Successful
 
 				if ($user->banned == 1) {
-					$errors['banned'] = $user->ban_reason;
+					$this->errors['banned'] = $user->ban_reason;
 				}
 				else if (($user->activated == 0) && ! empty($this->_config['activation'])) {
-					$errors['not_activated'] = '';
+					$this->errors['not_activated'] = '';
 				}
 				else {
 					if ($remember === TRUE) {
