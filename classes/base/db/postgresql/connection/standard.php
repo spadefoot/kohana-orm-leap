@@ -148,11 +148,20 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = pg_last_oid($this->resource_id);
-		if ($insert_id === FALSE) {
+		
+		$command_id = pg_query($this->resource_id, 'SELECT lastval();');
+		
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
-		return $insert_id;
+		
+		$result = pg_fetch_row($command_id);
+		
+		if ($result === FALSE) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		}
+		
+		return $result[0];
 	}
 
 	/**
