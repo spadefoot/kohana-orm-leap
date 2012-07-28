@@ -311,6 +311,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 * @param string $expr                      the expression to be prepared
 	 * @param char $escape                      the escape character
 	 * @return string                           the prepared expression
+	 *
 	 * @see http://www.postgresql.org/docs/7.4/static/datatype-boolean.html
 	 */
 	public function prepare_value($expr, $escape = NULL) {
