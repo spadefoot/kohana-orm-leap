@@ -1,7 +1,7 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2011-2012 Spadefoot
+ * Copyright 2012 Spadefoot
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
  */
 
 /**
- * This class represents an active record for an SQL database table.
+* This class represents an active record for an SQL database table and is
+* for handling a Modified Preorder Tree Traversal (MPTT).
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-09
+ * @version 2012-07-28
  */
 class DB_ORM_MPTT extends Base_DB_ORM_MPTT {}
+?>
