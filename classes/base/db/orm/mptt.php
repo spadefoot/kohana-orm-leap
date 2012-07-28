@@ -1,9 +1,31 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Modified Preorder Tree Traversal Class.
+ * Copyright 2012 Spadefoot
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * This class represents an active record for an SQL database table and is
+ * for handling a Modified Preorder Tree Traversal (MPTT).
+ *
+ * @package Leap
+ * @category ORM
+ * @version 2012-07-28
  */
 abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
+
 	/**
 	 * @access public
 	 * @var string parent id
@@ -46,7 +68,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 **/
 	public $scope_column = 'scope';
 
-
 	/**
 	 * Enable/Disable path calculation
 	 *
@@ -69,7 +90,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public $path_separator = '/';
 
-
 	/**
 	 * TODO - extend this class so we can put in application specific settings
 	 */
@@ -90,8 +110,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param array $additional_fields
 	 * @return boolean
 	 **/
-	public function new_scope($scope, array $additional_fields = array())
-	{
+	public function new_scope($scope, array $additional_fields = array()) {
 		// Make sure the specified scope doesn't already exist.
 		$search = DB_ORM::select(get_class($this))->where($this->scope_column, '=', $scope)->query();
 
@@ -107,8 +126,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		// Other fields may be required.
 		if ( ! empty($additional_fields)) {
-			foreach ($additional_fields as $column => $value)
-			{
+			foreach ($additional_fields as $column => $value) {
 				$this->{$column} = $value;
 			}
 		}
@@ -182,7 +200,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		if ($this->{self::primary_key()} === $target->{self::primary_key()}) {
 			return FALSE;
 		}
-
 		return ($this->parent->{self::primary_key()} === $target->parent->{self::primary_key()});
 	}
 
@@ -263,7 +280,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		if ($self) {
 			return $this->descendants($self, $direction)->where($this->level_column, '<=', $this->{$this->level_column} + 1)->where($this->level_column, '>=', $this->{$this->level_column});
 		}
-
 		return $this->descendants($self, $direction)->where($this->level_column, '=', $this->{$this->level_column} + 1);
 	}
 
@@ -398,7 +414,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		if (!$target instanceof $this) {
 			$target = DB_ORM::model(get_class($this), $target);
-		} else {
+		}
+		else {
 			$target->load(); // Ensure we're using the latest version of $target
 		}
 
@@ -473,7 +490,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		if ($this->is_loaded() === TRUE) {
 			return parent::save();
 		}
-
 		return FALSE;
 	}
 
@@ -494,7 +510,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 					->where($this->right_column, '<=', $this->{$this->right_column})
 					->where($this->scope_column, '=', $this->{$this->scope_column})
 					->execute();
-		} catch (Kohana_SQL_Exception $e) {
+		}
+		catch (Kohana_SQL_Exception $e) {
 			throw $e;
 		}
 
@@ -575,7 +592,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			if (!$target->is_loaded()) {
 				return FALSE;
 			}
-		} else {
+		}
+		else {
 			$target->load();
 		}
 
@@ -627,8 +645,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return mixed
 	 */
 	public function __get($column) {
-		switch ($column)
-		{
+		switch ($column) {
 			case 'parent':
 				return $this->parent();
 			case 'parents':
@@ -659,8 +676,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return boolean
 	 */
 	public function verify_tree() {
-		foreach ($this->get_scopes() as $scope)
-		{
+		foreach ($this->get_scopes() as $scope) {
 			if (!$this->verify_scope($scope->{$this->scope_column})) {
 				return FALSE;
 			}
@@ -676,7 +692,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return DB_SQL::select('default', DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
 				->from($this->table())->query();
 	}
-
 
 	public function verify_scope($scope) {
 		$root = $this->root($scope);
@@ -703,8 +718,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		// Make sure no 2 nodes share a left/right value
 		$i = 1;
-		while ($i <= $end)
-		{
+		while ($i <= $end) {
 			$result = $this->_db->query(Database::SELECT, 'SELECT count(*) as count FROM `' . $this->_table_name . '` WHERE `' . $this->scope_column . '` = ' . $root->{$this->scope_column} . ' AND (`' . $this->left_column . '` = ' . $i . ' OR `' . $this->right_column . '` = ' . $i . ')', FALSE);
 
 			if ($result[0]->count > 1) {
@@ -759,11 +773,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			$d = &$descendants_array[$i];
 			$d['Children'] = array();
 
-			while(count($stack) > 0 && $stack[count($stack) - 1][$this->right_column] < $d[$this->right_column]) {
+			while (count($stack) > 0 && $stack[count($stack) - 1][$this->right_column] < $d[$this->right_column]) {
 				array_pop($stack);
 			}
 
-			if(count($stack) > 0) {
+			if (count($stack) > 0) {
 				$stack[count($stack) - 1]['Children'][] = &$d;
 			}
 
@@ -804,7 +818,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		foreach ($this->fields as $col => $field) {
 			$buffer[$col] = $field->value;
 		}
-
 		return $buffer;
 	}
+
 }
+?>
