@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-05-25
+ * @version 2012-07-28
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -143,16 +143,38 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @throws Kohana_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
+	 * @see https://github.com/spadefoot/kohana-orm-leap/issues/44
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = pg_last_oid($this->resource_id);
-		if ($insert_id === FALSE) {
+		
+		// Option #1: Using 'SELECT lastval();'
+		
+		$command_id = @pg_query($this->resource_id, 'SELECT lastval();');
+		
+		if ($command_id === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
-		return $insert_id;
+		
+		$result = @pg_fetch_row($command_id);
+		
+		if ($result === FALSE) {
+			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		}
+		
+		return $result[0];
+		
+		// Option #2: Using pg_last_oid($this->resource_id)
+		
+		//$insert_id = pg_last_oid($this->resource_id);
+		
+		//if ($insert_id === FALSE) {
+		//	throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		//}
+		
+		//return $insert_id;
 	}
 
 	/**
