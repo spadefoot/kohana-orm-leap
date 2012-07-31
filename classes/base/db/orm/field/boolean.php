@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-07-31
  *
  * @abstract
  */
@@ -62,6 +62,15 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 			if ( ! is_null($default)) {
+				if (is_string($default)) {
+					$default = strtolower($default);
+					if (in_array($default, array('t', 'true', 'y', 'yes', '1'))) {
+						$default = TRUE;
+					}
+					else if (in_array($default, array('f', 'false', 'n', 'no', '0'))) {
+						$default = FALSE;
+					}
+				}
 				settype($default, $this->metadata['type']);
 				$this->validate($default);
 			}
@@ -72,6 +81,46 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 			$default = FALSE;
 			$this->metadata['default'] = $default;
 			$this->value = $default;
+		}
+	}
+
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public /*override*/ function __set($key, $value) {
+		switch ($key) {
+			case 'value':
+				if ( ! is_null($value)) {
+					if (is_string($value)) {
+						$value = strtolower($value);
+						if (in_array($value, array('true', 't', 'yes', 'y', '1'))) {
+							$value = TRUE;
+						}
+						else if (in_array($value, array('false', 'f', 'no', 'n', '0'))) {
+							$value = FALSE;
+						}
+					}
+					settype($value, $this->metadata['type']);
+					$this->validate($value);
+					$this->value = $value;
+				}
+				else {
+					$this->value = $this->metadata['default'];
+				}
+				$this->metadata['modified'] = TRUE;
+			break;
+			case 'modified':
+				$this->metadata['modified'] = (bool) $value;
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+			break;
 		}
 	}
 
