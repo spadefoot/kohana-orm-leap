@@ -64,10 +64,10 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 			if ( ! is_null($default)) {
 				if (is_string($default)) {
 					$default = strtolower($default);
-					if (in_array($default, array('t', 'true', 'y', 'yes', '1'))) {
+					if (in_array($default, array('true', 't', 'yes', 'y', '1'))) {
 						$default = TRUE;
 					}
-					else if (in_array($default, array('f', 'false', 'n', 'no', '0'))) {
+					else if (in_array($default, array('false', 'f', 'no', 'n', '0'))) {
 						$default = FALSE;
 					}
 				}
