@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-08-01
  *
  * @abstract
  */
@@ -69,7 +69,9 @@ abstract class Base_DB_ORM_Field_Date extends DB_ORM_Field {
 			$default = $metadata['default'];
 			if ( ! is_null($default)) {
 				settype($default, $this->metadata['type']);
-				$this->validate($default);
+				if ( ! $this->validate($default)) {
+					throw new Kohana_Validation_Exception(NULL, 'Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+				}
 			}
 			$this->metadata['default'] = $default;
 			$this->value = $default;
