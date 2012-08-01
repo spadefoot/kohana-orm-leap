@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-05-10
+ * @version 2012-08-01
  *
  * @abstract
  */
@@ -41,15 +41,33 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$this->metadata['max_length'] = (int) $metadata['max_length']; // the maximum length of the integer
 		}
 
-		$this->metadata['unsigned'] = (isset($metadata['unsigned'])) ? (bool) $metadata['unsigned'] : FALSE;
+		$this->metadata['unsigned'] = isset($metadata['unsigned']) ? (bool) $metadata['unsigned'] : FALSE;
 
-		// smallint/tinyint: -2^15 (-32,768) through 2^15 - 1 (32,767)
-		$this->metadata['range']['lower_bound'] = ($this->metadata['unsigned']) ? 0 : -2147483648;
-		$this->metadata['range']['upper_bound'] = 2147483647;
-
+		if (isset($this->metadata['max_length']) AND ($this->metadata['max_length'] >= 11)) {
+			if (PHP_INT_SIZE === 4) {
+				$this->metadata['int8fix'] = TRUE;
+				$this->metadata['range']['lower_bound'] = $this->metadata['unsigned'] ? '0' : '-9223372036854775808';
+				$this->metadata['range']['upper_bound'] = '9223372036854775807';
+			}
+			else {
+				$this->metadata['range']['lower_bound'] = $this->metadata['unsigned'] ? 0 : -9223372036854775808;
+				$this->metadata['range']['upper_bound'] = 9223372036854775807;
+			}
+		}
+		else {
+			$this->metadata['range']['lower_bound'] = $this->metadata['unsigned'] ? 0 : -2147483648;
+			$this->metadata['range']['upper_bound'] = 2147483647;
+		}
+		
 		if (isset($metadata['range'])) {
-			$this->metadata['range']['lower_bound'] = max( (int) $metadata['range'][0], $this->metadata['range']['lower_bound']);
-			$this->metadata['range']['upper_bound'] = min( (int) $metadata['range'][1], $this->metadata['range']['upper_bound']);
+			if (isset($this->metadata['int8fix'])) {
+				$this->metadata['range']['lower_bound'] = (bccomp(strval($metadata['range'][0]), $this->metadata['range']['lower_bound']) === 1) ? strval($metadata['range'][0]) : $this->metadata['range']['lower_bound'];
+				$this->metadata['range']['upper_bound'] = (bccomp(strval($metadata['range'][1]), $this->metadata['range']['lower_bound']) === -1) ? strval($metadata['range'][0]) : $this->metadata['range']['upper_bound'];
+			}
+			else {
+				$this->metadata['range']['lower_bound'] = max( (int) $metadata['range'][0], $this->metadata['range']['lower_bound']);
+				$this->metadata['range']['upper_bound'] = min( (int) $metadata['range'][1], $this->metadata['range']['upper_bound']);
+			}
 		}
 
 		if (isset($metadata['savable'])) {
@@ -83,16 +101,59 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 			if ( ! is_null($default)) {
-				settype($default, $this->metadata['type']);
+				if ((PHP_INT_SIZE !== 4) OR ! is_string($default) OR ! preg_match('/^-?[0-9]+$/D', $default) OR ((bccomp($default, '-2147483648') !== -1) AND (bccomp($default, '2147483647') !== 1))) {
+					settype($default, $this->metadata['type']);
+				}
 				$this->validate($default);
 			}
 			$this->metadata['default'] = $default;
 			$this->value = $default;
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = max(0, $this->metadata['range']['lower_bound']);
+			if (isset($this->metadata['int8fix'])) {
+				$default = (bccomp($this->metadata['range']['lower_bound'], '0') === 1) ? $this->metadata['range']['lower_bound'] : '0';
+				if ((bccomp($default, '-2147483648') !== -1) OR (bccomp($default, '2147483647') !== 1)) {
+					$default = (int) $default;
+				}
+			}
+			else {
+				$default = max(0, $this->metadata['range']['lower_bound']);
+			}
 			$this->metadata['default'] = $default;
 			$this->value = $default;
+		}
+	}
+
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'value':
+				if ( ! is_null($value)) {
+					if ( ! isset($this->metadata['int8fix']) OR is_int($value) OR ! preg_match('/^-?[0-9]+$/D', (string) $value) OR (bccomp( (string) $value, '-2147483648') !== -1 AND bccomp( (string) $value, '2147483647') !== 1)) {
+						settype($value, $this->metadata['type']);
+					}
+					$this->validate($value);
+					$this->value = $value;
+				}
+				else {
+					$this->value = $this->metadata['default'];
+				}
+				$this->metadata['modified'] = TRUE;
+			break;
+			case 'modified':
+				$this->metadata['modified'] = (bool) $value;
+			break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+			break;
 		}
 	}
 
@@ -105,13 +166,14 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 */
 	protected function validate($value) {
 		if ( ! is_null($value)) {
-			if (isset($this->metadata['max_length'])) {
-				$strval = strval($value);
-				if (strlen($strval) > $this->metadata['max_length']) {
-					return FALSE;
-				}
+			if (isset($this->metadata['max_length']) AND (strlen(strval($value)) > $this->metadata['max_length'])) {
+				return FALSE;
 			}
-			if (($value < $this->metadata['range']['lower_bound']) || ($value > $this->metadata['range']['upper_bound'])) {
+			if (isset($this->metadata['int8fix'])) {
+				if ( ! preg_match('/^-?[0-9]+$/D', strval($value)) OR (bccomp(strval($value), strval($this->metadata['range']['lower_bound'])) === -1) OR (bccomp(strval($value), strval($this->metadata['range']['upper_bound'])) === 1))
+					return FALSE;
+			}
+			else if (($value < $this->metadata['range']['lower_bound']) OR ($value > $this->metadata['range']['upper_bound'])) {
 				return FALSE;
 			}
 		}
