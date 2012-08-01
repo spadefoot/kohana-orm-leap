@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-07-28
+ * @version 2012-08-01
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -158,17 +158,17 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		
-		$result = @pg_fetch_row($command_id);
+		$record = @pg_fetch_row($command_id);
 		
-		if ($result === FALSE) {
+		if ($record === FALSE) {
 			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		
-		return $result[0];
+		return $record[0];
 		
 		// Option #2: Using pg_last_oid($this->resource_id)
 		
-		//$insert_id = pg_last_oid($this->resource_id);
+		//$insert_id = @pg_last_oid($this->resource_id);
 		
 		//if ($insert_id === FALSE) {
 		//	throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
