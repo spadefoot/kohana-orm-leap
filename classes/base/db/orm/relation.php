@@ -104,7 +104,7 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
 	 * @access public
 	 */
 	public function reset() {
-		$this->cache = NULL;;
+		$this->cache = NULL;
 	}
 
 }
