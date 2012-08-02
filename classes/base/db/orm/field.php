@@ -111,7 +111,9 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 			case 'value':
 				if ( ! is_null($value)) {
 					settype($value, $this->metadata['type']);
-					$this->validate($value);
+					if ( ! $this->validate($value)) {
+						throw new Kohana_Validation_Exception(NULL, 'Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					}
 					$this->value = $value;
 				}
 				else {
