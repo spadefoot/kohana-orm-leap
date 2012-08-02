@@ -500,6 +500,51 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		}
 	}
 
+	/**
+	 * This method sets an array of values to their associated fields, aliases and adaptors.
+	 * It uses only expected keys listed in $expected. If $expected is NULL, it expects
+	 * keys of all fields, aliases and adaptors, except primary key(s), of this Model.
+	 *
+	 * @access public
+	 * @param array $values                         an array of column/value mappings
+	 * @param mixed $expected                       an array of keys to take from $values, or NULL
+	 * @return DB_ORM_Model
+	 */
+	public function set_values(array $values, array $expected = NULL)
+	{
+		// Automatically create list expected keys
+		if ($expected === NULL)
+		{
+			$expected = array_merge(
+				array_keys($this->fields),
+				array_keys($this->aliases),
+				array_keys($this->adaptors)
+			);
+			
+			$expected = array_flip($expected);
+			
+			$self = get_class($this);
+			$primary_key = call_user_func(array($self, 'primary_key'));
+			
+			// Remove primary key(s)
+			foreach ($primary_key AS $key)
+			{
+				unset($expected[$key]);
+			}
+		}
+		else
+		{
+			$expected = array_flip($expected);
+		}
+		
+		foreach (array_intersect_key($values, $expected) AS $key => $value)
+		{
+			$this->$key = $value;
+		}
+		
+		return $this;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
