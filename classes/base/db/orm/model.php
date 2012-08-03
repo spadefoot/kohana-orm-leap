@@ -76,7 +76,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		$this->metadata['loaded'] = FALSE;
 		$this->metadata['saved'] = NULL;
 	}
-	
+
 	/**
 	 * This function returns whether a property is set.
 	 *
@@ -386,25 +386,25 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		}
 	}
 
-    /**
-     * This function creates a new relation to be used by model's instance.
-     *
-     * @param string $name                          the relation's name
-     * @param enum $type                            the type of relation to be created
-     *                                              (e.g. 'BelongsTo', 'HasMany', 'HasOne')
-     * @param array $metadata                       the relation's metadata
-     */
-    public function relate($name, $type, Array $metadata) {
-        if ( ! is_string($name) || $this->is_adaptor($name) || $this->is_alias($name) || $this->is_field($name)) {
-            throw new Kohana_InvalidArgument_Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
-        }
-        $types = array('belongs_to' => 'DB_ORM_Relation_BelongsTo', 'has_many' => 'DB_ORM_Relation_HasMany', 'has_one' => 'DB_ORM_Relation_HasOne');
-        if ( ! isset($types[$type])) {
-            throw new Kohana_InvalidArgument_Exception('Message: Invalid value passed. Reason: Value must be of the correct enumerated type.', array(':name' => $name, ':type' => $type));
-        }
-        $type = $types[$type];
-        $this->relations[$name] = new $type($this, $metadata);
-    }
+	/**
+	 * This function creates a new relation to be used by model's instance.
+	 *
+	 * @param string $name                          the relation's name
+	 * @param enum $type                            the type of relation to be created (e.g.
+	 *                                              'belongs_to', 'has_many', 'has_one')
+	 * @param array $metadata                       the relation's metadata
+	 */
+	public function relate($name, $type, Array $metadata) {
+		if ( ! is_string($name) || $this->is_adaptor($name) || $this->is_alias($name) || $this->is_field($name)) {
+			throw new Kohana_InvalidArgument_Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
+		}
+		$types = array('belongs_to' => 'DB_ORM_Relation_BelongsTo', 'has_many' => 'DB_ORM_Relation_HasMany', 'has_one' => 'DB_ORM_Relation_HasOne');
+		if ( ! isset($types[$type])) {
+			throw new Kohana_InvalidArgument_Exception('Message: Invalid value passed. Reason: Value must be of the correct enumerated type.', array(':name' => $name, ':type' => $type));
+		}
+		$type = $types[$type];
+		$this->relations[$name] = new $type($this, $metadata);
+	}
 
 	/**
 	 * This function resets each column's value back to its original value.
@@ -538,12 +538,12 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 				array_keys($this->aliases),
 				array_keys($this->adaptors)
 			);
-			
+
 			$expected = array_flip($expected);
-			
+
 			$self = get_class($this);
 			$primary_key = call_user_func(array($self, 'primary_key'));
-			
+
 			// Remove primary key(s)
 			foreach ($primary_key AS $key) {
 				unset($expected[$key]);
@@ -552,24 +552,24 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		else {
 			$expected = array_flip($expected);
 		}
-		
+
 		foreach (array_intersect_key($values, $expected) AS $key => $value) {
 			$this->$key = $value;
 		}
-		
+
 		return $this;
 	}
 
-    /**
-     * This function unrelates the specified relation.
-     *
-     * @param string $name                          the relation's name
-     */
-    public function unrelate($name) {
-        if ($this->is_relation($name)) {
-            unset($this->relations[$name]);
-        }
-    }
+	/**
+	 * This function unrelates the specified relation.
+	 *
+	 * @param string $name                          the relation's name
+	 */
+	public function unrelate($name) {
+		if ($this->is_relation($name)) {
+			unset($this->relations[$name]);
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
