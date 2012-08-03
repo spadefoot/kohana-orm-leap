@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-30
+ * @version 2012-08-03
  *
  * @abstract
  */
@@ -77,9 +77,9 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	public function __construct($model, Array $columns = array()) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
+		$this->source = new DB_DataSource($model::data_source());
 		$builder = 'DB_' . $this->source->dialect . '_Select_Builder';
-		$this->table = call_user_func(array($model, 'table'));
+		$this->table = $model::table();
 		$this->builder = new $builder($this->source, $columns);
 		if (empty($columns)) {
 			$this->builder->all("{$this->table}.*");

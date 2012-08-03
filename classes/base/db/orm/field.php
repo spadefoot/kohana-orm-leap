@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-08-03
  *
  * @abstract
  *
@@ -213,7 +213,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 		if (isset($this->metadata['enum']) && ! in_array($value, $this->metadata['enum'])) {
 			return FALSE;
 		}
-		if (isset($this->metadata['callback']) && call_user_func(array($this->model, $this->metadata['callback']), $value)) {
+		if (isset($this->metadata['callback']) && $this->model->{$this->metadata['callback']}($value)) {
 			return FALSE;
 		}
 		return TRUE;

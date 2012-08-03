@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-05-10
+ * @version 2012-08-03
  *
  * @abstract
  */
@@ -313,7 +313,7 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 		else if (is_array($expr)) {
 			$buffer = array();
 			foreach ($expr as $value) {
-				$buffer[] = call_user_func_array(array($this, __FUNCTION__), array($value, $escape));
+				$buffer[] = $this->prepare_value($value, $escape);
 			}
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
