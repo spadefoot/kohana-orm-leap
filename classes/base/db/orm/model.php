@@ -187,17 +187,16 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              deleted
 	 */
 	public function delete($reset = FALSE) {
-		$self = get_class($this);
-		$is_savable = call_user_func(array($self, 'is_savable'));
+		$is_savable = static::is_savable();
 		if ( ! $is_savable) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
 		}
-		$primary_key = call_user_func(array($self, 'primary_key'));
+		$primary_key = static::primary_key();
 		if ( ! is_array($primary_key) || empty($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
-		$data_source = call_user_func(array($self, 'data_source'));
-		$table = call_user_func(array($self, 'table'));
+		$data_source = static::data_source();
+		$table = static::table();
 		$builder = DB_SQL::delete($data_source)->from($table);
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
@@ -268,10 +267,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              table
 	 */
 	public function is_saved() {
-		$self = get_class($this);
-		$data_source = call_user_func(array($self, 'data_source'));
-		$table = call_user_func(array($self, 'table'));
-		$primary_key = call_user_func(array($self, 'primary_key'));
+		$data_source = static::data_source();
+		$table = static::table();
+		$primary_key = static::primary_key();
 		$builder = DB_SQL::select($data_source)->from($table)->limit(1);
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
@@ -301,8 +299,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return string                               the generated hash code
 	 */
 	protected function hash_code() {
-		$self = get_class($this);
-		$primary_key = call_user_func(array($self, 'primary_key'));
+		$primary_key = static::primary_key();
 		if (is_array($primary_key) && ! empty($primary_key)) {
 			if (self::is_auto_incremented()) {
 				$column = $primary_key[0];
@@ -353,13 +350,12 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public function load(Array $columns = array()) {
 		if (empty($columns)) {
-			$self = get_class($this);
-			$primary_key = call_user_func(array($self, 'primary_key'));
+			$primary_key = static::primary_key();
 			if ( ! is_array($primary_key) || empty($primary_key)) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
-			$data_source = call_user_func(array($self, 'data_source'));
-			$table = call_user_func(array($self, 'table'));
+			$data_source = static::data_source();
+			$table = static::table();
 			$builder = DB_SQL::select($data_source)->from($table)->limit(1);
 			foreach ($primary_key as $column) {
 				$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
@@ -430,17 +426,16 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              after the save is done
 	 */
 	public function save($reload = FALSE) {
-		$self = get_class($this);
-		$is_savable = call_user_func(array($self, 'is_savable'));
+		$is_savable = static::is_savable();
 		if ( ! $is_savable) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
 		}
-		$primary_key = call_user_func(array($self, 'primary_key'));
+		$primary_key = static::primary_key();
 		if ( ! is_array($primary_key) || empty($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
-		$data_source = call_user_func(array($self, 'data_source'));
-		$table = call_user_func(array($self, 'table'));
+		$data_source = static::data_source();
+		$table = static::table();
 		$columns = array_keys($this->fields);
 		$hash_code = $this->hash_code();
 		$do_insert = is_null($hash_code);
@@ -484,7 +479,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			}
 		}
 		if ($do_insert) {
-			$is_auto_incremented = call_user_func(array($self, 'is_auto_incremented'));
+			$is_auto_incremented = static::is_auto_incremented();
 			if ($is_auto_incremented || is_null($hash_code)) {
 				foreach ($primary_key as $column) {
 					$index = array_search($column, $columns);
@@ -540,9 +535,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			);
 
 			$expected = array_flip($expected);
-
-			$self = get_class($this);
-			$primary_key = call_user_func(array($self, 'primary_key'));
+			$primary_key = static::primary_key();
 
 			// Remove primary key(s)
 			foreach ($primary_key AS $key) {

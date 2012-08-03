@@ -266,7 +266,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
             ->where($this->right_column, '>=', $this->{$this->right_column})
             ->where($this->scope_column, '=', $this->{$this->scope_column});
 
-		foreach (call_user_func(array(get_class($this), 'primary_key')) as $col) {
+		foreach (static::primary_key() as $col) {
 			$parents->where($col, '<>', $this->{$col});
 		}
 

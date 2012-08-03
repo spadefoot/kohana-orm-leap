@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-10
+ * @version 2012-08-03
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -664,7 +664,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 	 */
 	public static function is_keyword($token, $dialect) {
 		$compiler = 'DB_' . $dialect . '_Expression';
-		$result = call_user_func(array($compiler, 'is_keyword'), $token);
+		$result = $compiler::is_keyword($token);
 		return $result;
 	}
 
