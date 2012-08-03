@@ -1,19 +1,25 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2012 Spadefoot
+ * The MIT License (MIT)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright (c) 2010 Kiall Mac Innes, Mathew Davies, and Mike Parkin
+ * Copyright (c) 2012 Spadefoot
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 /**
@@ -22,7 +28,12 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-07-28
+ * @version 2012-08-03
+ *
+ * @see https://github.com/kiall/kohana3-orm_mptt
+ * @see http://dev.kohanaframework.org/projects/mptt
+ *
+ * @abstract
  */
 abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
@@ -251,9 +262,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function parents($root = TRUE, $direction = 'ASC') {
 		$parents = DB_ORM::select(get_class($this))
-				->where($this->left_column, '<=', $this->{$this->left_column})
-				->where($this->right_column, '>=', $this->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column});
+            ->where($this->left_column, '<=', $this->{$this->left_column})
+            ->where($this->right_column, '>=', $this->{$this->right_column})
+            ->where($this->scope_column, '=', $this->{$this->scope_column});
 
 		foreach (call_user_func(array(get_class($this), 'primary_key')) as $col) {
 			$parents->where($col, '<>', $this->{$col});
@@ -504,18 +515,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public function delete($reset = FALSE) {
 		$this->load();
 
-		try {
-			DB_ORM::delete(get_class($this))
-					->where($this->left_column, '>=', $this->{$this->left_column})
-					->where($this->right_column, '<=', $this->{$this->right_column})
-					->where($this->scope_column, '=', $this->{$this->scope_column})
-					->execute();
-		}
-		catch (Kohana_SQL_Exception $e) {
-			throw $e;
-		}
+        DB_ORM::delete(get_class($this))
+            ->where($this->left_column, '>=', $this->{$this->left_column})
+            ->where($this->right_column, '<=', $this->{$this->right_column})
+            ->where($this->scope_column, '=', $this->{$this->scope_column})
+            ->execute();
 
-		$this->delete_space($this->{$this->left_column}, $this->get_size());
+        $this->delete_space($this->{$this->left_column}, $this->get_size());
 
 		return TRUE;
 	}
@@ -583,7 +589,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			return FALSE;
 		}
 
-		// Make sure we have the most upto date version of this
+		// Make sure we have the most up to date version of this
 		$this->load();
 
 		if (!$target instanceof $this) {
@@ -628,7 +634,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$builder->execute();
 
 		$this->delete_space($this->{$this->left_column}, $size);
-
 
 		if ($this->path_calculation_enabled) {
 			$this->update_path();
@@ -684,42 +689,74 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
-	private function get_scopes() {
-		// TODO... redo this so its proper :P and open it public
-		// used by verify_tree()
-		//return $this->_db->query(Database::SELECT, 'SELECT DISTINCT(`' . $this->scope_column . '`) from `' . $this->_table_name . '`', TRUE);
-
-		return DB_SQL::select('default', DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
-				->from($this->table())->query();
+    // TODO... redo this so its proper :P and open it public
+    // used by verify_tree()
+    private function get_scopes() {
+		$result = DB_SQL::select('default')
+            ->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
+			->from($this->table())
+            ->query();
+        return $result;
 	}
 
+    // TODO Use model's data source, not default
+    // TODO Fixed instance variables references
 	public function verify_scope($scope) {
 		$root = $this->root($scope);
 
 		$end = $root->{$this->right_column};
 
 		// Find nodes that have slipped out of bounds.
-		$result = $this->_db->query(Database::SELECT, 'SELECT count(*) as count FROM `' . $this->_table_name . '` WHERE `' . $this->scope_column . '` = ' . $root->{$this->scope_column} . ' AND (`' . $this->left_column . '` > ' . $end . ' OR `' . $this->right_column . '` > ' . $end . ')', FALSE);
-		if ($result[0]->count > 0) {
+		$result = DB_SQL::select('default')
+            ->column(DB_SQL::expr('count(*)'), 'count')
+            ->from($this->_table_name)
+            ->where($this->scope_column, '=', $root->{$this->scope_column})
+            ->where_block('(')
+            ->where($this->left_column, '>', $end)
+            ->where($this->right_column, '>', $end, 'OR')
+            ->where_block(')')
+            ->query();
+
+        if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Find nodes that have the same left and right value
-		$result = $this->_db->query(Database::SELECT, 'SELECT count(*) as count FROM `' . $this->_table_name . '` WHERE `' . $this->scope_column . '` = ' . $root->{$this->scope_column} . ' AND `' . $this->left_column . '` = `' . $this->right_column . '`', FALSE);
+        $result = DB_SQL::select('default')
+            ->column(DB_SQL::expr('count(*)'), 'count')
+            ->from($this->_table_name)
+            ->where($this->scope_column, '=', $root->{$this->scope_column})
+            ->where($this->left_column, '=', $this->right_column)
+            ->query();
+
 		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Find nodes that right value is less than the left value
-		$result = $this->_db->query(Database::SELECT, 'SELECT count(*) as count FROM `' . $this->_table_name . '` WHERE `' . $this->scope_column . '` = ' . $root->{$this->scope_column} . ' AND `' . $this->left_column . '` > `' . $this->right_column . '`', FALSE);
-		if ($result[0]->count > 0) {
+        $result = DB_SQL::select('default')
+            ->column(DB_SQL::expr('count(*)'), 'count')
+            ->from($this->_table_name)
+            ->where($this->scope_column, '=', $root->{$this->scope_column})
+            ->where($this->left_column, '>', $this->right_column)
+            ->query();
+
+        if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Make sure no 2 nodes share a left/right value
 		$i = 1;
 		while ($i <= $end) {
-			$result = $this->_db->query(Database::SELECT, 'SELECT count(*) as count FROM `' . $this->_table_name . '` WHERE `' . $this->scope_column . '` = ' . $root->{$this->scope_column} . ' AND (`' . $this->left_column . '` = ' . $i . ' OR `' . $this->right_column . '` = ' . $i . ')', FALSE);
+            $result = DB_SQL::select('default')
+                ->column(DB_SQL::expr('count(*)'), 'count')
+                ->from($this->_table_name)
+                ->where($this->scope_column, '=', $root->{$this->scope_column})
+                ->where_block('(')
+                ->where($this->left_column, '=', $i)
+                ->where($this->right_column, '=', $i, 'OR')
+                ->where_block(')')
+                ->query();
 
 			if ($result[0]->count > 1) {
 				return FALSE;
@@ -734,14 +771,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
+    // TODO Replace find_all() with LEAP's equivalent
 	public function update_path() {
-		$path = "";
+		$path = '';
 
 		$parents = $this->parents(FALSE)
-				->find_all();
+			->find_all();
 
-		foreach ($parents as $parent)
-		{
+		foreach ($parents as $parent) {
 			$path .= $this->path_separator . trim($parent->{$this->path_part_column});
 		}
 
@@ -782,7 +819,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			}
 
 			$stack[] = &$d;
-
 		}
 		
 		return $stack[0];
