@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-01
+ * @version 2012-08-04
  *
  * @abstract
  */
@@ -82,7 +82,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 			if ( ! is_null($default)) {
 				settype($default, $this->metadata['type']);
 				if ( ! $this->validate($default)) {
-					throw new Kohana_Validation_Exception(NULL, 'Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+					throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
 				}
 			}
 			$this->metadata['default'] = $default;
@@ -112,7 +112,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 					$value = number_format( (float) $value, $this->metadata['scale']);
 					settype($value, $this->metadata['type']);
 					if ( ! $this->validate($value)) {
-						throw new Kohana_Validation_Exception(NULL, 'Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+						throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 					}
 					$this->value = $value;
 				}
