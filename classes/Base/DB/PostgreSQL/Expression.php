@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-05-10
+ * @version 2012-07-28
  *
  * @abstract
  */
@@ -311,16 +311,18 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 * @param string $expr                      the expression to be prepared
 	 * @param char $escape                      the escape character
 	 * @return string                           the prepared expression
+	 *
+	 * @see http://www.postgresql.org/docs/7.4/static/datatype-boolean.html
 	 */
 	public function prepare_value($expr, $escape = NULL) {
 		if ($expr === NULL) {
 			return 'NULL';
 		}
 		else if ($expr === TRUE) {
-			return "'1'";
+			return "'t'"; // TRUE, 't', 'true', 'y', 'yes', '1'
 		}
 		else if ($expr === FALSE) {
-			return "'0'";
+			return "'f'"; // FALSE, 'f', 'false', 'n', 'no', '0'
 		}
 		else if (is_array($expr)) {
 			$buffer = array();

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-06-14
+ * @version 2012-07-22
  *
  * @abstract
  */
