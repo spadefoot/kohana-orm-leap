@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-05
+ * @version 2012-08-04
  *
  * @abstract
  *
@@ -111,7 +111,9 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 			case 'value':
 				if ( ! is_null($value)) {
 					settype($value, $this->metadata['type']);
-					$this->validate($value);
+					if ( ! $this->validate($value)) {
+						throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					}
 					$this->value = $value;
 				}
 				else {
