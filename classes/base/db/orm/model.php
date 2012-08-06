@@ -68,6 +68,12 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	protected $relations = array();
 
 	/**
+	 * Validation object created before creating/updating
+	 * @var Validation
+	 */
+	protected $_validation = NULL;
+
+	/**
 	 * This constructor instantiates this class.
 	 *
 	 * @access public
@@ -144,6 +150,42 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 
 	/**
+	 * Initializes validation rules, and labels
+	 *
+	 * @return void
+	 */
+	protected function _validation() {
+		$self = get_class($this);
+		$rules = call_user_func(array($self, 'rules'));
+
+		$fields = array();
+
+		// Will use these field groups recursively
+		$field_groups = array('adaptors', 'aliases', 'fields');
+
+		foreach ($field_groups AS $field_group) {
+			foreach ($this->{$field_group} AS $name => $field) {
+				if ($field instanceof DB_SQL_Expression) {
+					// Validate only values that are not SQL expressions
+					unset($rules[$name]);
+				}
+				else {
+					$fields[$name] = $field->value;
+				}
+			}
+		}
+
+		// Build the validation object with its rules
+		$this->_validation = Validation::factory($fields)
+			->bind(':model', $this);
+
+		// Set validation rules
+		foreach ($rules AS $field => $rules) {
+			$this->_validation->rules($field, $rules);
+		}
+	}
+
+	/**
 	 * This function will return an array of column/value mappings.
 	 *
 	 * @access public
@@ -158,6 +200,34 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			$buffer[$name] = $field->value;
 		}
 		return $buffer;
+	}
+
+	/**
+	 * Validates the model's data
+	 *
+	 * @param  Validation $extra_validation Validation object
+	 * @return DB_ORM_Model
+	 */
+	public function check(Validation $extra_validation = NULL)
+	{
+		// Always build a new validation object
+		$this->_validation();
+
+		// Determine if any external validation failed
+		$extra_errors = ($extra_validation && ! $extra_validation->check());
+
+		if ( ! $this->_validation->check() || $extra_errors) {
+			$exception = new DB_ORM_Validation_Exception($this->errors_filename($this), $this->_validation);
+
+			if ($extra_errors) {
+				// Merge any possible errors from the external object
+				$exception->add_object('_external', $extra_validation);
+			}
+			
+			throw $exception;
+		}
+
+		return $this;
 	}
 
 	/**
@@ -428,8 +498,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @access public
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
+	 * @param Validation $validation                
 	 */
-	public function save($reload = FALSE) {
+	public function save($reload = FALSE, Validation $extra_validation = NULL) {
 		$self = get_class($this);
 		$is_savable = call_user_func(array($self, 'is_savable'));
 		if ( ! $is_savable) {
@@ -439,6 +510,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if ( ! is_array($primary_key) || empty($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
+
+		// Require model validation before saving
+		$this->check($extra_validation);
+
 		$data_source = call_user_func(array($self, 'data_source'));
 		$table = call_user_func(array($self, 'table'));
 		$columns = array_keys($this->fields);
@@ -471,6 +546,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 							$builder->set($column, $this->fields[$column]->value);
 							$this->fields[$column]->modified = FALSE;
 							$count++;
+
+							if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+								$reload = TRUE;
+							}
 						}
 					}
 					if ($count > 0) {
@@ -502,6 +581,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 						$builder->column($column, $this->fields[$column]->value);
 						$this->fields[$column]->modified = FALSE;
 						$count++;
+
+						if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+							$reload = TRUE;
+						}
 					}
 				}
 				if ($count > 0) {
@@ -571,6 +654,23 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		}
 	}
 
+	/**
+	 * This function returns current Model's Validation object.
+	 *
+	 * @access public
+	 * @return Validation
+	 */
+	public function validation()
+	{
+		if ( ! isset($this->_validation))
+		{
+			// Initialize the validation object
+			$this->_validation();
+		}
+
+		return $this->_validation;
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -615,6 +715,20 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public static function data_source() {
 		return 'default'; // the key used in config/database.php
+	}
+
+	/**
+	 * This function returns the filename which contains error messages.
+	 *
+	 * @access public
+	 * @static
+	 * @return string                               the data source name
+	 */
+	public static function errors_filename() {
+		list($model) = func_get_args();
+
+		// Just get the Model's name and strip the 'Model_Leap_'
+		return substr(get_class($model), 11);
 	}
 
 	/**
@@ -681,6 +795,17 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public static function primary_key() {
 		return array('ID');
+	}
+
+	/**
+	 * This function returns the array of rules for the Validation.
+	 *
+	 * @access public
+	 * @static
+	 * @return array                                array of rules for Validation
+	 */
+	public static function rules() {
+		return array();
 	}
 
 	/**

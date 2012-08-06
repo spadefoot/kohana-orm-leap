@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-08-06
  *
  * @see http://www.php.net/manual/en/function.gzcompress.php
  * @see http://php.net/manual/en/function.gzuncompress.php
@@ -61,7 +61,7 @@ abstract class Base_DB_ORM_Field_Adaptor_GZ extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value)) {
+				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
 					$value = gzuncompress($value);
 				}
 				return $value;
