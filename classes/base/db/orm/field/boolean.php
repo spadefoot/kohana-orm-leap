@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-08-06
  *
  * @abstract
  */
@@ -59,9 +59,9 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (isset($metadata['default'])) {
+		if (array_key_exists('default', $metadata)) {
 			$default = $metadata['default'];
-			if ( ! is_null($default)) {
+			if ( ! is_null($default) && ! ($default instanceof DB_SQL_Expression)) {
 				if (is_string($default)) {
 					$default = strtolower($default);
 					if (in_array($default, array('true', 't', 'yes', 'y', '1'))) {
@@ -98,7 +98,10 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					$this->value = $value;
+				}
+				else if ( ! is_null($value)) {
 					if (is_string($value)) {
 						$value = strtolower($value);
 						if (in_array($value, array('true', 't', 'yes', 'y', '1'))) {

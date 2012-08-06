@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-08-06
  *
  * @abstract
  */
@@ -98,9 +98,9 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (isset($metadata['default'])) {
+		if (array_key_exists('default', $metadata)) {
 			$default = $metadata['default'];
-			if ( ! is_null($default)) {
+			if ( ! is_null($default) && ! ($default instanceof DB_SQL_Expression)) {
 				if ((PHP_INT_SIZE !== 4) OR ! is_string($default) OR ! preg_match('/^-?[0-9]+$/D', $default) OR ((bccomp($default, '-2147483648') !== -1) AND (bccomp($default, '2147483647') !== 1))) {
 					settype($default, $this->metadata['type']);
 				}
@@ -138,7 +138,10 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					$this->value = $value;
+				}
+				else if ( ! is_null($value)) {
 					if ( ! isset($this->metadata['int8fix']) OR is_int($value) OR ! preg_match('/^-?[0-9]+$/D', (string) $value) OR (bccomp( (string) $value, '-2147483648') !== -1 AND bccomp( (string) $value, '2147483647') !== 1)) {
 						settype($value, $this->metadata['type']);
 					}
