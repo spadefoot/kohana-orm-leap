@@ -322,6 +322,24 @@ abstract class Base_Auth_Leap extends Auth {
 	}
 
 	/**
+	 * This function refreshes the current user's object.
+	 *
+	 * @access public
+	 * @return boolean                           whether the user has been refreshed or not
+	 */
+	public function refresh_user() {
+		$user = $this->get_user();
+
+		if ( ! $user) {
+			return FALSE;
+		}
+		
+		$user = DB_ORM::model($this->models['user'], array($user->id));
+
+		return parent::complete_login($user);
+	}
+
+	/**
 	 * This function logs the current user out.
 	 *
 	 * @access public
