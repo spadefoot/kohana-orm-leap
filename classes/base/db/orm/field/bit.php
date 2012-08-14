@@ -33,8 +33,8 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-     * @throws Kohana_BadData_Exception             indicates that the specified value does
-     *                                              not validate
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'integer');
@@ -62,7 +62,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 		if (isset($metadata['label'])) {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
-		
+
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}

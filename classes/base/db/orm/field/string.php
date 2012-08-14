@@ -33,8 +33,8 @@ abstract class Base_DB_ORM_Field_String extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-     * @throws Kohana_BadData_Exception             indicates that the specified value does
-     *                                              not validate
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'string');
@@ -59,6 +59,10 @@ abstract class Base_DB_ORM_Field_String extends DB_ORM_Field {
 
 		if (isset($metadata['enum'])) {
 			$this->metadata['enum'] = (array) $metadata['enum'];
+		}
+
+		if (isset($metadata['regex'])) {
+			$this->metadata['regex'] = (string) $metadata['regex'];
 		}
 
 		if (isset($metadata['control'])) {
@@ -102,6 +106,9 @@ abstract class Base_DB_ORM_Field_String extends DB_ORM_Field {
 	protected /*override*/ function validate($value) {
 		if ( ! is_null($value)) {
 			if (strlen($value) > $this->metadata['max_length']) {
+				return FALSE;
+			}
+			else if (isset($this->metadata['regex']) AND ! preg_match($this->metadata['regex'], $value)) {
 				return FALSE;
 			}
 		}

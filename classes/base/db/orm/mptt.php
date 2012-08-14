@@ -262,9 +262,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function parents($root = TRUE, $direction = 'ASC') {
 		$parents = DB_ORM::select(get_class($this))
-            ->where($this->left_column, '<=', $this->{$this->left_column})
-            ->where($this->right_column, '>=', $this->{$this->right_column})
-            ->where($this->scope_column, '=', $this->{$this->scope_column});
+			->where($this->left_column, '<=', $this->{$this->left_column})
+			->where($this->right_column, '>=', $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column});
 
 		foreach (call_user_func(array(get_class($this), 'primary_key')) as $col) {
 			$parents->where($col, '<>', $this->{$col});
@@ -515,13 +515,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public function delete($reset = FALSE) {
 		$this->load();
 
-        DB_ORM::delete(get_class($this))
-            ->where($this->left_column, '>=', $this->{$this->left_column})
-            ->where($this->right_column, '<=', $this->{$this->right_column})
-            ->where($this->scope_column, '=', $this->{$this->scope_column})
-            ->execute();
+		DB_ORM::delete(get_class($this))
+			->where($this->left_column, '>=', $this->{$this->left_column})
+			->where($this->right_column, '<=', $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
-        $this->delete_space($this->{$this->left_column}, $this->get_size());
+		$this->delete_space($this->{$this->left_column}, $this->get_size());
 
 		return TRUE;
 	}
@@ -689,18 +689,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
-    // TODO... redo this so its proper :P and open it public
-    // used by verify_tree()
-    private function get_scopes() {
+	// TODO... redo this so its proper :P and open it public
+	// used by verify_tree()
+	private function get_scopes() {
 		$result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
+			->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
 			->from($this->table())
-            ->query();
-        return $result;
+			->query();
+		return $result;
 	}
 
-    // TODO Use model's data source, not default
-    // TODO Fixed instance variables references
+	// TODO Use model's data source, not default
+	// TODO Fixed instance variables references
 	public function verify_scope($scope) {
 		$root = $this->root($scope);
 
@@ -708,55 +708,55 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		// Find nodes that have slipped out of bounds.
 		$result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('count(*)'), 'count')
-            ->from($this->_table_name)
-            ->where($this->scope_column, '=', $root->{$this->scope_column})
-            ->where_block('(')
-            ->where($this->left_column, '>', $end)
-            ->where($this->right_column, '>', $end, 'OR')
-            ->where_block(')')
-            ->query();
+			->column(DB_SQL::expr('count(*)'), 'count')
+			->from($this->_table_name)
+			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where_block('(')
+			->where($this->left_column, '>', $end)
+			->where($this->right_column, '>', $end, 'OR')
+			->where_block(')')
+			->query();
 
-        if ($result[0]->count > 0) {
+		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Find nodes that have the same left and right value
-        $result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('count(*)'), 'count')
-            ->from($this->_table_name)
-            ->where($this->scope_column, '=', $root->{$this->scope_column})
-            ->where($this->left_column, '=', $this->right_column)
-            ->query();
+		$result = DB_SQL::select('default')
+			->column(DB_SQL::expr('count(*)'), 'count')
+			->from($this->_table_name)
+			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where($this->left_column, '=', $this->right_column)
+			->query();
 
 		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Find nodes that right value is less than the left value
-        $result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('count(*)'), 'count')
-            ->from($this->_table_name)
-            ->where($this->scope_column, '=', $root->{$this->scope_column})
-            ->where($this->left_column, '>', $this->right_column)
-            ->query();
+		$result = DB_SQL::select('default')
+			->column(DB_SQL::expr('count(*)'), 'count')
+			->from($this->_table_name)
+			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where($this->left_column, '>', $this->right_column)
+			->query();
 
-        if ($result[0]->count > 0) {
+		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Make sure no 2 nodes share a left/right value
 		$i = 1;
 		while ($i <= $end) {
-            $result = DB_SQL::select('default')
-                ->column(DB_SQL::expr('count(*)'), 'count')
-                ->from($this->_table_name)
-                ->where($this->scope_column, '=', $root->{$this->scope_column})
-                ->where_block('(')
-                ->where($this->left_column, '=', $i)
-                ->where($this->right_column, '=', $i, 'OR')
-                ->where_block(')')
-                ->query();
+			$result = DB_SQL::select('default')
+				->column(DB_SQL::expr('count(*)'), 'count')
+				->from($this->_table_name)
+				->where($this->scope_column, '=', $root->{$this->scope_column})
+				->where_block('(')
+				->where($this->left_column, '=', $i)
+				->where($this->right_column, '=', $i, 'OR')
+				->where_block(')')
+				->query();
 
 			if ($result[0]->count > 1) {
 				return FALSE;
@@ -771,7 +771,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
-    // TODO Replace find_all() with LEAP's equivalent
+	// TODO Replace find_all() with LEAP's equivalent
 	public function update_path() {
 		$path = '';
 
@@ -820,7 +820,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 			$stack[] = &$d;
 		}
-		
+
 		return $stack[0];
 	}
 

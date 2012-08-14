@@ -33,8 +33,8 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-     * @throws Kohana_BadData_Exception             indicates that the specified value does
-     *                                              not validate
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'boolean');
@@ -99,8 +99,8 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-     * @throws Kohana_BadData_Exception             indicates that the specified value does
-     *                                              not validate
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
