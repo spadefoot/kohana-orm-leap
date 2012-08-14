@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-08-14
  *
  * @abstract
  */
@@ -33,6 +33,8 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
+     * @throws Kohana_BadData_Exception             indicates that the specified value does
+     *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'integer');
@@ -60,23 +62,28 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 		if (isset($metadata['label'])) {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
-
+		
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if ( ! is_null($default)) {
-				settype($default, $this->metadata['type']);
-				if ( ! $this->validate($default)) {
-					throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
-				}
-			}
-			$this->metadata['default'] = $default;
-			$this->value = $default;
 		}
 		else if ( ! $this->metadata['nullable']) {
 			$default = 0;
-			$this->metadata['default'] = $default;
-			$this->value = $default;
 		}
+		else {
+			$default = NULL;
+		}
+
+		if ( ! ($default instanceof DB_SQL_Expression)) {
+			if ( ! is_null($default)) {
+				settype($default, $this->metadata['type']);
+			}
+			if ( ! $this->validate($default)) {
+				throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+			}
+		}
+
+		$this->metadata['default'] = $default;
+		$this->value = $default;
 	}
 
 }

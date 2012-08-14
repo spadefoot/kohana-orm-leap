@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-08-14
  *
  * @abstract
  *
@@ -103,23 +103,30 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
-					settype($value, $this->metadata['type']);
-					if ( ! $this->validate($value)) {
-						throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					if ( ! is_null($value)) {
+						settype($value, $this->metadata['type']);
+						if ( ! $this->validate($value)) {
+							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+						}
 					}
-					$this->value = $value;
+					else if ( ! $this->metadata['nullable']) {
+						$value = $this->metadata['default'];
+					}
 				}
-				else {
-					$this->value = $this->metadata['default'];
+				if (isset($this->metadata['callback']) AND ! call_user_func(array($this->model, $this->metadata['callback']), $value)) {
+					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
+				$this->value = $value;
 			break;
 			case 'modified':
 				$this->metadata['modified'] = (bool) $value;
@@ -211,9 +218,6 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 */
 	protected function validate($value) {
 		if (isset($this->metadata['enum']) && ! in_array($value, $this->metadata['enum'])) {
-			return FALSE;
-		}
-		if (isset($this->metadata['callback']) && call_user_func(array($this->model, $this->metadata['callback']), $value)) {
 			return FALSE;
 		}
 		return TRUE;
