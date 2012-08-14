@@ -33,8 +33,8 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-     * @throws Kohana_BadData_Exception             indicates that the specified value does
-     *                                              not validate
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'integer');
@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$this->metadata['range']['lower_bound'] = $this->metadata['unsigned'] ? 0 : -2147483648;
 			$this->metadata['range']['upper_bound'] = 2147483647;
 		}
-		
+
 		if (isset($metadata['range'])) {
 			if (isset($this->metadata['int8fix'])) {
 				$this->metadata['range']['lower_bound'] = (bccomp(strval($metadata['range'][0]), $this->metadata['range']['lower_bound']) === 1) ? strval($metadata['range'][0]) : $this->metadata['range']['lower_bound'];
@@ -139,8 +139,8 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-     * @throws Kohana_BadData_Exception             indicates that the specified value does
-     *                                              not validate
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
