@@ -1,6 +1,9 @@
 Change Log for LEAP ORM
 
-2014-06-14
+2012-08-14
+* Reworked validation in field classes (Issues #50, #59, #60).
+
+2012-06-14
 * Changing Data::BINARY_DATA to Data::BYTE_DATA.
 
 2012-06-06

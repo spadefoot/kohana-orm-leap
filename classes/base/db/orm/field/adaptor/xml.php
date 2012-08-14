@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-08-14
  *
  * @abstract
  */
@@ -50,11 +50,11 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public function __get($key) {
+	public /*override*/ function __get($key) {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value)) {
+				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
 					$value = new XML($value);
 				}
 				return $value;
@@ -75,7 +75,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public function __set($key, $value) {
+	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
 				if (is_object($value) && ($value instanceof SimpleXMLElement)) {
