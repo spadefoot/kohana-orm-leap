@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-05-10
+ * @version 2012-08-15
  *
  * @abstract
  */
@@ -86,8 +86,8 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a boolean.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param mixed $expr                       the expression to be prepared
+	 * @return boolean                          the prepared boolean value
 	 */
 	public function prepare_boolean($expr) {
 		return (bool) $expr;
@@ -182,12 +182,11 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a natural number.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param mixed $expr                       the expression to be prepared
+	 * @return integer                          the prepared natural
 	 */
 	public function prepare_natural($expr) {
-		settype($expr, 'integer');
-		return abs($expr);
+		return (is_numeric($expr)) ? (int) abs($expr) : 0;
 	}
 
 	/**
