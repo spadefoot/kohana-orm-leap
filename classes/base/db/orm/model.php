@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-03
+ * @version 2012-08-15
  *
  * @abstract
  */
@@ -471,6 +471,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 							$builder->set($column, $this->fields[$column]->value);
 							$this->fields[$column]->modified = FALSE;
 							$count++;
+							if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+								$reload = TRUE;
+							}
 						}
 					}
 					if ($count > 0) {
@@ -502,6 +505,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 						$builder->column($column, $this->fields[$column]->value);
 						$this->fields[$column]->modified = FALSE;
 						$count++;
+						if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+							$reload = TRUE;
+						}
 					}
 				}
 				if ($count > 0) {
