@@ -45,7 +45,7 @@ LEAP provides a number of features, such as:
 
 To start using LEAP, follow these steps:
 
-1. Just download the module from github.
+1. Just download the module (see below regarding as to which branch) from github.
 2. Unzip the download to the modules folder in Kohana.
 3. Rename the uncompressed folder to "leap".
 4. Modify leap/config/database.php.
@@ -53,6 +53,16 @@ To start using LEAP, follow these steps:
 6. Begin creating your models in the application/classes/model/leap/ folder.
 
 For more information, see the tutorial on [installing LEAP](http://orm.spadefootcode.com/tutorials/installing-leap/).
+
+### About Branches
+
+* 3.1/master  - PHP 5.2+, Kohana 3.1.X, "stable", maintained
+* 3.1/develop - PHP 5.2+, Kohana 3.1.X, "unstable", maintained
+* 3.2/master  - PHP 5.3+, Kohana 3.2.X, "stable", maintained
+* 3.2/develop - PHP 5.3+, Kohana 3.2.X, "unstable", maintained
+* 3.2/legacy  - PHP 5.2+, Kohana 3.2.X, "stable", maintained
+* 3.3/master  - PHP 5.4+, Kohana 3.3.X, "stable", maintained
+* 3.3/develop - PHP 5.4+, Kohana 3.3.X, "unstable", maintained
 
 ## Required Files
 
