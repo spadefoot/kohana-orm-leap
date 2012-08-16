@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
 				}
 				return $value;
@@ -86,7 +86,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 			case 'value':
 				if ($value !== NULL) {
 					$true = $this->metadata['values'][0];
-					$value = (is_string($true) && is_string($value))
+					$value = (is_string($true) AND is_string($value))
 						? (strcasecmp($true, $value) == 0)
 						: ($true == $value);
 				}

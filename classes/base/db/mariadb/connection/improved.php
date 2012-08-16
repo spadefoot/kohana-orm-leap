@@ -53,7 +53,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			if ($this->resource_id === FALSE) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => mysqli_connect_error()));
 			}
-			if ( ! empty($this->data_source->charset) && ! @mysqli_set_charset($this->resource_id, strtolower($this->data_source->charset))) {
+			if ( ! empty($this->data_source->charset) AND ! @mysqli_set_charset($this->resource_id, strtolower($this->data_source->charset))) {
 				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 			}
 		}
@@ -205,7 +205,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 
 		$string = "'" . mysqli_real_escape_string($this->resource_id, $string) . "'";
 
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 		}
 

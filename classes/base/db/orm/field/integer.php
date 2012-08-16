@@ -63,8 +63,8 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 
 		if (isset($metadata['range'])) {
 			if (isset($this->metadata['int8fix'])) {
-				$this->metadata['range']['lower_bound'] = (bccomp(strval($metadata['range'][0]), $this->metadata['range']['lower_bound']) === 1) ? strval($metadata['range'][0]) : $this->metadata['range']['lower_bound'];
-				$this->metadata['range']['upper_bound'] = (bccomp(strval($metadata['range'][1]), $this->metadata['range']['lower_bound']) === -1) ? strval($metadata['range'][0]) : $this->metadata['range']['upper_bound'];
+				$this->metadata['range']['lower_bound'] = (bccomp(strval($metadata['range'][0]), ($this->metadata['range']['lower_bound']) === 1)) ? strval($metadata['range'][0]) : $this->metadata['range']['lower_bound'];
+				$this->metadata['range']['upper_bound'] = (bccomp(strval($metadata['range'][1]), ($this->metadata['range']['lower_bound']) === -1)) ? strval($metadata['range'][0]) : $this->metadata['range']['upper_bound'];
 			}
 			else {
 				$this->metadata['range']['lower_bound'] = max( (int) $metadata['range'][0], $this->metadata['range']['lower_bound']);
@@ -100,7 +100,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (array_key_exists('default', $metadata)) {
+		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
@@ -160,7 +160,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 						$value = $this->metadata['default'];
 					}
 				}
-				if (isset($this->metadata['callback']) && ! $this->model->{$this->metadata['callback']}($value)) {
+				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
 					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;

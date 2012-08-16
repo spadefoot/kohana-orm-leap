@@ -67,7 +67,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
@@ -83,7 +83,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			$do_append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
-				if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($do_append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$having[0]} ";
 				}
 				$sql .= $having[1];

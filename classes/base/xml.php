@@ -106,7 +106,7 @@ abstract class Base_XML extends SimpleXMLElement {
 					static::convert_to_xml($value, $element, $DOMDocument);
 				}
 			} else {
-				if (is_string($array) && preg_match('/^<!CDATA\[.*\]\]>$/', $array)) {
+				if (is_string($array) AND preg_match('/^<!CDATA\[.*\]\]>$/', $array)) {
 					$array = substr($array, 8, strlen($array) - 11);
 					$element = $DOMDocument->createCDATASection($array);
 					$domElement->appendChild($element);

@@ -61,7 +61,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 		else if (is_array($config)) {
 			$this->init($config);
 		}
-		else if (is_object($config) && ($config instanceof DB_DataSource)) {
+		else if (is_object($config) AND ($config instanceof DB_DataSource)) {
 			$this->settings = $config->settings;
 		}
 		else {

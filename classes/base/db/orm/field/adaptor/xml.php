@@ -54,7 +54,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = new XML($value);
 				}
 				return $value;
@@ -78,7 +78,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if (is_object($value) && ($value instanceof SimpleXMLElement)) {
+				if (is_object($value) AND ($value instanceof SimpleXMLElement)) {
 					$value = $value->asXML();
 				}
 				else if (is_array($value)) {

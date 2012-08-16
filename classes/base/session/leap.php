@@ -132,7 +132,7 @@ abstract class Base_Session_Leap extends Session {
 	 * @return string                           the raw session data string
 	 */
 	protected function _read($id = NULL) {
-		if ($id || $id = Cookie::get($this->_name)) {
+		if ($id OR $id = Cookie::get($this->_name)) {
 			try {
 				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
 					->where($this->_columns['session_id'], '=', $id)

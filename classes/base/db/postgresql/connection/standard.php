@@ -57,7 +57,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			if ($this->resource_id === FALSE) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => pg_last_error()));
 			}
-			if ( ! empty($this->data_source->charset) && abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
+			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
 				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 			}
 		}
@@ -216,7 +216,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 
 		$string = "'" . pg_escape_string($this->resource_id, $string) . "'";
 
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 		}
 

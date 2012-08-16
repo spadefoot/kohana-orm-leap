@@ -41,7 +41,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 */
 	public function combine($operator, $statement) {
 		$select_builder = 'DB_' . $this->dialect . '_Select_Builder';
-		if (is_object($statement) && ($statement instanceof $select_builder)) {
+		if (is_object($statement) AND ($statement instanceof $select_builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
@@ -93,7 +93,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
@@ -109,7 +109,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			$do_append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
-				if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($do_append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$having[0]} ";
 				}
 				$sql .= $having[1];
@@ -125,7 +125,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
-		if (($this->data['limit'] > 0) && ($this->data['offset'] > 0)) {
+		if (($this->data['limit'] > 0) AND ($this->data['offset'] > 0)) {
 			$max_row_to_fetch = $this->data['offset'] + ($this->data['limit'] - 1);
 			$min_row_to_fetch = $this->data['offset'];
 			$sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM <= {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";

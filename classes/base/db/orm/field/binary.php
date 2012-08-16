@@ -63,7 +63,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (array_key_exists('default', $metadata)) {
+		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
@@ -95,7 +95,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 	 */
 	protected /*override*/ function validate($value) {
 		if ($value !== NULL) {
-			if (strlen($value) > $this->metadata['max_length'] && ! preg_match('/^(0|1)*$/', $value)) {
+			if (strlen($value) > $this->metadata['max_length'] AND ! preg_match('/^(0|1)*$/', $value)) {
 				return FALSE;
 			}
 		}

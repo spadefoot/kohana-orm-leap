@@ -177,7 +177,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 				break;
 			}
 		}
-		else if (is_object($data) && ($data instanceof Data)) {
+		else if (is_object($data) AND ($data instanceof Data)) {
 			return $data->as_hexcode();
 		}
 		return '';

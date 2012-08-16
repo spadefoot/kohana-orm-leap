@@ -124,7 +124,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 						$value = $this->metadata['default'];
 					}
 				}
-				if (isset($this->metadata['callback']) && ! $this->model->{$this->metadata['callback']}($value)) {
+				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
 					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
@@ -148,7 +148,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 * @return string                               the HTML form control
 	 */
 	public function control($name, Array $attributes) {
-		if ( ! $this->metadata['savable'] && ($this->metadata['control'] != 'label')) {
+		if ( ! $this->metadata['savable'] AND ($this->metadata['control'] != 'label')) {
 			$attributes['disabled'] = 'disabled';
 			//$attributes['readonly'] = 'readonly';
 		}
@@ -219,7 +219,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected function validate($value) {
-		if (isset($this->metadata['enum']) && ! in_array($value, $this->metadata['enum'])) {
+		if (isset($this->metadata['enum']) AND ! in_array($value, $this->metadata['enum'])) {
 			return FALSE;
 		}
 		return TRUE;

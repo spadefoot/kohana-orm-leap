@@ -200,7 +200,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 
 		$string = $this->connection->quote($string);
 
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 		}
 

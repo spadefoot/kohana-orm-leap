@@ -59,7 +59,7 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 
 		$string = "'" . str_replace("'", "''", $string) . "'";
 		
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 	    }
 

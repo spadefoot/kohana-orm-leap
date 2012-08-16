@@ -161,10 +161,10 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 *                                              can be added
 	 */
 	public function get_connection($source = 'default', $new = FALSE) {
-		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
+		if ( ! (is_object($source) AND ($source instanceof DB_DataSource))) {
 			$source = new DB_DataSource($source);
 		}
-		if (isset($this->pool[$source->id]) && ! empty($this->pool[$source->id])) {
+		if (isset($this->pool[$source->id]) AND ! empty($this->pool[$source->id])) {
 			if ($new) {
 				foreach ($this->pool[$source->id] as $connection) {
 					if ( ! $connection->is_connected()) {

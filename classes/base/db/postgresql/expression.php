@@ -126,7 +126,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 		else if ($expr instanceof DB_SQL_Expression) {
 			return $expr->value($this);
 		}
-		else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
+		else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
@@ -205,7 +205,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 * @see http://www.postgresql.org/docs/8.3/interactive/queries-union.html
 	 */
 	public function prepare_operator($expr, $group) {
-		if (is_string($group) && is_string($expr)) {
+		if (is_string($group) AND is_string($expr)) {
 			$group = strtoupper($group);
 			$expr = strtoupper($expr);
 			if ($group == 'COMPARISON') {
@@ -337,7 +337,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 			else if ($expr instanceof DB_SQL_Expression) {
 				return $expr->value($this);
 			}
-			else if (class_exists('Database_Expression') && ($expr instanceof Database_Expression)) {
+			else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
 				return $expr->value();
 			}
 			else if ($expr instanceof Data) {
@@ -353,7 +353,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);
 		}
-		else if (is_string($expr) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
+		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
 			return "'{$expr}'";
 		}
 		else if (empty($expr)) {
@@ -382,7 +382,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 				? static::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $parts[$i])) . static::_CLOSING_QUOTE_CHARACTER_
 				: '*';
 		}
-		if (isset($parts[$count - 1]) && ($parts[$count - 1] != '*')) {
+		if (isset($parts[$count - 1]) AND ($parts[$count - 1] != '*')) {
 			$parts[] = '*';
 		}
 		$expr = implode('.', $parts);

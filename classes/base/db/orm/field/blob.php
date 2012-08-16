@@ -61,7 +61,7 @@ abstract class Base_DB_ORM_Field_Blob extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (array_key_exists('default', $metadata)) {
+		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {

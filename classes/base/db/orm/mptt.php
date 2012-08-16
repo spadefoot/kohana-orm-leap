@@ -231,14 +231,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT
 	 */
 	public function root($scope = NULL) {
-		if ($scope === NULL && $this->is_loaded()) {
+		if (($scope === NULL) AND $this->is_loaded()) {
 			$scope = $this->{$this->scope_column};
 		}
-		elseif ($scope === NULL && !$this->is_loaded())
-		{
+		else if (($scope === NULL) AND ! $this->is_loaded()) {
 			return FALSE;
 		}
-
 		return DB_ORM::select(get_class($this))->where($this->left_column, '=', 1)->where($this->scope_column, '=', $scope);
 	}
 
@@ -810,7 +808,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			$d = &$descendants_array[$i];
 			$d['Children'] = array();
 
-			while (count($stack) > 0 && $stack[count($stack) - 1][$this->right_column] < $d[$this->right_column]) {
+			while (count($stack) > 0 AND $stack[count($stack) - 1][$this->right_column] < $d[$this->right_column]) {
 				array_pop($stack);
 			}
 

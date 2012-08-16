@@ -192,7 +192,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				}
 				$position = $lookahead;
 			}
-			else if (($char == '!') || ($char == '=')) { // "operator" token
+			else if (($char == '!') OR ($char == '=')) { // "operator" token
 				$lookahead = $position + 1;
 				$next = static::char_at($statement, $lookahead, $strlen);
 				if ($next == '=') {
@@ -216,10 +216,10 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				}
 				$position = $lookahead;
 			}
-			else if (($char == '<') || ($char == '>')) { // "operator" token
+			else if (($char == '<') OR ($char == '>')) { // "operator" token
 				$lookahead = $position + 1;
 				$next = static::char_at($statement, $lookahead, $strlen);
-				if (($next == '=') || ($next == $char) || (($next == '>') && ($char == '<'))) {
+				if (($next == '=') OR ($next == $char) OR (($next == '>') AND ($char == '<'))) {
 					$lookahead++;
 					$size = $lookahead - $position;
 					$token = substr($statement, $position, $size);
@@ -240,13 +240,13 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				}
 				$position = $lookahead;
 			}
-			else if (in_array($char, $whitespace) || in_array($char, $eol)) { // "whitespace" token
+			else if (in_array($char, $whitespace) OR in_array($char, $eol)) { // "whitespace" token
 				$start = $position;
 				$next = '';
 				do {
 					$position++;
 					$next = static::char_at($statement, $position, $strlen);
-				} while(($next != '') && (in_array($next, $whitespace) || in_array($next, $eol)));
+				} while(($next != '') AND (in_array($next, $whitespace) OR in_array($next, $eol)));
 				$size = $position - $start;
 				$token = substr($statement, $start, $size);
 				$this->tuples[] = array(
@@ -273,7 +273,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 			}
 			else if ($char == '-') { // "whitespace" token (i.e. SQL-style comment) or "operator" token
 				$lookahead = $position + 1;
-				if (($lookahead > $length) || (static::char_at($statement, $lookahead, $strlen) != '-')) {
+				if (($lookahead > $length) OR (static::char_at($statement, $lookahead, $strlen) != '-')) {
 					$this->tuples[] = array(
 						'type' => static::OPERATOR_TOKEN,
 						'token' => $char,
@@ -310,7 +310,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				}
 				else {
 					$lookahead += 2;
-					while ( ! ((static::char_at($statement, $lookahead - 1, $strlen) == '*') && (static::char_at($statement, $lookahead, $strlen) == '/'))) {
+					while ( ! ((static::char_at($statement, $lookahead - 1, $strlen) == '*') AND (static::char_at($statement, $lookahead, $strlen) == '/'))) {
 						$lookahead++;
 					}
 					$lookahead++;
@@ -329,7 +329,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				$start = $position;
 				do {
 					$position++;
-				} while(($position < $length) && (static::char_at($statement, $position, $strlen) != ']'));
+				} while(($position < $length) AND (static::char_at($statement, $position, $strlen) != ']'));
 				$position++;
 				$size = $position - $start;
 				$token = substr($statement, $start, $size);
@@ -344,7 +344,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				$start = $position;
 				do {
 					$position++;
-				} while(($position < $length) && (static::char_at($statement, $position, $strlen) != $char));
+				} while(($position < $length) AND (static::char_at($statement, $position, $strlen) != $char));
 				$position++;
 				$size = $position - $start;
 				$token = substr($statement, $start, $size);
@@ -359,7 +359,7 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				$lookahead = $position + 1;
 				while ($lookahead <= $length) {
 					if (static::char_at($statement, $lookahead, $strlen) == '\'') {
-						if (($lookahead == $length) || (static::char_at($statement, $lookahead + 1, $strlen) != '\'')) {
+						if (($lookahead == $length) OR (static::char_at($statement, $lookahead + 1, $strlen) != '\'')) {
 							$lookahead++;
 							break;
 						}
@@ -377,25 +377,25 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				// echo Debug::vars($token);
 				$position = $lookahead;
 			}
-			else if (($char >= '0') && ($char <= '9')) { // "integer" token, "real" token, or "hexadecimal" token
+			else if (($char >= '0') AND ($char <= '9')) { // "integer" token, "real" token, or "hexadecimal" token
 				$type = '';
 				$start = $position;
 				$next = '';
 				if ($char == '0') {
 					$position++;
 					$next = static::char_at($statement, $position, $strlen);
-					if (($next == 'x') || ($next == 'X')) {
+					if (($next == 'x') OR ($next == 'X')) {
 						do {
 							$position++;
 							$next = static::char_at($statement, $position, $strlen);
-						} while (($next >= '0') && ($next <= '9'));
+						} while (($next >= '0') AND ($next <= '9'));
 						$type = static::HEXADECIMAL_TOKEN;
 					}
 					else if ($next == '.') {
 						do {
 							$position++;
 							$next = static::char_at($statement, $position, $strlen);
-						} while (($next >= '0') && ($next <= '9'));
+						} while (($next >= '0') AND ($next <= '9'));
 						$type = static::REAL_TOKEN;
 					}
 					else {
@@ -406,12 +406,12 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 					do {
 						$position++;
 						$next = static::char_at($statement, $position, $strlen);
-					} while (($next >= '0') && ($next <= '9'));
+					} while (($next >= '0') AND ($next <= '9'));
 					if ($next == '.') {
 						do {
 							$position++;
 							$next = static::char_at($statement, $position, $strlen);
-						} while (($next >= '0') && ($next <= '9'));
+						} while (($next >= '0') AND ($next <= '9'));
 						$type = static::REAL_TOKEN;
 					}
 					else {
@@ -427,13 +427,13 @@ abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAcces
 				$this->size++;
 				// echo Debug::vars($token);
 			}
-			else if ((($char >= 'a') && ($char <= 'z')) || (($char >= 'A') && ($char <= 'Z')) || ($char == '_')) { // "keyword" token or "identifier" token
+			else if ((($char >= 'a') AND ($char <= 'z')) OR (($char >= 'A') AND ($char <= 'Z')) OR ($char == '_')) { // "keyword" token or "identifier" token
 				$start = $position;
 				$next = '';
 				do {
 					$position++;
 					$next = static::char_at($statement, $position, $strlen);
-				} while(($position <= $length) && ((($next >= 'a') && ($next <= 'z')) || (($next >= 'A') && ($next <= 'Z')) || ($next == '_') || (($next >= '0') && ($next <= '9'))));
+				} while(($position <= $length) AND ((($next >= 'a') AND ($next <= 'z')) OR (($next >= 'A') AND ($next <= 'Z')) OR ($next == '_') OR (($next >= '0') AND ($next <= '9'))));
 				$size = $position - $start;
 				$token = substr($statement, $start, $size);
 				$type = (static::is_keyword($token, $dialect)) ? static::KEYWORD_TOKEN : static::IDENTIFIER_TOKEN;

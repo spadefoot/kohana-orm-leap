@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = Encrypt::instance($this->metadata['config'])->decode($value);
 				}
 				return $value;

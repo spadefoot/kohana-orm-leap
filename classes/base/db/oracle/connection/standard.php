@@ -131,7 +131,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			return $result_set;
 		}
 		$command_id = @oci_parse($this->resource_id, $sql);
-		if (($command_id === FALSE) || ! oci_execute($command_id, $this->execution_mode)) {
+		if (($command_id === FALSE) OR ! oci_execute($command_id, $this->execution_mode)) {
 			$oci_error = oci_error($command_id);
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
@@ -161,7 +161,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		}
 		$sql = trim($sql, "; \t\n\r\0\x0B");
 		$command_id = @oci_parse($this->resource_id, $sql);
-		if (($command_id === FALSE) || ! oci_execute($command_id, $this->execution_mode)) {
+		if (($command_id === FALSE) OR ! oci_execute($command_id, $this->execution_mode)) {
 			$oci_error = oci_error($command_id);
 			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
 		}

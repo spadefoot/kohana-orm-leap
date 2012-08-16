@@ -104,7 +104,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			return $result_set;
 		}
 		$command_id = @db2_prepare($this->resource_id, $sql);
-		if (($command_id === FALSE) || ! db2_execute($command_id)) {
+		if (($command_id === FALSE) OR ! db2_execute($command_id)) {
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => db2_stmt_error($command_id)));
 		}
 		$records = array();
@@ -222,7 +222,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 
 		$string = "'" . db2_escape_string($string) . "'";
 
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 		}
 

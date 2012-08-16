@@ -56,7 +56,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Object  extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = unserialize($value);
 				}
 				return $value;
@@ -81,7 +81,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Object  extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				if ($value !== NULL) {
-					if ( ! (is_object($value) && ($value instanceof $this->metadata['class']))) {
+					if ( ! (is_object($value) AND ($value instanceof $this->metadata['class']))) {
 						throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Value is not an instance of data type.', array(':object' => $this->metadata['class'], ':type' => gettype($value)));
 					}
 					$value = (string) serialize($value);
