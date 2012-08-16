@@ -85,10 +85,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return boolean								whether the property is set
 	 */
 	public function __isset($name) {
-		if ($this->is_field($name) || $this->is_alias($name) || $this->is_adaptor($name) || $this->is_relation($name)) {
-			return TRUE;
-		}
-		return FALSE;
+		return (isset($this->fields[$name]) || isset($this->aliases[$name]) || isset($this->adaptors[$name]) || isset($this->relations[$name]));
 	}
 
 	/**
@@ -101,16 +98,16 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
-		if ($this->is_field($name)) {
+		if (isset($this->fields[$name])) {
 			return $this->fields[$name]->value;
 		}
-		else if ($this->is_alias($name)) {
+		else if (isset($this->aliases[$name])) {
 			return $this->aliases[$name]->value;
 		}
-		else if ($this->is_adaptor($name)) {
+		else if (isset($this->adaptors[$name])) {
 			return $this->adaptors[$name]->value;
 		}
-		else if ($this->is_relation($name)) {
+		else if (isset($this->relations[$name])) {
 			return $this->relations[$name]->result;
 		}
 		else {
@@ -128,14 +125,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($name, $value) {
-		if ($this->is_field($name)) {
+		if (isset($this->fields[$name])) {
 			$this->fields[$name]->value = $value;
 			$this->metadata['loaded'] = TRUE;
 		}
-		else if ($this->is_alias($name)) {
+		else if (isset($this->aliases[$name])) {
 			$this->aliases[$name]->value = $value;
 		}
-		else if ($this->is_adaptor($name)) {
+		else if (isset($this->adaptors[$name])) {
 			$this->adaptors[$name]->value = $value;
 		}
 		else {
@@ -187,12 +184,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              deleted
 	 */
 	public function delete($reset = FALSE) {
-		$is_savable = static::is_savable();
-		if ( ! $is_savable) {
+		if ( ! static::is_savable()) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 		$primary_key = static::primary_key();
-		if ( ! is_array($primary_key) || empty($primary_key)) {
+		if (empty($primary_key) || ! is_array($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
 		$data_source = static::data_source();
@@ -300,7 +296,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	protected function hash_code() {
 		$primary_key = static::primary_key();
-		if (is_array($primary_key) && ! empty($primary_key)) {
+		if ( ! empty($primary_key) && is_array($primary_key)) {
 			if (static::is_auto_incremented()) {
 				$column = $primary_key[0];
 				if ( ! isset($this->fields[$column])) {
@@ -335,7 +331,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public function label($name, Array $attributes = NULL) {
 		$key = $name;
-		if ($this->is_alias($key)) {
+		if (isset($this->aliases[$key])) {
 			$key = $this->aliases[$name]->field;
 		}
 		return $this->fields[$key]->label($name, $attributes);
@@ -369,14 +365,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			$this->metadata['saved'] = $this->hash_code();
 		}
 		foreach ($columns as $column => $value) {
-			if ($this->is_field($column)) {
+			if (isset($this->fields[$column])) {
 				$this->fields[$column]->value = $value;
 				$this->metadata['loaded'] = TRUE;
 			}
-			else if ($this->is_alias($column)) {
+			else if (isset($this->aliases[$column])) {
 				$this->aliases[$column]->value = $value;
 			}
-			else if ($this->is_adaptor($column)) {
+			else if (isset($this->adaptors[$column])) {
 				$this->adaptors[$column]->value = $value;
 			}
 		}
@@ -391,7 +387,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @param array $metadata                       the relation's metadata
 	 */
 	public function relate($name, $type, Array $metadata) {
-		if ( ! is_string($name) || $this->is_adaptor($name) || $this->is_alias($name) || $this->is_field($name)) {
+		if ( ! is_string($name) || isset($this->adaptors[$name]) || isset($this->aliases[$name]) || isset($this->fields[$name])) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
 		}
 		$types = array('belongs_to' => 'DB_ORM_Relation_BelongsTo', 'has_many' => 'DB_ORM_Relation_HasMany', 'has_one' => 'DB_ORM_Relation_HasOne');
@@ -426,12 +422,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              after the save is done
 	 */
 	public function save($reload = FALSE) {
-		$is_savable = static::is_savable();
-		if ( ! $is_savable) {
+		if ( ! static::is_savable()) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 		$primary_key = static::primary_key();
-		if ( ! is_array($primary_key) || empty($primary_key)) {
+		if (empty($primary_key) || ! is_array($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
 		$data_source = static::data_source();
@@ -566,7 +561,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @param string $name                          the relation's name
 	 */
 	public function unrelate($name) {
-		if ($this->is_relation($name)) {
+		if (isset($this->relations[$name])) {
 			unset($this->relations[$name]);
 		}
 	}
@@ -638,10 +633,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return boolean                              whether the primary key auto increments
 	 */
 	public static function is_auto_incremented() {
-		if (count(static::primary_key()) > 1) {
-			return FALSE;
-		}
-		return TRUE;
+		return count(static::primary_key()) === 1;
 	}
 
 	/**
