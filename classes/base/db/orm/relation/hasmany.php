@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-04-01
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -43,7 +43,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
 		$this->metadata['parent_key'] = (isset($metadata['parent_key']))
 			? (array) $metadata['parent_key']
-			: call_user_func(array($this->metadata['parent_model'], 'primary_key'));
+			: $this->metadata['parent_model']::primary_key();
 
 		// the through model is the pivot table
 		if (isset($metadata['through_model'])) {
@@ -77,15 +77,15 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		$parent_key = $this->metadata['parent_key'];
 
 		$child_model = $this->metadata['child_model'];
-		$child_table = call_user_func(array($child_model, 'table'));
+		$child_table = $child_model::table();
 		$child_key = $this->metadata['child_key'];
-		$child_source = call_user_func(array($child_model, 'data_source'));
+		$child_source = $child_model::data_source();
 
 		if (isset($this->metadata['through_model']) && isset($this->metadata['through_keys'])) {
 			$through_model = $this->metadata['through_model'];
-			$through_table = call_user_func(array($through_model, 'table'));
+			$through_table = $through_model::table();
 			$through_keys = $this->metadata['through_keys'];
-			$through_source = call_user_func(array($through_model, 'data_source'));
+			$through_source = $through_model::data_source();
 
 			if ($through_source != $child_source) {
 				$builder = DB_SQL::select($through_source)

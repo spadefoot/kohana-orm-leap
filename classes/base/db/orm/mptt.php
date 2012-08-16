@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-03
+ * @version 2012-08-16
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
@@ -186,7 +186,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_child($target) {
-		return ($this->parent->{self::primary_key()} === $target->{self::primary_key()});
+		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
 	}
 
 	/**
@@ -197,7 +197,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_parent($target) {
-		return ($this->{self::primary_key()} === $target->parent->{self::primary_key()});
+		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
 	/**
@@ -208,10 +208,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_sibling($target) {
-		if ($this->{self::primary_key()} === $target->{self::primary_key()}) {
+		if ($this->{static::primary_key()} === $target->{static::primary_key()}) {
 			return FALSE;
 		}
-		return ($this->parent->{self::primary_key()} === $target->parent->{self::primary_key()});
+		return ($this->parent->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
 	/**
@@ -266,7 +266,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->where($this->right_column, '>=', $this->{$this->right_column})
 			->where($this->scope_column, '=', $this->{$this->scope_column});
 
-		foreach (call_user_func(array(get_class($this), 'primary_key')) as $col) {
+		foreach (static::primary_key() as $col) {
 			$parents->where($col, '<>', $this->{$col});
 		}
 
@@ -330,7 +330,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				->order_by($this->left_column, $direction);
 
 		if (!$self) {
-			$siblings->where(self::primary_key(), '<>', $this->{self::primary_key()});
+			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
 		}
 
 		return $siblings;

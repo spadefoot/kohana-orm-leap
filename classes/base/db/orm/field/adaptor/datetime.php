@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -58,7 +58,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
 					$value = date($this->metadata['format'], (int) $value);
 				}
 				return $value;

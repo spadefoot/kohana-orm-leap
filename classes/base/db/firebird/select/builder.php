@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-02-22
+ * @version 2012-08-16
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd20-select.html
  *
@@ -56,7 +56,7 @@ abstract class Base_DB_Firebird_Select_Builder extends DB_SQL_Select_Builder {
 			? implode(', ', $this->data['column'])
 			: $this->data['wildcard'];
 
-		if ( ! is_null($this->data['from'])) {
+		if ($this->data['from'] !== NULL) {
 			$sql .= " FROM {$this->data['from']}";
 		}
 

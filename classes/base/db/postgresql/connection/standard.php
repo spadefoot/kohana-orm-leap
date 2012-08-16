@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-08-01
+ * @version 2012-08-16
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -93,7 +93,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
-		if ( ! is_null($result_set)) {
+		if ($result_set !== NULL) {
 			$this->sql = $sql;
 			return $result_set;
 		}

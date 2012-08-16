@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-11
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -137,10 +137,10 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && ! is_array($value)) {
+			if (($operator == DB_SQL_Operator::_IN_ || $operator == DB_SQL_Operator::_NOT_IN_) && ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
-			if (is_null($value)) {
+			if ($value === NULL) {
 				switch ($operator) {
 					case DB_SQL_Operator::_EQUAL_TO_:
 						$operator = DB_SQL_Operator::_IS_;

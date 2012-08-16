@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -73,8 +73,8 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
-					$value = self::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
+				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
+					$value = static::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
 				}
 				return $value;
 			break;
@@ -97,8 +97,8 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
-					$value = self::convert($value, $this->metadata['units'][1], $this->metadata['units'][0]);
+				if ($value !== NULL) {
+					$value = static::convert($value, $this->metadata['units'][1], $this->metadata['units'][0]);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;
@@ -121,7 +121,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @return double                           the new value
 	 */
 	protected static function convert($value, $units0, $units1) {
-		return ($value * self::parse($units0)) / self::parse($units1);
+		return ($value * static::parse($units0)) / static::parse($units1);
 	}
 
 	/**

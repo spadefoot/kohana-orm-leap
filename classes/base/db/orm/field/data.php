@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -61,7 +61,7 @@ abstract class Base_DB_ORM_Field_Data extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (isset($metadata['default'])) {
+		if (array_key_exists('default', $metadata)) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
@@ -96,7 +96,7 @@ abstract class Base_DB_ORM_Field_Data extends DB_ORM_Field {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
-					if ( ! is_null($value)) {
+					if ($value !== NULL) {
 						if (is_string($value)) {
 							$value = new Data($value, Data::HEXADECIMAL_DATA);
 						}
@@ -108,7 +108,7 @@ abstract class Base_DB_ORM_Field_Data extends DB_ORM_Field {
 						$value = $this->metadata['default'];
 					}
 				}
-				if (isset($this->metadata['callback']) AND ! call_user_func(array($this->model, $this->metadata['callback']), $value)) {
+				if (isset($this->metadata['callback']) && ! $this->model->{$this->metadata['callback']}($value)) {
 					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
@@ -131,7 +131,7 @@ abstract class Base_DB_ORM_Field_Data extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected /*override*/ function validate($value) {
-		if ( ! is_null($value)) {
+		if ($value !== NULL) {
 			if ( ! ($value instanceof $this->metadata['type'])) {
 				return FALSE;
 			}

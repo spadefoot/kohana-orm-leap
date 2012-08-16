@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @see http://www.iitechs.com/kohana/userguide/api/kohana/Encrypt
  *
@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
 					$value = Encrypt::instance($this->metadata['config'])->decode($value);
 				}
 				return $value;
@@ -84,7 +84,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Encryption extends DB_ORM_Field_Adaptor
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					$value = Encrypt::instance($this->metadata['config'])->encode($value);
 				}
 				$this->model->{$this->metadata['field']} = $value;
