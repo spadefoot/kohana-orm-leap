@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2012-05-31
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -40,7 +40,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 *                                              formatted string
 	 */
 	public static function encode(Array $array, $as_string = FALSE) {
-		$content = self::convert_to_xml($array);
+		$content = static::convert_to_xml($array);
 		if ($as_string) {
 			return $content;
 		}
@@ -65,7 +65,7 @@ abstract class Base_XML extends SimpleXMLElement {
 			throw new Kohana_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
 		}
 
-		$source = self::find_file($file);
+		$source = static::find_file($file);
 
 		$content = file_get_contents($source);
 
@@ -91,7 +91,7 @@ abstract class Base_XML extends SimpleXMLElement {
 		if (is_null($DOMDocument)) {
 			$DOMDocument = new DOMDocument();
 			$DOMDocument->formatOutput = TRUE;
-			self::convert_to_xml($array, $DOMDocument, $DOMDocument);
+			static::convert_to_xml($array, $DOMDocument, $DOMDocument);
 			return $DOMDocument->asXML();
 		} else {
 			if (is_array($array)) {
@@ -103,7 +103,7 @@ abstract class Base_XML extends SimpleXMLElement {
 						$element = $DOMDocument->createElement($node);
 						$domElement->appendChild($element);
 					}
-					self::convert_to_xml($value, $element, $DOMDocument);
+					static::convert_to_xml($value, $element, $DOMDocument);
 				}
 			} else {
 				if (is_string($array) && preg_match('/^<!CDATA\[.*\]\]>$/', $array)) {

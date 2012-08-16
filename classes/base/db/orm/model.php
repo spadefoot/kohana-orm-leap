@@ -189,7 +189,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	public function delete($reset = FALSE) {
 		$is_savable = static::is_savable();
 		if ( ! $is_savable) {
-			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
+			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 		$primary_key = static::primary_key();
 		if ( ! is_array($primary_key) || empty($primary_key)) {
@@ -301,7 +301,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	protected function hash_code() {
 		$primary_key = static::primary_key();
 		if (is_array($primary_key) && ! empty($primary_key)) {
-			if (self::is_auto_incremented()) {
+			if (static::is_auto_incremented()) {
 				$column = $primary_key[0];
 				if ( ! isset($this->fields[$column])) {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
@@ -428,7 +428,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	public function save($reload = FALSE) {
 		$is_savable = static::is_savable();
 		if ( ! $is_savable) {
-			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
+			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 		$primary_key = static::primary_key();
 		if ( ! is_array($primary_key) || empty($primary_key)) {
@@ -599,7 +599,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	public static function columns() {
 		static $columns = NULL;
 		if (is_null($columns)) {
-			$model = self::get_called_class();
+			$model = get_called_class();
 			$record = new $model();
 			$columns = array_keys($record->fields);
 		}
@@ -638,7 +638,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return boolean                              whether the primary key auto increments
 	 */
 	public static function is_auto_incremented() {
-		if (count(self::primary_key()) > 1) {
+		if (count(static::primary_key()) > 1) {
 			return FALSE;
 		}
 		return TRUE;
@@ -691,7 +691,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return string                               the database table's name
 	 */
 	public static function table() {
-		$segments = preg_split('/_/', self::get_called_class());
+		$segments = preg_split('/_/', get_called_class());
 		return $segments[count($segments) - 1];
 	}
 

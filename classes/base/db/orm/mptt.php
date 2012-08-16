@@ -186,7 +186,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_child($target) {
-		return ($this->parent->{self::primary_key()} === $target->{self::primary_key()});
+		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
 	}
 
 	/**
@@ -197,7 +197,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_parent($target) {
-		return ($this->{self::primary_key()} === $target->parent->{self::primary_key()});
+		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
 	/**
@@ -208,10 +208,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_sibling($target) {
-		if ($this->{self::primary_key()} === $target->{self::primary_key()}) {
+		if ($this->{static::primary_key()} === $target->{static::primary_key()}) {
 			return FALSE;
 		}
-		return ($this->parent->{self::primary_key()} === $target->parent->{self::primary_key()});
+		return ($this->parent->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
 	/**
@@ -330,7 +330,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				->order_by($this->left_column, $direction);
 
 		if (!$self) {
-			$siblings->where(self::primary_key(), '<>', $this->{self::primary_key()});
+			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
 		}
 
 		return $siblings;

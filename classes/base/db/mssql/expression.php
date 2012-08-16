@@ -76,7 +76,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 		if ( ! is_string($expr)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
-		return self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $expr)) . self::_CLOSING_QUOTE_CHARACTER_;
+		return static::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $expr)) . static::_CLOSING_QUOTE_CHARACTER_;
 	}
 
 	/**
@@ -139,7 +139,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 		}
 		$parts = explode('.', $expr);
 		foreach ($parts as &$part) {
-			$part = self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $part)) . self::_CLOSING_QUOTE_CHARACTER_;
+			$part = static::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $part)) . static::_CLOSING_QUOTE_CHARACTER_;
 		}
 		$expr = implode('.', $parts);
 		return $expr;
@@ -327,7 +327,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 				return "x'" . $expr->as_hexcode() . "'";
 			}
 			else {
-				return self::prepare_value( (string) $expr); // Convert the object to a string
+				return static::prepare_value( (string) $expr); // Convert the object to a string
 			}
 		}
 		else if (is_integer($expr)) {
@@ -362,7 +362,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 		$count = count($parts);
 		for ($i = 0; $i < $count; $i++) {
 			$parts[$i] = (trim($parts[$i]) != '*')
-				? self::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $parts[$i])) . self::_CLOSING_QUOTE_CHARACTER_
+				? static::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $parts[$i])) . static::_CLOSING_QUOTE_CHARACTER_
 				: '*';
 		}
 		if (isset($parts[$count - 1]) && ($parts[$count - 1] != '*')) {
@@ -394,11 +394,11 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.sqlref%2Fsrc%2Ftpc%2Fdb2z_reservedwords.htm
 	 */
 	public static function is_keyword($token) {
-		if (is_null(self::$xml)) {
-			self::$xml = XML::load('config/sql/mssql.xml');
+		if (is_null(static::$xml)) {
+			static::$xml = XML::load('config/sql/mssql.xml');
 		}
 		$token = strtoupper($token);
-		$nodes = self::$xml->xpath("/sql/dialect[@name='mssql' and @version='2008.R2']/keywords[keyword = '{$token}']");
+		$nodes = static::$xml->xpath("/sql/dialect[@name='mssql' and @version='2008.R2']/keywords[keyword = '{$token}']");
 		return ! empty($nodes);
 	}
 
