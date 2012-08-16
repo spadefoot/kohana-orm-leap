@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-01
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -60,14 +60,14 @@ abstract class Base_DB_ORM_Delete_Proxy extends Kohana_Object implements DB_SQL_
 	public function __construct($model) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
+		$this->source = new DB_DataSource($model::data_source());
 		$builder = 'DB_' . $this->source->dialect . '_Delete_Builder';
 		$this->builder = new $builder($this->source);
 		$extension = DB_ORM_Model::builder_name($name);
 		if (class_exists($extension)) {
 			$this->extension = new $extension($this->builder);
 		}
-		$table = call_user_func(array($model, 'table'));
+		$table = $model::table();
 		$this->builder->from($table);
 	}
 

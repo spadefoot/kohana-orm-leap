@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-03
+ * @version 2012-08-16
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
@@ -266,7 +266,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->where($this->right_column, '>=', $this->{$this->right_column})
 			->where($this->scope_column, '=', $this->{$this->scope_column});
 
-		foreach (call_user_func(array(get_class($this), 'primary_key')) as $col) {
+		foreach (static::primary_key() as $col) {
 			$parents->where($col, '<>', $this->{$col});
 		}
 
