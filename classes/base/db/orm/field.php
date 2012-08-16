@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  *
@@ -91,7 +91,9 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 				return $this->value;
 			break;
 			default:
-				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+				if (array_key_exists($key, $this->metadata)) {
+					return $this->metadata[$key];
+				}
 			break;
 		}
 		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
@@ -112,7 +114,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
-					if ( ! is_null($value)) {
+					if ($value !== NULL) {
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {
 							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
@@ -122,7 +124,7 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 						$value = $this->metadata['default'];
 					}
 				}
-				if (isset($this->metadata['callback']) AND ! call_user_func(array($this->model, $this->metadata['callback']), $value)) {
+				if (isset($this->metadata['callback']) && ! $this->model->{$this->metadata['callback']}($value)) {
 					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;

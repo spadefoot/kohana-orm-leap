@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-02-22
+ * @version 2012-08-16
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -75,7 +75,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			? implode(', ', $this->data['column'])
 			: $this->data['wildcard'];
 
-		if ( ! is_null($this->data['from'])) {
+		if ($this->data['from'] !== NULL) {
 			$sql .= " FROM {$this->data['from']}";
 		}
 

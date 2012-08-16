@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @see http://php.net/manual/en/function.number-format.php
  * @see http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html
@@ -82,7 +82,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Number extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
 					$value = number_format($value, $this->metadata['precision'], $this->metadata['separator'], $this->metadata['delimiter']);
 				}
 				return $value;

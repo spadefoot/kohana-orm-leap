@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -73,7 +73,7 @@ abstract class Base_DB_ORM_Field_String extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (isset($metadata['default'])) {
+		if (array_key_exists('default', $metadata)) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
@@ -84,7 +84,7 @@ abstract class Base_DB_ORM_Field_String extends DB_ORM_Field {
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
-			if ( ! is_null($default)) {
+			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
 			}
 			if ( ! $this->validate($default)) {
@@ -104,7 +104,7 @@ abstract class Base_DB_ORM_Field_String extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected /*override*/ function validate($value) {
-		if ( ! is_null($value)) {
+		if ($value !== NULL) {
 			if (strlen($value) > $this->metadata['max_length']) {
 				return FALSE;
 			}

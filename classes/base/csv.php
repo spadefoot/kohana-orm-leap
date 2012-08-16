@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category CSV
- * @version 2012-05-31
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -307,7 +307,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 * @return boolean                              whether the CSV file was saved
 	 */
 	public function save($file_name = NULL) {
-		if ( ! is_null($file_name)) {
+		if ($file_name !== NULL) {
 			$this->file_name = $file_name;
 		}
 		$result = @file_put_contents($this->file_name, $this->render());
@@ -380,7 +380,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 		if ( ! is_array($value)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
 		}
-		else if (is_null($offset)) {
+		else if ($offset === NULL) {
 			$this->data[] = $value;
 		}
 		else {

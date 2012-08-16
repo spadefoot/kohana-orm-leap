@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Object
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -35,80 +35,6 @@ abstract class Kohana_Object {
 	 */
 	public function __hashCode() {
 		return spl_object_hash($this);
-	}
-
-	/**
-	 * This function allows for an inheriting class to determine its child classes.
-	 *
-	 * Retro-support of get_called_class()
-	 * Tested and works in PHP 5.2.4
-	 *
-	 * @access public
-	 * @final
-	 * @static
-	 * @param array $backtrace          the generated backtrace
-	 * @param integer $level            the depth level
-	 * @return string                   the name of the called class
-	 *
-	 * @see http://php.net/manual/en/function.get-called-class.php
-	 * @see http://www.sol1.com.au/
-	 */
-	public final static function get_called_class($backtrace = FALSE, $level = 1) {
-		if ( ! $backtrace) {
-			$backtrace = debug_backtrace();
-		}
-		if ( ! isset($backtrace[$level])) {
-			throw new Kohana_ClassNotFound_Exception('Message: Cannot find called class. Reason: Stack level too deep.', array(':backtrace' => $backtrace, ':level' => $level));
-		}
-		if ( ! isset($backtrace[$level]['type'])) {
-			throw new Kohana_ClassNotFound_Exception('Message: Cannot find called class. Reason: Type not set.', array(':backtrace' => $backtrace, ':level' => $level));
-		}
-		else {
-			switch ($backtrace[$level]['type']) {
-				case '::':
-					try {
-						$lines = file($backtrace[$level]['file']);
-						$i = 0;
-						$callerLine = '';
-						do {
-							$i++;
-							$callerLine = $lines[$backtrace[$level]['line'] - $i] . $callerLine;
-						} while (stripos($callerLine, $backtrace[$level]['function']) === FALSE);
-						preg_match('/([a-zA-Z0-9\_]+)::' . $backtrace[$level]['function'] . '/', $callerLine, $matches);
-						if ( ! isset($matches[1])) {
-							// must be an edge case.
-							throw new Kohana_ClassNotFound_Exception('Message: Cannot find called class. Reason: Originating method call is obscured.', array(':backtrace' => $backtrace, ':level' => $level));
-						}
-						switch ($matches[1]) {
-							case 'self':
-							case 'parent':
-								return self::get_called_class($backtrace, $level + 1);
-							default:
-								return $matches[1];
-						}
-					}
-					catch (ErrorException $ex) {
-						throw new Kohana_ClassNotFound_Exception('Message: Cannot find called class. Reason: :exception', array(':exception' => $ex->getMessage(), ':backtrace' => $backtrace, ':level' => $level));
-					}
-				break;
-				case '->':
-					switch ($backtrace[$level]['function']) {
-						case '__get':
-							// edge case -> get class of calling object
-							if (!is_object($backtrace[$level]['object'])) {
-								throw new Kohana_ClassNotFound_Exception('Message: Cannot find called class. Reason: Edge case fail. __get called on non object.', array(':backtrace' => $backtrace, ':level' => $level));
-							}
-							return get_class($backtrace[$level]['object']);
-						break;
-						default:
-							return $backtrace[$level]['class'];
-						break;
-					}
-				default:
-					throw new Kohana_ClassNotFound_Exception('Message: Cannot find called class. Reason: Unknown backtrace method type.', array(':backtrace' => $backtrace, ':level' => $level));
-				break;
-			}
-		}
 	}
 
 }

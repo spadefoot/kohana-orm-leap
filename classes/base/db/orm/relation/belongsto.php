@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-04-01
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -43,7 +43,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
 		$this->metadata['parent_key'] = (isset($metadata['parent_key']))
 			? (array) $metadata['parent_key']
-			: call_user_func(array($this->metadata['parent_model'], 'primary_key'));
+			: $this->metadata['parent_model']::primary_key();
 
 		// the child model is the referencing table
 		$this->metadata['child_model'] = get_class($model);
@@ -60,9 +60,9 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 	 */
 	protected function load() {
 		$parent_model = $this->metadata['parent_model'];
-		$parent_table = call_user_func(array($parent_model, 'table'));
+		$parent_table = $parent_model::table();
 		$parent_key = $this->metadata['parent_key'];
-		$parent_source = call_user_func(array($parent_model, 'data_source'));
+		$parent_source = $parent_model::data_source();
 
 		$child_key = $this->metadata['child_key'];
 

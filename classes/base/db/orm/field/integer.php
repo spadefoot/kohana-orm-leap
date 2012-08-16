@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -100,7 +100,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (isset($metadata['default'])) {
+		if (array_key_exists('default', $metadata)) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
@@ -119,7 +119,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
-			if ( ! is_null($default)) {
+			if ($default !== NULL) {
 				if ((PHP_INT_SIZE !== 4) OR ! is_string($default) OR ! preg_match('/^-?[0-9]+$/D', $default) OR ((bccomp($default, '-2147483648') !== -1) AND (bccomp($default, '2147483647') !== 1))) {
 					settype($default, $this->metadata['type']);
 				}
@@ -148,7 +148,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
-					if ( ! is_null($value)) {
+					if ($value !== NULL) {
 						if ( ! isset($this->metadata['int8fix']) OR is_int($value) OR ! preg_match('/^-?[0-9]+$/D', (string) $value) OR (bccomp( (string) $value, '-2147483648') !== -1 AND bccomp( (string) $value, '2147483647') !== 1)) {
 							settype($value, $this->metadata['type']);
 						}
@@ -160,7 +160,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 						$value = $this->metadata['default'];
 					}
 				}
-				if (isset($this->metadata['callback']) AND ! call_user_func(array($this->model, $this->metadata['callback']), $value)) {
+				if (isset($this->metadata['callback']) && ! $this->model->{$this->metadata['callback']}($value)) {
 					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
@@ -183,7 +183,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected /*override*/ function validate($value) {
-		if ( ! is_null($value)) {
+		if ($value !== NULL) {
 			if (isset($this->metadata['max_length']) AND (strlen(strval($value)) > $this->metadata['max_length'])) {
 				return FALSE;
 			}

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-03
+ * @version 2012-08-16
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -122,7 +122,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 *                                              can be added
 	 */
 	public function add_connection(DB_Connection $connection) {
-		if ( ! is_null($connection)) {
+		if ($connection !== NULL) {
 			$connection_id = spl_object_hash($connection);
 			if ( ! isset($this->lookup[$connection_id])) {
 				if ($this->count() >= $this->settings['max_size']) {
@@ -207,7 +207,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @param DB_Connection $connection             the connection to be released
 	 */
 	public function release(DB_Connection $connection) {
-		if ( ! is_null($connection)) {
+		if ($connection !== NULL) {
 			$connection_id = spl_object_hash($connection);
 			if (isset($this->lookup[$connection_id])) {
 				$source_id = $this->lookup[$connection_id];
@@ -249,11 +249,11 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @return DB_Connection_Pool               	a singleton instance of this class
 	 */
 	public static function instance() {
-		if (is_null(self::$instance)) {
+		if (static::$instance === NULL) {
 			register_shutdown_function(array('DB_Connection_Pool', 'autorelease'));
-			self::$instance = new DB_Connection_Pool();
+			static::$instance = new DB_Connection_Pool();
 		}
-		return self::$instance;
+		return static::$instance;
 	}
 
 }
