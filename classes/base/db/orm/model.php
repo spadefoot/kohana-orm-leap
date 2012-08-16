@@ -181,6 +181,17 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	}
 
 	/**
+	 * Creates the record in database.
+	 *
+	 * @access public
+	 * @param boolean $reload                       whether the model should be reloaded
+	 *                                              after the save is done
+	 */
+	public function create($reload = FALSE) {
+		$this->save($reload, TRUE);
+	}
+
+	/**
 	 * This function deletes the record matching the primary key from the database.
 	 *
 	 * @access public
@@ -426,98 +437,133 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @access public
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
+	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
 	 */
-	public function save($reload = FALSE) {
+	public function save($reload = FALSE, $mode = NULL) {
 		if ( ! static::is_savable()) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
+		
 		$primary_key = static::primary_key();
+		
 		if (empty($primary_key) || ! is_array($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
+		
 		$data_source = static::data_source();
 		$table = static::table();
 		$columns = array_keys($this->fields);
 		$hash_code = $this->hash_code();
-		$do_insert = $hash_code === NULL;
+		
+		// Set saving mode
+		$do_insert = $mode === NULL ? $hash_code === NULL : (bool) $mode;
+		
 		if ( ! $do_insert) {
-			$do_insert = ($this->metadata['saved'] === NULL || ($hash_code != $this->metadata['saved']));
-			if ($do_insert) {
-				$builder = DB_SQL::select($data_source)
-						->column(DB_SQL::expr(1), 'IsFound')
-						->from($table);
-				foreach ($primary_key as $column) {
-					$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
-				}
-				$do_insert = ! ($builder->limit(1)->query()->is_loaded());
-			}
-			if ( ! $do_insert) {
-				foreach ($primary_key as $column) {
-					$index = array_search($column, $columns);
-					if ($index !== FALSE) {
-						unset($columns[$index]);
+			// Check if we have to detect saving mode automatically
+			if ($mode === NULL) {
+				// Check if the model has been already saved
+				$do_insert = ($this->metadata['saved'] === NULL || ($hash_code != $this->metadata['saved']));
+				
+				// Check if the record exists in database
+				if ($do_insert) {
+					$builder = DB_SQL::select($data_source)
+							->column(DB_SQL::expr(1), 'IsFound')
+							->from($table);
+					
+					foreach ($primary_key as $column) {
+						$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 					}
+					
+					$do_insert = ! ($builder->limit(1)->query()->is_loaded());
 				}
+			}
+			
+			if ( ! $do_insert) {
 				if ( ! empty($columns)) {
 					$builder = DB_SQL::update($data_source)
 						->table($table);
-					$count = 0;
+					
+					// Is there any data to save and it's worth to execute the query?
+					$is_worth = FALSE;
+					
 					foreach ($columns as $column) {
 						if ($this->fields[$column]->savable && $this->fields[$column]->modified) {
+							// It's worth do execute the query.
+							$is_worth = TRUE;
+							
+							// Add column values to the query builder
 							$builder->set($column, $this->fields[$column]->value);
-							$this->fields[$column]->modified = FALSE;
-							$count++;
-							if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+							
+							if (in_array($column, $primary_key) || $this->fields[$column]->value instanceof DB_SQL_Expression) {
+								// Reloading required because primary key has been changed or an SQL expression has been used
 								$reload = TRUE;
 							}
 						}
+						
+						// Mark field as not modified
+						$this->fields[$column]->modified = FALSE;
 					}
-					if ($count > 0) {
+					
+					// Execute the query only if there is data to save
+					if ($is_worth) {
 						foreach ($primary_key as $column) {
 							$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 						}
+						
 						$builder->execute();
 					}
+					
 					$this->metadata['saved'] = $hash_code;
 				}
 			}
 		}
+		
 		if ($do_insert) {
-			$is_auto_incremented = static::is_auto_incremented();
-			if ($is_auto_incremented || $hash_code === NULL) {
-				foreach ($primary_key as $column) {
-					$index = array_search($column, $columns);
-					if ($index !== FALSE) {
-						unset($columns[$index]);
-					}
-				}
-			}
 			if ( ! empty($columns)) {
 				$builder = DB_SQL::insert($data_source)
 					->into($table);
-				$count = 0;
+				
+				// Is any data to save and it's worth to execute the query?
+				$is_worth = FALSE;
+				
 				foreach ($columns as $column) {
-					if ($this->fields[$column]->savable) {
+					if ($this->fields[$column]->savable && $this->fields[$column]->modified) {
+						// It's worth do execute the query.
+						$is_worth = TRUE;
+						
+						// Add column values to the query builder
 						$builder->column($column, $this->fields[$column]->value);
-						$this->fields[$column]->modified = FALSE;
-						$count++;
+						
 						if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+							// Reloading required, if using SQL expresions
 							$reload = TRUE;
 						}
 					}
+					
+					// Mark field as not modified
+					$this->fields[$column]->modified = FALSE;
 				}
-				if ($count > 0) {
-					if ($is_auto_incremented && $hash_code === NULL) {
+				
+				// Execute the query only if there is data to save
+				if ($is_worth) {
+					if (static::is_auto_incremented() && $hash_code === NULL) {
+						// Execute the query and assign the result to the primary key field
 						$this->fields[$primary_key[0]]->value = $builder->execute(TRUE);
+						
+						// Mark the primary key field as not modified
+						$this->fields[$primary_key[0]]->modified = FALSE;
 					}
 					else {
 						$builder->execute();
 					}
 				}
+				
 				$this->metadata['saved'] = $this->hash_code();
 			}
 		}
+		
 		if ($reload) {
+			// Reload the record, if it's required
 			$this->load();
 		}
 	}
@@ -570,6 +616,17 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if (isset($this->relations[$name])) {
 			unset($this->relations[$name]);
 		}
+	}
+
+	/**
+	 * Updates the record in database.
+	 *
+	 * @access public
+	 * @param boolean $reload                       whether the model should be reloaded
+	 *                                              after the save is done
+	 */
+	public function update($reload = FALSE) {
+		$this->save($reload, FALSE);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
