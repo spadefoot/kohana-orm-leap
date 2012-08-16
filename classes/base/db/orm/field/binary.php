@@ -63,7 +63,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
-		if (isset($metadata['default'])) {
+		if (array_key_exists('default', $metadata)) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {

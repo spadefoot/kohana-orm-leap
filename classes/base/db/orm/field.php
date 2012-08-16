@@ -91,7 +91,9 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 				return $this->value;
 			break;
 			default:
-				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
+				if (array_key_exists($key, $this->metadata)) {
+					return $this->metadata[$key];
+				}
 			break;
 		}
 		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
