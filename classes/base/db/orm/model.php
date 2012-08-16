@@ -154,6 +154,12 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		foreach ($this->fields as $name => $field) {
 			$buffer[$name] = $field->value;
 		}
+		foreach ($this->aliases as $name => $alias) {
+			$buffer[$name] = $alias->value;
+		}
+		foreach ($this->adaptors as $name => $adaptor) {
+			$buffer[$name] = $adaptor->value;
+		}
 		return $buffer;
 	}
 
