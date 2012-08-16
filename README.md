@@ -61,8 +61,8 @@ For more information, see the tutorial on [installing LEAP](http://orm.spadefoot
 * 3.2/master  - PHP 5.3+, Kohana 3.2.X, "stable", maintained
 * 3.2/develop - PHP 5.3+, Kohana 3.2.X, "unstable", maintained
 * 3.2/legacy  - PHP 5.2+, Kohana 3.2.X, "stable", maintained
-* 3.3/master  - PHP 5.4+, Kohana 3.3.X, "stable", maintained
-* 3.3/develop - PHP 5.4+, Kohana 3.3.X, "unstable", maintained
+* 3.3/master  - PHP 5.3+, Kohana 3.3.X, "stable", maintained
+* 3.3/develop - PHP 5.3+, Kohana 3.3.X, "unstable", maintained
 
 ## Required Files
 
