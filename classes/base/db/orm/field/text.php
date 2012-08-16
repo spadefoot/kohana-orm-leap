@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-14
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -72,7 +72,7 @@ abstract class Base_DB_ORM_Field_Text extends DB_ORM_Field {
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
-			if ( ! is_null($default)) {
+			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
 			}
 			if ( ! $this->validate($default)) {

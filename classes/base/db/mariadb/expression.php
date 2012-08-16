@@ -400,7 +400,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @see http://books.google.com/books?id=cKSgkT8AAkwC&pg=PT270&lpg=PT270&dq=mariadb+reserved+keywords&source=bl&ots=S58RmNOK4N&sig=wHm0cKwcNUho8EghBgPlvH0BiPo&hl=en&sa=X&ei=7fsYT6mMF-qTiQKp6u3NCA&sqi=2&ved=0CDUQ6AEwAw#v=onepage&q=mariadb%20reserved%20keywords&f=false
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml) {
 			static::$xml = XML::load('config/sql/mysql.xml');
 		}
 		$token = strtoupper($token);

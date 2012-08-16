@@ -104,7 +104,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 *                                              inaccessible
 	 */
 	public function __call($function, $arguments) {
-		if ( ! is_null($this->extension)) {
+		if ($this->extension !== NULL) {
 			if (method_exists($this->extension, $function)) {
 				$result = call_user_func_array(array($this->extension, $function), $arguments);
 				if ($result instanceof DB_ORM_Builder) {
@@ -361,7 +361,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @return DB_ResultSet                         the result set
 	 */
 	public function query($limit = NULL) {
-		if ( ! is_null($limit)) {
+		if ($limit !== NULL) {
 			$this->limit($limit);
 		}
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);

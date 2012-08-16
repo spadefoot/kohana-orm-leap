@@ -83,7 +83,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 *                                              inaccessible
 	 */
 	public function __call($function, $arguments) {
-		if ( ! is_null($this->extension)) {
+		if ($this->extension !== NULL) {
 			if (method_exists($this->extension, $function)) {
 				$result = call_user_func_array(array($this->extension, $function), $arguments);
 				if ($result instanceof DB_ORM_Builder) {

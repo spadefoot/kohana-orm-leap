@@ -72,7 +72,7 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
-			if ( ! is_null($default)) {
+			if ($default !== NULL) {
 				if (is_string($default)) {
 					$default = strtolower($default);
 					if (in_array($default, array('true', 't', 'yes', 'y', '1'))) {
@@ -108,7 +108,7 @@ abstract class Base_DB_ORM_Field_Boolean extends DB_ORM_Field {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
-					if ( ! is_null($value)) {
+					if ($value !== NULL) {
 						if (is_string($value)) {
 							$value = strtolower($value);
 							if (in_array($value, array('true', 't', 'yes', 'y', '1'))) {

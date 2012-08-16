@@ -394,7 +394,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.sqlref%2Fsrc%2Ftpc%2Fdb2z_reservedwords.htm
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/mssql.xml');
 		}
 		$token = strtoupper($token);

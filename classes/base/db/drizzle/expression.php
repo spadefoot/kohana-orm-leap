@@ -388,7 +388,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @return boolean                          whether the token is a reserved keyword
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/mysql.xml');
 		}
 		$token = strtoupper($token);

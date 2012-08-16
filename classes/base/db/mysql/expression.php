@@ -399,7 +399,7 @@ abstract class Base_DB_MySQL_Expression implements DB_SQL_Expression_Interface {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/reserved-words.html
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/mysql.xml');
 		}
 		$token = strtoupper($token);

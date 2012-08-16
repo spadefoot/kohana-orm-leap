@@ -411,7 +411,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 * @see http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/postgresql.xml');
 		}
 		$token = strtoupper($token);

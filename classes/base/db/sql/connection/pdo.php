@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-05-25
+ * @version 2012-08-16
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -78,7 +78,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
-		if ( ! is_null($result_set)) {
+		if ($result_set !== NULL) {
 			$this->sql = $sql;
 			return $result_set;
 		}
@@ -227,7 +227,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 * @access public
 	 */
 	public function __destruct() {
-		if ( ! is_null($this->connection)) {
+		if ($this->connection !== NULL) {
 		   unset($this->connection);
 		}
 	}

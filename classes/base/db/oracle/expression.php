@@ -406,7 +406,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @see http://docs.oracle.com/cd/B28359_01/appdev.111/b31231/appb.htm
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/oracle.xml');
 		}
 		$token = strtoupper($token);

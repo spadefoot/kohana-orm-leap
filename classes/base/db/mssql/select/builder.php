@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-02-22
+ * @version 2012-08-16
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -54,7 +54,7 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 			? implode(', ', $this->data['column'])
 			: $this->data['wildcard'];
 
-		if ( ! is_null($this->data['from'])) {
+		if ($this->data['from'] !== NULL) {
 			$sql .= " FROM {$this->data['from']}";
 		}
 

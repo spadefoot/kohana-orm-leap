@@ -73,7 +73,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value) && ! ($value instanceof DB_SQL_Expression)) {
+				if ($value !== NULL && ! ($value instanceof DB_SQL_Expression)) {
 					$value = static::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
 				}
 				return $value;
@@ -97,7 +97,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					$value = static::convert($value, $this->metadata['units'][1], $this->metadata['units'][0]);
 				}
 				$this->model->{$this->metadata['field']} = $value;

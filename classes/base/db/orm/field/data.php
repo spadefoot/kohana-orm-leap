@@ -96,7 +96,7 @@ abstract class Base_DB_ORM_Field_Data extends DB_ORM_Field {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
-					if ( ! is_null($value)) {
+					if ($value !== NULL) {
 						if (is_string($value)) {
 							$value = new Data($value, Data::HEXADECIMAL_DATA);
 						}
@@ -131,7 +131,7 @@ abstract class Base_DB_ORM_Field_Data extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected /*override*/ function validate($value) {
-		if ( ! is_null($value)) {
+		if ($value !== NULL) {
 			if ( ! ($value instanceof $this->metadata['type'])) {
 				return FALSE;
 			}

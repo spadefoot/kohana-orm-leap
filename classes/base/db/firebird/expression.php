@@ -397,7 +397,7 @@ abstract class Base_DB_Firebird_Expression implements DB_SQL_Expression_Interfac
 	 * @see http://www.firebirdsql.org/file/documentation/reference_manuals/reference_material/html/langrefupd25-reskeywords-full-reswords.html
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/firebird.xml');
 		}
 		$token = strtoupper($token);

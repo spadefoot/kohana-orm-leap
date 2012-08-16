@@ -408,7 +408,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * @see http://www.sqlite.org/lang_keywords.html
 	 */
 	public static function is_keyword($token) {
-		if (is_null(static::$xml)) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/sqlite.xml');
 		}
 		$token = strtoupper($token);

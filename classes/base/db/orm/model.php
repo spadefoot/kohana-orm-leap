@@ -170,7 +170,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return string                               the HTML form control
 	 */
 	public function control($name, Array $attributes = NULL) {
-		if ( ! is_array($attributes)) {
+		if ($attributes === NULL) {
 			$attributes = array();
 		}
 		$control = $this->fields[$name]->control($name, $attributes);
@@ -315,7 +315,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
 				$value = $this->fields[$column]->value;
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					$buffer .= "{$column}={$value}";
 				}
 			}
@@ -351,7 +351,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	public function load(Array $columns = array()) {
 		if (empty($columns)) {
 			$primary_key = static::primary_key();
-			if ( ! is_array($primary_key) || empty($primary_key)) {
+			if (empty($primary_key) || ! is_array($primary_key)) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
 			$data_source = static::data_source();
@@ -438,9 +438,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		$table = static::table();
 		$columns = array_keys($this->fields);
 		$hash_code = $this->hash_code();
-		$do_insert = is_null($hash_code);
+		$do_insert = $hash_code === NULL;
 		if ( ! $do_insert) {
-			$do_insert = (is_null($this->metadata['saved']) || ($hash_code != $this->metadata['saved']));
+			$do_insert = ($this->metadata['saved'] === NULL || ($hash_code != $this->metadata['saved']));
 			if ($do_insert) {
 				$builder = DB_SQL::select($data_source)
 						->column(DB_SQL::expr(1), 'IsFound')
@@ -483,7 +483,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		}
 		if ($do_insert) {
 			$is_auto_incremented = static::is_auto_incremented();
-			if ($is_auto_incremented || is_null($hash_code)) {
+			if ($is_auto_incremented || $hash_code === NULL) {
 				foreach ($primary_key as $column) {
 					$index = array_search($column, $columns);
 					if ($index !== FALSE) {
@@ -506,7 +506,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 					}
 				}
 				if ($count > 0) {
-					if ($is_auto_incremented && is_null($hash_code)) {
+					if ($is_auto_incremented && $hash_code === NULL) {
 						$this->fields[$primary_key[0]]->value = $builder->execute(TRUE);
 					}
 					else {
@@ -598,7 +598,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public static function columns() {
 		static $columns = NULL;
-		if (is_null($columns)) {
+		if ($columns === NULL) {
 			$model = get_called_class();
 			$record = new $model();
 			$columns = array_keys($record->fields);

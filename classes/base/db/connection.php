@@ -110,7 +110,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	protected function cache($sql, $type, $results = NULL) {
 		if ($this->data_source->cache->enabled) {
-			if ( ! is_null($results)) {
+			if ($results !== NULL) {
 				if ($this->data_source->cache->lifetime > 0) {
 					Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
 				}

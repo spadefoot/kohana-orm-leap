@@ -88,7 +88,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @see http://darklaunch.com/2009/05/23/php-xml-encode-using-domdocument-convert-array-to-xml-json-encode
 	 */
 	protected static function convert_to_xml($array, $domElement = NULL, $DOMDocument = NULL) {
-		if (is_null($DOMDocument)) {
+		if ($DOMDocument === NULL) {
 			$DOMDocument = new DOMDocument();
 			$DOMDocument->formatOutput = TRUE;
 			static::convert_to_xml($array, $DOMDocument, $DOMDocument);

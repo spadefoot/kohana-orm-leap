@@ -90,7 +90,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
-			if ( ! is_null($default)) {
+			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
 			}
 			if ( ! $this->validate($default)) {
@@ -117,7 +117,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
-					if ( ! is_null($value)) {
+					if ($value !== NULL) {
 						$value = number_format( (float) $value, $this->metadata['scale']);
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {
@@ -151,7 +151,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected /*override*/ function validate($value) {
-		if ( ! is_null($value)) {
+		if ($value !== NULL) {
 			if (strlen("{$value}") > $this->metadata['precision']) {
 				return FALSE;
 			}
