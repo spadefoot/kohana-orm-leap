@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-17
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
@@ -342,7 +342,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function leaves() {
 		return DB_ORM::select(get_class($this))
-				->where($this->left_column, '=', new Database_Expression('(`' . $this->right_column . '` - 1)'))
+				->where($this->left_column, '=', DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
 				->where($this->left_column, '>=', $this->{$this->left_column})
 				->where($this->right_column, '<=', $this->{$this->right_column})
 				->where($this->scope_column, '=', $this->{$this->scope_column})
@@ -602,11 +602,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		}
 
 		// Stop $this being moved into a descendant or disallow if target is root
-		if ($target->is_descendant($this) OR ($allow_root_target === FALSE AND $target->is_root())) {
+		if ($target->is_descendant($this) OR (($allow_root_target === FALSE) AND $target->is_root())) {
 			return FALSE;
 		}
 
-		$left_offset = ($left_column === TRUE ? $target->{$this->left_column} : $target->{$this->right_column}) + $left_offset;
+		$left_offset = (($left_column === TRUE) ? $target->{$this->left_column} : $target->{$this->right_column}) + $left_offset;
 		$level_offset = $target->{$this->level_column} - $this->{$this->level_column} + $level_offset;
 
 		$size = $this->get_size();
@@ -687,12 +687,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
-	// TODO... redo this so its proper :P and open it public
+	// TODO redo this so its proper :P and open it public
 	// used by verify_tree()
 	private function get_scopes() {
-		$result = DB_SQL::select('default')
+		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
-			->from($this->table())
+			->from(static::table())
 			->query();
 		return $result;
 	}
@@ -705,7 +705,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$end = $root->{$this->right_column};
 
 		// Find nodes that have slipped out of bounds.
-		$result = DB_SQL::select('default')
+		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('count(*)'), 'count')
 			->from($this->_table_name)
 			->where($this->scope_column, '=', $root->{$this->scope_column})
@@ -720,7 +720,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		}
 
 		// Find nodes that have the same left and right value
-		$result = DB_SQL::select('default')
+		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('count(*)'), 'count')
 			->from($this->_table_name)
 			->where($this->scope_column, '=', $root->{$this->scope_column})
@@ -732,7 +732,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		}
 
 		// Find nodes that right value is less than the left value
-		$result = DB_SQL::select('default')
+		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('count(*)'), 'count')
 			->from($this->_table_name)
 			->where($this->scope_column, '=', $root->{$this->scope_column})
@@ -746,7 +746,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Make sure no 2 nodes share a left/right value
 		$i = 1;
 		while ($i <= $end) {
-			$result = DB_SQL::select('default')
+			$result = DB_SQL::select(static::data_source())
 				->column(DB_SQL::expr('count(*)'), 'count')
 				->from($this->_table_name)
 				->where($this->scope_column, '=', $root->{$this->scope_column})
