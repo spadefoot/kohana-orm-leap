@@ -28,82 +28,103 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-17
+ * @version 2012-08-18
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
  *
  * @abstract
  */
-abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
+abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class so we can put in application specific settings.
 
 	/**
+	 * This variable stores the parent id.
+	 *
 	 * @access public
-	 * @var string parent id
+	 * @var string
 	 */
 	public $parent_id = 'parentID';
 
 	/**
+	 * This variable stores the title column.
+	 *
 	 * @access public
 	 * @var string
 	 */
 	public $title_column = 'name';
 
 	/**
+	 * This variable stores the link column.
+	 *
 	 * @access public
 	 * @var string
 	 */
 	public $link_column = 'alias';
 
 	/**
+	 * This variable stores the name of the left column.
+	 *
 	 * @access public
-	 * @var string left column name.
+	 * @var string
 	 */
 	public $left_column = 'lft';
 
 	/**
+	 * This variable stores the name of the right column.
+	 *
 	 * @access public
-	 * @var string right column name.
+	 * @var string
 	 */
 	public $right_column = 'rgt';
 
 	/**
+	 * This variable stores the name of the level column.
+	 *
 	 * @access public
-	 * @var string level column name.
+	 * @var string
 	 */
 	public $level_column = 'lvl';
 
 	/**
+	 * This variable stores the name of the scope column.
+	 *
 	 * @access public
-	 * @var string scope column name.
+	 * @var string
 	 **/
 	public $scope_column = 'scope';
 
 	/**
-	 * Enable/Disable path calculation
+	 * This variable stores whether path calculation is enabled/disabled.
 	 *
+	 * @access protected
+	 * @var boolean
 	 */
 	protected $path_calculation_enabled = FALSE;
 
 	/**
-	 * Full pre-calculated path
+	 * This variable stores the full pre-calculated path.
 	 *
+	 * @access public
+	 * @var string
 	 */
 	public $path_column = 'path';
 
 	/**
-	 * Single path element
+	 * This variable stores the single path element.
+	 *
+	 * @access public
+	 * @var string
 	 */
 	public $path_part_column = 'path_part';
 
 	/**
-	 * Path separator
+	 * This variable stores the path separator to be used.
+	 *
+	 * @access public
+	 * @var char
 	 */
 	public $path_separator = '/';
 
-	/**
-	 * TODO - extend this class so we can put in application specific settings
-	 */
 	/**
 	 * The view to be used to create the unordered list
 	 *
@@ -127,7 +148,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->where($this->scope_column, '=', $scope)
 			->query();
 
-		if ($search->count() > 0 ) {
+		if ($search->count() > 0) {
 			return FALSE;
 		}
 
@@ -597,7 +618,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Make sure we have the most up to date version of this
 		$this->load();
 
-		if ( ! $target instanceof $this) {
+		if ( ! ($target instanceof $this)) {
 			$target = DB_ORM::model(get_class($this), $target);
 			if ( ! $target->is_loaded()) {
 				return FALSE;
@@ -711,7 +732,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		// Find nodes that have slipped out of bounds.
 		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('count(*)'), 'count')
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
 			->where($this->scope_column, '=', $root->{$this->scope_column})
 			->where_block('(')
@@ -726,7 +747,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		// Find nodes that have the same left and right value
 		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('count(*)'), 'count')
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
 			->where($this->scope_column, '=', $root->{$this->scope_column})
 			->where($this->left_column, '=', $this->right_column)
@@ -738,7 +759,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		// Find nodes that right value is less than the left value
 		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('count(*)'), 'count')
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
 			->where($this->scope_column, '=', $root->{$this->scope_column})
 			->where($this->left_column, '>', $this->right_column)
@@ -752,7 +773,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$i = 1;
 		while ($i <= $end) {
 			$result = DB_SQL::select(static::data_source())
-				->column(DB_SQL::expr('count(*)'), 'count')
+				->column(DB_SQL::expr('COUNT(*)'), 'count')
 				->from(static::table())
 				->where($this->scope_column, '=', $root->{$this->scope_column})
 				->where_block('(')
