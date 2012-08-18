@@ -76,7 +76,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	 * @param string $data						the data
 	 * @param boolean $type						the current type of data
 	 */
-	public function __construct($data, $type = 0) {
+	public function __construct($data, $type = 1) {
 		$this->hexcode = Data::unpack($data, $type);
 		$this->length = -1;
 	}
