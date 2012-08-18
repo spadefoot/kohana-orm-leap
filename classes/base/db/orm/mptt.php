@@ -123,7 +123,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 **/
 	public function new_scope($scope, array $additional_fields = array()) {
 		// Make sure the specified scope doesn't already exist.
-		$search = DB_ORM::select(get_class($this))->where($this->scope_column, '=', $scope)->query();
+		$search = DB_ORM::select(get_class($this))
+			->where($this->scope_column, '=', $scope)
+			->query();
 
 		if ($search->count() > 0 ) {
 			return FALSE;
@@ -164,7 +166,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_leaf() {
-		return !$this->has_children();
+		return ! $this->has_children();
 	}
 
 	/**
@@ -175,7 +177,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_descendant($target) {
-		return ($this->{$this->left_column} > $target->{$this->left_column} AND $this->{$this->right_column} < $target->{$this->right_column} AND $this->{$this->scope_column} = $target->{$this->scope_column});
+		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} = $target->{$this->scope_column}));
 	}
 
 	/**
@@ -208,10 +210,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_sibling($target) {
-		if ($this->{static::primary_key()} === $target->{static::primary_key()}) {
+		$primary_key = static::primary_key();
+		if ($this->{$primary_key} === $target->{$primary_key}) {
 			return FALSE;
 		}
-		return ($this->parent->{static::primary_key()} === $target->parent->{static::primary_key()});
+		return ($this->parent->{$primary_key} === $target->parent->{$primary_key});
 	}
 
 	/**
@@ -237,7 +240,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		else if (($scope === NULL) AND ! $this->is_loaded()) {
 			return FALSE;
 		}
-		return DB_ORM::select(get_class($this))->where($this->left_column, '=', 1)->where($this->scope_column, '=', $scope);
+		return DB_ORM::select(get_class($this))
+			->where($this->left_column, '=', 1)
+			->where($this->scope_column, '=', $scope);
 	}
 
 	/**
@@ -270,7 +275,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$parents->order_by($this->left_column, $direction);
 
-		if (!$root) {
+		if ( ! $root) {
 			$parents->where($this->left_column, '!=', 1);
 		}
 
@@ -287,9 +292,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function children($self = FALSE, $direction = 'ASC') {
 		if ($self) {
-			return $this->descendants($self, $direction)->where($this->level_column, '<=', $this->{$this->level_column} + 1)->where($this->level_column, '>=', $this->{$this->level_column});
+			return $this->descendants($self, $direction)
+				->where($this->level_column, '<=', $this->{$this->level_column} + 1)
+				->where($this->level_column, '>=', $this->{$this->level_column});
 		}
-		return $this->descendants($self, $direction)->where($this->level_column, '=', $this->{$this->level_column} + 1);
+		return $this->descendants($self, $direction)
+			->where($this->level_column, '=', $this->{$this->level_column} + 1);
 	}
 
 	/**
@@ -301,8 +309,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT
 	 */
 	public function descendants($self = FALSE, $direction = 'ASC') {
-		$left_operator = $self ? '>=' : '>';
-		$right_operator = $self ? '<=' : '<';
+		$left_operator = ($self) ? '>=' : '>';
+		$right_operator = ($self) ? '<=' : '<';
 
 		return DB_ORM::select(get_class($this))
 				->where($this->left_column, $left_operator, $this->{$this->left_column})
@@ -321,13 +329,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function siblings($self = FALSE, $direction = 'ASC') {
 		$siblings = DB_ORM::select(get_class($this))
-				->where($this->left_column, '>', $this->parent->find()->{$this->left_column})
-				->where($this->right_column, '<', $this->parent->find()->{$this->right_column})
+				->where($this->left_column, '>', $this->parent->fetch(0)->{$this->left_column})
+				->where($this->right_column, '<', $this->parent>fetch(0)->{$this->right_column})
 				->where($this->scope_column, '=', $this->{$this->scope_column})
 				->where($this->level_column, '=', $this->{$this->level_column})
 				->order_by($this->left_column, $direction);
 
-		if (!$self) {
+		if ( ! $self) {
 			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
 		}
 
@@ -368,18 +376,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	private function create_space($start, $size = 2) {
 		// Update the right values
-		$builder = DB_ORM::update(get_class($this))
+		DB_ORM::update(get_class($this))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
 			->where($this->right_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
 		// Update the left values
-		$builder = DB_ORM::update(get_class($this))
-				->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
-				->where($this->left_column, '>=', $start)
-				->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
+			->where($this->left_column, '>=', $start)
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 	}
 
 	/**
@@ -392,18 +400,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	private function delete_space($start, $size = 2) {
 		// Update the left values
-		$builder = DB_ORM::update(get_class($this))
-				->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
-				->where($this->left_column, '>=', $start)
-				->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
+			->where($this->left_column, '>=', $start)
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
 		// Update the right values
-		$builder = DB_ORM::update(get_class($this))
-				->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
-				->where($this->right_column, '>=', $start)
-				->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
+			->where($this->right_column, '>=', $start)
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 	}
 
 	/**
@@ -413,7 +421,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param $copy_left_from int
 	 * @param $left_offset int
 	 * @param $level_offset int
-	 * @return Base_DB_ORM_MPTT|bool
+	 * @return DB_ORM_MPTT|bool
 	 */
 	protected function insert($target, $copy_left_from, $left_offset, $level_offset) {
 		// Insert should only work on new nodes.. if its already in the tree it needs to be moved!
@@ -421,7 +429,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			return FALSE;
 		}
 
-		if (!$target instanceof $this) {
+		if ( ! $target instanceof $this) {
 			$target = DB_ORM::model(get_class($this), $target);
 		}
 		else {
@@ -505,7 +513,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	/**
 	 * Removes a node and it's descendants.
 	 *
-	 * $usless_param prevents a strict error that breaks PHPUnit like hell!
+	 * $useless_param prevents a strict error that breaks PHPUnit like hell!
 	 * @access public
 	 * @param bool $descendants remove the descendants?
 	 * @return bool
@@ -523,7 +531,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		return TRUE;
 	}
-
 
 	/**
 	 * Move to First Child
@@ -583,17 +590,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param bool allow this movement to be allowed on the root node
 	 */
 	protected function move($target, $left_column, $left_offset, $level_offset, $allow_root_target) {
-		if (!$this->is_loaded()) {
+		if ( ! $this->is_loaded()) {
 			return FALSE;
 		}
 
 		// Make sure we have the most up to date version of this
 		$this->load();
 
-		if (!$target instanceof $this) {
+		if ( ! $target instanceof $this) {
 			$target = DB_ORM::model(get_class($this), $target);
-
-			if (!$target->is_loaded()) {
+			if ( ! $target->is_loaded()) {
 				return FALSE;
 			}
 		}
@@ -620,16 +626,15 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$offset = ($left_offset - $this->{$this->left_column});
 
 		// Update the values
-		$builder = DB_ORM::update(get_class($this))
+		DB_ORM::update(get_class($this))
 			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $offset))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $offset))
 			->set($this->level_column, DB_ORM::expr($this->level_column . ' + ' . $level_offset))
 			->set($this->scope_column, $target->{$this->scope_column})
 			->where($this->left_column, '>=', $this->{$this->left_column})
 			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column});
-
-		$builder->execute();
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
 		$this->delete_space($this->{$this->left_column}, $size);
 
@@ -680,7 +685,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function verify_tree() {
 		foreach ($this->get_scopes() as $scope) {
-			if (!$this->verify_scope($scope->{$this->scope_column})) {
+			if ( ! $this->verify_scope($scope->{$this->scope_column})) {
 				return FALSE;
 			}
 		}
@@ -707,7 +712,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Find nodes that have slipped out of bounds.
 		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('count(*)'), 'count')
-			->from($this->_table_name)
+			->from(static::table())
 			->where($this->scope_column, '=', $root->{$this->scope_column})
 			->where_block('(')
 			->where($this->left_column, '>', $end)
@@ -722,7 +727,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Find nodes that have the same left and right value
 		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('count(*)'), 'count')
-			->from($this->_table_name)
+			->from(static::table())
 			->where($this->scope_column, '=', $root->{$this->scope_column})
 			->where($this->left_column, '=', $this->right_column)
 			->query();
@@ -734,7 +739,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Find nodes that right value is less than the left value
 		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('count(*)'), 'count')
-			->from($this->_table_name)
+			->from(static::table())
 			->where($this->scope_column, '=', $root->{$this->scope_column})
 			->where($this->left_column, '>', $this->right_column)
 			->query();
@@ -748,7 +753,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		while ($i <= $end) {
 			$result = DB_SQL::select(static::data_source())
 				->column(DB_SQL::expr('count(*)'), 'count')
-				->from($this->_table_name)
+				->from(static::table())
 				->where($this->scope_column, '=', $root->{$this->scope_column})
 				->where_block('(')
 				->where($this->left_column, '=', $i)
@@ -769,12 +774,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
-	// TODO Replace find_all() with LEAP's equivalent
 	public function update_path() {
 		$path = '';
 
 		$parents = $this->parents(FALSE)
-			->find_all();
+			->query();
 
 		foreach ($parents as $parent) {
 			$path .= $this->path_separator . trim($parent->{$this->path_part_column});
@@ -808,7 +812,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			$d = &$descendants_array[$i];
 			$d['Children'] = array();
 
-			while (count($stack) > 0 AND $stack[count($stack) - 1][$this->right_column] < $d[$this->right_column]) {
+			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
 				array_pop($stack);
 			}
 

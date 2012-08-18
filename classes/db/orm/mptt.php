@@ -22,7 +22,9 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-07-28
+ * @version 2012-08-17
+ *
+ * @abstract
  */
-class DB_ORM_MPTT extends Base_DB_ORM_MPTT {}
+abstract class DB_ORM_MPTT extends Base_DB_ORM_MPTT {}
 ?>
