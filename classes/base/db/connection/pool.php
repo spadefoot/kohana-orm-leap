@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-16
+ * @version 2012-08-18
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -123,7 +123,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 */
 	public function add_connection(DB_Connection $connection) {
 		if ($connection !== NULL) {
-			$connection_id = spl_object_hash($connection);
+			$connection_id = $connection->__hashCode();
 			if ( ! isset($this->lookup[$connection_id])) {
 				if ($this->count() >= $this->settings['max_size']) {
 					throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
@@ -193,7 +193,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 		}
 		$connection = DB_Connection::factory($source);
 		$connection->open();
-		$connection_id = spl_object_hash($connection);
+		$connection_id = $connection->__hashCode();
 		$this->pool[$source->id][$connection_id] = $connection;
 		$this->lookup[$connection_id] = $source->id;
 		return $connection;
@@ -208,7 +208,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 */
 	public function release(DB_Connection $connection) {
 		if ($connection !== NULL) {
-			$connection_id = spl_object_hash($connection);
+			$connection_id = $connection->__hashCode();
 			if (isset($this->lookup[$connection_id])) {
 				$source_id = $this->lookup[$connection_id];
 				unset($this->pool[$source_id][$connection_id]);
