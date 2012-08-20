@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-20
  *
  * @abstract
  */
@@ -73,7 +73,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ($value !== NULL AND ! ($value instanceof DB_SQL_Expression)) {
+				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = static::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
 				}
 				return $value;

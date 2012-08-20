@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-20
  *
  * @see http://www.php.net/manual/en/language.types.boolean.php
  *
@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ($value !== NULL AND ! ($value instanceof DB_SQL_Expression)) {
+				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
 				}
 				return $value;
