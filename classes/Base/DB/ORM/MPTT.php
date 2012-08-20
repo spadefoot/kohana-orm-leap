@@ -450,7 +450,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 			return FALSE;
 		}
 
-		if ( ! $target instanceof $this) {
+		if ( ! ($target instanceof $this)) {
 			$target = DB_ORM::model(get_class($this), $target);
 		}
 		else {
@@ -524,9 +524,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	 * @access public
 	 * @return DB_ORM_MPTT|bool
 	 */
-	public function save($reload = FALSE) {
+	public function save($reload = FALSE, $mode = NULL) {
 		if ($this->is_loaded() === TRUE) {
-			return parent::save($reload);
+			return parent::save($reload, $mode);
 		}
 		return FALSE;
 	}
