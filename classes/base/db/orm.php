@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-20
  *
  * @abstract
  */
@@ -85,7 +85,7 @@ abstract class Base_DB_ORM extends Kohana_Object {
 			if ( ! is_array($primary_key)) {
 				$primary_key = array($primary_key);
 			}
-			$model_key = static::primary_key();
+			$model_key = call_user_func(array(get_class($model), 'primary_key'));
 			$count = count($model_key);
 			for ($i = 0; $i < $count; $i++) {
 				$column = $model_key[$i];
