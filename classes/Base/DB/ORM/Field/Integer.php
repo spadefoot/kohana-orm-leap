@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -33,6 +33,8 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'integer');
@@ -58,11 +60,11 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$this->metadata['range']['lower_bound'] = $this->metadata['unsigned'] ? 0 : -2147483648;
 			$this->metadata['range']['upper_bound'] = 2147483647;
 		}
-		
+
 		if (isset($metadata['range'])) {
 			if (isset($this->metadata['int8fix'])) {
-				$this->metadata['range']['lower_bound'] = (bccomp(strval($metadata['range'][0]), $this->metadata['range']['lower_bound']) === 1) ? strval($metadata['range'][0]) : $this->metadata['range']['lower_bound'];
-				$this->metadata['range']['upper_bound'] = (bccomp(strval($metadata['range'][1]), $this->metadata['range']['lower_bound']) === -1) ? strval($metadata['range'][0]) : $this->metadata['range']['upper_bound'];
+				$this->metadata['range']['lower_bound'] = (bccomp(strval($metadata['range'][0]), ($this->metadata['range']['lower_bound']) === 1)) ? strval($metadata['range'][0]) : $this->metadata['range']['lower_bound'];
+				$this->metadata['range']['upper_bound'] = (bccomp(strval($metadata['range'][1]), ($this->metadata['range']['lower_bound']) === -1)) ? strval($metadata['range'][0]) : $this->metadata['range']['upper_bound'];
 			}
 			else {
 				$this->metadata['range']['lower_bound'] = max( (int) $metadata['range'][0], $this->metadata['range']['lower_bound']);
@@ -100,16 +102,6 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if ( ! is_null($default)) {
-				if ((PHP_INT_SIZE !== 4) OR ! is_string($default) OR ! preg_match('/^-?[0-9]+$/D', $default) OR ((bccomp($default, '-2147483648') !== -1) AND (bccomp($default, '2147483647') !== 1))) {
-					settype($default, $this->metadata['type']);
-				}
-				if ( ! $this->validate($default)) {
-					throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
-				}
-			}
-			$this->metadata['default'] = $default;
-			$this->value = $default;
 		}
 		else if ( ! $this->metadata['nullable']) {
 			if (isset($this->metadata['int8fix'])) {
@@ -121,9 +113,24 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			else {
 				$default = max(0, $this->metadata['range']['lower_bound']);
 			}
-			$this->metadata['default'] = $default;
-			$this->value = $default;
 		}
+		else {
+			$default = NULL;
+		}
+
+		if ( ! ($default instanceof DB_SQL_Expression)) {
+			if ($default !== NULL) {
+				if ((PHP_INT_SIZE !== 4) OR ! is_string($default) OR ! preg_match('/^-?[0-9]+$/D', $default) OR ((bccomp($default, '-2147483648') !== -1) AND (bccomp($default, '2147483647') !== 1))) {
+					settype($default, $this->metadata['type']);
+				}
+			}
+			if ( ! $this->validate($default)) {
+				throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+			}
+		}
+
+		$this->metadata['default'] = $default;
+		$this->value = $default;
 	}
 
 	/**
@@ -132,25 +139,32 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
-					if ( ! isset($this->metadata['int8fix']) OR is_int($value) OR ! preg_match('/^-?[0-9]+$/D', (string) $value) OR (bccomp( (string) $value, '-2147483648') !== -1 AND bccomp( (string) $value, '2147483647') !== 1)) {
-						settype($value, $this->metadata['type']);
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					if ($value !== NULL) {
+						if ( ! isset($this->metadata['int8fix']) OR is_int($value) OR ! preg_match('/^-?[0-9]+$/D', (string) $value) OR (bccomp( (string) $value, '-2147483648') !== -1 AND bccomp( (string) $value, '2147483647') !== 1)) {
+							settype($value, $this->metadata['type']);
+						}
+						if ( ! $this->validate($value)) {
+							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+						}
 					}
-					if ( ! $this->validate($value)) {
-						throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					else if ( ! $this->metadata['nullable']) {
+						$value = $this->metadata['default'];
 					}
-					$this->value = $value;
 				}
-				else {
-					$this->value = $this->metadata['default'];
+				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
+					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
+				$this->value = $value;
 			break;
 			case 'modified':
 				$this->metadata['modified'] = (bool) $value;
@@ -168,8 +182,8 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected function validate($value) {
-		if ( ! is_null($value)) {
+	protected /*override*/ function validate($value) {
+		if ($value !== NULL) {
 			if (isset($this->metadata['max_length']) AND (strlen(strval($value)) > $this->metadata['max_length'])) {
 				return FALSE;
 			}
