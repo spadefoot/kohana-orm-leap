@@ -28,82 +28,103 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-03
+ * @version 2012-08-20
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
  *
  * @abstract
  */
-abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
+abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class so we can put in application specific settings.
 
 	/**
+	 * This variable stores the parent id.
+	 *
 	 * @access public
-	 * @var string parent id
+	 * @var string
 	 */
 	public $parent_id = 'parentID';
 
 	/**
+	 * This variable stores the title column.
+	 *
 	 * @access public
 	 * @var string
 	 */
 	public $title_column = 'name';
 
 	/**
+	 * This variable stores the link column.
+	 *
 	 * @access public
 	 * @var string
 	 */
 	public $link_column = 'alias';
 
 	/**
+	 * This variable stores the name of the left column.
+	 *
 	 * @access public
-	 * @var string left column name.
+	 * @var string
 	 */
 	public $left_column = 'lft';
 
 	/**
+	 * This variable stores the name of the right column.
+	 *
 	 * @access public
-	 * @var string right column name.
+	 * @var string
 	 */
 	public $right_column = 'rgt';
 
 	/**
+	 * This variable stores the name of the level column.
+	 *
 	 * @access public
-	 * @var string level column name.
+	 * @var string
 	 */
 	public $level_column = 'lvl';
 
 	/**
+	 * This variable stores the name of the scope column.
+	 *
 	 * @access public
-	 * @var string scope column name.
+	 * @var string
 	 **/
 	public $scope_column = 'scope';
 
 	/**
-	 * Enable/Disable path calculation
+	 * This variable stores whether path calculation is enabled/disabled.
 	 *
+	 * @access protected
+	 * @var boolean
 	 */
 	protected $path_calculation_enabled = FALSE;
 
 	/**
-	 * Full pre-calculated path
+	 * This variable stores the full pre-calculated path.
 	 *
+	 * @access public
+	 * @var string
 	 */
 	public $path_column = 'path';
 
 	/**
-	 * Single path element
+	 * This variable stores the single path element.
+	 *
+	 * @access public
+	 * @var string
 	 */
 	public $path_part_column = 'path_part';
 
 	/**
-	 * Path separator
+	 * This variable stores the path separator to be used.
+	 *
+	 * @access public
+	 * @var char
 	 */
 	public $path_separator = '/';
 
-	/**
-	 * TODO - extend this class so we can put in application specific settings
-	 */
 	/**
 	 * The view to be used to create the unordered list
 	 *
@@ -123,9 +144,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 **/
 	public function new_scope($scope, array $additional_fields = array()) {
 		// Make sure the specified scope doesn't already exist.
-		$search = DB_ORM::select(get_class($this))->where($this->scope_column, '=', $scope)->query();
+		$search = DB_ORM::select(get_class($this))
+			->where($this->scope_column, '=', $scope)
+			->query();
 
-		if ($search->count() > 0 ) {
+		if ($search->count() > 0) {
 			return FALSE;
 		}
 
@@ -164,7 +187,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_leaf() {
-		return !$this->has_children();
+		return ! $this->has_children();
 	}
 
 	/**
@@ -175,7 +198,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_descendant($target) {
-		return ($this->{$this->left_column} > $target->{$this->left_column} AND $this->{$this->right_column} < $target->{$this->right_column} AND $this->{$this->scope_column} = $target->{$this->scope_column});
+		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} = $target->{$this->scope_column}));
 	}
 
 	/**
@@ -186,7 +209,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_child($target) {
-		return ($this->parent->{self::primary_key()} === $target->{self::primary_key()});
+		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
 	}
 
 	/**
@@ -197,7 +220,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_parent($target) {
-		return ($this->{self::primary_key()} === $target->parent->{self::primary_key()});
+		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
 	/**
@@ -208,10 +231,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_sibling($target) {
-		if ($this->{self::primary_key()} === $target->{self::primary_key()}) {
+		$primary_key = static::primary_key();
+		if ($this->{$primary_key} === $target->{$primary_key}) {
 			return FALSE;
 		}
-		return ($this->parent->{self::primary_key()} === $target->parent->{self::primary_key()});
+		return ($this->parent->{$primary_key} === $target->parent->{$primary_key});
 	}
 
 	/**
@@ -231,15 +255,15 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT
 	 */
 	public function root($scope = NULL) {
-		if ($scope === NULL && $this->is_loaded()) {
+		if (($scope === NULL) AND $this->is_loaded()) {
 			$scope = $this->{$this->scope_column};
 		}
-		elseif ($scope === NULL && !$this->is_loaded())
-		{
+		else if (($scope === NULL) AND ! $this->is_loaded()) {
 			return FALSE;
 		}
-
-		return DB_ORM::select(get_class($this))->where($this->left_column, '=', 1)->where($this->scope_column, '=', $scope);
+		return DB_ORM::select(get_class($this))
+			->where($this->left_column, '=', 1)
+			->where($this->scope_column, '=', $scope);
 	}
 
 	/**
@@ -262,17 +286,17 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function parents($root = TRUE, $direction = 'ASC') {
 		$parents = DB_ORM::select(get_class($this))
-            ->where($this->left_column, '<=', $this->{$this->left_column})
-            ->where($this->right_column, '>=', $this->{$this->right_column})
-            ->where($this->scope_column, '=', $this->{$this->scope_column});
+			->where($this->left_column, '<=', $this->{$this->left_column})
+			->where($this->right_column, '>=', $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column});
 
-		foreach (call_user_func(array(get_class($this), 'primary_key')) as $col) {
+		foreach (static::primary_key() as $col) {
 			$parents->where($col, '<>', $this->{$col});
 		}
 
 		$parents->order_by($this->left_column, $direction);
 
-		if (!$root) {
+		if ( ! $root) {
 			$parents->where($this->left_column, '!=', 1);
 		}
 
@@ -289,9 +313,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function children($self = FALSE, $direction = 'ASC') {
 		if ($self) {
-			return $this->descendants($self, $direction)->where($this->level_column, '<=', $this->{$this->level_column} + 1)->where($this->level_column, '>=', $this->{$this->level_column});
+			return $this->descendants($self, $direction)
+				->where($this->level_column, '<=', $this->{$this->level_column} + 1)
+				->where($this->level_column, '>=', $this->{$this->level_column});
 		}
-		return $this->descendants($self, $direction)->where($this->level_column, '=', $this->{$this->level_column} + 1);
+		return $this->descendants($self, $direction)
+			->where($this->level_column, '=', $this->{$this->level_column} + 1);
 	}
 
 	/**
@@ -303,14 +330,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT
 	 */
 	public function descendants($self = FALSE, $direction = 'ASC') {
-		$left_operator = $self ? '>=' : '>';
-		$right_operator = $self ? '<=' : '<';
+		$left_operator = ($self) ? '>=' : '>';
+		$right_operator = ($self) ? '<=' : '<';
 
 		return DB_ORM::select(get_class($this))
-				->where($this->left_column, $left_operator, $this->{$this->left_column})
-				->where($this->right_column, $right_operator, $this->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column})
-				->order_by($this->left_column, $direction);
+			->where($this->left_column, $left_operator, $this->{$this->left_column})
+			->where($this->right_column, $right_operator, $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->order_by($this->left_column, $direction);
 	}
 
 	/**
@@ -323,14 +350,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function siblings($self = FALSE, $direction = 'ASC') {
 		$siblings = DB_ORM::select(get_class($this))
-				->where($this->left_column, '>', $this->parent->find()->{$this->left_column})
-				->where($this->right_column, '<', $this->parent->find()->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column})
-				->where($this->level_column, '=', $this->{$this->level_column})
-				->order_by($this->left_column, $direction);
+			->where($this->left_column, '>', $this->parent->fetch(0)->{$this->left_column})
+			->where($this->right_column, '<', $this->parent>fetch(0)->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->level_column, '=', $this->{$this->level_column})
+			->order_by($this->left_column, $direction);
 
-		if (!$self) {
-			$siblings->where(self::primary_key(), '<>', $this->{self::primary_key()});
+		if ( ! $self) {
+			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
 		}
 
 		return $siblings;
@@ -344,11 +371,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function leaves() {
 		return DB_ORM::select(get_class($this))
-				->where($this->left_column, '=', new Database_Expression('(`' . $this->right_column . '` - 1)'))
-				->where($this->left_column, '>=', $this->{$this->left_column})
-				->where($this->right_column, '<=', $this->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column})
-				->order_by($this->left_column, 'ASC');
+			->where($this->left_column, '=', DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
+			->where($this->left_column, '>=', $this->{$this->left_column})
+			->where($this->right_column, '<=', $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->order_by($this->left_column, 'ASC');
 	}
 
 	/**
@@ -370,18 +397,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	private function create_space($start, $size = 2) {
 		// Update the right values
-		$builder = DB_ORM::update(get_class($this))
+		DB_ORM::update(get_class($this))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
 			->where($this->right_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
 		// Update the left values
-		$builder = DB_ORM::update(get_class($this))
-				->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
-				->where($this->left_column, '>=', $start)
-				->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
+			->where($this->left_column, '>=', $start)
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 	}
 
 	/**
@@ -394,18 +421,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	private function delete_space($start, $size = 2) {
 		// Update the left values
-		$builder = DB_ORM::update(get_class($this))
-				->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
-				->where($this->left_column, '>=', $start)
-				->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
+			->where($this->left_column, '>=', $start)
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
 		// Update the right values
-		$builder = DB_ORM::update(get_class($this))
-				->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
-				->where($this->right_column, '>=', $start)
-				->where($this->scope_column, '=', $this->{$this->scope_column});
-		$builder->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
+			->where($this->right_column, '>=', $start)
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 	}
 
 	/**
@@ -415,7 +442,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param $copy_left_from int
 	 * @param $left_offset int
 	 * @param $level_offset int
-	 * @return Base_DB_ORM_MPTT|bool
+	 * @return DB_ORM_MPTT|bool
 	 */
 	protected function insert($target, $copy_left_from, $left_offset, $level_offset) {
 		// Insert should only work on new nodes.. if its already in the tree it needs to be moved!
@@ -423,7 +450,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			return FALSE;
 		}
 
-		if (!$target instanceof $this) {
+		if ( ! $target instanceof $this) {
 			$target = DB_ORM::model(get_class($this), $target);
 		}
 		else {
@@ -499,7 +526,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function save($reload = FALSE) {
 		if ($this->is_loaded() === TRUE) {
-			return parent::save();
+			return parent::save($reload);
 		}
 		return FALSE;
 	}
@@ -507,7 +534,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	/**
 	 * Removes a node and it's descendants.
 	 *
-	 * $usless_param prevents a strict error that breaks PHPUnit like hell!
+	 * $useless_param prevents a strict error that breaks PHPUnit like hell!
 	 * @access public
 	 * @param bool $descendants remove the descendants?
 	 * @return bool
@@ -515,17 +542,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public function delete($reset = FALSE) {
 		$this->load();
 
-        DB_ORM::delete(get_class($this))
-            ->where($this->left_column, '>=', $this->{$this->left_column})
-            ->where($this->right_column, '<=', $this->{$this->right_column})
-            ->where($this->scope_column, '=', $this->{$this->scope_column})
-            ->execute();
+		DB_ORM::delete(get_class($this))
+			->where($this->left_column, '>=', $this->{$this->left_column})
+			->where($this->right_column, '<=', $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
-        $this->delete_space($this->{$this->left_column}, $this->get_size());
+		$this->delete_space($this->{$this->left_column}, $this->get_size());
 
 		return TRUE;
 	}
-
 
 	/**
 	 * Move to First Child
@@ -585,17 +611,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param bool allow this movement to be allowed on the root node
 	 */
 	protected function move($target, $left_column, $left_offset, $level_offset, $allow_root_target) {
-		if (!$this->is_loaded()) {
+		if ( ! $this->is_loaded()) {
 			return FALSE;
 		}
 
 		// Make sure we have the most up to date version of this
 		$this->load();
 
-		if (!$target instanceof $this) {
+		if ( ! ($target instanceof $this)) {
 			$target = DB_ORM::model(get_class($this), $target);
-
-			if (!$target->is_loaded()) {
+			if ( ! $target->is_loaded()) {
 				return FALSE;
 			}
 		}
@@ -604,11 +629,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		}
 
 		// Stop $this being moved into a descendant or disallow if target is root
-		if ($target->is_descendant($this) OR ($allow_root_target === FALSE AND $target->is_root())) {
+		if ($target->is_descendant($this) OR (($allow_root_target === FALSE) AND $target->is_root())) {
 			return FALSE;
 		}
 
-		$left_offset = ($left_column === TRUE ? $target->{$this->left_column} : $target->{$this->right_column}) + $left_offset;
+		$left_offset = (($left_column === TRUE) ? $target->{$this->left_column} : $target->{$this->right_column}) + $left_offset;
 		$level_offset = $target->{$this->level_column} - $this->{$this->level_column} + $level_offset;
 
 		$size = $this->get_size();
@@ -622,16 +647,15 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$offset = ($left_offset - $this->{$this->left_column});
 
 		// Update the values
-		$builder = DB_ORM::update(get_class($this))
+		DB_ORM::update(get_class($this))
 			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $offset))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $offset))
 			->set($this->level_column, DB_ORM::expr($this->level_column . ' + ' . $level_offset))
 			->set($this->scope_column, $target->{$this->scope_column})
 			->where($this->left_column, '>=', $this->{$this->left_column})
 			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column});
-
-		$builder->execute();
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->execute();
 
 		$this->delete_space($this->{$this->left_column}, $size);
 
@@ -682,81 +706,81 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function verify_tree() {
 		foreach ($this->get_scopes() as $scope) {
-			if (!$this->verify_scope($scope->{$this->scope_column})) {
+			if ( ! $this->verify_scope($scope->{$this->scope_column})) {
 				return FALSE;
 			}
 		}
 		return TRUE;
 	}
 
-    // TODO... redo this so its proper :P and open it public
-    // used by verify_tree()
-    private function get_scopes() {
-		$result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
-			->from($this->table())
-            ->query();
-        return $result;
+	// TODO redo this so its proper :P and open it public
+	// used by verify_tree()
+	private function get_scopes() {
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
+			->from(static::table())
+			->query();
+		return $result;
 	}
 
-    // TODO Use model's data source, not default
-    // TODO Fixed instance variables references
+	// TODO Use model's data source, not default
+	// TODO Fixed instance variables references
 	public function verify_scope($scope) {
 		$root = $this->root($scope);
 
 		$end = $root->{$this->right_column};
 
 		// Find nodes that have slipped out of bounds.
-		$result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('count(*)'), 'count')
-            ->from($this->_table_name)
-            ->where($this->scope_column, '=', $root->{$this->scope_column})
-            ->where_block('(')
-            ->where($this->left_column, '>', $end)
-            ->where($this->right_column, '>', $end, 'OR')
-            ->where_block(')')
-            ->query();
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
+			->from(static::table())
+			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where_block('(')
+			->where($this->left_column, '>', $end)
+			->where($this->right_column, '>', $end, 'OR')
+			->where_block(')')
+			->query();
 
-        if ($result[0]->count > 0) {
+		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Find nodes that have the same left and right value
-        $result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('count(*)'), 'count')
-            ->from($this->_table_name)
-            ->where($this->scope_column, '=', $root->{$this->scope_column})
-            ->where($this->left_column, '=', $this->right_column)
-            ->query();
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
+			->from(static::table())
+			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where($this->left_column, '=', $this->right_column)
+			->query();
 
 		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Find nodes that right value is less than the left value
-        $result = DB_SQL::select('default')
-            ->column(DB_SQL::expr('count(*)'), 'count')
-            ->from($this->_table_name)
-            ->where($this->scope_column, '=', $root->{$this->scope_column})
-            ->where($this->left_column, '>', $this->right_column)
-            ->query();
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
+			->from(static::table())
+			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where($this->left_column, '>', $this->right_column)
+			->query();
 
-        if ($result[0]->count > 0) {
+		if ($result[0]->count > 0) {
 			return FALSE;
 		}
 
 		// Make sure no 2 nodes share a left/right value
 		$i = 1;
 		while ($i <= $end) {
-            $result = DB_SQL::select('default')
-                ->column(DB_SQL::expr('count(*)'), 'count')
-                ->from($this->_table_name)
-                ->where($this->scope_column, '=', $root->{$this->scope_column})
-                ->where_block('(')
-                ->where($this->left_column, '=', $i)
-                ->where($this->right_column, '=', $i, 'OR')
-                ->where_block(')')
-                ->query();
+			$result = DB_SQL::select(static::data_source())
+				->column(DB_SQL::expr('COUNT(*)'), 'count')
+				->from(static::table())
+				->where($this->scope_column, '=', $root->{$this->scope_column})
+				->where_block('(')
+				->where($this->left_column, '=', $i)
+				->where($this->right_column, '=', $i, 'OR')
+				->where_block(')')
+				->query();
 
 			if ($result[0]->count > 1) {
 				return FALSE;
@@ -771,12 +795,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		return TRUE;
 	}
 
-    // TODO Replace find_all() with LEAP's equivalent
 	public function update_path() {
 		$path = '';
 
 		$parents = $this->parents(FALSE)
-			->find_all();
+			->query();
 
 		foreach ($parents as $parent) {
 			$path .= $this->path_separator . trim($parent->{$this->path_part_column});
@@ -810,7 +833,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			$d = &$descendants_array[$i];
 			$d['Children'] = array();
 
-			while (count($stack) > 0 && $stack[count($stack) - 1][$this->right_column] < $d[$this->right_column]) {
+			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
 				array_pop($stack);
 			}
 
@@ -820,7 +843,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 			$stack[] = &$d;
 		}
-		
+
 		return $stack[0];
 	}
 
