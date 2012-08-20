@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-18
+ * @version 2012-08-20
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
@@ -334,10 +334,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 		$right_operator = ($self) ? '<=' : '<';
 
 		return DB_ORM::select(get_class($this))
-				->where($this->left_column, $left_operator, $this->{$this->left_column})
-				->where($this->right_column, $right_operator, $this->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column})
-				->order_by($this->left_column, $direction);
+			->where($this->left_column, $left_operator, $this->{$this->left_column})
+			->where($this->right_column, $right_operator, $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->order_by($this->left_column, $direction);
 	}
 
 	/**
@@ -350,11 +350,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	 */
 	public function siblings($self = FALSE, $direction = 'ASC') {
 		$siblings = DB_ORM::select(get_class($this))
-				->where($this->left_column, '>', $this->parent->fetch(0)->{$this->left_column})
-				->where($this->right_column, '<', $this->parent>fetch(0)->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column})
-				->where($this->level_column, '=', $this->{$this->level_column})
-				->order_by($this->left_column, $direction);
+			->where($this->left_column, '>', $this->parent->fetch(0)->{$this->left_column})
+			->where($this->right_column, '<', $this->parent>fetch(0)->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->level_column, '=', $this->{$this->level_column})
+			->order_by($this->left_column, $direction);
 
 		if ( ! $self) {
 			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
@@ -371,11 +371,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	 */
 	public function leaves() {
 		return DB_ORM::select(get_class($this))
-				->where($this->left_column, '=', DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
-				->where($this->left_column, '>=', $this->{$this->left_column})
-				->where($this->right_column, '<=', $this->{$this->right_column})
-				->where($this->scope_column, '=', $this->{$this->scope_column})
-				->order_by($this->left_column, 'ASC');
+			->where($this->left_column, '=', DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
+			->where($this->left_column, '>=', $this->{$this->left_column})
+			->where($this->right_column, '<=', $this->{$this->right_column})
+			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->order_by($this->left_column, 'ASC');
 	}
 
 	/**
@@ -526,7 +526,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	 */
 	public function save($reload = FALSE) {
 		if ($this->is_loaded() === TRUE) {
-			return parent::save();
+			return parent::save($reload);
 		}
 		return FALSE;
 	}

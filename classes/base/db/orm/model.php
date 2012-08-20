@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-20
  *
  * @abstract
  */
@@ -208,9 +208,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		if (empty($primary_key) OR ! is_array($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
-		$data_source = static::data_source();
-		$table = static::table();
-		$builder = DB_SQL::delete($data_source)->from($table);
+		$builder = DB_SQL::delete(static::data_source())->from(static::table());
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
@@ -280,15 +278,13 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              table
 	 */
 	public function is_saved() {
-		$data_source = static::data_source();
-		$table = static::table();
-		$primary_key = static::primary_key();
-		$builder = DB_SQL::select($data_source)->from($table)->limit(1);
-		foreach ($primary_key as $column) {
+		$builder = DB_SQL::select(static::data_source())
+            ->from(static::table())
+            ->limit(1);
+        foreach (static::primary_key() as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
-		$record = $builder->query();
-		return $record->is_loaded();
+		return $builder->query()->is_loaded();
 	}
 
 	/**
@@ -367,9 +363,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			if (empty($primary_key) OR ! is_array($primary_key)) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
-			$data_source = static::data_source();
-			$table = static::table();
-			$builder = DB_SQL::select($data_source)->from($table)->limit(1);
+			$builder = DB_SQL::select(static::data_source())->from(static::table())->limit(1);
 			foreach ($primary_key as $column) {
 				$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
