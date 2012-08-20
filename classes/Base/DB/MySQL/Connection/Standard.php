@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-05-22
+ * @version 2012-08-16
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -50,7 +50,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 			if ( ! @mysql_select_db($this->data_source->database, $this->resource_id)) {
 				throw new Kohana_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => mysql_error($this->resource_id)));
 			}
-			if ( ! empty($this->data_source->charset) && ! @mysql_set_charset(strtolower($this->data_source->charset), $this->resource_id)) {
+			if ( ! empty($this->data_source->charset) AND ! @mysql_set_charset(strtolower($this->data_source->charset), $this->resource_id)) {
 				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => mysql_error($this->resource_id)));
 			}
 		}
@@ -84,7 +84,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
-		if ( ! is_null($result_set)) {
+		if ($result_set !== NULL) {
 			$this->sql = $sql;
 			return $result_set;
 		}
@@ -184,7 +184,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 
 		$string = "'" . mysql_real_escape_string($string, $this->resource_id) . "'";
 
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 		}
 
