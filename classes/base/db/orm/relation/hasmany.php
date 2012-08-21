@@ -40,10 +40,14 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		// the parent model is the referenced table
 		$this->metadata['parent_model'] = get_class($model);
 
+		// Get parent model's name into variable, otherways a late static binding code throws a
+		// syntax error when used like this: $this->metadata['parent_model']::primary_key()
+		$parent_model = $this->metadata['parent_model'];
+
 		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
 		$this->metadata['parent_key'] = (isset($metadata['parent_key']))
 			? (array) $metadata['parent_key']
-			: $this->metadata['parent_model']::primary_key();
+			: $parent_model::primary_key();
 
 		// the through model is the pivot table
 		if (isset($metadata['through_model'])) {
