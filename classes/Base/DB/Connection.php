@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-25
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -110,7 +110,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 */
 	protected function cache($sql, $type, $results = NULL) {
 		if ($this->data_source->cache->enabled) {
-			if ( ! is_null($results)) {
+			if ($results !== NULL) {
 				if ($this->data_source->cache->lifetime > 0) {
 					Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
 				}
@@ -119,7 +119,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 			else if ($this->data_source->cache->lifetime !== NULL) {
 				$this->cache_key = 'DB_Connection::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
 				$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
-				if (($results !== NULL) && ! $this->data_source->cache->force) {
+				if (($results !== NULL) AND ! $this->data_source->cache->force) {
 					return $results;
 				}
 			}
@@ -291,12 +291,12 @@ abstract class Base_DB_Connection extends Kohana_Object {
 				return (object) $record;
 			break;
 			default:
-				if ( ! isset(self::$cached_objects[$type])) {
+				if ( ! isset(static::$cached_objects[$type])) {
 					$object = new $type();
-					self::$cached_objects[$type] = serialize($object);
+					static::$cached_objects[$type] = serialize($object);
 				}
 				else {
-					$object = unserialize( (string) self::$cached_objects[$type]);
+					$object = unserialize( (string) static::$cached_objects[$type]);
 				}
 				foreach ($record as $key => $value) {
 					$object->{$key} = $value;

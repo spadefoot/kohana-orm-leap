@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-20
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -61,7 +61,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 		else if (is_array($config)) {
 			$this->init($config);
 		}
-		else if (is_object($config) && ($config instanceof DB_DataSource)) {
+		else if (is_object($config) AND ($config instanceof DB_DataSource)) {
 			$this->settings = $config->settings;
 		}
 		else {
@@ -109,7 +109,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	protected function init($settings, $id = NULL) {
 		$this->settings = array();
 
-		if (is_null($id)) {
+		if ($id === NULL) {
 			$this->settings['id'] = (isset($settings['id']))
 				? (string) $settings['id']
 				: 'unique_id.' . uniqid();

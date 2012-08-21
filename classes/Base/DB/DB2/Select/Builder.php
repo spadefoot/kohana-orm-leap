@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-02-22
+ * @version 2012-08-16
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
@@ -49,7 +49,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			? implode(', ', $this->data['column'])
 			: $this->data['wildcard'];
 
-		if ( ! is_null($this->data['from'])) {
+		if ($this->data['from'] !== NULL) {
 			$sql .= " FROM {$this->data['from']}";
 		}
 
@@ -67,7 +67,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			$do_append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
@@ -83,7 +83,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 			$do_append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
-				if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($do_append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$having[0]} ";
 				}
 				$sql .= $having[1];

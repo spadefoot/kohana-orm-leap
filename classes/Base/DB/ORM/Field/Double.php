@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -33,6 +33,8 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'double');
@@ -86,19 +88,22 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if ( ! is_null($default)) {
+		}
+		else if ($this->metadata['nullable']) {
+			$default = NULL;
+		}
+
+		if ( ! ($default instanceof DB_SQL_Expression)) {
+			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
-				if ( ! $this->validate($default)) {
-					throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
-				}
 			}
-			$this->metadata['default'] = $default;
-			$this->value = $default;
+			if ( ! $this->validate($default)) {
+				throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+			}
 		}
-		else if ( ! $this->metadata['nullable']) {
-			$this->metadata['default'] = $default;
-			$this->value = $default;
-		}
+
+		$this->metadata['default'] = $default;
+		$this->value = $default;
 	}
 
 	/**
@@ -108,20 +113,20 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected function validate($value) {
-		if ( ! is_null($value)) {
-			if ($this->metadata['unsigned'] && ($value < 0.0)) {
+	protected /*override*/ function validate($value) {
+		if ($value !== NULL) {
+			if ($this->metadata['unsigned'] AND ($value < 0.0)) {
 				return FALSE;
 			}
 			else if (isset($this->metadata['range'])) {
-				if (($value < $this->metadata['range']['lower_bound']) || ($value > $this->metadata['range']['upper_bound'])) {
+				if (($value < $this->metadata['range']['lower_bound']) OR ($value > $this->metadata['range']['upper_bound'])) {
 					return FALSE;
 				}
 			}
 			if (isset($this->metadata['max_digits'])) {
 				$parts = preg_split('/\./', "{$value}");
 				$digits = strlen("{$parts[0]}");
-				if (isset($this->metadata['max_decimals']) && (count($parts) > 1)) {
+				if (isset($this->metadata['max_decimals']) AND (count($parts) > 1)) {
 					$decimals = strlen("{$parts[1]}");
 					if ($decimals > $this->metadata['max_decimals']) {
 						return FALSE;

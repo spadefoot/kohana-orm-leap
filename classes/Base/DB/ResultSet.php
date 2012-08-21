@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-05-10
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -105,7 +105,7 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 				break;
 				default:
 					if (class_exists($this->type)) {
-						if (($this->records[0] instanceof DB_ORM_Model) || method_exists($this->records[0], 'as_array')) {
+						if (($this->records[0] instanceof DB_ORM_Model) OR method_exists($this->records[0], 'as_array')) {
 							foreach ($this->records as $record) {
 								$csv->add_row($record->as_array());
 							}
@@ -201,13 +201,13 @@ abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, C
 		if (is_object($record)) {
 			try {
 				$value = $record->{$name};
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					return $value;
 				}
 			}
 			catch (Exception $ex) {}
 		}
-		else if (is_array($record) && isset($record[$name])) {
+		else if (is_array($record) AND isset($record[$name])) {
 			return $record[$name];
 		}
 

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-08-20
  *
  * @see http://www.php.net/manual/en/language.types.boolean.php
  *
@@ -56,11 +56,11 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public function __get($key) {
+	public /*override*/ function __get($key) {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value)) {
+				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
 				}
 				return $value;
@@ -81,12 +81,12 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public function __set($key, $value) {
+	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					$true = $this->metadata['values'][0];
-					$value = (is_string($true) && is_string($value))
+					$value = (is_string($true) AND is_string($value))
 						? (strcasecmp($true, $value) == 0)
 						: ($true == $value);
 				}

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-03-29
+ * @version 2012-08-20
  *
  * @abstract
  */
@@ -69,12 +69,12 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public function __get($key) {
+	public /*override*/ function __get($key) {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value)) {
-					$value = self::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
+				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
+					$value = static::convert($value, $this->metadata['units'][0], $this->metadata['units'][1]);
 				}
 				return $value;
 			break;
@@ -94,11 +94,11 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public function __set($key, $value) {
+	public /*override*/ function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
-					$value = self::convert($value, $this->metadata['units'][1], $this->metadata['units'][0]);
+				if ($value !== NULL) {
+					$value = static::convert($value, $this->metadata['units'][1], $this->metadata['units'][0]);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;
@@ -121,7 +121,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @return double                           the new value
 	 */
 	protected static function convert($value, $units0, $units1) {
-		return ($value * self::parse($units0)) / self::parse($units1);
+		return ($value * static::parse($units0)) / static::parse($units1);
 	}
 
 	/**

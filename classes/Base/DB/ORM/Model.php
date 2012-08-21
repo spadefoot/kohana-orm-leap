@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-03
+ * @version 2012-08-20
  *
  * @abstract
  */
@@ -85,10 +85,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return boolean								whether the property is set
 	 */
 	public function __isset($name) {
-		if ($this->is_field($name) || $this->is_alias($name) || $this->is_adaptor($name) || $this->is_relation($name)) {
-			return TRUE;
-		}
-		return FALSE;
+		return (isset($this->fields[$name]) OR isset($this->aliases[$name]) OR isset($this->adaptors[$name]) OR isset($this->relations[$name]));
 	}
 
 	/**
@@ -101,16 +98,16 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
-		if ($this->is_field($name)) {
+		if (isset($this->fields[$name])) {
 			return $this->fields[$name]->value;
 		}
-		else if ($this->is_alias($name)) {
+		else if (isset($this->aliases[$name])) {
 			return $this->aliases[$name]->value;
 		}
-		else if ($this->is_adaptor($name)) {
+		else if (isset($this->adaptors[$name])) {
 			return $this->adaptors[$name]->value;
 		}
-		else if ($this->is_relation($name)) {
+		else if (isset($this->relations[$name])) {
 			return $this->relations[$name]->result;
 		}
 		else {
@@ -128,14 +125,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($name, $value) {
-		if ($this->is_field($name)) {
+		if (isset($this->fields[$name])) {
 			$this->fields[$name]->value = $value;
 			$this->metadata['loaded'] = TRUE;
 		}
-		else if ($this->is_alias($name)) {
+		else if (isset($this->aliases[$name])) {
 			$this->aliases[$name]->value = $value;
 		}
-		else if ($this->is_adaptor($name)) {
+		else if (isset($this->adaptors[$name])) {
 			$this->adaptors[$name]->value = $value;
 		}
 		else {
@@ -157,6 +154,12 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 		foreach ($this->fields as $name => $field) {
 			$buffer[$name] = $field->value;
 		}
+		foreach ($this->aliases as $name => $alias) {
+			$buffer[$name] = $alias->value;
+		}
+		foreach ($this->adaptors as $name => $adaptor) {
+			$buffer[$name] = $adaptor->value;
+		}
 		return $buffer;
 	}
 
@@ -170,11 +173,22 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return string                               the HTML form control
 	 */
 	public function control($name, Array $attributes = NULL) {
-		if ( ! is_array($attributes)) {
+		if ($attributes === NULL) {
 			$attributes = array();
 		}
 		$control = $this->fields[$name]->control($name, $attributes);
 		return $control;
+	}
+
+	/**
+	 * Creates the record in database.
+	 *
+	 * @access public
+	 * @param boolean $reload                       whether the model should be reloaded
+	 *                                              after the save is done
+	 */
+	public function create($reload = FALSE) {
+		$this->save($reload, TRUE);
 	}
 
 	/**
@@ -187,18 +201,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              deleted
 	 */
 	public function delete($reset = FALSE) {
-		$self = get_class($this);
-		$is_savable = call_user_func(array($self, 'is_savable'));
-		if ( ! $is_savable) {
-			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
+		if ( ! static::is_savable()) {
+			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
-		$primary_key = call_user_func(array($self, 'primary_key'));
-		if ( ! is_array($primary_key) || empty($primary_key)) {
+		$primary_key = static::primary_key();
+		if (empty($primary_key) OR ! is_array($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
-		$data_source = call_user_func(array($self, 'data_source'));
-		$table = call_user_func(array($self, 'table'));
-		$builder = DB_SQL::delete($data_source)->from($table);
+		$builder = DB_SQL::delete(static::data_source())->from(static::table());
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
@@ -268,16 +278,13 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 *                                              table
 	 */
 	public function is_saved() {
-		$self = get_class($this);
-		$data_source = call_user_func(array($self, 'data_source'));
-		$table = call_user_func(array($self, 'table'));
-		$primary_key = call_user_func(array($self, 'primary_key'));
-		$builder = DB_SQL::select($data_source)->from($table)->limit(1);
-		foreach ($primary_key as $column) {
+		$builder = DB_SQL::select(static::data_source())
+            ->from(static::table())
+            ->limit(1);
+        foreach (static::primary_key() as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
-		$record = $builder->query();
-		return $record->is_loaded();
+		return $builder->query()->is_loaded();
 	}
 
 	/**
@@ -301,10 +308,9 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return string                               the generated hash code
 	 */
 	protected function hash_code() {
-		$self = get_class($this);
-		$primary_key = call_user_func(array($self, 'primary_key'));
-		if (is_array($primary_key) && ! empty($primary_key)) {
-			if (self::is_auto_incremented()) {
+		$primary_key = static::primary_key();
+		if ( ! empty($primary_key) AND is_array($primary_key)) {
+			if (static::is_auto_incremented()) {
 				$column = $primary_key[0];
 				if ( ! isset($this->fields[$column])) {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
@@ -318,7 +324,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 					throw new Kohana_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
 				$value = $this->fields[$column]->value;
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					$buffer .= "{$column}={$value}";
 				}
 			}
@@ -338,7 +344,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public function label($name, Array $attributes = NULL) {
 		$key = $name;
-		if ($this->is_alias($key)) {
+		if (isset($this->aliases[$key])) {
 			$key = $this->aliases[$name]->field;
 		}
 		return $this->fields[$key]->label($name, $attributes);
@@ -353,14 +359,11 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public function load(Array $columns = array()) {
 		if (empty($columns)) {
-			$self = get_class($this);
-			$primary_key = call_user_func(array($self, 'primary_key'));
-			if ( ! is_array($primary_key) || empty($primary_key)) {
+			$primary_key = static::primary_key();
+			if (empty($primary_key) OR ! is_array($primary_key)) {
 				throw new Kohana_Marshalling_Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
-			$data_source = call_user_func(array($self, 'data_source'));
-			$table = call_user_func(array($self, 'table'));
-			$builder = DB_SQL::select($data_source)->from($table)->limit(1);
+			$builder = DB_SQL::select(static::data_source())->from(static::table())->limit(1);
 			foreach ($primary_key as $column) {
 				$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
@@ -373,14 +376,14 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			$this->metadata['saved'] = $this->hash_code();
 		}
 		foreach ($columns as $column => $value) {
-			if ($this->is_field($column)) {
+			if (isset($this->fields[$column])) {
 				$this->fields[$column]->value = $value;
 				$this->metadata['loaded'] = TRUE;
 			}
-			else if ($this->is_alias($column)) {
+			else if (isset($this->aliases[$column])) {
 				$this->aliases[$column]->value = $value;
 			}
-			else if ($this->is_adaptor($column)) {
+			else if (isset($this->adaptors[$column])) {
 				$this->adaptors[$column]->value = $value;
 			}
 		}
@@ -395,7 +398,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @param array $metadata                       the relation's metadata
 	 */
 	public function relate($name, $type, Array $metadata) {
-		if ( ! is_string($name) || $this->is_adaptor($name) || $this->is_alias($name) || $this->is_field($name)) {
+		if ( ! is_string($name) OR isset($this->adaptors[$name]) OR isset($this->aliases[$name]) OR isset($this->fields[$name])) {
 			throw new Kohana_InvalidArgument_Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
 		}
 		$types = array('belongs_to' => 'DB_ORM_Relation_BelongsTo', 'has_many' => 'DB_ORM_Relation_HasMany', 'has_one' => 'DB_ORM_Relation_HasOne');
@@ -428,94 +431,135 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @access public
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
+	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
 	 */
-	public function save($reload = FALSE) {
-		$self = get_class($this);
-		$is_savable = call_user_func(array($self, 'is_savable'));
-		if ( ! $is_savable) {
-			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => self::get_called_class()));
+	public function save($reload = FALSE, $mode = NULL) {
+		if ( ! static::is_savable()) {
+			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
-		$primary_key = call_user_func(array($self, 'primary_key'));
-		if ( ! is_array($primary_key) || empty($primary_key)) {
+		
+		$primary_key = static::primary_key();
+		
+		if (empty($primary_key) OR ! is_array($primary_key)) {
 			throw new Kohana_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
-		$data_source = call_user_func(array($self, 'data_source'));
-		$table = call_user_func(array($self, 'table'));
+		
+		$data_source = static::data_source();
+		$table = static::table();
 		$columns = array_keys($this->fields);
 		$hash_code = $this->hash_code();
-		$do_insert = is_null($hash_code);
+		
+		// Set saving mode
+		$do_insert = ($mode === NULL)
+			? ($hash_code === NULL)
+			: (bool) $mode;
+		
 		if ( ! $do_insert) {
-			$do_insert = (is_null($this->metadata['saved']) || ($hash_code != $this->metadata['saved']));
-			if ($do_insert) {
-				$builder = DB_SQL::select($data_source)
-						->column(DB_SQL::expr(1), 'IsFound')
-						->from($table);
-				foreach ($primary_key as $column) {
-					$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
-				}
-				$do_insert = ! ($builder->limit(1)->query()->is_loaded());
-			}
-			if ( ! $do_insert) {
-				foreach ($primary_key as $column) {
-					$index = array_search($column, $columns);
-					if ($index !== FALSE) {
-						unset($columns[$index]);
+			// Check if we have to detect saving mode automatically
+			if ($mode === NULL) {
+				// Check if the model has been already saved
+				$do_insert = (($this->metadata['saved'] === NULL) OR ($hash_code != $this->metadata['saved']));
+				
+				// Check if the record exists in database
+				if ($do_insert) {
+					$builder = DB_SQL::select($data_source)
+							->column(DB_SQL::expr(1), 'IsFound')
+							->from($table);
+					
+					foreach ($primary_key as $column) {
+						$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 					}
+					
+					$do_insert = ! ($builder->limit(1)->query()->is_loaded());
 				}
+			}
+			
+			if ( ! $do_insert) {
 				if ( ! empty($columns)) {
 					$builder = DB_SQL::update($data_source)
 						->table($table);
-					$count = 0;
+					
+					// Is there any data to save and it's worth to execute the query?
+					$is_worth = FALSE;
+					
 					foreach ($columns as $column) {
-						if ($this->fields[$column]->savable && $this->fields[$column]->modified) {
+						if ($this->fields[$column]->savable AND $this->fields[$column]->modified) {
+							// It's worth do execute the query.
+							$is_worth = TRUE;
+							
+							// Add column values to the query builder
 							$builder->set($column, $this->fields[$column]->value);
-							$this->fields[$column]->modified = FALSE;
-							$count++;
+							
+							if (in_array($column, $primary_key) OR $this->fields[$column]->value instanceof DB_SQL_Expression) {
+								// Reloading required because primary key has been changed or an SQL expression has been used
+								$reload = TRUE;
+							}
 						}
+						
+						// Mark field as not modified
+						$this->fields[$column]->modified = FALSE;
 					}
-					if ($count > 0) {
+					
+					// Execute the query only if there is data to save
+					if ($is_worth) {
 						foreach ($primary_key as $column) {
 							$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 						}
+						
 						$builder->execute();
 					}
+					
 					$this->metadata['saved'] = $hash_code;
 				}
 			}
 		}
+		
 		if ($do_insert) {
-			$is_auto_incremented = call_user_func(array($self, 'is_auto_incremented'));
-			if ($is_auto_incremented || is_null($hash_code)) {
-				foreach ($primary_key as $column) {
-					$index = array_search($column, $columns);
-					if ($index !== FALSE) {
-						unset($columns[$index]);
-					}
-				}
-			}
 			if ( ! empty($columns)) {
 				$builder = DB_SQL::insert($data_source)
 					->into($table);
-				$count = 0;
+				
+				// Is any data to save and it's worth to execute the query?
+				$is_worth = FALSE;
+				
 				foreach ($columns as $column) {
-					if ($this->fields[$column]->savable) {
+					if ($this->fields[$column]->savable AND $this->fields[$column]->modified) {
+						// It's worth executing the query.
+						$is_worth = TRUE;
+						
+						// Add column values to the query builder
 						$builder->column($column, $this->fields[$column]->value);
-						$this->fields[$column]->modified = FALSE;
-						$count++;
+						
+						if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+							// Reloading required, if using SQL expresions
+							$reload = TRUE;
+						}
 					}
+					
+					// Mark field as not modified
+					$this->fields[$column]->modified = FALSE;
 				}
-				if ($count > 0) {
-					if ($is_auto_incremented && is_null($hash_code)) {
+				
+				// Execute the query only if there is data to save
+				if ($is_worth) {
+					if (static::is_auto_incremented() AND ($hash_code === NULL)) {
+						// Execute the query and assign the result to the primary key field
 						$this->fields[$primary_key[0]]->value = $builder->execute(TRUE);
+						
+						// Mark the primary key field as not modified
+						$this->fields[$primary_key[0]]->modified = FALSE;
 					}
 					else {
 						$builder->execute();
 					}
 				}
+				
 				$this->metadata['saved'] = $this->hash_code();
 			}
 		}
+		
 		if ($reload) {
+			// Reload the record, if it's required
 			$this->load();
 		}
 	}
@@ -530,7 +574,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @param mixed $expected                       an array of keys to take from $values, or NULL
 	 * @return DB_ORM_Model
 	 */
-	public function set_values(array $values, array $expected = NULL) {
+	public function set_values(Array $values, Array $expected = NULL) {
 		// Automatically create list expected keys
 		if ($expected === NULL) {
 			$expected = array_merge(
@@ -541,11 +585,10 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 
 			$expected = array_flip($expected);
 
-			$self = get_class($this);
-			$primary_key = call_user_func(array($self, 'primary_key'));
+			$primary_key = static::primary_key();
 
 			// Remove primary key(s)
-			foreach ($primary_key AS $key) {
+			foreach ($primary_key as $key) {
 				unset($expected[$key]);
 			}
 		}
@@ -553,7 +596,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 			$expected = array_flip($expected);
 		}
 
-		foreach (array_intersect_key($values, $expected) AS $key => $value) {
+		foreach (array_intersect_key($values, $expected) as $key => $value) {
 			$this->$key = $value;
 		}
 
@@ -566,9 +609,20 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @param string $name                          the relation's name
 	 */
 	public function unrelate($name) {
-		if ($this->is_relation($name)) {
+		if (isset($this->relations[$name])) {
 			unset($this->relations[$name]);
 		}
+	}
+
+	/**
+	 * Updates the record in database.
+	 *
+	 * @access public
+	 * @param boolean $reload                       whether the model should be reloaded
+	 *                                              after the save is done
+	 */
+	public function update($reload = FALSE) {
+		$this->save($reload, FALSE);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -598,8 +652,8 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 */
 	public static function columns() {
 		static $columns = NULL;
-		if (is_null($columns)) {
-			$model = self::get_called_class();
+		if ($columns === NULL) {
+			$model = get_called_class();
 			$record = new $model();
 			$columns = array_keys($record->fields);
 		}
@@ -638,10 +692,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return boolean                              whether the primary key auto increments
 	 */
 	public static function is_auto_incremented() {
-		if (count(self::primary_key()) > 1) {
-			return FALSE;
-		}
-		return TRUE;
+		return (count(static::primary_key()) === 1);
 	}
 
 	/**
@@ -691,7 +742,7 @@ abstract class Base_DB_ORM_Model extends Kohana_Object {
 	 * @return string                               the database table's name
 	 */
 	public static function table() {
-		$segments = preg_split('/_/', self::get_called_class());
+		$segments = preg_split('/_/', get_called_class());
 		return $segments[count($segments) - 1];
 	}
 
