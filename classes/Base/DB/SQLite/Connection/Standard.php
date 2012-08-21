@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-05-25
+ * @version 2012-08-16
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -81,7 +81,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
-		if ( ! is_null($result_set)) {
+		if ($result_set !== NULL) {
 			$this->sql = $sql;
 			return $result_set;
 		}
@@ -184,7 +184,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 
 		$string = "'" . sqlite_escape_string($string) . "'";
 
-		if (is_string($escape) || ! empty($escape)) {
+		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
 		}
 

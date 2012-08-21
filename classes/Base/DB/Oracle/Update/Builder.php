@@ -42,14 +42,14 @@ abstract class Base_DB_Oracle_Update_Builder extends DB_SQL_Update_Builder {
 	 * @see http://geekswithblogs.net/WillSmith/archive/2008/06/18/oracle-update-with-join-again.aspx
 	 */
 	public function statement($terminated = TRUE) {
-		if ( ! empty($this->data['order_by']) || ($this->data['limit'] > 0) || ($this->data['offset'] > 0)) {
+		if ( ! empty($this->data['order_by']) OR ($this->data['limit'] > 0) OR ($this->data['offset'] > 0)) {
 			$sql = "SELECT * FROM {$this->data['table']}";
 
 			if ( ! empty($this->data['where'])) {
 				$do_append = FALSE;
 				$sql .= ' WHERE ';
 				foreach ($this->data['where'] as $where) {
-					if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 						$sql .= " {$where[0]} ";
 					}
 					$sql .= $where[1];
@@ -61,7 +61,7 @@ abstract class Base_DB_Oracle_Update_Builder extends DB_SQL_Update_Builder {
 				$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 			}
 
-			if (($this->data['limit'] > 0) && ($this->data['offset'] > 0)) {
+			if (($this->data['limit'] > 0) AND ($this->data['offset'] > 0)) {
 				$max_row_to_fetch = $this->data['offset'] + ($this->data['limit'] - 1);
 				$min_row_to_fetch = $this->data['offset'];
 				$sql = "SELECT * FROM (SELECT \"t0\".*, ROWNUM AS \"rn\" FROM ({$sql}) \"t0\" WHERE ROWNUM <= {$max_row_to_fetch}) WHERE \"rn\" >= {$min_row_to_fetch}";
@@ -90,7 +90,7 @@ abstract class Base_DB_Oracle_Update_Builder extends DB_SQL_Update_Builder {
 				$do_append = FALSE;
 				$sql .= ' WHERE ';
 				foreach ($this->data['where'] as $where) {
-					if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 						$sql .= " {$where[0]} ";
 					}
 					$sql .= $where[1];
