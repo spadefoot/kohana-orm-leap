@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -109,7 +109,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 
 				$field_count = count($child_key);
 				foreach ($records as $record) {
-					$builder->where_block('(', 'OR');
+					$builder->where_block('(', DB_SQL_Connector::_OR_);
 					for ($i = 0; $i < $field_count; $i++) {
 						$builder->where("{$child_table}.{$child_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$record[$through_keys[1][$i]]});
 					}

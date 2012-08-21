@@ -225,11 +225,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public function children($self = FALSE, $direction = 'ASC') {
 		if ($self) {
 			return $this->descendants($self, $direction)
-				->where($this->level_column, '<=', $this->{$this->level_column} + 1)
-				->where($this->level_column, '>=', $this->{$this->level_column});
+				->where($this->level_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->level_column} + 1)
+				->where($this->level_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->level_column});
 		}
 		return $this->descendants($self, $direction)
-			->where($this->level_column, '=', $this->{$this->level_column} + 1);
+			->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1);
 	}
 
 	/**
@@ -243,15 +243,15 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Update the right values
 		DB_ORM::update(get_class($this))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
-			->where($this->right_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 
 		// Update the left values
 		DB_ORM::update(get_class($this))
 			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
-			->where($this->left_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 	}
 
@@ -280,9 +280,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$this->load();
 
 		DB_ORM::delete(get_class($this))
-			->where($this->left_column, '>=', $this->{$this->left_column})
-			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 
 		$this->delete_space($this->{$this->left_column}, $this->get_size());
@@ -302,15 +302,15 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		// Update the left values
 		DB_ORM::update(get_class($this))
 			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
-			->where($this->left_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 
 		// Update the right values
 		DB_ORM::update(get_class($this))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
-			->where($this->right_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 	}
 
@@ -323,13 +323,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT
 	 */
 	public function descendants($self = FALSE, $direction = 'ASC') {
-		$left_operator = ($self) ? '>=' : '>';
-		$right_operator = ($self) ? '<=' : '<';
+		$left_operator = ($self) ? DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_GREATER_THAN_;
+		$right_operator = ($self) ? DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_LESS_THAN_;
 
 		return DB_ORM::select(get_class($this))
 			->where($this->left_column, $left_operator, $this->{$this->left_column})
 			->where($this->right_column, $right_operator, $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->order_by($this->left_column, $direction);
 	}
 
@@ -522,10 +522,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function leaves() {
 		return DB_ORM::select(get_class($this))
-			->where($this->left_column, '=', DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
-			->where($this->left_column, '>=', $this->{$this->left_column})
-			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->order_by($this->left_column, 'ASC');
 	}
 
@@ -580,9 +580,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $offset))
 			->set($this->level_column, DB_ORM::expr($this->level_column . ' + ' . $level_offset))
 			->set($this->scope_column, $target->{$this->scope_column})
-			->where($this->left_column, '>=', $this->{$this->left_column})
-			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 
 		$this->delete_space($this->{$this->left_column}, $size);
@@ -655,7 +655,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public function new_scope($scope, Array $additional_fields = array()) {
 		// Make sure the specified scope doesn't already exist.
 		$search = DB_ORM::select(get_class($this))
-			->where($this->scope_column, '=', $scope)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope)
 			->query();
 
 		if ($search->count() > 0) {
@@ -687,7 +687,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT
 	 */
 	public function parent() {
-		return $this->parents()->where($this->level_column, '=', $this->{$this->level_column} - 1);
+		return $this->parents()->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} - 1);
 	}
 
 	/**
@@ -700,18 +700,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function parents($root = TRUE, $direction = 'ASC') {
 		$parents = DB_ORM::select(get_class($this))
-			->where($this->left_column, '<=', $this->{$this->left_column})
-			->where($this->right_column, '>=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column});
+			->where($this->left_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column});
 
 		foreach (static::primary_key() as $col) {
-			$parents->where($col, '<>', $this->{$col});
+			$parents->where($col, DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$col});
 		}
 
 		$parents->order_by($this->left_column, $direction);
 
 		if ( ! $root) {
-			$parents->where($this->left_column, '!=', 1);
+			$parents->where($this->left_column, DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
 		}
 
 		return $parents;
@@ -731,8 +731,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			return FALSE;
 		}
 		return DB_ORM::select(get_class($this))
-			->where($this->left_column, '=', 1)
-			->where($this->scope_column, '=', $scope);
+			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, 1)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope);
 	}
 
 	/**
@@ -758,14 +758,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function siblings($self = FALSE, $direction = 'ASC') {
 		$siblings = DB_ORM::select(get_class($this))
-			->where($this->left_column, '>', $this->parent->fetch(0)->{$this->left_column})
-			->where($this->right_column, '<', $this->parent>fetch(0)->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->where($this->level_column, '=', $this->{$this->level_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->parent->fetch(0)->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_, $this->parent>fetch(0)->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column})
 			->order_by($this->left_column, $direction);
 
 		if ( ! $self) {
-			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
+			$siblings->where(static::primary_key(), DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{static::primary_key()});
 		}
 
 		return $siblings;
@@ -801,10 +801,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
-			->where($this->scope_column, '=', $root->{$this->scope_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
 			->where_block('(')
-			->where($this->left_column, '>', $end)
-			->where($this->right_column, '>', $end, 'OR')
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $end)
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_, $end, DB_SQL_Connector::_OR_)
 			->where_block(')')
 			->query();
 
@@ -816,8 +816,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
-			->where($this->scope_column, '=', $root->{$this->scope_column})
-			->where($this->left_column, '=', $this->right_column)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $this->right_column)
 			->query();
 
 		if ($result[0]->count > 0) {
@@ -828,8 +828,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$result = DB_SQL::select(static::data_source())
 			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
-			->where($this->scope_column, '=', $root->{$this->scope_column})
-			->where($this->left_column, '>', $this->right_column)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->right_column)
 			->query();
 
 		if ($result[0]->count > 0) {
@@ -842,10 +842,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			$result = DB_SQL::select(static::data_source())
 				->column(DB_SQL::expr('COUNT(*)'), 'count')
 				->from(static::table())
-				->where($this->scope_column, '=', $root->{$this->scope_column})
+				->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
 				->where_block('(')
-				->where($this->left_column, '=', $i)
-				->where($this->right_column, '=', $i, 'OR')
+				->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $i)
+				->where($this->right_column, DB_SQL_Operator::_EQUAL_TO_, $i, DB_SQL_Connector::_OR_)
 				->where_block(')')
 				->query();
 

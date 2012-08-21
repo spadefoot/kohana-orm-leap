@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-02-09
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -127,12 +127,12 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			->from('information_schema.tables')
-			->where('table_type', '=', 'BASE TABLE')
-			->where('table_schema', 'NOT IN', array('pg_catalog', 'information_schema'))
+			->where('table_type', DB_SQL_Operator::_EQUAL_TO_, 'BASE TABLE')
+			->where('table_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
 			->order_by(DB_SQL::expr('LOWER("table_name")'));
 
 		if ( ! empty($like)) {
-			$builder->where('table_name', 'LIKE', $like);
+			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
@@ -158,13 +158,13 @@ abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
 		$builder = DB_SQL::select($this->source)
 			->column('table_name', 'name')
 			->from('information_schema.tables')
-			->where('table_type', '=', 'VIEW')
-			->where('table_schema', 'NOT IN', array('pg_catalog', 'information_schema'))
-			->where('table_name', 'NOT LIKE', 'pg_%')
+			->where('table_type', DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
+			->where('table_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
+			->where('table_name', DB_SQL_Operator::_NOT_LIKE_, 'pg_%')
 			->order_by(DB_SQL::expr('LOWER("table_name")'));
 
 		if ( ! empty($like)) {
-			$builder->where('table_name', 'LIKE', $like);
+			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-05-15
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -134,7 +134,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 		do {
 			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
 		}
-		while(DB_SQL::select($this->data_source())->from($this->table())->where('token','=',$token)->query()->is_loaded());
+		while(DB_SQL::select($this->data_source())->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
 		return $token;
 	}
 

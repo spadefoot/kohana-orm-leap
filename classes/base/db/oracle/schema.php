@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-02-09
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -163,7 +163,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 			->order_by(DB_SQL::expr('LOWER("table_name")'));
 
 		if ( ! empty($like)) {
-			$builder->where('table_name', 'LIKE', $like);
+			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
@@ -192,7 +192,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 			->order_by(DB_SQL::expr('LOWER("view_name")'));
 
 		if ( ! empty($like)) {
-			$builder->where('view_name', 'LIKE', $like);
+			$builder->where('view_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
