@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-08-16
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -94,13 +94,13 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->join('CROSS', 'sys.index_columns')
 			->join('CROSS', 'sys.columns')
 			->where_block('(')
-			->where('sys.tables.object_id', '=', DB_SQL::expr('[sys].[indexes].[object_id]'))
-			->where('sys.tables.object_id', '=', DB_SQL::expr('[sys].[index_columns].[object_id]'))
-			->where('sys.tables.object_id', '=', DB_SQL::expr('[sys].[columns].[object_id]'))
-			->where('sys.indexes.index_id', '=', DB_SQL::expr('[sys].[index_columns].[index_id]'))
-			->where('sys.index_columns.column_id', '=', DB_SQL::expr('[sys].[columns].[column_id]'))
+			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[indexes].[object_id]'))
+			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[index_columns].[object_id]'))
+			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[columns].[object_id]'))
+			->where('sys.indexes.index_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[index_columns].[index_id]'))
+			->where('sys.index_columns.column_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[columns].[column_id]'))
 			->where_block(')')
-			->where('sys.tables.name', '=', DB_SQL::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
+			->where('sys.tables.name', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
 
 		$results = $builder->query();
 
@@ -123,11 +123,11 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
-			->where('TABLE_TYPE', '=', 'BASE TABLE')
+			->where('TABLE_TYPE', DB_SQL_Operator::_EQUAL_TO_, 'BASE TABLE')
 			->order_by(DB_SQL::expr('LOWER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', 'LIKE', $like);
+			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
@@ -151,11 +151,11 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('INFORMATION_SCHEMA.TABLES')
-			->where('TABLE_TYPE', '=', 'VIEW')
+			->where('TABLE_TYPE', DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
 			->order_by(DB_SQL::expr('LOWER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', 'LIKE', $like);
+			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();

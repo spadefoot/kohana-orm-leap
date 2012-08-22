@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-02-09
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -198,12 +198,12 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', 'LIKE', $this->source->database)
-			->where('TABLE_TYPE', 'LIKE', 'BASE_TABLE')
+			->where('TABLE_SCHEMA', DB_SQL_Operator::_LIKE_, $this->source->database)
+			->where('TABLE_TYPE', DB_SQL_Operator::_LIKE_, 'BASE_TABLE')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', 'LIKE', $like);
+			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
@@ -227,12 +227,12 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column('TABLE_NAME', 'table_name')
 			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', 'LIKE', $this->source->database)
-			->where('TABLE_TYPE', 'LIKE', 'VIEW')
+			->where('TABLE_SCHEMA', DB_SQL_Operator::_LIKE_, $this->source->database)
+			->where('TABLE_TYPE', DB_SQL_Operator::_LIKE_, 'VIEW')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', 'LIKE', $like);
+			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
