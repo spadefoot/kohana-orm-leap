@@ -90,16 +90,16 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->column('sys.indexes.is_primary_key')
 			->column('sys.indexes.is_unique')
 			->from('sys.tables')
-			->join('CROSS', 'sys.indexes')
-			->join('CROSS', 'sys.index_columns')
-			->join('CROSS', 'sys.columns')
-			->where_block('(')
+			->join(DB_SQL_JoinType::_CROSS_, 'sys.indexes')
+			->join(DB_SQL_JoinType::_CROSS_, 'sys.index_columns')
+			->join(DB_SQL_JoinType::_CROSS_, 'sys.columns')
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[indexes].[object_id]'))
 			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[index_columns].[object_id]'))
 			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[columns].[object_id]'))
 			->where('sys.indexes.index_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[index_columns].[index_id]'))
 			->where('sys.index_columns.column_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[columns].[column_id]'))
-			->where_block(')')
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 			->where('sys.tables.name', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
 
 		$results = $builder->query();

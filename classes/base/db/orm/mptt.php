@@ -803,10 +803,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->column(DB_SQL::expr('COUNT(*)'), 'count')
 			->from(static::table())
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
-			->where_block('(')
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $end)
 			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_, $end, DB_SQL_Connector::_OR_)
-			->where_block(')')
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 			->query();
 
 		if ($result[0]->count > 0) {
@@ -844,10 +844,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				->column(DB_SQL::expr('COUNT(*)'), 'count')
 				->from(static::table())
 				->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
-				->where_block('(')
+				->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 				->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $i)
 				->where($this->right_column, DB_SQL_Operator::_EQUAL_TO_, $i, DB_SQL_Connector::_OR_)
-				->where_block(')')
+				->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 				->query();
 
 			if ($result[0]->count > 1) {
