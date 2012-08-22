@@ -53,14 +53,14 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 		$sql .= " * FROM {$this->data['table']}";
 
 		if ( ! empty($this->data['where'])) {
-			$do_append = FALSE;
+			$append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
-				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 

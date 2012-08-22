@@ -30,8 +30,10 @@
  * @category ORM
  * @version 2012-08-21
  *
- * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
+ * @see https://github.com/kiall/kohana3-orm_mptt
+ * @see https://github.com/smgladkovskiy/jelly-mptt
+ * @see https://github.com/banks/sprig-mptt
  *
  * @abstract
  */
@@ -271,12 +273,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	/**
 	 * Removes a node and it's descendants.
 	 *
-	 * $useless_param prevents a strict error that breaks PHPUnit like hell!
 	 * @access public
-	 * @param bool $descendants remove the descendants?
-	 * @return bool
+	 * @param boolean $descendants remove the descendants
+	 * @return boolean
 	 */
-	public function delete($reset = FALSE) {
+	public /*override*/ function delete($reset = FALSE) {
 		$this->load();
 
 		DB_ORM::delete(get_class($this))
@@ -453,7 +454,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param DB_ORM_MPTT $target Target
 	 * @return bool
 	 */
-	public function is_child($target) {
+	public function is_child(DB_ORM_MPTT $target) {
 		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
 	}
 
@@ -464,7 +465,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param DB_ORM_MPTT $target Target
 	 * @return bool
 	 */
-	public function is_descendant($target) {
+	public function is_descendant(DB_ORM_MPTT $target) {
 		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} = $target->{$this->scope_column}));
 	}
 
@@ -485,7 +486,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param DB_ORM_MPTT $target Target
 	 * @return bool
 	 */
-	public function is_parent($target) {
+	public function is_parent(DB_ORM_MPTT $target) {
 		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
@@ -506,7 +507,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param DB_ORM_MPTT $target Target
 	 * @return bool
 	 */
-	public function is_sibling($target) {
+	public function is_sibling(DB_ORM_MPTT $target) {
 		$primary_key = static::primary_key();
 		if ($this->{$primary_key} === $target->{$primary_key}) {
 			return FALSE;
@@ -720,7 +721,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	/**
 	 * Returns the root node.
 	 *
-	 * @access protected
+	 * @access public
 	 * @return DB_ORM_MPTT
 	 */
 	public function root($scope = NULL) {
@@ -741,7 +742,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @access public
 	 * @return DB_ORM_MPTT|bool
 	 */
-	public function save($reload = FALSE, $mode = NULL) {
+	public /*override*/ function save($reload = FALSE, $mode = NULL) {
 		if ($this->is_loaded() === TRUE) {
 			return parent::save($reload, $mode);
 		}

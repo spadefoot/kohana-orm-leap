@@ -63,14 +63,14 @@ abstract class Base_DB_SQLite_Select_Builder extends DB_SQL_Select_Builder {
 		}
 
 		if ( ! empty($this->data['where'])) {
-			$do_append = FALSE;
+			$append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
-				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 
@@ -79,14 +79,14 @@ abstract class Base_DB_SQLite_Select_Builder extends DB_SQL_Select_Builder {
 		}
 
 		if ( ! empty($this->data['having'])) {
-			$do_append = FALSE;
+			$append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
-				if ($do_append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$having[0]} ";
 				}
 				$sql .= $having[1];
-				$do_append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 
