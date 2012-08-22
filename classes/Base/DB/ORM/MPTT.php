@@ -28,14 +28,14 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-20
+ * @version 2012-08-21
  *
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see http://dev.kohanaframework.org/projects/mptt
  *
  * @abstract
  */
-abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class so we can put in application specific settings.
+abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 	/**
 	 * This variable stores the parent id.
@@ -134,173 +134,84 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	public $ul_view = 'partial/asset/left_menu';
 
 	/**
-	 * New scope
-	 * This also double as a new_root method allowing
-	 * us to store multiple trees in the same table.
 	 *
-	 * @param integer $scope New scope to create.
-	 * @param array $additional_fields
-	 * @return boolean
-	 **/
-	public function new_scope($scope, array $additional_fields = array()) {
-		// Make sure the specified scope doesn't already exist.
-		$search = DB_ORM::select(get_class($this))
-			->where($this->scope_column, '=', $scope)
-			->query();
+	 * @access public
+	 * @param $column - Which field to get.
+	 * @return mixed
+	 */
+	public function __get($column) {
+		switch ($column) {
+			case 'parent':
+				return $this->parent();
+			case 'parents':
+				return $this->parents();
+			case 'children':
+				return $this->children();
+			case 'siblings':
+				return $this->siblings();
+			case 'root':
+				return $this->root();
+			case 'leaves':
+				return $this->leaves();
+			case 'descendants':
+				return $this->descendants();
+			default:
+				return parent::__get($column);
+		}
+	}
 
-		if ($search->count() > 0) {
-			return FALSE;
+	/**
+	 * This function returns a multidimensional array
+	 *
+	 * @return mixed
+	 */
+	public function as_multi_array() {
+		$descendants = $this->descendants(TRUE)->query();
+
+		$descendants_array = array();
+		foreach ($descendants as $descendant) {
+			$descendants_array[] = $descendant->data();
 		}
 
-		// Create a new root node in the new scope.
-		$this->{$this->left_column} = 1;
-		$this->{$this->right_column} = 2;
-		$this->{$this->level_column} = 0;
-		$this->{$this->scope_column} = $scope;
+		$stack = array();
 
-		// Other fields may be required.
-		if ( ! empty($additional_fields)) {
-			foreach ($additional_fields as $column => $value) {
-				$this->{$column} = $value;
+		for ($i = 0; $i < count($descendants_array); $i++) {
+			$d = &$descendants_array[$i];
+			$d['Children'] = array();
+
+			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
+				array_pop($stack);
 			}
+
+			if (count($stack) > 0) {
+				$stack[count($stack) - 1]['Children'][] = &$d;
+			}
+
+			$stack[] = &$d;
 		}
 
-		parent::save();
-
-		return $this;
+		return $stack[0];
 	}
 
 	/**
-	 * Does the current node have children?
+	 * This function return an HTML unordered list
 	 *
-	 * @access public
-	 * @return bool
+	 * @return string
 	 */
-	public function has_children() {
-		return (($this->{$this->right_column} - $this->{$this->left_column}) > 1);
-	}
+	public function as_ul() {
+		$descendants = $this->descendants(TRUE)
+            ->query();
 
-	/**
-	 * Is the current node a leaf node?
-	 *
-	 * @access public
-	 * @return bool
-	 */
-	public function is_leaf() {
-		return ! $this->has_children();
-	}
-
-	/**
-	 * Is the current node a descendant of the supplied node.
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT $target Target
-	 * @return bool
-	 */
-	public function is_descendant($target) {
-		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} = $target->{$this->scope_column}));
-	}
-
-	/**
-	 * Is the current node a direct child of the supplied node?
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT $target Target
-	 * @return bool
-	 */
-	public function is_child($target) {
-		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
-	}
-
-	/**
-	 * Is the current node the direct parent of the supplied node?
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT $target Target
-	 * @return bool
-	 */
-	public function is_parent($target) {
-		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
-	}
-
-	/**
-	 * Is the current node a sibling of the supplied node
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT $target Target
-	 * @return bool
-	 */
-	public function is_sibling($target) {
-		$primary_key = static::primary_key();
-		if ($this->{$primary_key} === $target->{$primary_key}) {
-			return FALSE;
-		}
-		return ($this->parent->{$primary_key} === $target->parent->{$primary_key});
-	}
-
-	/**
-	 * Is the current node a root node?
-	 *
-	 * @access public
-	 * @return bool
-	 */
-	public function is_root() {
-		return ($this->{$this->left_column} === 1);
-	}
-
-	/**
-	 * Returns the root node.
-	 *
-	 * @access protected
-	 * @return DB_ORM_MPTT
-	 */
-	public function root($scope = NULL) {
-		if (($scope === NULL) AND $this->is_loaded()) {
-			$scope = $this->{$this->scope_column};
-		}
-		else if (($scope === NULL) AND ! $this->is_loaded()) {
-			return FALSE;
-		}
-		return DB_ORM::select(get_class($this))
-			->where($this->left_column, '=', 1)
-			->where($this->scope_column, '=', $scope);
-	}
-
-	/**
-	 * Returns the parent of the current node.
-	 *
-	 * @access public
-	 * @return DB_ORM_MPTT
-	 */
-	public function parent() {
-		return $this->parents()->where($this->level_column, '=', $this->{$this->level_column} - 1);
-	}
-
-	/**
-	 * Returns the parents of the current node.
-	 *
-	 * @access public
-	 * @param bool $root include the root node?
-	 * @param string $direction direction to order the left column by.
-	 * @return DB_ORM_MPTT
-	 */
-	public function parents($root = TRUE, $direction = 'ASC') {
-		$parents = DB_ORM::select(get_class($this))
-			->where($this->left_column, '<=', $this->{$this->left_column})
-			->where($this->right_column, '>=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column});
-
-		foreach (static::primary_key() as $col) {
-			$parents->where($col, '<>', $this->{$col});
+		$tree = array();
+		foreach ($descendants as $descendant) {
+			$tree[] = $descendant->data();
 		}
 
-		$parents->order_by($this->left_column, $direction);
+		$result = View::factory($this->ul_view)
+			->bind('mptt', $this)
+			->bind('tree', $tree);
 
-		if ( ! $root) {
-			$parents->where($this->left_column, '!=', 1);
-		}
-
-		return $parents;
+		return $result;
 	}
 
 	/**
@@ -314,11 +225,93 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	public function children($self = FALSE, $direction = 'ASC') {
 		if ($self) {
 			return $this->descendants($self, $direction)
-				->where($this->level_column, '<=', $this->{$this->level_column} + 1)
-				->where($this->level_column, '>=', $this->{$this->level_column});
+				->where($this->level_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->level_column} + 1)
+				->where($this->level_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->level_column});
 		}
 		return $this->descendants($self, $direction)
-			->where($this->level_column, '=', $this->{$this->level_column} + 1);
+			->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1);
+	}
+
+	/**
+	 * Create a gap in the tree to make room for a new node
+	 *
+	 * @access protected
+	 * @param integer $start start position.
+	 * @param integer $size the size of the gap (default is 2).
+	 */
+	protected function create_space($start, $size = 2) {
+		// Update the right values
+		DB_ORM::update(get_class($this))
+			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->execute();
+
+		// Update the left values
+		DB_ORM::update(get_class($this))
+			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->execute();
+	}
+
+	/**
+	 * This function returns an array of just the fields
+	 *
+	 * @return array
+	 */
+	public function data() {
+		$buffer = array();
+		foreach ($this->fields as $name => $field) {
+			$buffer[$name] = $field->value;
+		}
+		return $buffer;
+	}
+
+	/**
+	 * Removes a node and it's descendants.
+	 *
+	 * $useless_param prevents a strict error that breaks PHPUnit like hell!
+	 * @access public
+	 * @param bool $descendants remove the descendants?
+	 * @return bool
+	 */
+	public function delete($reset = FALSE) {
+		$this->load();
+
+		DB_ORM::delete(get_class($this))
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->execute();
+
+		$this->delete_space($this->{$this->left_column}, $this->get_size());
+
+		return TRUE;
+	}
+
+	/**
+	 * Closes a gap in a tree. Mainly used after a node has
+	 * been removed.
+	 *
+	 * @access protected
+	 * @param integer $start start position.
+	 * @param integer $size the size of the gap (default is 2).
+	 */
+	protected function delete_space($start, $size = 2) {
+		// Update the left values
+		DB_ORM::update(get_class($this))
+			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->execute();
+
+		// Update the right values
+		DB_ORM::update(get_class($this))
+			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->execute();
 	}
 
 	/**
@@ -330,52 +323,24 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	 * @return DB_ORM_MPTT
 	 */
 	public function descendants($self = FALSE, $direction = 'ASC') {
-		$left_operator = ($self) ? '>=' : '>';
-		$right_operator = ($self) ? '<=' : '<';
+		$left_operator = ($self) ? DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_GREATER_THAN_;
+		$right_operator = ($self) ? DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_LESS_THAN_;
 
 		return DB_ORM::select(get_class($this))
 			->where($this->left_column, $left_operator, $this->{$this->left_column})
 			->where($this->right_column, $right_operator, $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->order_by($this->left_column, $direction);
 	}
 
-	/**
-	 * Returns the siblings of the current node
-	 *
-	 * @access public
-	 * @param bool $self include the current loaded node?
-	 * @param string $direction direction to order the left column by.
-	 * @return DB_ORM_MPTT
-	 */
-	public function siblings($self = FALSE, $direction = 'ASC') {
-		$siblings = DB_ORM::select(get_class($this))
-			->where($this->left_column, '>', $this->parent->fetch(0)->{$this->left_column})
-			->where($this->right_column, '<', $this->parent>fetch(0)->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->where($this->level_column, '=', $this->{$this->level_column})
-			->order_by($this->left_column, $direction);
-
-		if ( ! $self) {
-			$siblings->where(static::primary_key(), '<>', $this->{static::primary_key()});
-		}
-
-		return $siblings;
-	}
-
-	/**
-	 * Returns leaves under the current node.
-	 *
-	 * @access public
-	 * @return DB_ORM_MPTT
-	 */
-	public function leaves() {
-		return DB_ORM::select(get_class($this))
-			->where($this->left_column, '=', DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
-			->where($this->left_column, '>=', $this->{$this->left_column})
-			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->order_by($this->left_column, 'ASC');
+	// TODO redo this so its proper :P and open it public
+	// used by verify_tree()
+	protected function get_scopes() {
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
+			->from(static::table())
+			->query();
+		return $result;
 	}
 
 	/**
@@ -389,50 +354,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	}
 
 	/**
-	 * Create a gap in the tree to make room for a new node
+	 * Does the current node have children?
 	 *
-	 * @access private
-	 * @param integer $start start position.
-	 * @param integer $size the size of the gap (default is 2).
+	 * @access public
+	 * @return bool
 	 */
-	private function create_space($start, $size = 2) {
-		// Update the right values
-		DB_ORM::update(get_class($this))
-			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
-			->where($this->right_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->execute();
-
-		// Update the left values
-		DB_ORM::update(get_class($this))
-			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
-			->where($this->left_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->execute();
-	}
-
-	/**
-	 * Closes a gap in a tree. Mainly used after a node has
-	 * been removed.
-	 *
-	 * @access private
-	 * @param integer $start start position.
-	 * @param integer $size the size of the gap (default is 2).
-	 */
-	private function delete_space($start, $size = 2) {
-		// Update the left values
-		DB_ORM::update(get_class($this))
-			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
-			->where($this->left_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->execute();
-
-		// Update the right values
-		DB_ORM::update(get_class($this))
-			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
-			->where($this->right_column, '>=', $start)
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->execute();
+	public function has_children() {
+		return (($this->{$this->right_column} - $this->{$this->left_column}) > 1);
 	}
 
 	/**
@@ -497,17 +425,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	}
 
 	/**
-	 * Inserts a new node as a previous sibling of the target node.
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
-	 * @return DB_ORM_MPTT
-	 */
-	public function insert_as_prev_sibling($target) {
-		return $this->insert($target, $this->left_column, 0, 0);
-	}
-
-	/**
 	 * Inserts a new node as the next sibling of the target node.
 	 *
 	 * @access public
@@ -519,86 +436,97 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	}
 
 	/**
-	 * Overloaded save method
+	 * Inserts a new node as a previous sibling of the target node.
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT|bool
+	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
+	 * @return DB_ORM_MPTT
 	 */
-	public function save($reload = FALSE, $mode = NULL) {
-		if ($this->is_loaded() === TRUE) {
-			return parent::save($reload, $mode);
-		}
-		return FALSE;
+	public function insert_as_prev_sibling($target) {
+		return $this->insert($target, $this->left_column, 0, 0);
 	}
 
 	/**
-	 * Removes a node and it's descendants.
+	 * Is the current node a direct child of the supplied node?
 	 *
-	 * $useless_param prevents a strict error that breaks PHPUnit like hell!
 	 * @access public
-	 * @param bool $descendants remove the descendants?
+	 * @param DB_ORM_MPTT $target Target
 	 * @return bool
 	 */
-	public function delete($reset = FALSE) {
-		$this->load();
-
-		DB_ORM::delete(get_class($this))
-			->where($this->left_column, '>=', $this->{$this->left_column})
-			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
-			->execute();
-
-		$this->delete_space($this->{$this->left_column}, $this->get_size());
-
-		return TRUE;
+	public function is_child($target) {
+		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
 	}
 
 	/**
-	 * Move to First Child
+	 * Is the current node a descendant of the supplied node.
 	 *
-	 * Moves the current node to the first child of the target node.
-	 *
-	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
-	 * @return DB_ORM_MPTT
+	 * @access public
+	 * @param DB_ORM_MPTT $target Target
+	 * @return bool
 	 */
-	public function move_to_first_child($target) {
-		return $this->move($target, TRUE, 1, 1, TRUE);
+	public function is_descendant($target) {
+		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} = $target->{$this->scope_column}));
 	}
 
 	/**
-	 * Move to Last Child
+	 * Is the current node a leaf node?
 	 *
-	 * Moves the current node to the last child of the target node.
-	 *
-	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
-	 * @return DB_ORM_MPTT
+	 * @access public
+	 * @return bool
 	 */
-	public function move_to_last_child($target) {
-		return $this->move($target, FALSE, 0, 1, TRUE);
+	public function is_leaf() {
+		return ! $this->has_children();
 	}
 
 	/**
-	 * Move to Previous Sibling.
+	 * Is the current node the direct parent of the supplied node?
 	 *
-	 * Moves the current node to the previous sibling of the target node.
-	 *
-	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
-	 * @return DB_ORM_MPTT
+	 * @access public
+	 * @param DB_ORM_MPTT $target Target
+	 * @return bool
 	 */
-	public function move_to_prev_sibling($target) {
-		return $this->move($target, TRUE, 0, 0, FALSE);
+	public function is_parent($target) {
+		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
 	}
 
 	/**
-	 * Move to Next Sibling.
+	 * Is the current node a root node?
 	 *
-	 * Moves the current node to the next sibling of the target node.
+	 * @access public
+	 * @return bool
+	 */
+	public function is_root() {
+		return ($this->{$this->left_column} === 1);
+	}
+
+	/**
+	 * Is the current node a sibling of the supplied node
 	 *
-	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
+	 * @access public
+	 * @param DB_ORM_MPTT $target Target
+	 * @return bool
+	 */
+	public function is_sibling($target) {
+		$primary_key = static::primary_key();
+		if ($this->{$primary_key} === $target->{$primary_key}) {
+			return FALSE;
+		}
+		return ($this->parent->{$primary_key} === $target->parent->{$primary_key});
+	}
+
+	/**
+	 * Returns leaves under the current node.
+	 *
+	 * @access public
 	 * @return DB_ORM_MPTT
 	 */
-	public function move_to_next_sibling($target) {
-		return $this->move($target, FALSE, 1, 0, FALSE);
+	public function leaves() {
+		return DB_ORM::select(get_class($this))
+			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, DB_ORM::expr('(`' . $this->right_column . '` - 1)'))
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->order_by($this->left_column, 'ASC');
 	}
 
 	/**
@@ -652,9 +580,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $offset))
 			->set($this->level_column, DB_ORM::expr($this->level_column . ' + ' . $level_offset))
 			->set($this->scope_column, $target->{$this->scope_column})
-			->where($this->left_column, '>=', $this->{$this->left_column})
-			->where($this->right_column, '<=', $this->{$this->right_column})
-			->where($this->scope_column, '=', $this->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 
 		$this->delete_space($this->{$this->left_column}, $size);
@@ -668,131 +596,179 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 	}
 
 	/**
+	 * Move to First Child
 	 *
-	 * @access public
-	 * @param $column - Which field to get.
-	 * @return mixed
+	 * Moves the current node to the first child of the target node.
+	 *
+	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
+	 * @return DB_ORM_MPTT
 	 */
-	public function __get($column) {
-		switch ($column) {
-			case 'parent':
-				return $this->parent();
-			case 'parents':
-				return $this->parents();
-			case 'children':
-				return $this->children();
-			case 'siblings':
-				return $this->siblings();
-			case 'root':
-				return $this->root();
-			case 'leaves':
-				return $this->leaves();
-			case 'descendants':
-				return $this->descendants();
-			default:
-				return parent::__get($column);
-		}
+	public function move_to_first_child($target) {
+		return $this->move($target, TRUE, 1, 1, TRUE);
 	}
 
 	/**
-	 * Verify the tree is in good order
+	 * Move to Last Child
 	 *
-	 * This functions speed is irrelevant - its really only for debugging and unit tests
+	 * Moves the current node to the last child of the target node.
 	 *
-	 * @todo Look for any nodes no longer contained by the root node.
-	 * @todo Ensure every node has a path to the root via ->parents();
-	 * @access public
-	 * @return boolean
+	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
+	 * @return DB_ORM_MPTT
 	 */
-	public function verify_tree() {
-		foreach ($this->get_scopes() as $scope) {
-			if ( ! $this->verify_scope($scope->{$this->scope_column})) {
-				return FALSE;
-			}
-		}
-		return TRUE;
+	public function move_to_last_child($target) {
+		return $this->move($target, FALSE, 0, 1, TRUE);
 	}
 
-	// TODO redo this so its proper :P and open it public
-	// used by verify_tree()
-	private function get_scopes() {
-		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
-			->from(static::table())
-			->query();
-		return $result;
+	/**
+	 * Move to Next Sibling.
+	 *
+	 * Moves the current node to the next sibling of the target node.
+	 *
+	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
+	 * @return DB_ORM_MPTT
+	 */
+	public function move_to_next_sibling($target) {
+		return $this->move($target, FALSE, 1, 0, FALSE);
 	}
 
-	// TODO Use model's data source, not default
-	// TODO Fixed instance variables references
-	public function verify_scope($scope) {
-		$root = $this->root($scope);
+	/**
+	 * Move to Previous Sibling.
+	 *
+	 * Moves the current node to the previous sibling of the target node.
+	 *
+	 * @param DB_ORM_MPTT|integer $target target node id or DB_ORM_MPTT object.
+	 * @return DB_ORM_MPTT
+	 */
+	public function move_to_prev_sibling($target) {
+		return $this->move($target, TRUE, 0, 0, FALSE);
+	}
 
-		$end = $root->{$this->right_column};
-
-		// Find nodes that have slipped out of bounds.
-		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('COUNT(*)'), 'count')
-			->from(static::table())
-			->where($this->scope_column, '=', $root->{$this->scope_column})
-			->where_block('(')
-			->where($this->left_column, '>', $end)
-			->where($this->right_column, '>', $end, 'OR')
-			->where_block(')')
+	/**
+	 * New scope
+	 * This also double as a new_root method allowing
+	 * us to store multiple trees in the same table.
+	 *
+	 * @param integer $scope New scope to create.
+	 * @param array $additional_fields
+	 * @return boolean
+	 **/
+	public function new_scope($scope, Array $additional_fields = array()) {
+		// Make sure the specified scope doesn't already exist.
+		$search = DB_ORM::select(get_class($this))
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope)
 			->query();
 
-		if ($result[0]->count > 0) {
+		if ($search->count() > 0) {
 			return FALSE;
 		}
 
-		// Find nodes that have the same left and right value
-		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('COUNT(*)'), 'count')
-			->from(static::table())
-			->where($this->scope_column, '=', $root->{$this->scope_column})
-			->where($this->left_column, '=', $this->right_column)
-			->query();
+		// Create a new root node in the new scope.
+		$this->{$this->left_column} = 1;
+		$this->{$this->right_column} = 2;
+		$this->{$this->level_column} = 0;
+		$this->{$this->scope_column} = $scope;
 
-		if ($result[0]->count > 0) {
-			return FALSE;
-		}
-
-		// Find nodes that right value is less than the left value
-		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('COUNT(*)'), 'count')
-			->from(static::table())
-			->where($this->scope_column, '=', $root->{$this->scope_column})
-			->where($this->left_column, '>', $this->right_column)
-			->query();
-
-		if ($result[0]->count > 0) {
-			return FALSE;
-		}
-
-		// Make sure no 2 nodes share a left/right value
-		$i = 1;
-		while ($i <= $end) {
-			$result = DB_SQL::select(static::data_source())
-				->column(DB_SQL::expr('COUNT(*)'), 'count')
-				->from(static::table())
-				->where($this->scope_column, '=', $root->{$this->scope_column})
-				->where_block('(')
-				->where($this->left_column, '=', $i)
-				->where($this->right_column, '=', $i, 'OR')
-				->where_block(')')
-				->query();
-
-			if ($result[0]->count > 1) {
-				return FALSE;
+		// Other fields may be required.
+		if ( ! empty($additional_fields)) {
+			foreach ($additional_fields as $column => $value) {
+				$this->{$column} = $value;
 			}
-
-			$i++;
 		}
 
-		// Check to ensure that all nodes have a "correct" level
-		//TODO
+		parent::save();
 
-		return TRUE;
+		return $this;
+	}
+
+	/**
+	 * Returns the parent of the current node.
+	 *
+	 * @access public
+	 * @return DB_ORM_MPTT
+	 */
+	public function parent() {
+		return $this->parents()->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} - 1);
+	}
+
+	/**
+	 * Returns the parents of the current node.
+	 *
+	 * @access public
+	 * @param bool $root include the root node?
+	 * @param string $direction direction to order the left column by.
+	 * @return DB_ORM_MPTT
+	 */
+	public function parents($root = TRUE, $direction = 'ASC') {
+		$parents = DB_ORM::select(get_class($this))
+			->where($this->left_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column});
+
+		foreach (static::primary_key() as $col) {
+			$parents->where($col, DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$col});
+		}
+
+		$parents->order_by($this->left_column, $direction);
+
+		if ( ! $root) {
+			$parents->where($this->left_column, DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
+		}
+
+		return $parents;
+	}
+
+	/**
+	 * Returns the root node.
+	 *
+	 * @access protected
+	 * @return DB_ORM_MPTT
+	 */
+	public function root($scope = NULL) {
+		if (($scope === NULL) AND $this->is_loaded()) {
+			$scope = $this->{$this->scope_column};
+		}
+		else if (($scope === NULL) AND ! $this->is_loaded()) {
+			return FALSE;
+		}
+		return DB_ORM::select(get_class($this))
+			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, 1)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope);
+	}
+
+	/**
+	 * Overloaded save method
+	 *
+	 * @access public
+	 * @return DB_ORM_MPTT|bool
+	 */
+	public function save($reload = FALSE, $mode = NULL) {
+		if ($this->is_loaded() === TRUE) {
+			return parent::save($reload, $mode);
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Returns the siblings of the current node
+	 *
+	 * @access public
+	 * @param bool $self include the current loaded node?
+	 * @param string $direction direction to order the left column by.
+	 * @return DB_ORM_MPTT
+	 */
+	public function siblings($self = FALSE, $direction = 'ASC') {
+		$siblings = DB_ORM::select(get_class($this))
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->parent->fetch(0)->{$this->left_column})
+			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_, $this->parent>fetch(0)->{$this->right_column})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column})
+			->order_by($this->left_column, $direction);
+
+		if ( ! $self) {
+			$siblings->where(static::primary_key(), DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{static::primary_key()});
+		}
+
+		return $siblings;
 	}
 
 	public function update_path() {
@@ -814,70 +790,95 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model { // TODO Extend this class
 		return $this;
 	}
 
-	/**
-	 * This function returns a multidimensional array
-	 *
-	 * @return mixed
-	 */
-	public function as_multi_array() {
-		$descendants = $this->descendants(TRUE)->query();
+	// TODO Use model's data source, not default
+	// TODO Fixed instance variables references
+	public function verify_scope($scope) {
+		$root = $this->root($scope);
 
-		$descendants_array = array();
-		foreach ($descendants as $d) {
-			$descendants_array[] = $d->data();
+		$end = $root->{$this->right_column};
+
+		// Find nodes that have slipped out of bounds.
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
+			->from(static::table())
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
+			->where_block('(')
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $end)
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_, $end, DB_SQL_Connector::_OR_)
+			->where_block(')')
+			->query();
+
+		if ($result[0]->count > 0) {
+			return FALSE;
 		}
 
-		$stack = array();
+		// Find nodes that have the same left and right value
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
+			->from(static::table())
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $this->right_column)
+			->query();
 
-		for ($i = 0; $i < count($descendants_array); $i++) {
-			$d = &$descendants_array[$i];
-			$d['Children'] = array();
-
-			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
-				array_pop($stack);
-			}
-
-			if (count($stack) > 0) {
-				$stack[count($stack) - 1]['Children'][] = &$d;
-			}
-
-			$stack[] = &$d;
+		if ($result[0]->count > 0) {
+			return FALSE;
 		}
 
-		return $stack[0];
+		// Find nodes that right value is less than the left value
+		$result = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(*)'), 'count')
+			->from(static::table())
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
+			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->right_column)
+			->query();
+
+		if ($result[0]->count > 0) {
+			return FALSE;
+		}
+
+		// Make sure no 2 nodes share a left/right value
+		$i = 1;
+		while ($i <= $end) {
+			$result = DB_SQL::select(static::data_source())
+				->column(DB_SQL::expr('COUNT(*)'), 'count')
+				->from(static::table())
+				->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
+				->where_block('(')
+				->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $i)
+				->where($this->right_column, DB_SQL_Operator::_EQUAL_TO_, $i, DB_SQL_Connector::_OR_)
+				->where_block(')')
+				->query();
+
+			if ($result[0]->count > 1) {
+				return FALSE;
+			}
+
+			$i++;
+		}
+
+		// Check to ensure that all nodes have a "correct" level
+		//TODO
+
+		return TRUE;
 	}
 
 	/**
-	 * This function return an HTML unordered list
+	 * Verify the tree is in good order
 	 *
-	 * @return string
-	 */
-	public function as_ul() {
-		$descendants = $this->descendants(TRUE)->query();
-
-		$tree = array();
-		foreach ($descendants as $d) {
-			$tree[] = $d->data();
-		}
-
-		$result = View::factory($this->ul_view)
-			->bind('mptt', $this)
-			->bind('tree', $tree);
-
-		return $result;
-	}
-
-	/**
-	 * This function returns an array of just the fields
+	 * This functions speed is irrelevant - its really only for debugging and unit tests
 	 *
-	 * @return array
+	 * @todo Look for any nodes no longer contained by the root node.
+	 * @todo Ensure every node has a path to the root via ->parents();
+	 * @access public
+	 * @return boolean
 	 */
-	public function data() {
-		$buffer = array();
-		foreach ($this->fields as $col => $field) {
-			$buffer[$col] = $field->value;
+	public function verify_tree() {
+		foreach ($this->get_scopes() as $scope) {
+			if ( ! $this->verify_scope($scope->{$this->scope_column})) {
+				return FALSE;
+			}
 		}
-		return $buffer;
+		return TRUE;
 	}
 
 }

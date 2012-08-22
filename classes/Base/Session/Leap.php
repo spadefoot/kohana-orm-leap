@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-04-08
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -135,7 +135,7 @@ abstract class Base_Session_Leap extends Session {
 		if ($id OR $id = Cookie::get($this->_name)) {
 			try {
 				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
-					->where($this->_columns['session_id'], '=', $id)
+					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
 					->limit(1)
 					->query()
 					->fetch(0)
@@ -173,7 +173,7 @@ abstract class Base_Session_Leap extends Session {
 
 			try {
 				$result = DB_ORM::select($this->_table, array($this->_columns['session_id']))
-					->where($this->_columns['session_id'], '=', $id)
+					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
 					->limit(1)
 					->query()
 					->fetch(0)
@@ -208,7 +208,7 @@ abstract class Base_Session_Leap extends Session {
 			$query = DB_ORM::update($this->_table)
 				->set($this->_columns['last_active'], $this->_data['last_active'])
 				->set($this->_columns['contents'], $this->__toString())
-				->where($this->_columns['session_id'], '=', $this->_update_id);
+				->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $this->_update_id);
 
 			if ($this->_update_id !== $this->_session_id) {
 				// Also update the session id
@@ -233,7 +233,7 @@ abstract class Base_Session_Leap extends Session {
 	 *
 	 * @access protected
 	 * @return boolean                          whether the current session was
-	 *                                          successfully destoryed
+	 *                                          successfully destroyed
 	 */
 	protected function _destroy() {
 		// Session has not been created yet
@@ -243,7 +243,7 @@ abstract class Base_Session_Leap extends Session {
 
 		// Delete the current session
 		DB_ORM::delete($this->_table)
-			->where($this->_columns['session_id'], '=', $this->_update_id)
+			->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $this->_update_id)
 			->execute();
 
 		try {
@@ -270,7 +270,7 @@ abstract class Base_Session_Leap extends Session {
 
 		// Delete all sessions that have expired
 		DB_ORM::delete($this->_table)
-			->where($this->_columns['last_active'], '<', time() - $expires)
+			->where($this->_columns['last_active'], DB_SQL_Operator::_LESS_THAN_, time() - $expires)
 			->execute();
 	}
 

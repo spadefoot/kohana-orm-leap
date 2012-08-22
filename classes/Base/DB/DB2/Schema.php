@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-02-09
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -165,11 +165,11 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column('tabname', 'name')
 			->from('syscat.tables')
-			->where('tabschema', '=', 'SYSCAT')
+			->where('tabschema', DB_SQL_Operator::_EQUAL_TO_, 'SYSCAT')
 			->order_by(DB_SQL::expr('LOWER("tabname")'));
 
 		if ( ! empty($like)) {
-			$builder->where('tabname', 'LIKE', $like);
+			$builder->where('tabname', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
@@ -194,12 +194,12 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column('viewname', 'name')
 			->from('syscat.views')
-			->where('viewschema', '=', 'SYSCAT')
-			->where('valid', '<>', 'Y')
+			->where('viewschema', DB_SQL_Operator::_EQUAL_TO_, 'SYSCAT')
+			->where('valid', DB_SQL_Operator::_NOT_EQUIVALENT_, 'Y')
 			->order_by(DB_SQL::expr('LOWER("tabname")'));
 
 		if ( ! empty($like)) {
-			$builder->where('viewname', 'LIKE', $like);
+			$builder->where('viewname', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
