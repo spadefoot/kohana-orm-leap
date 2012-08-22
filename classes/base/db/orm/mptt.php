@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-21
+ * @version 2012-08-22
  *
  * @see http://dev.kohanaframework.org/projects/mptt
  * @see https://github.com/kiall/kohana3-orm_mptt
@@ -455,7 +455,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_child(DB_ORM_MPTT $target) {
-		return ($this->parent->{static::primary_key()} === $target->{static::primary_key()});
+		$primary_key = static::primary_key();	
+		foreach ($primary_key as $column) {
+			if (($this->parent->{$column} === $target->{$column}) === FALSE) {
+				return FALSE;
+			}
+		}
+		return ! empty($primary_key);
 	}
 
 	/**
@@ -487,7 +493,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_parent(DB_ORM_MPTT $target) {
-		return ($this->{static::primary_key()} === $target->parent->{static::primary_key()});
+		$primary_key = static::primary_key();	
+		foreach ($primary_key as $column) {
+			if (($this->{$column} === $target->parent->{$column}) === FALSE) {
+				return FALSE;
+			}
+		}
+		return ! empty($primary_key);
 	}
 
 	/**
@@ -508,11 +520,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_sibling(DB_ORM_MPTT $target) {
+		// TODO Handle a composite primary key.
 		$primary_key = static::primary_key();
-		if ($this->{$primary_key} === $target->{$primary_key}) {
+		if ($this->{$primary_key[0]} === $target->{$primary_key[0]}) {
 			return FALSE;
 		}
-		return ($this->parent->{$primary_key} === $target->parent->{$primary_key});
+		return ($this->parent->{$primary_key[0]} === $target->parent->{$primary_key[0]});
 	}
 
 	/**
@@ -705,8 +718,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column});
 
-		foreach (static::primary_key() as $col) {
-			$parents->where($col, DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$col});
+		foreach (static::primary_key() as $column) {
+			$parents->where($column, DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$column});
 		}
 
 		$parents->order_by($this->left_column, $direction);
@@ -766,7 +779,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->order_by($this->left_column, $direction);
 
 		if ( ! $self) {
-			$siblings->where(static::primary_key(), DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{static::primary_key()});
+			foreach (static::primary_key() as $column) {
+				$siblings->where($column, DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$column});
+			}
 		}
 
 		return $siblings;
