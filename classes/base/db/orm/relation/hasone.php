@@ -38,11 +38,11 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 		parent::__construct($model, 'has_one');
 
 		// the parent model is the referenced table
-		$this->metadata['parent_model'] = get_class($model);
+		$parent_model = get_class($model);
 
 		// Get parent model's name into variable, otherways a late static binding code throws a
 		// syntax error when used like this: $this->metadata['parent_model']::primary_key()
-		$parent_model = $this->metadata['parent_model'];
+		$this->metadata['parent_model'] = $parent_model;
 
 		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
 		$this->metadata['parent_key'] = (isset($metadata['parent_key']))

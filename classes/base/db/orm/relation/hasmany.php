@@ -38,11 +38,11 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		parent::__construct($model, 'has_many');
 
 		// the parent model is the referenced table
-		$this->metadata['parent_model'] = get_class($model);
+		$parent_model = get_class($model);
 
 		// Get parent model's name into variable, otherways a late static binding code throws a
 		// syntax error when used like this: $this->metadata['parent_model']::primary_key()
-		$parent_model = $this->metadata['parent_model'];
+		$this->metadata['parent_model'] = $parent_model;
 
 		// the parent key (i.e. candidate key) is an ordered list of field names in the parent model
 		$this->metadata['parent_key'] = (isset($metadata['parent_key']))
@@ -130,7 +130,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 				$builder = DB_SQL::select($child_source)
 					->all("{$child_table}.*")
 					->from($through_table)
-					->join('INNER', $child_table);
+					->join(DB_SQL_JoinType::_INNER_, $child_table);
 
 				$field_count = count($child_key);
 				for ($i = 0; $i < $field_count; $i++) {
