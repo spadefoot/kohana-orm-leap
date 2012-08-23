@@ -3,7 +3,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2010 Kiall Mac Innes, Mathew Davies, and Mike Parkin
+ * Copyright (c) 2010-2012 Kiall Mac Innes, Mathew Davies, Mike Parkin, and Paul Banks
  * Copyright (c) 2012 Spadefoot
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
@@ -23,12 +23,12 @@
  */
 
 /**
- * This class represents an active record for an SQL database table and is
- * for handling a Modified Preorder Tree Traversal (MPTT).
+ * This class represents an active record for an SQL database table and is for handling
+ * a Modified Pre-Order Tree Traversal (MPTT).
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-22
+ * @version 2012-08-23
  *
  * @see http://dev.kohanaframework.org/projects/mptt
  * @see https://github.com/kiall/kohana3-orm_mptt
@@ -40,28 +40,12 @@
 abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 	/**
-	 * This variable stores the parent id.
+	 * This variable stores the name of the name column.
 	 *
 	 * @access public
 	 * @var string
 	 */
-	public $parent_id = 'parentID';
-
-	/**
-	 * This variable stores the title column.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $title_column = 'name';
-
-	/**
-	 * This variable stores the link column.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $link_column = 'alias';
+	public $name_column = 'name';
 
 	/**
 	 * This variable stores the name of the left column.
@@ -96,14 +80,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public $scope_column = 'scope';
 
 	/**
-	 * This variable stores whether path calculation is enabled/disabled.
-	 *
-	 * @access protected
-	 * @var boolean
-	 */
-	protected $path_calculation_enabled = FALSE;
-
-	/**
 	 * This variable stores the full pre-calculated path.
 	 *
 	 * @access public
@@ -118,6 +94,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @var string
 	 */
 	public $path_part_column = 'path_part';
+
+	/**
+	 * This variable stores whether path calculation is enabled/disabled.
+	 *
+	 * @access protected
+	 * @var boolean
+	 */
+	protected $path_calculation_enabled = FALSE;
 
 	/**
 	 * This variable stores the path separator to be used.
@@ -136,19 +120,40 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public $ul_view = 'partial/asset/left_menu';
 
 	/**
+	 * This constructor instantiates this class.
 	 *
 	 * @access public
-	 * @param $column - Which field to get.
-	 * @return mixed
 	 */
-	public function __get($column) {
-		switch ($column) {
+	public function __construct() {
+		parent::__construct();
+
+		$primary_key = static::primary_key();
+		if (count($primary_key) != 1) {
+			throw new Kohana_Exception('Message: Unable to initialize model. Reason: MPTT does not support composite primary key.');
+		}
+	}
+
+	/**
+	 * This function returns the value associated with the specified property.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __get($name) {
+		switch ($name) {
 			case 'parent':
 				return $this->parent();
 			case 'parents':
 				return $this->parents();
 			case 'children':
 				return $this->children();
+			case 'first_child':
+				return $this->children(FALSE, 'ASC', 1);
+			case 'last_child':
+				return $this->children(FALSE, 'DESC', 1);
 			case 'siblings':
 				return $this->siblings();
 			case 'root':
@@ -158,127 +163,122 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			case 'descendants':
 				return $this->descendants();
 			default:
-				return parent::__get($column);
+				return parent::__get($name);
 		}
 	}
 
+//	/**
+//	 * This function returns a multidimensional array
+//	 *
+//	 * @return mixed
+//	 */
+//	public function as_multi_array() {
+//		$descendants = $this->descendants(TRUE)->query();
+//
+//		$descendants_array = array();
+//		foreach ($descendants as $descendant) {
+//			$descendants_array[] = $descendant->data();
+//		}
+//
+//		$stack = array();
+//
+//		for ($i = 0; $i < count($descendants_array); $i++) {
+//			$d = &$descendants_array[$i];
+//			$d['Children'] = array();
+//
+//			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
+//				array_pop($stack);
+//			}
+//
+//			if (count($stack) > 0) {
+//				$stack[count($stack) - 1]['Children'][] = &$d;
+//			}
+//
+//			$stack[] = &$d;
+//		}
+//
+//		return $stack[0];
+//	}
+
+//	/**
+//	 * This function return an HTML unordered list
+//	 *
+//	 * @return string
+//	 */
+//	public function as_ul() {
+//		$descendants = $this->descendants(TRUE)
+//            ->query();
+//
+//		$tree = array();
+//		foreach ($descendants as $descendant) {
+//			$tree[] = $descendant->data();
+//		}
+//
+//		$result = View::factory($this->ul_view)
+//			->bind('mptt', $this)
+//			->bind('tree', $tree);
+//
+//		return $result;
+//	}
+
 	/**
-	 * This function returns a multidimensional array
-	 *
-	 * @return mixed
-	 */
-	public function as_multi_array() {
-		$descendants = $this->descendants(TRUE)->query();
-
-		$descendants_array = array();
-		foreach ($descendants as $descendant) {
-			$descendants_array[] = $descendant->data();
-		}
-
-		$stack = array();
-
-		for ($i = 0; $i < count($descendants_array); $i++) {
-			$d = &$descendants_array[$i];
-			$d['Children'] = array();
-
-			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
-				array_pop($stack);
-			}
-
-			if (count($stack) > 0) {
-				$stack[count($stack) - 1]['Children'][] = &$d;
-			}
-
-			$stack[] = &$d;
-		}
-
-		return $stack[0];
-	}
-
-	/**
-	 * This function return an HTML unordered list
-	 *
-	 * @return string
-	 */
-	public function as_ul() {
-		$descendants = $this->descendants(TRUE)
-            ->query();
-
-		$tree = array();
-		foreach ($descendants as $descendant) {
-			$tree[] = $descendant->data();
-		}
-
-		$result = View::factory($this->ul_view)
-			->bind('mptt', $this)
-			->bind('tree', $tree);
-
-		return $result;
-	}
-
-	/**
-	 * Returns the children of the current node.
+	 * This function returns the children of the current node.
 	 *
 	 * @access public
-	 * @param bool $self include the current loaded node?
-	 * @param string $direction direction to order the left column by.
-	 * @return DB_ORM_MPTT
+	 * @param bool $self                            whether to include the current loaded node
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              left column will sorted either in ascending or
+	 *                                              descending order
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_ResultSet                         an array of children nodes
 	 */
-	public function children($self = FALSE, $direction = 'ASC') {
-		if ($self) {
-			return $this->descendants($self, $direction)
-				->where($this->level_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->level_column} + 1)
-				->where($this->level_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->level_column});
-		}
-		return $this->descendants($self, $direction)
-			->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1);
+	public function children($self = FALSE, $ordering = 'ASC', $limit = NULL) {
+		return $this->descendants($self, $ordering, TRUE, FALSE, $limit);
 	}
 
 	/**
-	 * Create a gap in the tree to make room for a new node
+	 * This function creates a space in the tree to make room for a new node.
 	 *
 	 * @access protected
-	 * @param integer $start start position.
-	 * @param integer $size the size of the gap (default is 2).
+	 * @param integer $start                        the start position
+	 * @param integer $size                         the size of the space
 	 */
 	protected function create_space($start, $size = 2) {
-		// Update the right values
-		DB_ORM::update(get_class($this))
-			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
-			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->execute();
-
-		// Update the left values
 		DB_ORM::update(get_class($this))
 			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
 			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
+		DB_ORM::update(get_class($this))
+			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
+			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->execute();
 	}
 
-	/**
-	 * This function returns an array of just the fields
-	 *
-	 * @return array
-	 */
-	public function data() {
-		$buffer = array();
-		foreach ($this->fields as $name => $field) {
-			$buffer[$name] = $field->value;
-		}
-		return $buffer;
-	}
+//	/**
+//	 * This function returns an array of just the fields
+//	 *
+//	 * @return array
+//	 */
+//	public function data() {
+//		$buffer = array();
+//		foreach ($this->fields as $name => $field) {
+//			$buffer[$name] = $field->value;
+//		}
+//		return $buffer;
+//	}
 
 	/**
-	 * Removes a node and it's descendants.
+	 * This function removes a node and its descendants.
 	 *
 	 * @access public
-	 * @param boolean $descendants remove the descendants
-	 * @return boolean
+	 * @param boolean $reset                        whether to reset each column's value back
+	 *                                              to its original value (this parameter has
+	 *                                              no affect on MPTT models)
 	 */
 	public /*override*/ function delete($reset = FALSE) {
-		$this->load();
+		$this->load(); // ? may not be needed
 
 		DB_ORM::delete(get_class($this))
 			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
@@ -287,27 +287,22 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->execute();
 
 		$this->delete_space($this->{$this->left_column}, $this->get_size());
-
-		return TRUE;
 	}
 
 	/**
-	 * Closes a gap in a tree. Mainly used after a node has
+	 * This function closes a space in a tree. Mainly used after a node has
 	 * been removed.
 	 *
 	 * @access protected
-	 * @param integer $start start position.
-	 * @param integer $size the size of the gap (default is 2).
+	 * @param integer $start                        the start position
+	 * @param integer $size                         the size of the space
 	 */
 	protected function delete_space($start, $size = 2) {
-		// Update the left values
 		DB_ORM::update(get_class($this))
 			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
 			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
-
-		// Update the right values
 		DB_ORM::update(get_class($this))
 			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
 			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
@@ -316,39 +311,69 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	}
 
 	/**
-	 * Returns the descendants of the current node.
+	 * This function returns the descendants of the current node.
 	 *
 	 * @access public
-	 * @param bool $self include the current loaded node?
-	 * @param string $direction direction to order the left column by.
-	 * @return DB_ORM_MPTT
+	 * @param boolean $self                         whether to include the current loaded node
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              left column will sorted either in ascending or
+	 *                                              descending order
+	 * @param boolean $direct_children_only         whether to only fetch the direct children
+	 * @param boolean $leaves_only                  whether to only fetch leaves
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_ResultSet                         an array of descendant nodes
 	 */
-	public function descendants($self = FALSE, $direction = 'ASC') {
+	public function descendants($self = FALSE, $ordering = 'ASC', $direct_children_only = FALSE, $leaves_only = FALSE, $limit = NULL) {
 		$left_operator = ($self) ? DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_GREATER_THAN_;
 		$right_operator = ($self) ? DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_LESS_THAN_;
 
-		return DB_ORM::select(get_class($this))
+		$builder = DB_ORM::select(get_class($this))
 			->where($this->left_column, $left_operator, $this->{$this->left_column})
 			->where($this->right_column, $right_operator, $this->{$this->right_column})
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->order_by($this->left_column, $direction);
+			->order_by($this->left_column, $ordering);
+
+		if ($direct_children_only) {
+			if ($self) {
+				$builder->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
+					->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column})
+					->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1, DB_SQL_Connector::_OR_)
+					->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_);
+			}
+			else {
+				$builder->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1);
+			}
+		}
+
+		if ($leaves_only) {
+			$builder->where($this->right_column, DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr($this->left_column . ' + 1'));
+		}
+
+		$builder->limit($limit);
+
+		return $builder->query();
 	}
 
-	// TODO redo this so its proper :P and open it public
-	// used by verify_tree()
+	/**
+	 * This function returns an array of all scope keys (i.e. IDs).
+	 *
+	 * @access protected
+	 * @return DB_ResultSet
+	 */
 	protected function get_scopes() {
 		$result = DB_SQL::select(static::data_source())
-			->column(DB_SQL::expr('DISTINCT(' . $this->scope_column . ')'))
+			->distinct()
+			->column($this->scope_column)
 			->from(static::table())
 			->query();
 		return $result;
 	}
 
 	/**
-	 * Get Size
+	 * This function gets the size of ....
 	 *
 	 * @access protected
-	 * @return integer
+	 * @return integer                                  the size
 	 */
 	protected function get_size() {
 		return ($this->{$this->right_column} - $this->{$this->left_column}) + 1;
@@ -455,13 +480,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_child(DB_ORM_MPTT $target) {
-		$primary_key = static::primary_key();	
-		foreach ($primary_key as $column) {
-			if (($this->parent->{$column} === $target->{$column}) === FALSE) {
-				return FALSE;
-			}
-		}
-		return ! empty($primary_key);
+		$primary_key = static::primary_key();
+		return ($this->parent->{$primary_key[0]} === $target->{$primary_key[0]});
 	}
 
 	/**
@@ -494,12 +514,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function is_parent(DB_ORM_MPTT $target) {
 		$primary_key = static::primary_key();	
-		foreach ($primary_key as $column) {
-			if (($this->{$column} === $target->parent->{$column}) === FALSE) {
-				return FALSE;
-			}
-		}
-		return ! empty($primary_key);
+		return ($this->{$primary_key[0]} === $target->parent->{$primary_key[0]});
 	}
 
 	/**
@@ -520,7 +535,6 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return bool
 	 */
 	public function is_sibling(DB_ORM_MPTT $target) {
-		// TODO Handle a composite primary key.
 		$primary_key = static::primary_key();
 		if ($this->{$primary_key[0]} === $target->{$primary_key[0]}) {
 			return FALSE;
@@ -532,7 +546,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * Returns leaves under the current node.
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT
+	 * @return DB_ORM_Select_Proxy
 	 */
 	public function leaves() {
 		return DB_ORM::select(get_class($this))
@@ -695,58 +709,72 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	}
 
 	/**
-	 * Returns the parent of the current node.
+	 * This function returns the parent of the current node.
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT
+	 * @return DB_ORM_MPTT                          the parent of the current node
 	 */
 	public function parent() {
-		return $this->parents()->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} - 1);
+		return $this->parents(TRUE, 'ASC', TRUE)->fetch(0);
 	}
 
 	/**
-	 * Returns the parents of the current node.
+	 * This function returns the parents of the current node.
 	 *
 	 * @access public
-	 * @param bool $root include the root node?
-	 * @param string $direction direction to order the left column by.
-	 * @return DB_ORM_MPTT
+	 * @param boolean $root                         whether to include the root node
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              left column will sorted either in ascending or
+	 *                                              descending order
+	 * @param boolean $direct_parent_only           whether to only fetch the direct parent
+	 * @return DB_ResultSet                         an array of parent nodes
 	 */
-	public function parents($root = TRUE, $direction = 'ASC') {
-		$parents = DB_ORM::select(get_class($this))
+	public function parents($root = TRUE, $ordering = 'ASC', $direct_parent_only = FALSE) {
+		$primary_key = static::primary_key();
+
+		$builder = DB_ORM::select(get_class($this))
 			->where($this->left_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
 			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column});
-
-		foreach (static::primary_key() as $column) {
-			$parents->where($column, DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$column});
-		}
-
-		$parents->order_by($this->left_column, $direction);
+			->where($primary_key[0], DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$primary_key[0]})
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
+			->order_by($this->left_column, $ordering);
 
 		if ( ! $root) {
-			$parents->where($this->left_column, DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
+			$builder->where($this->left_column, DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
 		}
 
-		return $parents;
+		if ($direct_parent_only) {
+			$builder->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} - 1);
+			$builder->limit(1);
+		}
+
+		return $builder->query();
 	}
 
 	/**
-	 * Returns the root node.
+	 * This function returns the root node (i.e. model).
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT
+	 * @param integer $scope
+	 * @return DB_ORM_MPTT|boolean
 	 */
 	public function root($scope = NULL) {
-		if (($scope === NULL) AND $this->is_loaded()) {
-			$scope = $this->{$this->scope_column};
+		if ($scope === NULL) {
+			if ($this->is_loaded()) {
+				$scope = $this->{$this->scope_column};
+			}
+			else {
+				return FALSE;
+			}
 		}
-		else if (($scope === NULL) AND ! $this->is_loaded()) {
-			return FALSE;
-		}
-		return DB_ORM::select(get_class($this))
+
+		$record = DB_ORM::select(get_class($this))
 			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, 1)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope);
+			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope)
+			->query()
+			->fetch(0);
+
+		return $record;
 	}
 
 	/**
