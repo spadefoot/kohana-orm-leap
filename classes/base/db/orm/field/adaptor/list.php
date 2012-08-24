@@ -17,16 +17,16 @@
  */
 
 /**
- * This class represents an "array" adaptor for a delimitated string field
+ * This class represents a "list" adaptor for a delimitated string field
  * in a database table.
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-20
+ * @version 2012-08-24
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_List extends DB_ORM_Field_Adaptor {
 
 	/**
 	 * This constructor initializes the class.
