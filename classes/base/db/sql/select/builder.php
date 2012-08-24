@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-16
+ * @version 2012-08-24
  *
  * @abstract
  */
@@ -108,11 +108,11 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function explicits sets the specified column to be selected.
+	 * This function sets the specified column to be selected.
 	 *
 	 * @access public
 	 * @param string $column                    the column to be selected
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified column
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
@@ -126,11 +126,26 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
+	 * This function will a column to be counted.
+	 *
+	 * @access public
+	 * @param string $column                    the column to be counted
+	 * @param string $alias                     the alias to be used for the specified column
+	 * @return DB_SQL_Select_Builder            a reference to the current instance
+	 */
+	public function count($column = '*', $alias = 'count') {
+		if ($column != '*') {
+			$column = $this->compiler->prepare_identifier($column);
+		}
+		return $this->column(DB_SQL::expr("COUNT({$column})"), $alias);
+	}
+
+	/**
 	 * This function sets the table that will be accessed.
 	 *
 	 * @access public
 	 * @param string $table                     the table to be accessed
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
@@ -149,7 +164,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $type                      the type of join
 	 * @param string $table                     the table to be joined
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
