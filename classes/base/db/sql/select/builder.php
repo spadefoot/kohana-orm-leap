@@ -134,9 +134,9 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function count($column = '*', $alias = 'count') {
-		if ($column != '*') {
-			$column = $this->compiler->prepare_identifier($column);
-		}
+		$column = ( ! empty($column) AND (substr_compare($column, '*', -1, 1) === 0))
+			? $this->compiler->prepare_wildcard($column)
+			: $this->compiler->prepare_identifier($column);
 		return $this->column(DB_SQL::expr("COUNT({$column})"), $alias);
 	}
 
