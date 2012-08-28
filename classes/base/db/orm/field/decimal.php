@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-28
  *
  * @abstract
  */
@@ -82,7 +82,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
-		else if ( ! $this->metadata['nullable']) {
+		else if ( ! $this->metadata['nullable'] AND ! isset($this->metadata['enum'])) {
 			$default = 0.0;
 		}
 		else {
