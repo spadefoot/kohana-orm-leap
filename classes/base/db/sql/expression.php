@@ -111,7 +111,7 @@ abstract class Base_DB_SQL_Expression extends Kohana_Object {
 			$compiler = new $compiler($source);
 		}
 		$expr = $this->expr;
-		if ( ! ($compiler instanceof DB_SQL_Expression_Interface) AND ! empty($this->params)) {
+		if ( ($compiler instanceof DB_SQL_Expression_Interface) AND ! empty($this->params)) {
 			$params = array_map(array($compiler, 'prepare_value'), $this->params);
 			$expr = strtr($expr, $params);
 		}
