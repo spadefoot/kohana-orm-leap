@@ -15,30 +15,30 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE "mptt_example" (
+CREATE TABLE "mptt" (
 	"id" INTEGER NOT NULL,
 	"name" VARCHAR(32) NOT NULL DEFAULT '',
 	"lft" INTEGER NOT NULL,
 	"rgt" INTEGER NOT NULL,
 	"lvl" INTEGER NOT NULL,
 	"scope" INTEGER NOT NULL,
-	CONSTRAINT "mptt_example_id_pkey" PRIMARY KEY ("id")
+	CONSTRAINT "mptt_id_pkey" PRIMARY KEY ("id")
 );
 
 ----
--- Auto-increment the "mptt_example" table (see, http://www.firebirdfaq.org/faq29/)
+-- Auto-increment the "mptt" table (see, http://www.firebirdfaq.org/faq29/)
 ----
 
-CREATE GENERATOR "mptt_example_id_gen";
+CREATE GENERATOR "mptt_id_gen";
 
-SET GENERATOR "mptt_example_id_gen" TO 0;
+SET GENERATOR "mptt_id_gen" TO 0;
 
 SET TERM !! ;
-CREATE TRIGGER "mptt_example_id_trig" FOR "mptt_example" ACTIVE BEFORE INSERT POSITION 0 AS
+CREATE TRIGGER "mptt_id_trig" FOR "mptt" ACTIVE BEFORE INSERT POSITION 0 AS
 BEGIN
-	IF (NEW.ID IS NULL) THEN NEW.ID = GEN_ID("mptt_example_id_gen", 1);
+	IF (NEW.ID IS NULL) THEN NEW.ID = GEN_ID("mptt_id_gen", 1);
 END!!
 SET TERM ; !!

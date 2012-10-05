@@ -15,10 +15,10 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE [mptt_example] (
+CREATE TABLE [mptt] (
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[name] [varchar](35) NOT NULL DEFAULT (''),
 	[lft] [int] NOT NULL,

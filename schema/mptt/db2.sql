@@ -15,14 +15,15 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE "mptt_example" (
+CREATE TABLE "mptt" (
 	"id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	"name" VARCHAR(35) NOT NULL DEFAULT '',
-	"lft" INTEGER NOT NULL,
-	"rgt" INTEGER NOT NULL,
-	"lvl" INTEGER NOT NULL,
-	"scope" INTEGER NOT NULL
+	"title" VARCHAR(35) NOT NULL DEFAULT '',
+	"parent_id" INTEGER NOT NULL,
+	"left_id" INTEGER NOT NULL,
+	"right_id" INTEGER NOT NULL,
+	"level_id" INTEGER NOT NULL,
+	"scope_id" INTEGER NOT NULL
 );

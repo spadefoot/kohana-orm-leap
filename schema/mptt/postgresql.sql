@@ -15,15 +15,15 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE "mptt_example" (
+CREATE TABLE "mptt" (
 	"id" serial,
 	"name" varchar(35) NOT NULL DEFAULT '',
 	"lft" integer NOT NULL,
 	"rgt" integer NOT NULL,
 	"lvl" integer NOT NULL,
 	"scope" integer NOT NULL,
-	CONSTRAINT "mptt_example_id_pkey" PRIMARY KEY ("id")
+	CONSTRAINT "mptt_id_pkey" PRIMARY KEY ("id")
 );

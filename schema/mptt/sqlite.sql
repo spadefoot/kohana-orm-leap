@@ -15,10 +15,10 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE IF NOT EXISTS [mptt_example] (
+CREATE TABLE IF NOT EXISTS [mptt] (
 	[id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 	[name] VARCHAR(35) NOT NULL DEFAULT '',
 	[lft] INTEGER NOT NULL,

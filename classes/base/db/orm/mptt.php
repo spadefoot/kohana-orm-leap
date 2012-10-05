@@ -124,12 +124,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *
 	 * @access public
 	 */
-	public function __construct() {
+	public function __construct(Array $columns = NULL) {
 		parent::__construct();
 
 		$primary_key = static::primary_key();
 		if (count($primary_key) != 1) {
 			throw new Kohana_Exception('Message: Unable to initialize model. Reason: May not use a composite primary key with MPTT.');
+		}
+		
+		if ($columns !== NULL) {
+			$this->columns += $columns; // id, title, parent_id, left_id, right_id, level_id, scope_id
 		}
 	}
 
@@ -286,7 +290,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
 			->execute();
 
-		$this->delete_space($this->{$this->left_column}, $this->get_size());
+		$this->delete_space($this->{$this->left_column}, $this->size());
 	}
 
 	/**
@@ -370,12 +374,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	}
 
 	/**
-	 * This function gets the number of children nodes.
+	 * This function returns the size of the current node.
 	 *
 	 * @access protected
-	 * @return integer                                  the number of children nodes
+	 * @return integer                                  the size of the current node
 	 */
-	protected function get_size() {
+	protected function size() {
 		return ($this->{$this->right_column} - $this->{$this->left_column}) + 1;
 	}
 
@@ -516,7 +520,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  of the supplied node
 	 */
 	public function is_descendant(DB_ORM_MPTT $target) {
-		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} = $target->{$this->scope_column}));
+		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} == $target->{$this->scope_column}));
 	}
 
 	/**
@@ -629,7 +633,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				: $target->{$this->right_column}) + $left_offset;
 			$level_offset = $target->{$this->level_column} - $this->{$this->level_column} + $level_offset;
 
-			$size = $this->get_size();
+			$size = $this->size();
 
 			$this->create_space($left_offset, $size);
 
@@ -847,7 +851,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	}
 
 	/**
-	 * Returns the siblings of the current node
+	 * This function returns the siblings of the current node.
 	 *
 	 * @access public
 	 * @param boolean $self                         whether to include the current node
@@ -857,6 +861,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ResultSet                         an array of sibling nodes
 	 */
 	public function siblings($self = FALSE, $ordering = 'ASC') {
+        if ($this->root()) {
+            return new DB_ResultSet(array(), 0);
+        }
+
 		$builder = DB_ORM::select(get_class($this))
 			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->parent->{$this->left_column})
 			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_, $this->parent->{$this->right_column})

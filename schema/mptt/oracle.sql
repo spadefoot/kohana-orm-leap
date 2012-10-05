@@ -15,40 +15,40 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE `mptt_example` (
+CREATE TABLE `mptt` (
 	"id" NUMBER(11) NOT NULL,
 	`name` VARCHAR(35) NOT NULL DEFAULT '',
 	"lft" NUMBER(11) NOT NULL,
 	"rgt" NUMBER(11) NOT NULL,
 	"lvl" NUMBER(11) NOT NULL,
 	"scope" NUMBER(11) NOT NULL,
-	CONSTRAINT "mptt_example_id_pkey" PRIMARY KEY ("id")
+	CONSTRAINT "mptt_id_pkey" PRIMARY KEY ("id")
 );
 
 ----
--- Auto-increment the "mptt_example" table (see, http://earlruby.org/2009/01/creating-auto-increment-columns-in-oracle/)
+-- Auto-increment the "mptt" table (see, http://earlruby.org/2009/01/creating-auto-increment-columns-in-oracle/)
 ----
 
-CREATE SEQUENCE "mptt_example_id_seq" START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE "mptt_id_seq" START WITH 1 INCREMENT BY 1;
 
-CREATE TRIGGER "mptt_example_id_trig" BEFORE INSERT ON "mptt_example" FOR EACH ROW
+CREATE TRIGGER "mptt_id_trig" BEFORE INSERT ON "mptt" FOR EACH ROW
 DECLARE
     max_id NUMBER;
     cur_seq NUMBER;
 BEGIN
     IF :new.id IS NULL THEN
         -- No ID passed, get one from the sequence
-        SELECT "mptt_example_id_seq".nextval INTO :new.id FROM dual;
+        SELECT "mptt_id_seq".nextval INTO :new.id FROM dual;
     ELSE
         -- ID was set via insert, so update the sequence
-        SELECT greatest(nvl(max(id),0), :new.id) INTO max_id FROM "mptt_example";
-        SELECT "mptt_example_id_seq".nextval INTO cur_seq FROM dual;
+        SELECT greatest(nvl(max(id),0), :new.id) INTO max_id FROM "mptt";
+        SELECT "mptt_id_seq".nextval INTO cur_seq FROM dual;
         WHILE cur_seq < max_id
         LOOP
-            SELECT "mptt_example_id_seq".nextval INTO cur_seq FROM dual;
+            SELECT "mptt_id_seq".nextval INTO cur_seq FROM dual;
         END LOOP;
     END IF;
 END;

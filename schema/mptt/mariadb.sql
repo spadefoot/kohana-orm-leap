@@ -15,10 +15,10 @@
 ----
 
 ----
--- Table structure for the "mptt_example" table
+-- Table structure for the "mptt" table
 ----
 
-CREATE TABLE IF NOT EXISTS `mptt_example` (
+CREATE TABLE IF NOT EXISTS `mptt` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(35) NOT NULL DEFAULT '',
 	`lft` INT(11) UNSIGNED NOT NULL,
