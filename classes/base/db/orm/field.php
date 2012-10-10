@@ -219,8 +219,10 @@ abstract class Base_DB_ORM_Field extends Kohana_Object {
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected function validate($value) {
-		if (isset($this->metadata['enum']) AND ! in_array($value, $this->metadata['enum'])) {
-			return FALSE;
+		if ($value !== NULL) {
+			if (isset($this->metadata['enum']) AND ! in_array($value, $this->metadata['enum'])) {
+				return FALSE;
+			}
 		}
 		return TRUE;
 	}

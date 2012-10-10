@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-28
  *
  * @abstract
  */
@@ -89,7 +89,7 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
-		else if ($this->metadata['nullable']) {
+		else if ($this->metadata['nullable'] OR isset($this->metadata['enum'])) {
 			$default = NULL;
 		}
 

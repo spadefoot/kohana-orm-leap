@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-08-28
  *
  * @abstract
  */
@@ -103,7 +103,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
-		else if ( ! $this->metadata['nullable']) {
+		else if ( ! $this->metadata['nullable'] AND ! isset($this->metadata['enum'])) {
 			if (isset($this->metadata['int8fix'])) {
 				$default = (bccomp($this->metadata['range']['lower_bound'], '0') === 1) ? $this->metadata['range']['lower_bound'] : '0';
 				if ((bccomp($default, '-2147483648') !== -1) OR (bccomp($default, '2147483647') !== 1)) {
