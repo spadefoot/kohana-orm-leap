@@ -20,8 +20,8 @@
  * This class builds a SQLite delete statement.
  *
  * @package Leap
- * @category SQL
- * @version 2011-12-12
+ * @category SQLite
+ * @version 2012-10-08
  *
  * @see http://www.sqlite.org/lang_delete.html
  *
