@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-10-08
  *
  * @abstract
  */
@@ -110,10 +110,10 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $column                        the column to be set
 	 * @param string $value                         the value to be set
-	 * @return DB_SQL_Insert_Builder                a reference to the current instance
+	 * @return DB_ORM_Insert_Proxy                  a reference to the current instance
 	 */
 	public function column($column, $value) {
-		$this->builder->column($column, $value);
+		$this->builder->column($column, $value, 0);
 		return $this;
 	}
 
@@ -143,14 +143,13 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function executes the SQL statement.
 	 *
 	 * @access public
-	 * @param boolean $is_auto_incremented          whether to query for the last insert id
 	 * @return integer                              the last insert id
 	 */
 	public function execute() {
-		$is_auto_incremented = $this->model::is_auto_incremented();
+		$auto_increment = $this->model::is_auto_incremented();
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
-		$primary_key = ($is_auto_incremented) ? $connection->get_last_insert_id() : 0;
+		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;
 	}
 

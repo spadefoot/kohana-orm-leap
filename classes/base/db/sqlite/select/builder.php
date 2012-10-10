@@ -20,8 +20,8 @@
  * This class builds a SQLite select statement.
  *
  * @package Leap
- * @category SQL
- * @version 2012-08-16
+ * @category SQLite
+ * @version 2012-10-08
  *
  * @see http://www.sqlite.org/lang_select.html
  *
