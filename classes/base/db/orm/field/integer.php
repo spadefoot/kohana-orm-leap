@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-10-10
  *
  * @abstract
  */
@@ -104,7 +104,10 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
-			if (isset($this->metadata['int8fix'])) {
+			if (isset($this->metadata['enum'])) {
+				$default = $this->metadata['enum'][0];
+			}
+			else if (isset($this->metadata['int8fix'])) {
 				$default = (bccomp($this->metadata['range']['lower_bound'], '0') === 1) ? $this->metadata['range']['lower_bound'] : '0';
 				if ((bccomp($default, '-2147483648') !== -1) OR (bccomp($default, '2147483647') !== 1)) {
 					$default = (int) $default;
@@ -115,7 +118,9 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 			}
 		}
 		else {
-			$default = NULL;
+			$default = (isset($this->metadata['enum']) AND ! in_array(NULL, $this->metadata['enum']))
+				? $this->metadata['enum'][0]
+				: NULL;
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
