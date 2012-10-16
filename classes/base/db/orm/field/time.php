@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-10
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -98,10 +98,11 @@ abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
+	 * @override
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected /*override*/ function validate($value) {
+	protected function validate($value) {
 		if ($value !== NULL) {
 			if ( ! preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
 				return FALSE;

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-20
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -90,10 +90,11 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
+	 * @override
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected /*override*/ function validate($value) {
+	protected function validate($value) {
 		if ($value !== NULL) {
 			if ((strlen($value) > $this->metadata['max_length']) AND ! preg_match('/^(0|1)*$/', $value)) {
 				return FALSE;

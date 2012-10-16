@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-24
+ * @version 2012-10-15
  *
  * @see http://dev.kohanaframework.org/projects/mptt
  * @see https://github.com/kiall/kohana3-orm_mptt
@@ -273,11 +273,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function removes a node and its descendants.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $reset                        whether to reset each column's value back
 	 *                                              to its original value (this parameter has
 	 *                                              no affect on MPTT models)
 	 */
-	public /*override*/ function delete($reset = FALSE) {
+	public function delete($reset = FALSE) {
 		$this->load(); // ? may not be needed
 
 		DB_ORM::delete(get_class($this))
@@ -833,13 +834,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function saves the record matching using the primary key.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $reload                           whether the model should be reloaded
 	 *                                                  after the save is done
 	 * @param boolean $mode                             TRUE=save, FALSE=update, NULL=automatic
 	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
 	 *                                                  should an problem occur
 	 */
-	public /*override*/ function save($reload = FALSE, $mode = NULL) {
+	public function save($reload = FALSE, $mode = NULL) {
 		if ($this->is_loaded() === TRUE) {
 			return parent::save($reload, $mode);
 		}
