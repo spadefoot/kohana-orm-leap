@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-08-16
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -320,7 +320,10 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 				return $expr->value();
 			}
 			else if ($expr instanceof Data) {
-				return "x'" . $expr->as_hexcode() . "'";
+				return $expr->as_hexcode("x'%s'");
+			}
+			else if ($expr instanceof BitField) {
+				return $expr->as_binary("b'%s'");
 			}
 			else {
 				return static::prepare_value( (string) $expr); // Convert the object to a string

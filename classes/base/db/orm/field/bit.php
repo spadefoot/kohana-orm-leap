@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -37,7 +37,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-		parent::__construct($model, 'integer');
+		parent::__construct($model, 'BitField');
 
 		if (isset($metadata['savable'])) {
 			$this->metadata['savable'] = (bool) $metadata['savable'];
@@ -55,19 +55,23 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 			$this->metadata['callback'] = (string) $metadata['callback'];
 		}
 
-		$this->metadata['enum'] = array(0, 1);
-
-		$this->metadata['control'] = 'checkbox';
+		$this->metadata['control'] = 'text';
 
 		if (isset($metadata['label'])) {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
+		$this->metadata['boundary'] = (PHP_INT_SIZE == 8) ? 64 : 32;
+
+		$this->metadata['pattern'] = (isset($metadata['pattern']))
+			? (array) $metadata['pattern']
+			: array('bits' => $this->metadata['boundary']);
+
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = 0;
+			$default = new BitField($this->metadata['pattern']), 0);
 		}
 		else {
 			$default = NULL;

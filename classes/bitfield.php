@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2011-2012 Spadefoot
+ * Copyright 2012 Spadefoot
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@
  */
 
 /**
- * This class represents a "double" field (i.e. a floating point type) in a database
- * table.
+ * This class represents a bit-field value.
  *
  * @package Leap
- * @category ORM
+ * @category Data Type
  * @version 2012-10-15
  */
-class DB_ORM_Field_Double extends Base_DB_ORM_Field_Double {}
+class BitField extends Base_BitField {}
 ?>

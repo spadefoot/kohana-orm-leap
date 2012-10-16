@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-10
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -142,6 +142,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
 	 * @throws Kohana_BadData_Exception             indicates that the specified value does
@@ -149,7 +150,7 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public /*override*/ function __set($key, $value) {
+	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
@@ -184,10 +185,11 @@ abstract class Base_DB_ORM_Field_Integer extends DB_ORM_Field {
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
+	 * @override
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected /*override*/ function validate($value) {
+	protected function validate($value) {
 		if ($value !== NULL) {
 			if (isset($this->metadata['max_length']) AND (strlen(strval($value)) > $this->metadata['max_length'])) {
 				return FALSE;
