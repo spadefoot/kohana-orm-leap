@@ -102,7 +102,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
             case 'value':
                 if ( ! ($value instanceof DB_SQL_Expression)) {
                     if ($value !== NULL) {
-                        if (is_string($value)) {
+                        if ( ! ($value instanceof BitField)) {
                             $value = new BitField($this->metadata['pattern'], $value);
                         }
                         if ( ! $this->validate($value)) {
