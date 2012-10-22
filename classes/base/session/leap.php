@@ -133,6 +133,7 @@ abstract class Base_Session_Leap extends Session {
 	 */
 	protected function _read($id = NULL) {
 		if ($id OR $id = Cookie::get($this->_name)) {
+            
 			try {
 				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
 					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
@@ -170,20 +171,12 @@ abstract class Base_Session_Leap extends Session {
 		do {
 			// Create a new session id
 			$id = str_replace('.', '-', uniqid(NULL, TRUE));
-
-			try {
-				$result = DB_ORM::select($this->_table, array($this->_columns['session_id']))
-					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
-					->limit(1)
-					->query()
-					->fetch(0)
-					->id;
-			}
-			catch (ErrorException $ex) {
-				$result = FALSE;
-			}
+            $count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
+                ->where($this->_columns['session_id'], '=', $id)
+                ->query()
+                ->count();
 		}
-		while ($result !== FALSE);
+		while ($count > 0);
 
 		return $this->_session_id = $id;
 	}
