@@ -173,10 +173,8 @@ abstract class Base_Session_Leap extends Session {
 			$id = str_replace('.', '-', uniqid(NULL, TRUE));
             $count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
                 ->where($this->_columns['session_id'], '=', $id)
-                ->limit(1)
                 ->query()
-                ->fetch(0)
-                ->id;
+                ->count();
 		}
 		while ($count > 0);
 
