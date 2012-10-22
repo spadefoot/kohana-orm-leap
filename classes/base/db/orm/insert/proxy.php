@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-08
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -146,10 +146,8 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @return integer                              the last insert id
 	 */
 	public function execute() {
-        //Fix for some versions of PHP (tested 5.3.14 and 5.4.4) that didn't like this->model::is_auto_incremented()
-            $model_class = $this->model;
-            $auto_increment = $model_class::is_auto_incremented(); //PHP >5.3 this is faster than call_user_func(array($this->model, 'is_auto_incremented'));
-        //End Fix
+		$model = $this->model;
+		$auto_increment = $model::is_auto_incremented();
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
