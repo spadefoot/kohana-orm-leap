@@ -146,7 +146,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @return integer                              the last insert id
 	 */
 	public function execute() {
-		$auto_increment = $this->model::is_auto_incremented();
+        $auto_increment = call_user_func($this->model, 'is_auto_incremented');
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
