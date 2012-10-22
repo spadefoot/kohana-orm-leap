@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-19
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -66,7 +66,9 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 			: array('bits' => ((PHP_INT_SIZE == 8) ? 64 : 32));
 
 		if (isset($metadata['default'])) {
-			$default = $metadata['default'];
+			$default = ($metadata['default'] !== NULL)
+				? new BitField($this->metadata['pattern'], $metadata['default'])
+				: NULL;
 		}
 		else if ( ! $this->metadata['nullable']) {
 			$default = new BitField($this->metadata['pattern'], 0);
@@ -139,6 +141,9 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	protected function validate($value) {
 		if ($value !== NULL) {
 			if ( ! ($value instanceof $this->metadata['type'])) {
+				return FALSE;
+			}
+			if ( ! $value->has_pattern($this->metadata['pattern'])) {
 				return FALSE;
 			}
 		}

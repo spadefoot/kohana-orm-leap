@@ -25,7 +25,7 @@
  *
  * @abstract
  */
-abstract class Base_BitField extends Kohana_Object {
+abstract class Base_BitField extends Kohana_Object implements Countable {
 
 	/**
 	 * This variable stores the maximum size/boundary of the bit-field.
@@ -106,7 +106,7 @@ abstract class Base_BitField extends Kohana_Object {
 		if ( ! array_key_exists($field, $this->values)) {
 			throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field, ':value' => $value));
 		}
-		$this->values[$field] = bindec(BitField::unpack($value));
+		$this->values[$field] = bindec(static::unpack($value, $this->boundary));
 	}
 
 	/**
@@ -129,7 +129,7 @@ abstract class Base_BitField extends Kohana_Object {
 	public function as_binary($format = '%s') {
 		$binary = '';
 		foreach ($this->values as $field => $value) {
-			$binary = substr(BitField::unpack($value, $this->boundary), $this->boundary - $this->pattern[$field]) . $binary;
+			$binary = substr(static::unpack($value, $this->boundary), $this->boundary - $this->pattern[$field]) . $binary;
 		}
 		$binary = str_pad($binary, $this->boundary, '0', STR_PAD_LEFT);
 		if ($format != '%s') { // this is done for efficiency
@@ -146,7 +146,7 @@ abstract class Base_BitField extends Kohana_Object {
 	 * @return string                               the value as a hexadecimal
 	 */
 	public function as_hexcode($format = '%s') {
-		$hexcode = dechex(BitField::pack($this->as_binary()));
+		$hexcode = dechex(static::pack($this->as_binary()));
 		if ($format != '%s') {
 			return sprintf($format, $hexcode); // this is done for efficiency
 		}
@@ -160,7 +160,7 @@ abstract class Base_BitField extends Kohana_Object {
 	 * @return integer                              the value as an integer
 	 */
 	public function as_integer() {
-		return BitField::pack($this->as_binary());
+		return static::pack($this->as_binary());
 	}
 
 	/**
@@ -175,6 +175,28 @@ abstract class Base_BitField extends Kohana_Object {
 	}
 
 	/**
+	 * This function returns the size/boundary of the bit-field, which will be either
+	 * 32 or 64 bits.
+	 *
+	 * @access public
+	 * @return integer                              the size of the bit-field
+	 */
+	public function count() {
+		return $this->boundary;
+	}
+
+	/**
+	 * This function returns whether the specified pattern matches the bit-field's
+	 * pattern.
+	 *
+	 * @access public
+	 * @return boolean                              whether the pattern matches
+	 */
+	public function has_pattern(Array $pattern) {
+		return ( (string) serialize($pattern) === (string) serialize($this->pattern)); // order matters
+	}
+
+	/**
 	 * This function maps the specified value using the bit-field pattern.
 	 *
 	 * @access public
@@ -182,12 +204,12 @@ abstract class Base_BitField extends Kohana_Object {
 	 */
 	public function map($value) {
 		$this->values = array();
-		$binary = BitField::unpack($value, $this->boundary);
+		$binary = static::unpack($value, $this->boundary);
 		$start = 0;
 		$length = strlen($binary);
 		foreach ($this->pattern as $field => $bits) {
 			$this->values[$field] = ($start < $length)
-				? BitField::pack(substr($binary, $length - ($start + $bits), min($bits, $this->boundary)))
+				? static::pack(substr($binary, $length - ($start + $bits), min($bits, $this->boundary)))
 				: 0;
 			$start += $bits;
 		}
