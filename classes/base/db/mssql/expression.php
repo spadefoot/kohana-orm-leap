@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-10-15
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -342,7 +342,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
 			return "'{$expr}'";
 		}
-		else if (empty($expr)) {
+		else if ($expr === '') {
 			return "''";
 		}
 		else {

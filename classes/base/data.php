@@ -142,7 +142,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	 */
 	public function count() {
 		if ($this->length < 0) {
-			$this->length = strlen($this->hexcode) / 2;
+			$this->length = strlen($this->hexcode) * 2;
 		}
 		return $this->length;
 	}
