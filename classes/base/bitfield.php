@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-10-15
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -68,8 +68,8 @@ abstract class Base_BitField extends Kohana_Object {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param string $pattern
-	 * @param mixed $value
+	 * @param string $pattern                       the pattern to be used
+	 * @param mixed $value                          the value of the field
 	 */
 	public function __construct(Array $pattern, $value = '0') {
 		$this->boundary = (PHP_INT_SIZE == 8) ? 64 : 32;
@@ -124,7 +124,7 @@ abstract class Base_BitField extends Kohana_Object {
 	 * This function returns the value as a binary string.
 	 *
 	 * @access public
-	 * @return string								the value as a binary string
+	 * @return string                               the value as a binary string
 	 */
 	public function as_binary($format = '%s') {
 		$binary = '';
@@ -142,8 +142,8 @@ abstract class Base_BitField extends Kohana_Object {
 	 * This function returns the bit-field as a hexadecimal.
 	 *
 	 * @access public
-	 * @param string $format						the string formatting to be used
-	 * @return string								the value as a hexadecimal
+	 * @param string $format                        the string formatting to be used
+	 * @return string                               the value as a hexadecimal
 	 */
 	public function as_hexcode($format = '%s') {
 		$hexcode = dechex(BitField::pack($this->as_binary()));
@@ -157,7 +157,7 @@ abstract class Base_BitField extends Kohana_Object {
 	 * This function returns the bit-field as an integer.
 	 *
 	 * @access public
-	 * @return integer								the value as an integer
+	 * @return integer                              the value as an integer
 	 */
 	public function as_integer() {
 		return BitField::pack($this->as_binary());
@@ -167,8 +167,8 @@ abstract class Base_BitField extends Kohana_Object {
 	 * This function returns the value as a binary string.
 	 *
 	 * @access public
-	 * @param string $format						the string formatting to be used
-	 * @return string								the value as a binary string
+	 * @param string $format                        the string formatting to be used
+	 * @return string                               the value as a binary string
 	 */
 	public function as_string($format = '%s') {
 		return $this->as_binary($format);
@@ -178,7 +178,7 @@ abstract class Base_BitField extends Kohana_Object {
 	 * This function maps the specified value using the bit-field pattern.
 	 *
 	 * @access public
-	 * @param mixed $value							the value to be mapped
+	 * @param mixed $value                          the value to be mapped
 	 */
 	public function map($value) {
 		$this->values = array();
@@ -203,8 +203,8 @@ abstract class Base_BitField extends Kohana_Object {
 	 *
 	 * @access protected
 	 * @static
-	 * @param string $binary						the binary string to be packed
-	 * @return integer								an integer value
+	 * @param string $binary                        the binary string to be packed
+	 * @return integer                              an integer value
 	 */
 	protected static function pack($binary) {
 		return bindec($binary);
@@ -215,15 +215,15 @@ abstract class Base_BitField extends Kohana_Object {
 	 *
 	 * @access protected
 	 * @static
-	 * @param mixed $value							the value to be unpacked
-	 * @return string								a binary string
+	 * @param mixed $value                          the value to be unpacked
+	 * @return string                               a binary string
 	 */
 	protected static function unpack($value, $boundary) {
 		if (is_numeric($value)) {
 			return str_pad(decbin($value), $boundary, '0', STR_PAD_LEFT);
 		}
 		else if (is_string($value)) {
-			$binary = (preg_match("/^(b')?.*'?$/i", $value))
+			$binary = (preg_match("/^b'.*'$/i", $value))
 				? substr($value, 2, strlen($value) - 3)
 				: $value;
 			if (preg_match('/^(0|1)*$/', $binary)) {

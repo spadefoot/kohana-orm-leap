@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-10-15
+ * @version 2012-10-22
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -177,7 +177,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 		if (is_string($data)) {
 			switch ($type) {
 				case Data::BINARY_DATA:
-					$binary = (preg_match("/^(b')?.*'?$/i", $data))
+					$binary = (preg_match("/^(b'.*'$/i", $data))
 						? substr($data, 2, strlen($data) - 3)
 						: $data;
 					return base_convert($binary, 2, 16);
