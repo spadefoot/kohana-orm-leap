@@ -17,11 +17,12 @@
  */
 
 /**
- * This class represents a "decimal" field in a database table.
+ * This class represents a "decimal" field (i.e. a fixed point type) in a database
+ * table.
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-04
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -33,6 +34,8 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'double');
@@ -79,47 +82,63 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
-			if ( ! is_null($default)) {
-				settype($default, $this->metadata['type']);
-				if ( ! $this->validate($default)) {
-					throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
-				}
-			}
-			$this->metadata['default'] = $default;
-			$this->value = $default;
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = 0.0;
-			settype($default, $this->metadata['type']);
-			$this->metadata['default'] = $default;
-			$this->value = $default;
+			$default = (isset($this->metadata['enum']))
+				? $this->metadata['enum'][0]
+				: 0.0;
 		}
+		else {
+			$default = (isset($this->metadata['enum']) AND ! in_array(NULL, $this->metadata['enum']))
+				? $this->metadata['enum'][0]
+				: NULL;
+		}
+
+		if ( ! ($default instanceof DB_SQL_Expression)) {
+			if ($default !== NULL) {
+				settype($default, $this->metadata['type']);
+			}
+			if ( ! $this->validate($default)) {
+				throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+			}
+		}
+
+		$this->metadata['default'] = $default;
+		$this->value = $default;
 	}
 
 	/**
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
-	public /*override*/ function __set($key, $value) {
+	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
-					$value = number_format( (float) $value, $this->metadata['scale']);
-					settype($value, $this->metadata['type']);
-					if ( ! $this->validate($value)) {
-						throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					if ($value !== NULL) {
+						$value = number_format( (float) $value, $this->metadata['scale']);
+						settype($value, $this->metadata['type']);
+						if ( ! $this->validate($value)) {
+							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+						}
 					}
-					$this->value = $value;
+					else if ( ! $this->metadata['nullable']) {
+						$value = $this->metadata['default'];
+					}
 				}
-				else {
-					$this->value = $this->metadata['default'];
+				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
+					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
+				$this->value = $value;
 			break;
 			case 'modified':
 				$this->metadata['modified'] = (bool) $value;
@@ -134,11 +153,12 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
+	 * @override
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
 	protected function validate($value) {
-		if ( ! is_null($value)) {
+		if ($value !== NULL) {
 			if (strlen("{$value}") > $this->metadata['precision']) {
 				return FALSE;
 			}

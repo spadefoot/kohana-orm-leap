@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-05-22
+ * @version 2012-08-16
  *
  * @see http://www.php.net/manual/en/ref.pdo-dblib.php
  *
@@ -55,7 +55,7 @@ abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
-				$this->resource_id = self::$counter++;
+				$this->resource_id = static::$counter++;
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;

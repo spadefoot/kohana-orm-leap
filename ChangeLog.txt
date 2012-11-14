@@ -1,6 +1,34 @@
 Change Log for LEAP ORM
 
-2014-06-14
+2012-10-15
+* Adding new BitField class.
+* Redid the Base_DB_ORM_Field_Bit class.
+* Changing Data::BYTE_DATA back to Data::BINARY_DATA.
+* Added the ability to format strings in Base_Data.
+* Minor inline documentation changes.
+
+2012-08-24
+* Added a new 'count' method to SQL select builder.
+* Added some sample MPTT SQL schema files.
+* Updated MPTT methods.
+* Corrected some inline documentation.
+* Replaced some string operators with constants.
+* Replaced is_null function with === comparisons.
+* Added a new 'regex' property to 'string' field.
+* Replaced 'self' keywords, get_called_class(), and call_user_func() with PHP 5.3+ equivalents.
+* Added some new UOM conversions to config.
+* Replace && and || with AND and OR, respectfully.
+* Added adaptors and aliases to Base_DB_ORM_Model::as_array().
+* Added create and update methods to Base_DB_ORM_Model.
+* Replace spl_object_hash() with Kohana_Object::__hashCode().
+* Base_DB_ORM_Field_Blob now uses the Data class.
+* Renamed DB_ORM_Field_Adaptor_Array to DB_ORM_Field_Adaptor_List.
+* Renamed some variables.
+
+2012-08-14
+* Reworked validation in field classes (Issues #50, #59, #60).
+
+2012-06-14
 * Changing Data::BINARY_DATA to Data::BYTE_DATA.
 
 2012-06-06

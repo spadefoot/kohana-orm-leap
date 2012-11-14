@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-07-22
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -88,7 +88,7 @@ abstract class Base_Auth_Leap extends Auth {
 
 		if (isset($config['columns'])) {
 			if (isset($config['columns']['role_id'])) {
-				$this->columns['role_name'] = $config['columns']['role_id'];
+				$this->columns['role_id'] = $config['columns']['role_id'];
 			}
 			if (isset($config['columns']['role_name'])) {
 				$this->columns['role_name'] = $config['columns']['role_name'];
@@ -107,7 +107,7 @@ abstract class Base_Auth_Leap extends Auth {
 			}
 		}
 
-		if (empty($config['login_with_email']) && empty($config['login_with_username'])) {
+		if (empty($config['login_with_email']) AND empty($config['login_with_username'])) {
 			throw new Kohana_Exception('Message: Unable to load configuration. Reason: A valid "login_with" setting must be set in you auth config file.');
 		}
 	}
@@ -128,7 +128,7 @@ abstract class Base_Auth_Leap extends Auth {
 		$role_model = DB_ORM_Model::model_name($this->models['role']);
 
 		// If there is a user, proceed
-		if (($user instanceof $user_model) && $user->is_loaded()) {
+		if (($user instanceof $user_model) AND $user->is_loaded()) {
 			// If no roles defined then user is just logged in
 			if ( ! $roles) {
 				return TRUE;
@@ -155,7 +155,7 @@ abstract class Base_Auth_Leap extends Auth {
 							->query()
 							->fetch(0);
 					}
-					if ( ! $role || (($role instanceof $role_model) && ! in_array($role->id, $user_roles))) { // If it's NOT a role or (if it IS a role but NOT in the user's role list)
+					if ( ! $role OR (($role instanceof $role_model) AND ! in_array($role->id, $user_roles))) { // If it's NOT a role or (if it IS a role but NOT in the user's role list)
 						$status = FALSE;
 						if ($all_required) {
 							break;
@@ -177,7 +177,7 @@ abstract class Base_Auth_Leap extends Auth {
 
 					$status = FALSE;
 
-					if ($role && ($role instanceof $role_model)) {
+					if ($role AND ($role instanceof $role_model)) {
 						if (in_array($role->id, $user_roles)) {
 							$status = TRUE;
 						}
@@ -214,7 +214,7 @@ abstract class Base_Auth_Leap extends Auth {
 				if ($user->banned == 1) {
 					$this->errors['banned'] = $user->ban_reason;
 				}
-				else if (($user->activated == 0) && ! empty($this->_config['activation'])) {
+				else if (($user->activated == 0) AND ! empty($this->_config['activation'])) {
 					$this->errors['not_activated'] = '';
 				}
 				else {
@@ -279,7 +279,7 @@ abstract class Base_Auth_Leap extends Auth {
 				->query()
 				->fetch(0);
 			$token_model = DB_ORM_Model::model_name($this->models['token']);
-			if (($token instanceof $token_model) && $token->is_loaded() && $token->user->is_loaded()) {
+			if (($token instanceof $token_model) AND $token->is_loaded() AND $token->user->is_loaded()) {
 				if ($token->user_agent === sha1(Request::$user_agent)) {
 					// Save the token to create a new unique token
 					$token->save();
@@ -350,7 +350,7 @@ abstract class Base_Auth_Leap extends Auth {
 					->where($this->columns['user_id'], DB_SQL_Operator::_EQUAL_TO_, $token->user)
 					->execute();
 			}
-			else if (($token instanceof $token_model) && $token->is_loaded()) {
+			else if (($token instanceof $token_model) AND $token->is_loaded()) {
 				$token->delete();
 			}
 		}
@@ -424,9 +424,9 @@ abstract class Base_Auth_Leap extends Auth {
 	 */
 	protected function get_user_by_login($user) {
 		$builder = DB_ORM::select($this->models['user']);
-		if ( ! empty($this->_config['login_with_email']) && ! empty($this->_config['login_with_username'])) {
+		if ( ! empty($this->_config['login_with_email']) AND ! empty($this->_config['login_with_username'])) {
 			$builder->where($this->columns['user_username'], DB_SQL_Operator::_EQUAL_TO_, $user);
-			$builder->where($this->columns['user_email'], DB_SQL_Operator::_EQUAL_TO_, $user, 'OR');
+			$builder->where($this->columns['user_email'], DB_SQL_Operator::_EQUAL_TO_, $user, DB_SQL_Connector::_OR_);
 		}
 		else if ( ! empty($this->_config['login_with_email'])) {
 			$builder->where($this->columns['user_email'], DB_SQL_Operator::_EQUAL_TO_, $user);

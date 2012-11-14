@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category CSV
- * @version 2012-05-31
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -108,17 +108,17 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 * @param array $config                         the configuration array
 	 */
 	public function __construct(Array $config = array()) {
-		$this->file_name = (isset($config['file_name']) && is_string($config['file_name'])) ? $config['file_name'] : '';
+		$this->file_name = (isset($config['file_name']) AND is_string($config['file_name'])) ? $config['file_name'] : '';
 		$this->data = array();
 		$this->default_headers = (isset($config['default_headers'])) ? (bool) $config['default_headers'] : FALSE;
-		$this->delimiter = (isset($config['delimiter']) && is_string($config['delimiter'])) ? $config['delimiter'] : ',';
-		$this->header = (isset($config['header']) && is_array($config['header'])) ? $config['header'] : array() ;
+		$this->delimiter = (isset($config['delimiter']) AND is_string($config['delimiter'])) ? $config['delimiter'] : ',';
+		$this->header = (isset($config['header']) AND is_array($config['header'])) ? $config['header'] : array() ;
 		$this->mime = ($this->delimiter == "\t") ? 'text/tab-separated-values' : 'text/csv';
-		$this->enclosure = (isset($config['enclosure']) && is_string($config['enclosure'])) ? $config['enclosure'] : '"';
-		$this->eol = (isset($config['eol']) && is_string($config['eol'])) ? $config['eol'] : chr(10); // PHP_EOL
+		$this->enclosure = (isset($config['enclosure']) AND is_string($config['enclosure'])) ? $config['enclosure'] : '"';
+		$this->eol = (isset($config['eol']) AND is_string($config['eol'])) ? $config['eol'] : chr(10); // PHP_EOL
 		$this->position = 0;
 
-		if (isset($config['data']) && (is_array($config['data']) || $config['data'] instanceof Iterator)) {
+		if (isset($config['data']) AND (is_array($config['data']) OR ($config['data'] instanceof Iterator))) {
 			foreach ($config['data'] as $row) {
 				$this->add_row($row);
 			}
@@ -178,7 +178,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 				$this->mime = ($this->delimiter == "\t") ? 'text/tab-separated-values' : 'text/csv'; // 'text/plain'
 			break;
 			case 'header':
-				$this->header = (isset($value) && is_array($value)) ? $value : array() ;
+				$this->header = (isset($value) AND is_array($value)) ? $value : array() ;
 			break;
 			case 'enclosure':
 				$this->enclosure = (is_string($value)) ? $value : '"';
@@ -284,7 +284,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 			$buffer .= $this->implode($this->header);
 			$buffer .= $this->eol;
 		}
-		else if ($this->default_headers && ! empty($this->data)) {
+		else if ($this->default_headers AND ! empty($this->data)) {
 			$header = array_keys($this->current());
 			$buffer .= $this->implode($header);
 			$buffer .= $this->eol;
@@ -307,7 +307,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 * @return boolean                              whether the CSV file was saved
 	 */
 	public function save($file_name = NULL) {
-		if ( ! is_null($file_name)) {
+		if ($file_name !== NULL) {
 			$this->file_name = $file_name;
 		}
 		$result = @file_put_contents($this->file_name, $this->render());
@@ -380,7 +380,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 		if ( ! is_array($value)) {
 			throw new Kohana_InvalidArgument_Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
 		}
-		else if (is_null($offset)) {
+		else if ($offset === NULL) {
 			$this->data[] = $value;
 		}
 		else {

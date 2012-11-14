@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-11
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -126,7 +126,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
@@ -137,10 +137,10 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && ! is_array($value)) {
+			if (($operator == DB_SQL_Operator::_IN_ OR $operator == DB_SQL_Operator::_NOT_IN_) AND ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
-			if (is_null($value)) {
+			if ($value === NULL) {
 				switch ($operator) {
 					case DB_SQL_Operator::_EQUAL_TO_:
 						$operator = DB_SQL_Operator::_IS_;
@@ -166,7 +166,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
+	 * @param string $ordering              the ordering token that signals whether the
 	 *                                      column will sorted either in ascending or
 	 *                                      descending order
 	 * @param string $nulls                 the weight to be given to null values

@@ -15,7 +15,7 @@
 ----
 
 ----
--- Table structure for table "sessions"
+-- Table structure for the "sessions" table
 ----
 
 CREATE TABLE "sessions" (

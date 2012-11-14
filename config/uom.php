@@ -2,6 +2,18 @@
 
 $config = array();
 
+$config['area'] = array(
+	// TODO
+);
+
+$energy['energy'] = array(
+	// TODO
+);
+
+$config['force'] = array(
+	// TODO
+);
+
 $config['length'] = array(
 	'centimeters' => '0.01',
 	'feet' => '0.3048',
@@ -14,6 +26,18 @@ $config['length'] = array(
 	'millimeters' => '0.001',
 	'nautical leagues' => '5556.0',
 	'yards' => '0.9144',
+);
+
+$config['power'] = array(
+	// TODO
+);
+
+$config['pressure'] = array(
+	// TODO
+);
+
+$config['temperature'] = array(
+	// TODO
 );
 
 $config['volume'] = array(

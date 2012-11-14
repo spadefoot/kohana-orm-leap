@@ -17,16 +17,16 @@
  */
 
 /**
- * This class represents an "array" adaptor for a delimitated string field
+ * This class represents a "list" adaptor for a delimitated string field
  * in a database table.
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-10-15
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
+abstract class Base_DB_ORM_Field_Adaptor_List extends DB_ORM_Field_Adaptor {
 
 	/**
 	 * This constructor initializes the class.
@@ -51,6 +51,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
@@ -60,7 +61,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value)) {
+				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = preg_split($this->metadata['regex'], $value);
 				}
 				return $value;
@@ -76,6 +77,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Array extends DB_ORM_Field_Adaptor {
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is

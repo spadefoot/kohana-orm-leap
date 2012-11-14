@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-03
+ * @version 2012-08-18
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -122,8 +122,8 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 *                                              can be added
 	 */
 	public function add_connection(DB_Connection $connection) {
-		if ( ! is_null($connection)) {
-			$connection_id = spl_object_hash($connection);
+		if ($connection !== NULL) {
+			$connection_id = $connection->__hashCode();
 			if ( ! isset($this->lookup[$connection_id])) {
 				if ($this->count() >= $this->settings['max_size']) {
 					throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
@@ -161,10 +161,10 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 *                                              can be added
 	 */
 	public function get_connection($source = 'default', $new = FALSE) {
-		if ( ! (is_object($source) && ($source instanceof DB_DataSource))) {
+		if ( ! (is_object($source) AND ($source instanceof DB_DataSource))) {
 			$source = new DB_DataSource($source);
 		}
-		if (isset($this->pool[$source->id]) && ! empty($this->pool[$source->id])) {
+		if (isset($this->pool[$source->id]) AND ! empty($this->pool[$source->id])) {
 			if ($new) {
 				foreach ($this->pool[$source->id] as $connection) {
 					if ( ! $connection->is_connected()) {
@@ -193,7 +193,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 		}
 		$connection = DB_Connection::factory($source);
 		$connection->open();
-		$connection_id = spl_object_hash($connection);
+		$connection_id = $connection->__hashCode();
 		$this->pool[$source->id][$connection_id] = $connection;
 		$this->lookup[$connection_id] = $source->id;
 		return $connection;
@@ -207,8 +207,8 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @param DB_Connection $connection             the connection to be released
 	 */
 	public function release(DB_Connection $connection) {
-		if ( ! is_null($connection)) {
-			$connection_id = spl_object_hash($connection);
+		if ($connection !== NULL) {
+			$connection_id = $connection->__hashCode();
 			if (isset($this->lookup[$connection_id])) {
 				$source_id = $this->lookup[$connection_id];
 				unset($this->pool[$source_id][$connection_id]);
@@ -249,11 +249,11 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @return DB_Connection_Pool               	a singleton instance of this class
 	 */
 	public static function instance() {
-		if (is_null(self::$instance)) {
+		if (static::$instance === NULL) {
 			register_shutdown_function(array('DB_Connection_Pool', 'autorelease'));
-			self::$instance = new DB_Connection_Pool();
+			static::$instance = new DB_Connection_Pool();
 		}
-		return self::$instance;
+		return static::$instance;
 	}
 
 }

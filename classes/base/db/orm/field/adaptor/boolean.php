@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-17
+ * @version 2012-10-15
  *
  * @see http://www.php.net/manual/en/language.types.boolean.php
  *
@@ -51,6 +51,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
@@ -60,7 +61,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if ( ! is_null($value)) {
+				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
 					$value = ($value) ? $this->metadata['values'][0] : $this->metadata['values'][1];
 				}
 				return $value;
@@ -76,6 +77,7 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
 	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
@@ -84,9 +86,9 @@ abstract class Base_DB_ORM_Field_Adaptor_Boolean extends DB_ORM_Field_Adaptor {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! is_null($value)) {
+				if ($value !== NULL) {
 					$true = $this->metadata['values'][0];
-					$value = (is_string($true) && is_string($value))
+					$value = (is_string($true) AND is_string($value))
 						? (strcasecmp($true, $value) == 0)
 						: ($true == $value);
 				}

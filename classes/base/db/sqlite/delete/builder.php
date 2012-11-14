@@ -20,8 +20,8 @@
  * This class builds a SQLite delete statement.
  *
  * @package Leap
- * @category SQL
- * @version 2011-12-12
+ * @category SQLite
+ * @version 2012-10-08
  *
  * @see http://www.sqlite.org/lang_delete.html
  *
@@ -41,14 +41,14 @@ abstract class Base_DB_SQLite_Delete_Builder extends DB_SQL_Delete_Builder {
 		$sql = "DELETE FROM {$this->data['from']}";
 
 		if ( ! empty($this->data['where'])) {
-			$do_append = FALSE;
+			$append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
-				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 

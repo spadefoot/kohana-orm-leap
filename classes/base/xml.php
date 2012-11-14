@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2012-05-31
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -40,7 +40,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 *                                              formatted string
 	 */
 	public static function encode(Array $array, $as_string = FALSE) {
-		$content = self::convert_to_xml($array);
+		$content = static::convert_to_xml($array);
 		if ($as_string) {
 			return $content;
 		}
@@ -65,7 +65,7 @@ abstract class Base_XML extends SimpleXMLElement {
 			throw new Kohana_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
 		}
 
-		$source = self::find_file($file);
+		$source = static::find_file($file);
 
 		$content = file_get_contents($source);
 
@@ -80,38 +80,42 @@ abstract class Base_XML extends SimpleXMLElement {
 	 *
 	 * @access protected
 	 * @static
-	 * @param array $array 					        the associated array to be converted
-	 * @param DOMElement $domElement			    the XML DOM element
-	 * @param DOMDocument $DOMDocument		        the XML DOM document
+	 * @param array $array                          the associated array to be converted
+	 * @param DOMElement $domElement                the XML DOM element
+	 * @param DOMDocument $document                 the XML DOM document
 	 * @return string                               a string formatted with XML
 	 *
 	 * @see http://darklaunch.com/2009/05/23/php-xml-encode-using-domdocument-convert-array-to-xml-json-encode
 	 */
-	protected static function convert_to_xml($array, $domElement = NULL, $DOMDocument = NULL) {
-		if (is_null($DOMDocument)) {
-			$DOMDocument = new DOMDocument();
-			$DOMDocument->formatOutput = TRUE;
-			self::convert_to_xml($array, $DOMDocument, $DOMDocument);
-			return $DOMDocument->asXML();
-		} else {
+	protected static function convert_to_xml($array, $domElement = NULL, $document = NULL) {
+		if ($document === NULL) {
+			$document = new DOMDocument();
+			$document->formatOutput = TRUE;
+			static::convert_to_xml($array, $document, $document);
+			return $document->asXML();
+		}
+		else {
 			if (is_array($array)) {
 				foreach ($array as $node => $value) {
 					$element = NULL;
 					if (is_integer($node)) {
 						$element = $domElement;
-					} else {
-						$element = $DOMDocument->createElement($node);
+					}
+					else {
+						$element = $document->createElement($node);
 						$domElement->appendChild($element);
 					}
-					self::convert_to_xml($value, $element, $DOMDocument);
+					static::convert_to_xml($value, $element, $document);
 				}
-			} else {
-				if (is_string($array) && preg_match('/^<!CDATA\[.*\]\]>$/', $array)) {
+			}
+			else {
+				if (is_string($array) AND preg_match('/^<!CDATA\[.*\]\]>$/', $array)) {
 					$array = substr($array, 8, strlen($array) - 11);
-					$element = $DOMDocument->createCDATASection($array);
+					$element = $document->createCDATASection($array);
 					$domElement->appendChild($element);
-				} else {
-					$element = $DOMDocument->createTextNode($array);
+				}
+				else {
+					$element = $document->createTextNode($array);
 					$domElement->appendChild($element);
 				}
 			}

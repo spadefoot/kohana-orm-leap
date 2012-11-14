@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-02-09
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -292,11 +292,11 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'is_primary_key')
 			->column(DB_SQL::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'is_unique')
 			->from('RDB$INDICES')
-			->join('LEFT', 'RDB$INDEX_SEGMENTS')
-			->on('RDB$INDEX_SEGMENTS.RDB$INDEX_NAME', '=', 'RDB$INDICES.RDB$INDEX_NAME')
-			->join('LEFT', 'RDB$RELATION_CONSTRAINTS')
-			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', '=', 'RDB$INDICES.RDB$INDEX_NAME')
-			->where('RDB$INDICES.RDB$RELATION_NAME', '=', DB_SQL::expr("'" . $table . "'"));
+			->join(DB_SQL_JoinType::_LEFT_, 'RDB$INDEX_SEGMENTS')
+			->on('RDB$INDEX_SEGMENTS.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
+			->join(DB_SQL_JoinType::_LEFT_, 'RDB$RELATION_CONSTRAINTS')
+			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
+			->where('RDB$INDICES.RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr("'" . $table . "'"));
 
 		$results = $builder->query();
 
@@ -319,15 +319,15 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
-			->where('RDB$VIEW_BLR', 'IS', NULL)
-			->where_block('(')
-			->where('RDB$SYSTEM_FLAG', 'IS', NULL)
-			->where('RDB$SYSTEM_FLAG',  '=', 0, 'OR')
-			->where_block(')')
+			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
+			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
+			->where('RDB$SYSTEM_FLAG',  DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();
@@ -351,15 +351,15 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
-			->where('RDB$VIEW_BLR', 'IS NOT', NULL)
-			->where_block('(')
-			->where('RDB$SYSTEM_FLAG', 'IS', NULL)
-			->where('RDB$SYSTEM_FLAG',  '=', 0, 'OR')
-			->where_block(')')
+			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
+			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
+			->where('RDB$SYSTEM_FLAG',  DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'LIKE', $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		$results = $builder->query();

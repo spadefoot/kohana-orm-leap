@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-02-01
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -68,14 +68,14 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	public function __construct($model) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->source = new DB_DataSource(call_user_func(array($model, 'data_source')));
+		$this->source = new DB_DataSource($model::data_source());
 		$builder = 'DB_' . $this->source->dialect . '_Insert_Builder';
 		$this->builder = new $builder($this->source);
 		$extension = DB_ORM_Model::builder_name($name);
 		if (class_exists($extension)) {
 			$this->extension = new $extension($this->builder);
 		}
-		$table = call_user_func(array($model, 'table'));
+		$table = $model::table();
 		$this->builder->into($table);
 		$this->model = $model;
 	}
@@ -92,7 +92,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 *                                              inaccessible
 	 */
 	public function __call($function, $arguments) {
-		if ( ! is_null($this->extension)) {
+		if ($this->extension !== NULL) {
 			if (method_exists($this->extension, $function)) {
 				$result = call_user_func_array(array($this->extension, $function), $arguments);
 				if ($result instanceof DB_ORM_Builder) {
@@ -110,10 +110,10 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $column                        the column to be set
 	 * @param string $value                         the value to be set
-	 * @return DB_SQL_Insert_Builder                a reference to the current instance
+	 * @return DB_ORM_Insert_Proxy                  a reference to the current instance
 	 */
 	public function column($column, $value) {
-		$this->builder->column($column, $value);
+		$this->builder->column($column, $value, 0);
 		return $this;
 	}
 
@@ -143,14 +143,14 @@ abstract class Base_DB_ORM_Insert_Proxy extends Kohana_Object implements DB_SQL_
 	 * This function executes the SQL statement.
 	 *
 	 * @access public
-	 * @param boolean $is_auto_incremented          whether to query for the last insert id
 	 * @return integer                              the last insert id
 	 */
 	public function execute() {
-		$is_auto_incremented = call_user_func(array($this->model, 'is_auto_incremented'));
+		$model = $this->model;
+		$auto_increment = $model::is_auto_incremented();
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$connection->execute($this->statement());
-		$primary_key = ($is_auto_incremented) ? $connection->get_last_insert_id() : 0;
+		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;
 	}
 

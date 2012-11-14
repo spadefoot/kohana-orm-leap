@@ -17,12 +17,14 @@
  */
 
 /**
-* This class represents an active record for an SQL database table and is
-* for handling a Modified Preorder Tree Traversal (MPTT).
+ * This class represents an active record for an SQL database table and is for handling
+ * a Modified Pre-Order Tree Traversal (MPTT).
  *
  * @package Leap
  * @category ORM
- * @version 2012-07-28
+ * @version 2012-08-23
+ *
+ * @abstract
  */
-class DB_ORM_MPTT extends Base_DB_ORM_MPTT {}
+abstract class DB_ORM_MPTT extends Base_DB_ORM_MPTT {}
 ?>

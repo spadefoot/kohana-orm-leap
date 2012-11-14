@@ -49,7 +49,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$fields = array();
 		foreach ($records as $record) {
-			if ( ! empty($regex) || preg_match($regex, $record['name'])){
+			if ( ! empty($regex) OR preg_match($regex, $record['name'])){
 				list($type, $length) = $this->parse_type($record['Type']);
 
 				$field = $this->data_type($type);

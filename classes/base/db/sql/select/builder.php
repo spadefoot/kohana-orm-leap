@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-11
+ * @version 2012-08-24
  *
  * @abstract
  */
@@ -108,16 +108,16 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function explicits sets the specified column to be selected.
+	 * This function sets the specified column to be selected.
 	 *
 	 * @access public
 	 * @param string $column                    the column to be selected
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified column
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
 		$column = $this->compiler->prepare_identifier($column);
-		if ( ! is_null($alias)) {
+		if ($alias !== NULL) {
 			$alias = $this->compiler->prepare_alias($alias);
 			$column = "{$column} AS {$alias}";
 		}
@@ -126,16 +126,31 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
+	 * This function will a column to be counted.
+	 *
+	 * @access public
+	 * @param string $column                    the column to be counted
+	 * @param string $alias                     the alias to be used for the specified column
+	 * @return DB_SQL_Select_Builder            a reference to the current instance
+	 */
+	public function count($column = '*', $alias = 'count') {
+		$column = ( ! empty($column) AND (substr_compare($column, '*', -1, 1) === 0))
+			? $this->compiler->prepare_wildcard($column)
+			: $this->compiler->prepare_identifier($column);
+		return $this->column(DB_SQL::expr("COUNT({$column})"), $alias);
+	}
+
+	/**
 	 * This function sets the table that will be accessed.
 	 *
 	 * @access public
 	 * @param string $table                     the table to be accessed
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
 		$table = $this->compiler->prepare_identifier($table);
-		if ( ! is_null($alias)) {
+		if ($alias !== NULL) {
 			$alias = $this->compiler->prepare_alias($alias);
 			$table = "{$table} AS {$alias}";
 		}
@@ -149,16 +164,16 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $type                      the type of join
 	 * @param string $table                     the table to be joined
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
 		$table = 'JOIN ' . $this->compiler->prepare_identifier($table);
-		if ( ! is_null($type)) {
+		if ($type !== NULL) {
 			$type = $this->compiler->prepare_join($type);
 			$table = "{$type} {$table}";
 		}
-		if ( ! is_null($alias)) {
+		if ($alias !== NULL) {
 			$alias = $this->compiler->prepare_alias($alias);
 			$table = "{$table} {$alias}";
 		}
@@ -246,7 +261,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
@@ -257,10 +272,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && ! is_array($value)) {
+			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
-			if (is_null($value)) {
+			if ($value === NULL) {
 				switch ($operator) {
 					case DB_SQL_Operator::_EQUAL_TO_:
 						$operator = DB_SQL_Operator::_IS_;
@@ -289,7 +304,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function group_by($column) {
-		$fields = (is_array($column)) ? $column : array($column);
+		$fields = is_array($column) ? $column : array($column);
 		foreach ($fields as $field) {
 			$identifier = $this->compiler->prepare_identifier($field);
 			$this->data['group_by'][] = $identifier;
@@ -332,7 +347,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 		}
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) || ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
@@ -343,10 +358,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$this->data['having'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) || ($operator == DB_SQL_Operator::_NOT_IN_)) && !is_array($value)) {
+			if (($operator == DB_SQL_Operator::_IN_ OR $operator == DB_SQL_Operator::_NOT_IN_) AND ! is_array($value)) {
 				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
-			if (is_null($value)) {
+			if ($value === NULL) {
 				switch ($operator) {
 					case DB_SQL_Operator::_EQUAL_TO_:
 						$operator = DB_SQL_Operator::_IS_;
@@ -372,7 +387,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
+	 * @param string $ordering              the ordering token that signals whether the
 	 *                                      column will sorted either in ascending or
 	 *                                      descending order
 	 * @param string $nulls                 the weight to be given to null values
@@ -434,7 +449,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 */
 	public function combine($operator, $statement) {
 		$select_builder = 'DB_' . $this->dialect . '_Select_Builder';
-		if (is_object($statement) && ($statement instanceof $select_builder)) {
+		if (is_object($statement) AND ($statement instanceof $select_builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {

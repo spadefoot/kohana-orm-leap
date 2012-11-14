@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-30
+ * @version 2012-08-16
  *
  * @abstract
  */
@@ -77,7 +77,7 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
 	public function __get($key) {
 		switch ($key) {
 			case 'result':
-				if (is_null($this->cache)) {
+				if ($this->cache === NULL) {
 					$this->cache = $this->load();
 				}
 				return $this->cache;

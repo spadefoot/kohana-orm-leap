@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-02-22
+ * @version 2012-08-16
  *
  * @see http://www.postgresql.org/docs/9.0/static/sql-select.html
  *
@@ -48,7 +48,7 @@ abstract class Base_DB_PostgreSQL_Select_Builder extends DB_SQL_Select_Builder {
 			? implode(', ', $this->data['column'])
 			: $this->data['wildcard'];
 
-		if ( ! is_null($this->data['from'])) {
+		if ($this->data['from'] !== NULL) {
 			$sql .= " FROM {$this->data['from']}";
 		}
 
@@ -63,14 +63,14 @@ abstract class Base_DB_PostgreSQL_Select_Builder extends DB_SQL_Select_Builder {
 		}
 
 		if ( ! empty($this->data['where'])) {
-			$do_append = FALSE;
+			$append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($do_append && ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
-				$do_append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 
@@ -79,14 +79,14 @@ abstract class Base_DB_PostgreSQL_Select_Builder extends DB_SQL_Select_Builder {
 		}
 
 		if ( ! empty($this->data['having'])) {
-			$do_append = FALSE;
+			$append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
-				if ($do_append && ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$having[0]} ";
 				}
 				$sql .= $having[1];
-				$do_append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 
