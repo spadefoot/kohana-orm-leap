@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-24
+ * @version 2012-11-14
  *
  * @abstract
  */
@@ -304,7 +304,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function group_by($column) {
-		$fields = is_array($column) ? $column : array($column);
+		$fields = (is_array($column)) ? $column : array($column);
 		foreach ($fields as $field) {
 			$identifier = $this->compiler->prepare_identifier($field);
 			$this->data['group_by'][] = $identifier;
@@ -448,8 +448,8 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
-		$select_builder = 'DB_' . $this->dialect . '_Select_Builder';
-		if (is_object($statement) AND ($statement instanceof $select_builder)) {
+		$builder = 'DB_' . $this->dialect . '_Select_Builder';
+		if (is_object($statement) AND ($statement instanceof $builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
