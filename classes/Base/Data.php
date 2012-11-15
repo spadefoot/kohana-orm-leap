@@ -21,13 +21,13 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-10-22
+ * @version 2012-11-14
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
  * @abstract
  */
-abstract class Base_Data extends Kohana_Object implements Countable {
+abstract class Base_Data extends Core_Object implements Countable {
 
 	/**
 	 * This constant represents binary data.

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2012-08-21
+ * @version 2012-11-14
  *
  * @abstract
  */

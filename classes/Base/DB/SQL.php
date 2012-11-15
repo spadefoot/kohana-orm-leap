@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-20
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_SQL extends Kohana_Object {
+abstract class Base_DB_SQL extends Core_Object {
 
 	/**
 	 * This function returns an instance of the DB_SQL_Delete_Proxy.

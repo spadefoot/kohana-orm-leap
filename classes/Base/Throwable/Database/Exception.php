@@ -17,25 +17,10 @@
  */
 
 /**
- * This class acts as the base class for any Kohana object.
+ * This class indicates there is an SQL problem.
  *
  * @package Leap
- * @category Object
- * @version 2012-08-16
- *
- * @abstract
+ * @version 2012-05-31
  */
-abstract class Kohana_Object {
-
-	/**
-	 * This function returns the hash code for the object.
-	 *
-	 * @access public
-	 * @return string					the hash code for the object
-	 */
-	public function __hashCode() {
-		return spl_object_hash($this);
-	}
-
-}
+class Kohana_Database_Exception extends Kohana_Exception {}
 ?>

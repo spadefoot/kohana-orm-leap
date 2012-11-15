@@ -17,33 +17,13 @@
  */
 
 /**
- * This class acts as an extension to the a builder class.
+ * This class acts as the base class for any object.
  *
  * @package Leap
- * @category ORM
+ * @category Object
  * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Builder extends Core_Object {
-
-	/**
-	 * This variable stores an instance of the SQL builder class.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Builder
-	 */
-	protected $builder = NULL;
-
-	/**
-	 * This constructor instantiates this class.
-	 *
-	 * @access public
-	 * @param DB_SQL_Builder $builder             the SQL builder class to be extended
-	 */
-	public function __construct(DB_SQL_Builder $builder) {
-		$this->builder = $builder;
-	}
-
-}
+abstract class Core_Object extends Base_Core_Object {}
 ?>

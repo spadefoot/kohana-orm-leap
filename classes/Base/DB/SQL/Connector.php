@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-06-07
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connector extends Kohana_Object {
+abstract class Base_DB_SQL_Connector extends Core_Object {
 
 	const _AND_ = 'AND';
 

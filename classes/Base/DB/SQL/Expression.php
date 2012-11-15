@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-09-26
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Expression extends Kohana_Object {
+abstract class Base_DB_SQL_Expression extends Core_Object {
 
 	/**
 	 * This variable stores the raw SQL expression string.

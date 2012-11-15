@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-10-22
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_BitField extends Kohana_Object implements Countable {
+abstract class Base_BitField extends Core_Object implements Countable {
 
 	/**
 	 * This variable stores the maximum size/boundary of the bit-field.

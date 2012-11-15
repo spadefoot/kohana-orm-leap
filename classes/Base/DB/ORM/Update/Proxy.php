@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_Statement {
+abstract class Base_DB_ORM_Update_Proxy extends Core_Object implements DB_SQL_Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.

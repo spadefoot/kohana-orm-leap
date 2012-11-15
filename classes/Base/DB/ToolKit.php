@@ -22,11 +22,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2011-12-11
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ToolKit extends Kohana_Object {
+abstract class Base_DB_ToolKit extends Core_Object {
 
 	/**
 	 * This function converts a sting to a slug that can be used in a URL.

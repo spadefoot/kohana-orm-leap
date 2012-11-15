@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-24
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Model extends Kohana_Object {
+abstract class Base_DB_ORM_Model extends Core_Object {
 
 	/**
 	 * This variable stores the record's adaptors.

@@ -21,14 +21,14 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Tokenizer extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
 	/**
 	 * This constant represents an error token.

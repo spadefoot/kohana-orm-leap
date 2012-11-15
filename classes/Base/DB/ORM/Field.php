@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  *
@@ -29,7 +29,7 @@
  * @see http://msdn.microsoft.com/en-us/library/aa258271%28v=sql.80%29.aspx
  * @see http://kimbriggs.com/computers/computer-notes/mysql-notes/mysql-data-types-50.file
  */
-abstract class Base_DB_ORM_Field extends Kohana_Object {
+abstract class Base_DB_ORM_Field extends Core_Object {
 
 	/**
 	 * This variable stores a reference to the implementing model.

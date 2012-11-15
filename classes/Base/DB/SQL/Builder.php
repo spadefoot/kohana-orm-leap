@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Builder extends Kohana_Object implements DB_SQL_Statement {
+abstract class Base_DB_SQL_Builder extends Core_Object implements DB_SQL_Statement {
 
 	/**
 	 * This constant represents an opening parenthesis.

@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_DataSource extends Kohana_Object {
+abstract class Base_DB_DataSource extends Core_Object {
 
 	/**
 	 * This variable stores the settings for the data source.

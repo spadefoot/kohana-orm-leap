@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-08-21
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Schema extends Kohana_Object {
+abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 
 	/**
 	 * This function returns a result set that contains an array of all fields in

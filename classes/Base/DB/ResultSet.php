@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ResultSet extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
 	/**
 	 * This variable stores the records.

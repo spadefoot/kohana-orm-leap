@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Relation extends Kohana_Object {
+abstract class Base_DB_ORM_Relation extends Core_Object {
 
 	/**
 	 * This variable stores a reference to the implementing model.

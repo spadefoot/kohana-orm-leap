@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-18
+ * @version 2012-11-14
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -31,7 +31,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countable {
+abstract class Base_DB_Connection_Pool extends Core_Object implements Countable {
 
 	/**
 	 * This variable stores the lookup table.

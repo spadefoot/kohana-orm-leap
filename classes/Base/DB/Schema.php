@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Schema
- * @version 2012-01-18
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_Schema extends Kohana_Object {
+abstract class Base_DB_Schema extends Core_Object {
 
 	/**
 	 * This variable stores a reference to the data source.
