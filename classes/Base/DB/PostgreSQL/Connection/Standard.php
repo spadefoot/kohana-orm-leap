@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -33,7 +33,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 * 
 	 * @see http://www.php.net/manual/en/function.pg-connect.php
@@ -55,10 +55,10 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 				? @pg_pconnect($connection_string)
 				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
 			if ($this->resource_id === FALSE) {
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => pg_last_error()));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => pg_last_error()));
 			}
 			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
-				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 			}
 		}
 	}
@@ -67,7 +67,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://www.postgresql.org/docs/8.3/static/sql-start-transaction.html
 	 */
@@ -83,14 +83,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-query.php
 	 * @see http://www.php.net/manual/en/function.pg-last-error.php
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
@@ -99,7 +99,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		}
 		$command_id = @pg_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -119,17 +119,17 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	*
 	* @access public
 	* @param string $sql						the SQL statement
-	* @throws Kohana_SQL_Exception              indicates that the executed statement failed
+	* @throws Throwable_SQL_Exception              indicates that the executed statement failed
 	*
 	* @see http://www.php.net/manual/en/function.pg-insert.php
 	*/
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command_id = @pg_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		$this->sql = $sql;
 		@pg_free_result($command_id);
@@ -140,14 +140,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @return integer                          the last insert id
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
 	 * @see https://github.com/spadefoot/kohana-orm-leap/issues/44
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		
 		// Option #1: Using 'SELECT lastval();'
@@ -155,13 +155,13 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		$command_id = @pg_query($this->resource_id, 'SELECT lastval();');
 		
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		
 		$record = @pg_fetch_row($command_id);
 		
 		if ($record === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		}
 		
 		return $record[0];
@@ -171,7 +171,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		//$insert_id = @pg_last_oid($this->resource_id);
 		
 		//if ($insert_id === FALSE) {
-		//	throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		//	throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
 		//}
 		
 		//return $insert_id;
@@ -181,7 +181,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
@@ -191,7 +191,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
@@ -204,14 +204,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception             indicates that no connection could
 	 *                                          be found
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-escape-string.php
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		$string = "'" . pg_escape_string($this->resource_id, $string) . "'";

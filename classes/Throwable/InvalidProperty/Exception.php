@@ -20,7 +20,7 @@
  * This class indicates that no property with the specified key was found.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
  */
-class Kohana_InvalidProperty_Exception extends Kohana_Exception {}
+class Throwable_InvalidProperty_Exception extends Base_Throwable_InvalidProperty_Exception {}
 ?>

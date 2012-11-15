@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-08-21
+ * @version 2012-11-14
  *
  * @abstract
  */
@@ -108,7 +108,7 @@ abstract class Base_Auth_Leap extends Auth {
 		}
 
 		if (empty($config['login_with_email']) AND empty($config['login_with_username'])) {
-			throw new Kohana_Exception('Message: Unable to load configuration. Reason: A valid "login_with" setting must be set in you auth config file.');
+			throw new Throwable_Exception('Message: Unable to load configuration. Reason: A valid "login_with" setting must be set in you auth config file.');
 		}
 	}
 

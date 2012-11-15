@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -34,7 +34,7 @@ abstract class Base_DB_MariaDB_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
@@ -61,7 +61,7 @@ abstract class Base_DB_MariaDB_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			if ( ! empty($this->data_source->charset)) {
 				$this->execute('SET NAMES ' . $this->quote(strtolower($this->data_source->charset)));

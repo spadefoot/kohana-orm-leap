@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2011-2012 Spadefoot
+ * Copyright 2012 Spadefoot
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
  */
 
 /**
- * This class indicates there is an SQL problem.
+ * This class acts as the base class for all throwable exceptions.
  *
  * @package Leap
  * @version 2012-11-14
  */
-class Throwable_Database_Exception extends Base_Throwable_Database_Exception {}
+class Throwable_Exception extends Base_Throwable_Exception {}
 ?>

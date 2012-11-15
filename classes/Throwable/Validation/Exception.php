@@ -20,7 +20,7 @@
  * This class indicates that bad data was discovered.
  *
  * @package Leap
- * @version 2012-08-04
+ * @version 2012-11-14
  */
-class Kohana_BadData_Exception extends Kohana_Exception {}
+class Throwable_Validation_Exception extends Base_Throwable_Validation_Exception {}
 ?>

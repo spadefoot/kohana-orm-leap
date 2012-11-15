@@ -220,7 +220,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 					$type = array('blob', 0, 0, array());
 				break;
 				default:
-					throw new Kohana_Exception('Message: Unable to map data type. Reason: Case has not yet been handled.');
+					throw new Throwable_Exception('Message: Unable to map data type. Reason: Case has not yet been handled.');
 				break;
 			}
 

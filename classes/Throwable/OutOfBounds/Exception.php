@@ -20,38 +20,7 @@
  * This class indicates that a value is not a valid key.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
  */
-class Kohana_OutOfBounds_Exception extends OutOfBoundsException {
-
-	/**
-	* This function instantiates the exception with the specified message,
-	* variables, and code.
-	*
-	* @access public
-	* @param string $message                    the message
-	* @param array $variables                   the variables
-	* @param integer $code                      the code
-	* @return Kohana_OutOfBounds_Exception      the exception
-	*/
-	public function __construct($message, array $variables = NULL, $code = 0) {
-		// Set the message
-		$message = __($message, $variables);
-
-		// Pass the message to the parent
-		parent::__construct($message, $code);
-	}
-
-	/**
-	* This function returns a string for this object.
-	*
-	* @access public
-	* @uses Kohana::exception_text
-	* @return string                            the string for this object
-	*/
-	public function __toString() {
-		return Kohana::exception_text($this);
-	}
-
-}
+class Throwable_OutOfBounds_Exception extends Base_Throwable_OutOfBounds_Exception {}
 ?>

@@ -20,7 +20,9 @@
  * This class indicates that a file could not be found.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
+ *
+ * @abstract
  */
-class Kohana_FileNotFound_Exception extends Kohana_Exception {}
+abstract class Base_Throwable_FileNotFound_Exception extends Throwable_Exception {}
 ?>

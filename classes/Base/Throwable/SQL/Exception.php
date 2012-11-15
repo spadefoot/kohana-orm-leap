@@ -20,7 +20,9 @@
  * This class indicates there is an SQL problem.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
+ *
+ * @abstract
  */
-class Kohana_SQL_Exception extends Kohana_Exception {}
+abstract class Base_Throwable_SQL_Exception extends Throwable_Exception {}
 ?>

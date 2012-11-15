@@ -41,7 +41,7 @@ interface Base_DB_SQL_Expression_Interface {
 	 * @access public
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
-	 * @throws Kohana_InvalidArgument_Exception indicates that there is a data type mismatch
+	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
 	 */
 	public function prepare_alias($expr);
 

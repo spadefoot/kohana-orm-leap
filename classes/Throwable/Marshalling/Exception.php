@@ -20,7 +20,7 @@
  * This class indicates that data could not be marshalled.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
  */
-class Kohana_Marshalling_Exception extends Kohana_Exception {}
+class Throwable_Marshalling_Exception extends Base_Throwable_Marshalling_Exception {}
 ?>

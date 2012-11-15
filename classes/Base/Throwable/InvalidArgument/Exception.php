@@ -20,9 +20,11 @@
  * This class indicates that an argument does not match with the expected value.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
+ *
+ * @abstract
  */
-class Kohana_InvalidArgument_Exception extends InvalidArgumentException {
+abstract class Base_Throwable_InvalidArgument_Exception extends InvalidArgumentException {
 
 	/**
 	* This function instantiates the exception with the specified message,
@@ -32,7 +34,7 @@ class Kohana_InvalidArgument_Exception extends InvalidArgumentException {
 	* @param string $message                    the message
 	* @param array $variables                   the variables
 	* @param integer $code                      the code
-	* @return Kohana_InvalidArgument_Exception  the exception
+	* @return Throwable_InvalidArgument_Exception  the exception
 	*/
 	public function __construct($message, array $variables = NULL, $code = 0) {
 		// Set the message

@@ -20,9 +20,11 @@
  * This class indicates that a value is not a valid key.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
+ *
+ * @abstract
  */
-class Kohana_OutOfBounds_Exception extends OutOfBoundsException {
+abstract class Base_Throwable_OutOfBounds_Exception extends OutOfBoundsException {
 
 	/**
 	* This function instantiates the exception with the specified message,
@@ -32,7 +34,7 @@ class Kohana_OutOfBounds_Exception extends OutOfBoundsException {
 	* @param string $message                    the message
 	* @param array $variables                   the variables
 	* @param integer $code                      the code
-	* @return Kohana_OutOfBounds_Exception      the exception
+	* @return Throwable_OutOfBounds_Exception      the exception
 	*/
 	public function __construct($message, array $variables = NULL, $code = 0) {
 		// Set the message

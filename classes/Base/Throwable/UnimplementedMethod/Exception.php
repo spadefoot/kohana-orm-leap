@@ -20,7 +20,9 @@
  * This class indicates that a collection contains no elements.
  *
  * @package Leap
- * @version 2012-05-31
+ * @version 2012-11-14
+ *
+ * @abstract
  */
-class Kohana_UnimplementedMethod_Exception extends Kohana_Exception {}
+abstract class Base_Throwable_UnimplementedMethod_Exception extends Throwable_Exception {}
 ?>

@@ -56,13 +56,13 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @static
 	 * @param string $file                          the file name
 	 * @return XML                               	an instance of this class
-	 * @throws Kohana_InvalidArgument_Exception		indicates that the an argument is of the
+	 * @throws Throwable_InvalidArgument_Exception		indicates that the an argument is of the
 	 * 												wrong data type
-	 * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
+	 * @throws Throwable_FileNotFound_Exception        indicates that the file does not exist
 	 */
 	public static function load($file) {
 		if ( ! is_string($file)) {
-			throw new Kohana_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
+			throw new Throwable_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
 		}
 
 		$source = static::find_file($file);
@@ -129,7 +129,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @access protected
 	 * @param string $file                          the file name
 	 * @return string                               the file path
-	 * @throws Kohana_FileNotFound_Exception        indicates that the file does not exist
+	 * @throws Throwable_FileNotFound_Exception        indicates that the file does not exist
 	 */
 	protected static function find_file($file) {
 		if (file_exists($file)) {
@@ -154,7 +154,7 @@ abstract class Base_XML extends SimpleXMLElement {
 			return $uri;
 		}
 
-		throw new Kohana_FileNotFound_Exception('Message: Unable to locate file. Reason: No file exists with the specified file name.', array(':file', $file));
+		throw new Throwable_FileNotFound_Exception('Message: Unable to locate file. Reason: No file exists with the specified file name.', array(':file', $file));
 	}
 
 }

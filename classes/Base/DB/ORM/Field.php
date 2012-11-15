@@ -82,7 +82,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -96,7 +96,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 				}
 			break;
 		}
-		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**
@@ -105,9 +105,9 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception             indicates that the specified value does
 	 *                                              not validate
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -117,7 +117,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 					if ($value !== NULL) {
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {
-							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+							throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 						}
 					}
 					else if ( ! $this->metadata['nullable']) {
@@ -125,7 +125,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 					}
 				}
 				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
-					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
 				$this->value = $value;
@@ -134,7 +134,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 				$this->metadata['modified'] = (bool) $value;
 			break;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}
@@ -181,7 +181,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 			case 'text':
 				return Form::input($name, $this->value, $attributes);
 			default:
-				throw new Kohana_Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
+				throw new Throwable_Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
 			break;
 		}
 	}

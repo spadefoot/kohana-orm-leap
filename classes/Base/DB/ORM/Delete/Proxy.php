@@ -79,7 +79,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * @param string $function                      the name of the called function
 	 * @param array $arguments                      an array with the parameters passed
 	 * @return mixed                                the result of the called function
-	 * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
+	 * @throws Throwable_UnimplementedMethod_Exception indicates that the called function is
 	 *                                              inaccessible
 	 */
 	public function __call($function, $arguments) {
@@ -92,7 +92,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 				return $result;
 			}
 		}
-		throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
+		throw new Throwable_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
 	}
 
 	/**

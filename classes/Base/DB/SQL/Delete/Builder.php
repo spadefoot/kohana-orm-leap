@@ -106,13 +106,13 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @param string $value                     the value the column is constrained with
 	 * @param string $connector                 the connector to be used
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
-				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+				throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$value0 = $this->compiler->prepare_value($value[0]);
@@ -122,7 +122,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 		}
 		else {
 			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
-				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+				throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if ($value === NULL) {
 				switch ($operator) {

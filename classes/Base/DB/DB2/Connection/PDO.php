@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
  *
@@ -33,7 +33,7 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
@@ -58,7 +58,7 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
 		}

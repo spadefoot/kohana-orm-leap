@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-15
+ * @version 2012-11-14
  *
  * @abstract
  */
@@ -33,9 +33,9 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
-	 * @throws Kohana_Exception                     indicates that error occurred when loading
+	 * @throws Throwable_Exception                     indicates that error occurred when loading
 	 *                                              a configuration
-	 * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
+	 * @throws Throwable_InvalidArgument_Exception     indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -46,7 +46,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][0]);
 
 		if (($unit = Kohana::$config->load($group)) === NULL) {
-			throw new Kohana_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+			throw new Throwable_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
 		$this->metadata['units'][0] = $unit; // field's unit
@@ -54,7 +54,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][1]);
 
 		if (($unit = Kohana::$config->load($group)) === NULL) {
-			throw new Kohana_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+			throw new Throwable_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
 		$this->metadata['units'][1] = $unit; // adaptor's unit
@@ -67,7 +67,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -83,7 +83,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
 			break;
 		}
-		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**
@@ -93,7 +93,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -105,7 +105,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 				$this->model->{$this->metadata['field']} = $value;
 			break;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}

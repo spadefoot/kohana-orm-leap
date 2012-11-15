@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-10-22
+ * @version 2012-11-14
  *
  * @abstract
  */
@@ -70,14 +70,14 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @access public
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
-	 * @throws Kohana_InvalidArgument_Exception indicates that there is a data type mismatch
+	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
 	 *
 	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
-			throw new Kohana_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		return static::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $expr)) . static::_CLOSING_QUOTE_CHARACTER_;
 	}
@@ -110,7 +110,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 				break;
 			}
 		}
-		throw new Kohana_InvalidArgument_Exception('Message: Invalid connector token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+		throw new Throwable_InvalidArgument_Exception('Message: Invalid connector token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
 	}
 
 	/**
@@ -134,7 +134,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
-			throw new Kohana_InvalidArgument_Exception('Message: Invalid identifier expression specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable_InvalidArgument_Exception('Message: Invalid identifier expression specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
 			$expr = rtrim($expr, "; \t\n\r\0\x0B");
@@ -175,7 +175,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 				break;
 			}
 		}
-		throw new Kohana_InvalidArgument_Exception('Message: Invalid join type token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+		throw new Throwable_InvalidArgument_Exception('Message: Invalid join type token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
 	}
 
 	/**
@@ -239,7 +239,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 				}
 			}
 		}
-		throw new Kohana_InvalidArgument_Exception('Message: Invalid operator token specified. Reason: Token must exist in the enumerated set.', array(':group' => $group, ':expr' => $expr));
+		throw new Throwable_InvalidArgument_Exception('Message: Invalid operator token specified. Reason: Token must exist in the enumerated set.', array(':group' => $group, ':expr' => $expr));
 	}
 
 	/**
@@ -295,7 +295,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 				break;
 			}
 		}
-		throw new Kohana_InvalidArgument_Exception('Message: Invalid parenthesis token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+		throw new Throwable_InvalidArgument_Exception('Message: Invalid parenthesis token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
 	}
 
 	/**
@@ -369,7 +369,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 */
 	public function prepare_wildcard($expr) {
 		if ( ! is_string($expr)) {
-			throw new Kohana_InvalidArgument_Exception('Message: Invalid wildcard token specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable_InvalidArgument_Exception('Message: Invalid wildcard token specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		$parts = explode('.', $expr);
 		$count = count($parts);

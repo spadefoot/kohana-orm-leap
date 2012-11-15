@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-15
+ * @version 2012-11-14
  *
  * @see http://dev.kohanaframework.org/projects/mptt
  * @see https://github.com/kiall/kohana3-orm_mptt
@@ -129,7 +129,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$primary_key = static::primary_key();
 		if (count($primary_key) != 1) {
-			throw new Kohana_Exception('Message: Unable to initialize model. Reason: May not use a composite primary key with MPTT.');
+			throw new Throwable_Exception('Message: Unable to initialize model. Reason: May not use a composite primary key with MPTT.');
 		}
 		
 		if ($columns !== NULL) {
@@ -143,7 +143,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @access public
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
