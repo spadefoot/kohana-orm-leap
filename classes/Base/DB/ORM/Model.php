@@ -330,7 +330,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 			}
 			return ($buffer != '') ? sha1($buffer) : NULL;
 		}
-		throw new Throwable_EmptyCollection_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
+		throw new Throwable_Database_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
 	}
 
 	/**
