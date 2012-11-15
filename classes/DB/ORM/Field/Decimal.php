@@ -17,11 +17,12 @@
  */
 
 /**
- * This class represents a "decimal" field in a database table.
+ * This class represents a "decimal" field (i.e. a fixed point type) in a database
+ * table.
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-07
+ * @version 2012-10-15
  */
 class DB_ORM_Field_Decimal extends Base_DB_ORM_Field_Decimal {}
 ?>

@@ -17,11 +17,12 @@
  */
 
 /**
- * This class represents a "double" field in a database table.
+ * This class represents a "double" field (i.e. a floating point type) in a database
+ * table.
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -89,8 +90,13 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 		if (isset($metadata['default'])) {
 			$default = $metadata['default'];
 		}
+		else if ( ! $this->metadata['nullable'] AND isset($this->metadata['enum'])) {
+			$default = $this->metadata['enum'][0];
+		}
 		else if ($this->metadata['nullable']) {
-			$default = NULL;
+			$default = (isset($this->metadata['enum']) AND ! in_array(NULL, $this->metadata['enum']))
+				? $this->metadata['enum'][0]
+				: NULL;
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
@@ -110,10 +116,11 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
+	 * @override
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected /*override*/ function validate($value) {
+	protected function validate($value) {
 		if ($value !== NULL) {
 			if ($this->metadata['unsigned'] AND ($value < 0.0)) {
 				return FALSE;

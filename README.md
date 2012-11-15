@@ -56,13 +56,15 @@ For more information, see the tutorial on [installing LEAP](http://orm.spadefoot
 
 ### About Branches
 
-* 3.1/master  - PHP 5.2+, Kohana 3.1.X, "stable", maintained
-* 3.1/develop - PHP 5.2+, Kohana 3.1.X, "unstable", maintained
-* 3.2/master  - PHP 5.3+, Kohana 3.2.X, "stable", maintained
-* 3.2/develop - PHP 5.3+, Kohana 3.2.X, "unstable", maintained
-* 3.2/legacy  - PHP 5.2+, Kohana 3.2.X, "stable", maintained
-* 3.3/master  - PHP 5.3+, Kohana 3.3.X, "stable", maintained
-* 3.3/develop - PHP 5.3+, Kohana 3.3.X, "unstable", maintained
+* 3.3/master  - PHP 5.3+, Kohana 3.3.X, maintained, stable
+* 3.3/develop - PHP 5.3+, Kohana 3.3.X, maintained, unstable
+* 3.3/legacy  - PHP 5.2+, Kohana 3.3.X, deprecated, stable
+* 3.2/master  - PHP 5.3+, Kohana 3.2.X, maintained, stable
+* 3.2/develop - PHP 5.3+, Kohana 3.2.X, maintained, unstable
+* 3.2/legacy  - PHP 5.2+, Kohana 3.2.X, deprecated, stable
+* 3.1/master  - PHP 5.3+, Kohana 3.1.X, maintained, stable
+* 3.1/develop - PHP 5.3+, Kohana 3.1.X, maintained, unstable
+* 3.1/legacy  - PHP 5.2+, Kohana 3.1.X, deprecated, stable
 
 ## Required Files
 

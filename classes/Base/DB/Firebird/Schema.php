@@ -320,10 +320,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
 			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
-			->where_block('(')
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
 			->where('RDB$SYSTEM_FLAG',  DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
-			->where_block(')')
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
@@ -352,10 +352,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
 			->from('RDB$RELATIONS')
 			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
-			->where_block('(')
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
 			->where('RDB$SYSTEM_FLAG',  DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
-			->where_block(')')
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {

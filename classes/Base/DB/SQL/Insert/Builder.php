@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-01-18
+ * @version 2012-10-09
  *
  * @abstract
  */
@@ -64,7 +64,8 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 		$this->compiler = new $compiler($source);
 		$this->data = array();
 		$this->data['into'] = NULL;
-		$this->data['column'] = array();
+		$this->data['columns'] = array();
+		$this->data['rows'] = array();
 	}
 
 	/**
@@ -86,12 +87,30 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $column                    the column to be set
 	 * @param string $value                     the value to be set
+	 * @param integer $row						the index of the row
 	 * @return DB_SQL_Insert_Builder            a reference to the current instance
 	 */
-	public function column($column, $value) {
+	public function column($column, $value, $row = 0) {
 		$column = $this->compiler->prepare_identifier($column);
 		$value = $this->compiler->prepare_value($value);
-		$this->data['column'][$column] = $value;
+		$row = $this->compiler->prepare_natural($row);
+		$this->data['columns'][$column] = NULL;
+		$this->data['rows'][$row][$column] = $value;
+		return $this;
+	}
+
+	/**
+	 * This function sets a row of columns/values pairs.
+	 *
+	 * @access public
+	 * @param array $values						the columns/values pairs to be set
+	 * @param integer $row						the index of the row
+	 * @return DB_SQL_Insert_Builder			a reference to the current instance
+	 */
+	public function row(Array $values, $row = 0) {
+		foreach ($values as $column => $value) {
+			$this->column($column, $value, $row);
+		}
 		return $this;
 	}
 

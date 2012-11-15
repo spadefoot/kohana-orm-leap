@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-08-16
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -253,7 +253,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 	 *
 	 * @access public
 	 * @param string $column                    the column to be sorted
-	 * @param string $ordering                  the ordering token that signal whether the
+	 * @param string $ordering                  the ordering token that signals whether the
 	 *                                          column will sorted either in ascending or
 	 *                                          descending order
 	 * @param string $nulls                     the weight to be given to null values
@@ -341,7 +341,10 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 				return $expr->value();
 			}
 			else if ($expr instanceof Data) {
-				return "x'" . $expr->as_hexcode() . "'";
+				return $expr->as_hexcode("x'%s'");
+			}
+			else if ($expr instanceof BitField) {
+				return $expr->as_binary("b'%s'");
 			}
 			else {
 				return static::prepare_value( (string) $expr); // Convert the object to a string
@@ -356,7 +359,7 @@ abstract class Base_DB_PostgreSQL_Expression implements DB_SQL_Expression_Interf
 		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
 			return "'{$expr}'";
 		}
-		else if (empty($expr)) {
+		else if ($expr === '') {
 			return "''";
 		}
 		else {

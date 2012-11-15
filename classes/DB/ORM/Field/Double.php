@@ -17,11 +17,12 @@
  */
 
 /**
- * This class represents a "double" field in a database table.
+ * This class represents a "double" field (i.e. a floating point type) in a database
+ * table.
  *
  * @package Leap
  * @category ORM
- * @version 2011-06-07
+ * @version 2012-10-15
  */
 class DB_ORM_Field_Double extends Base_DB_ORM_Field_Double {}
 ?>

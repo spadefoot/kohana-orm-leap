@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-22
+ * @version 2012-08-24
  *
  * @abstract
  */
@@ -86,7 +86,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param string $column                the column to be selected
-	 * @param string $alias                 the alias to used for the specified table
+	 * @param string $alias                 the alias to be used for the specified column
 	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
@@ -95,11 +95,24 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	}
 
 	/**
+	 * This function will a column to be counted.
+	 *
+	 * @access public
+	 * @param string $column                the column to be counted
+	 * @param string $alias                 the alias to be used for the specified column
+	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 */
+	public function count($column = '*', $alias = 'count') {
+		$this->builder->count($column, $alias);
+		return $this;
+	}
+
+	/**
 	 * This function sets the table that will be accessed.
 	 *
 	 * @access public
 	 * @param string $table                 the table to be accessed
-	 * @param string $alias                 the alias to used for the specified table
+	 * @param string $alias                 the alias to be used for the specified table
 	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
@@ -113,7 +126,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 * @access public
 	 * @param string $type                  the type of join
 	 * @param string $table                 the table to be joined
-	 * @param string $alias                 the alias to used for the specified table
+	 * @param string $alias                 the alias to be used for the specified table
 	 * @return DB_SQL_Select_Proxy          a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
@@ -221,7 +234,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
+	 * @param string $ordering              the ordering token that signals whether the
 	 *                                      column will sorted either in ascending or
 	 *                                      descending order
 	 * @param string $nulls                 the weight to be given to null values
