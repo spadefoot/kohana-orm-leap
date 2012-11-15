@@ -1,5 +1,10 @@
 Change Log for LEAP ORM
 
+2012-11-14
+* Updated 3.3 branch with 3.2 changes.
+* Moved and renamed exception classes.
+* Moved and renamed object class.
+
 2012-10-15
 * Adding new BitField class.
 * Redid the Base_DB_ORM_Field_Bit class.
