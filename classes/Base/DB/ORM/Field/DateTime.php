@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-10-15
  *
  * @abstract
  */
@@ -71,10 +71,14 @@ abstract class Base_DB_ORM_Field_DateTime extends DB_ORM_Field {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = '0000-00-00 00:00:00';
+			$default = (isset($this->metadata['enum']))
+				? $this->metadata['enum'][0]
+				: '0000-00-00 00:00:00';
 		}
 		else {
-			$default = NULL;
+			$default = (isset($this->metadata['enum']) AND ! in_array(NULL, $this->metadata['enum']))
+				? $this->metadata['enum'][0]
+				: NULL;
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
@@ -94,10 +98,11 @@ abstract class Base_DB_ORM_Field_DateTime extends DB_ORM_Field {
 	 * This function validates the specified value against any constraints.
 	 *
 	 * @access protected
+	 * @override
 	 * @param mixed $value                          the value to be validated
 	 * @return boolean                              whether the specified value validates
 	 */
-	protected /*override*/ function validate($value) {
+	protected function validate($value) {
 		if ($value !== NULL) {
 			if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $value)) {
 				return FALSE;

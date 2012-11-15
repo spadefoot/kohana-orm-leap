@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-12-12
+ * @version 2012-10-10
  *
  * @see http://dev.mysql.com/doc/refman/5.5/en/insert.html
  *
@@ -40,10 +40,28 @@ abstract class Base_DB_MySQL_Insert_Builder extends DB_SQL_Insert_Builder {
 	public function statement($terminated = TRUE) {
 		$sql = "INSERT INTO {$this->data['into']}";
 
-		if ( ! empty($this->data['column'])) {
-			$columns = implode(', ', array_keys($this->data['column']));
-			$values = implode(', ', array_values($this->data['column']));
-			$sql .= " ({$columns}) VALUES ({$values})";
+		if ( ! empty($this->data['columns'])) {
+			$rows = array_values($this->data['rows']);
+			$rowCt = count($rows);
+			$columns = array_keys($this->data['columns']);
+			$columnCt = count($columns);
+			$sql .= ' (' . implode(', ', $columns) . ') VALUES';
+			for ($r = 0; $r < $rowCt; $r++) {
+				if ($r > 0) {
+					$sql .= ',';
+				}
+				$sql .= ' (';
+				for ($c = 0; $c < $columnCt; $c++) {
+					if ($c > 0) {
+						$sql .= ', ';
+					}
+					$column = $columns[$c];
+					$sql .= (isset($rows[$r][$column]))
+						? $rows[$r][$column]
+						: 'NULL';
+				}
+				$sql .= ')';
+			}
 		}
 
 		if ($terminated) {

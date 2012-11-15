@@ -88,7 +88,7 @@ abstract class Base_Auth_Leap extends Auth {
 
 		if (isset($config['columns'])) {
 			if (isset($config['columns']['role_id'])) {
-				$this->columns['role_name'] = $config['columns']['role_id'];
+				$this->columns['role_id'] = $config['columns']['role_id'];
 			}
 			if (isset($config['columns']['role_name'])) {
 				$this->columns['role_name'] = $config['columns']['role_name'];

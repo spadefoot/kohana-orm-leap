@@ -146,7 +146,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 *
 	 * @access public
 	 * @param string $column                        the column to be selected
-	 * @param string $alias                         the alias to used for the specified table
+	 * @param string $alias                         the alias to be used for the specified column
 	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
@@ -160,7 +160,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 * @access public
 	 * @param string $type                          the type of join
 	 * @param string $table                         the table to be joined
-	 * @param string $alias                         the alias to used for the specified table
+	 * @param string $alias                         the alias to be used for the specified table
 	 * @return DB_ORM_Select_Proxy                  a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
@@ -268,7 +268,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Kohana_Object implements DB_SQL
 	 *
 	 * @access public
 	 * @param string $column                        the column to be sorted
-	 * @param string $ordering                      the ordering token that signal whether the
+	 * @param string $ordering                      the ordering token that signals whether the
 	 *                                              column will sorted either in ascending or
 	 *                                              descending order
 	 * @param string $nulls                         the weight to be given to null values

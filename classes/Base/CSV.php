@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category CSV
- * @version 2012-08-16
+ * @version 2012-08-21
  *
  * @abstract
  */
@@ -118,7 +118,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 		$this->eol = (isset($config['eol']) AND is_string($config['eol'])) ? $config['eol'] : chr(10); // PHP_EOL
 		$this->position = 0;
 
-		if (isset($config['data']) AND (is_array($config['data']) OR $config['data'] instanceof Iterator)) {
+		if (isset($config['data']) AND (is_array($config['data']) OR ($config['data'] instanceof Iterator))) {
 			foreach ($config['data'] as $row) {
 				$this->add_row($row);
 			}

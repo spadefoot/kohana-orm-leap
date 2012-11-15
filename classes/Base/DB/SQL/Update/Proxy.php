@@ -113,7 +113,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
+	 * @param string $ordering              the ordering token that signals whether the
 	 *                                      column will sorted either in ascending or
 	 *                                      descending order
 	 * @param string $nulls                 the weight to be given to null values

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
@@ -108,11 +108,11 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function explicits sets the specified column to be selected.
+	 * This function sets the specified column to be selected.
 	 *
 	 * @access public
 	 * @param string $column                    the column to be selected
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified column
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
@@ -126,11 +126,26 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
+	 * This function will a column to be counted.
+	 *
+	 * @access public
+	 * @param string $column                    the column to be counted
+	 * @param string $alias                     the alias to be used for the specified column
+	 * @return DB_SQL_Select_Builder            a reference to the current instance
+	 */
+	public function count($column = '*', $alias = 'count') {
+		$column = ( ! empty($column) AND (substr_compare($column, '*', -1, 1) === 0))
+			? $this->compiler->prepare_wildcard($column)
+			: $this->compiler->prepare_identifier($column);
+		return $this->column(DB_SQL::expr("COUNT({$column})"), $alias);
+	}
+
+	/**
 	 * This function sets the table that will be accessed.
 	 *
 	 * @access public
 	 * @param string $table                     the table to be accessed
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
@@ -149,7 +164,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $type                      the type of join
 	 * @param string $table                     the table to be joined
-	 * @param string $alias                     the alias to used for the specified table
+	 * @param string $alias                     the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
@@ -289,7 +304,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
 	 */
 	public function group_by($column) {
-		$fields = is_array($column) ? $column : array($column);
+		$fields = (is_array($column)) ? $column : array($column);
 		foreach ($fields as $field) {
 			$identifier = $this->compiler->prepare_identifier($field);
 			$this->data['group_by'][] = $identifier;
@@ -372,7 +387,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signal whether the
+	 * @param string $ordering              the ordering token that signals whether the
 	 *                                      column will sorted either in ascending or
 	 *                                      descending order
 	 * @param string $nulls                 the weight to be given to null values
@@ -433,8 +448,8 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
-		$select_builder = 'DB_' . $this->dialect . '_Select_Builder';
-		if (is_object($statement) AND ($statement instanceof $select_builder)) {
+		$builder = 'DB_' . $this->dialect . '_Select_Builder';
+		if (is_object($statement) AND ($statement instanceof $builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {

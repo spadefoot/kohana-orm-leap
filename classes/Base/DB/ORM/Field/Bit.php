@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-10-22
  *
  * @abstract
  */
@@ -37,7 +37,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-		parent::__construct($model, 'integer');
+		parent::__construct($model, 'BitField');
 
 		if (isset($metadata['savable'])) {
 			$this->metadata['savable'] = (bool) $metadata['savable'];
@@ -55,28 +55,29 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 			$this->metadata['callback'] = (string) $metadata['callback'];
 		}
 
-		$this->metadata['enum'] = array(0, 1);
-
-		$this->metadata['control'] = 'checkbox';
+		$this->metadata['control'] = 'text';
 
 		if (isset($metadata['label'])) {
 			$this->metadata['label'] = (string) $metadata['label'];
 		}
 
+		$this->metadata['pattern'] = (isset($metadata['pattern']))
+			? (array) $metadata['pattern']
+			: array('bits' => ((PHP_INT_SIZE == 8) ? 64 : 32));
+
 		if (isset($metadata['default'])) {
-			$default = $metadata['default'];
+			$default = ($metadata['default'] !== NULL)
+				? new BitField($this->metadata['pattern'], $metadata['default'])
+				: NULL;
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = 0;
+			$default = new BitField($this->metadata['pattern'], 0);
 		}
 		else {
 			$default = NULL;
 		}
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
-			if ($default !== NULL) {
-				settype($default, $this->metadata['type']);
-			}
 			if ( ! $this->validate($default)) {
 				throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
 			}
@@ -84,6 +85,69 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 
 		$this->metadata['default'] = $default;
 		$this->value = $default;
+	}
+
+	/**
+	 * This function sets the value for the specified key.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 *                                              not validate
+	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 *                                              either inaccessible or undefined
+	 */
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'value':
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					if ($value !== NULL) {
+						if ( ! ($value instanceof BitField)) {
+							$value = new BitField($this->metadata['pattern'], $value);
+						}
+						if ( ! $this->validate($value)) {
+							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+						}
+					}
+					else if ( ! $this->metadata['nullable']) {
+						$value = $this->metadata['default'];
+					}
+				}
+				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
+					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+				}
+				$this->metadata['modified'] = TRUE;
+				$this->value = $value;
+				break;
+			case 'modified':
+				$this->metadata['modified'] = (bool) $value;
+				break;
+			default:
+				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				break;
+		}
+	}
+
+	/**
+	 * This function validates the specified value against any constraints.
+	 *
+	 * @access protected
+	 * @override
+	 * @param mixed $value                          the value to be validated
+	 * @return boolean                              whether the specified value validates
+	 */
+	protected function validate($value) {
+		if ($value !== NULL) {
+			if ( ! ($value instanceof $this->metadata['type'])) {
+				return FALSE;
+			}
+			if ( ! $value->has_pattern($this->metadata['pattern'])) {
+				return FALSE;
+			}
+		}
+		return parent::validate($value);
 	}
 
 }

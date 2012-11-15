@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-06-14
+ * @version 2012-10-22
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -30,12 +30,12 @@
 abstract class Base_Data extends Kohana_Object implements Countable {
 
 	/**
-	 * This constant represents byte data.
+	 * This constant represents binary data.
 	 *
 	 * @access public
 	 * @const integer
 	 */
-	const BYTE_DATA = 0;
+	const BINARY_DATA = 0;
 
 	/**
 	 * This constant represents hexadecimal data.
@@ -77,7 +77,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	 * @param boolean $type						the current type of data
 	 */
 	public function __construct($data, $type = 1) {
-		$this->hexcode = Data::unpack($data, $type);
+		$this->hexcode = static::unpack($data, $type);
 		$this->length = -1;
 	}
 
@@ -92,22 +92,31 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	}
 
 	/**
-	 * This function returns the data as a byte string.
+	 * This function returns the data as a binary string.
 	 *
 	 * @access public
-	 * @return string							the data as a byte string
+	 * @param string $format					the string formatting to be used
+	 * @return string							the data as a binary string
 	 */
-	public function as_bytes() {
-		return base_convert($this->hexcode, 16, 2);
+	public function as_binary($format = '%s') {
+		$binary = base_convert($this->hexcode, 16, 2);
+		if ($format != '%s') { // this is done for efficiency
+			return sprintf($format, $binary);
+		}
+		return $binary;
 	}
 
 	/**
 	 * This function returns the data as a hexadecimal.
 	 *
 	 * @access public
+	 * @param string $format					the string formatting to be used
 	 * @return string							the data as a hexadecimal
 	 */
-	public function as_hexcode() {
+	public function as_hexcode($format = '%s') {
+		if ($format != '%s') {
+			return sprintf($format, $this->hexcode); // this is done for efficiency
+		}
 		return $this->hexcode;
 	}
 
@@ -115,10 +124,13 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	 * This function returns the data as a string.
 	 *
 	 * @access public
+	 * @param string $format					the string formatting to be used
+	 * @param boolean $pack						whether to pack the hexcode as a string
 	 * @return string							the data as a string
 	 */
-	public function as_string() {
-		return Data::pack($this->hexcode);
+	public function as_string($format = '%s', $pack = TRUE) {
+		$string = ($pack) ? static::pack($this->hexcode) : $this->hexcode;
+		return sprintf($format, $string);
 	}
 
 	/**
@@ -130,7 +142,7 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	 */
 	public function count() {
 		if ($this->length < 0) {
-			$this->length = strlen($this->as_bytes());
+			$this->length = strlen($this->hexcode) * 2;
 		}
 		return $this->length;
 	}
@@ -164,15 +176,17 @@ abstract class Base_Data extends Kohana_Object implements Countable {
 	protected static function unpack($data, $type) {
 		if (is_string($data)) {
 			switch ($type) {
-				case Data::BYTE_DATA:
-					return base_convert($data, 2, 16);
+				case Data::BINARY_DATA:
+					$binary = (preg_match("/^b'.*'$/i", $data))
+						? substr($data, 2, strlen($data) - 3)
+						: $data;
+					return base_convert($binary, 2, 16);
 				break;
 				case Data::STRING_DATA:
 					$hexcode = unpack('H*hex', $data);
 					return $hexcode['hex'];
 				break;
 				case Data::HEXADECIMAL_DATA:
-				default:
 					return $data;
 				break;
 			}
