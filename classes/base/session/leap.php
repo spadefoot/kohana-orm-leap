@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-08-21
+ * @version 2012-11-15
  *
  * @abstract
  */
@@ -81,15 +81,6 @@ abstract class Base_Session_Leap extends Session {
 	 * @param string $id                        the session id
 	 */
 	public function __construct(array $config = NULL, $id = NULL) {
-		/*
-		// Use the default group
-		if ( ! isset($config['group']))
-			$config['group'] = 'default';
-		*/
-
-		// Load the database
-		// $this->_db = Doctrine::em();
-
 		// Set the table name
 		if (isset($config['table'])) {
 			$this->_table = (string) $config['table'];
