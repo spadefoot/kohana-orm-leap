@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -33,7 +33,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-oci.php
@@ -61,7 +61,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			catch (PDOException $ex) {
 				$this->connection = NULL;
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 		}
 	}
@@ -74,7 +74,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		$sql = trim($sql, "; \t\n\r\0\x0B");
@@ -88,7 +88,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		$sql = trim($sql, "; \t\n\r\0\x0B");

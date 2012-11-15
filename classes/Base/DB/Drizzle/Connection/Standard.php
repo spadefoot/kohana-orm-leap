@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -44,7 +44,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://wiki.drizzle.org/MySQL_Differences
@@ -59,7 +59,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$password = $this->data_source->password;
 			$this->resource_id = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
 			if ($this->resource_id === FALSE) {
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => drizzle_error($handle)));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => drizzle_error($handle)));
 			}
 			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
 		}
@@ -69,7 +69,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://docs.drizzle.org/start_transaction.html
 	 */
@@ -85,11 +85,11 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
@@ -99,10 +99,10 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		}
 		$command_id = @drizzle_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
 		}
 		if ( ! @drizzle_result_buffer($command_id)) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -125,15 +125,15 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command_id = @drizzle_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
 		}
 		$this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql))
 			? @drizzle_result_insert_id($command_id)
@@ -147,14 +147,14 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @return integer                          the last insert id
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		if ($this->insert_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
 		}
 		return $this->insert_id;
 	}
@@ -163,7 +163,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://docs.drizzle.org/rollback.html
 	 */
@@ -175,7 +175,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://docs.drizzle.org/commit.html
 	 */
@@ -190,12 +190,12 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception             indicates that no connection could
 	 *                                          be found
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		$string = "'" . drizzle_escape_string($this->resource_id, $string) . "'";

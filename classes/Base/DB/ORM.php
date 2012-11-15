@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-21
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM extends Kohana_Object {
+abstract class Base_DB_ORM extends Core_Object {
 
 	/**
 	 * This function returns an instance of the DB_ORM_Delete_Proxy.

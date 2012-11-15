@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-11-15
+ * @version 2012-11-14
  *
  * @abstract
  */

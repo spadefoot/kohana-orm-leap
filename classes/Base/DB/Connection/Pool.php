@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-18
+ * @version 2012-11-14
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -31,7 +31,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countable {
+abstract class Base_DB_Connection_Pool extends Core_Object implements Countable {
 
 	/**
 	 * This variable stores the lookup table.
@@ -79,7 +79,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @access public
 	 * @param string $key          	                the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -87,7 +87,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 			case 'max_size':
 				return $this->settings[$key];
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 			break;
 		}
 	}
@@ -98,7 +98,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -107,7 +107,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 				$this->settings[$key] = abs( (int) $value);
 			break;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 			break;
 		}
 	}
@@ -118,7 +118,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @access public
 	 * @param DB_Connection $connection             the connection to be added
 	 * @return boolean                              whether the connection was added
-	 * @throws Kohana_Database_Exception            indicates that no new connections
+	 * @throws Throwable_Database_Exception            indicates that no new connections
 	 *                                              can be added
 	 */
 	public function add_connection(DB_Connection $connection) {
@@ -126,7 +126,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 			$connection_id = $connection->__hashCode();
 			if ( ! isset($this->lookup[$connection_id])) {
 				if ($this->count() >= $this->settings['max_size']) {
-					throw new Kohana_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
+					throw new Throwable_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
 				}
 				$source_id = $connection->data_source->id;
 				$this->pool[$source_id][$connection_id] = $connection;
@@ -157,7 +157,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @param DB_DataSource $source                 the data source configurations
 	 * @param boolean $new                          whether to create a new connection
 	 * @return DB_Connection                        the appropriate connection
-	 * @throws Kohana_Database_Exception            indicates that no new connections
+	 * @throws Throwable_Database_Exception            indicates that no new connections
 	 *                                              can be added
 	 */
 	public function get_connection($source = 'default', $new = FALSE) {
@@ -189,7 +189,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 			}
 		}
 		if ($this->count() >= $this->settings['max_size']) {
-			throw new Kohana_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
+			throw new Throwable_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
 		}
 		$connection = DB_Connection::factory($source);
 		$connection->open();

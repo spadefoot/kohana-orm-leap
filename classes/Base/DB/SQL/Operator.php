@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-02-06
+ * @version 2012-11-14
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
  * @see http://nimal.info/blog/2007/intersection-and-set-difference-in-mysql-a-workaround-for-except/
@@ -32,7 +32,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Operator extends Kohana_Object {
+abstract class Base_DB_SQL_Operator extends Core_Object {
 
 	// Comparison Operators
 

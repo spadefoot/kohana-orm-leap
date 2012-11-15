@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2011-12-31
+ * @version 2012-11-14
  *
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyjoin.htm
  * @see http://www.craigsmullins.com/outer-j.htm
@@ -36,7 +36,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_JoinType extends Kohana_Object {
+abstract class Base_DB_SQL_JoinType extends Core_Object {
 
     const _NONE_ = NULL; // supported by all
 

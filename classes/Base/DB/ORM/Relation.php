@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Relation extends Kohana_Object {
+abstract class Base_DB_ORM_Relation extends Core_Object {
 
 	/**
 	 * This variable stores a reference to the implementing model.
@@ -71,7 +71,7 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -86,7 +86,7 @@ abstract class Base_DB_ORM_Relation extends Kohana_Object {
 				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
 			break;
 		}
-		throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**

@@ -189,14 +189,14 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $operator                  the operator to be used
 	 * @param string $column1                   the constraint column
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
 		if ( ! empty($this->data['join'])) {
 			$index = count($this->data['join']) - 1;
 			$condition = $this->data['join'][$index][2];
 			if ( ! empty($condition)) {
-				throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
+				throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
 			}
 			$column0 = $this->compiler->prepare_identifier($column0);
 			$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
@@ -204,7 +204,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$this->data['join'][$index][1][] = "{$column0} {$operator} {$column1}";
 		}
 		else {
-			throw new Kohana_SQL_Exception('Message: Invalid build instruction. Reason: Must declare a JOIN clause before declaring an "on" constraint.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
+			throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Must declare a JOIN clause before declaring an "on" constraint.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
 		}
 		return $this;
 	}
@@ -215,20 +215,20 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $column                    the column to be constrained
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function using($column) {
 		if ( ! empty($this->data['join'])) {
 			$index = count($this->data['join']) - 1;
 			$condition = $this->data['join'][$index][1];
 			if ( ! empty($condition)) {
-				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column' => $column));
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column' => $column));
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$this->data['join'][$index][2][] = $column;
 		}
 		else {
-			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a JOIN clause before declaring a "using" constraint.', array(':column' => $column));
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a JOIN clause before declaring a "using" constraint.', array(':column' => $column));
 		}
 		return $this;
 	}
@@ -257,13 +257,13 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $value                     the value the column is constrained with
 	 * @param string $connector                 the connector to be used
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
-				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$value0 = $this->compiler->prepare_value($value[0]);
@@ -273,7 +273,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		}
 		else {
 			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
-				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if ($value === NULL) {
 				switch ($operator) {
@@ -319,11 +319,11 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $parenthesis               the parenthesis to be used
 	 * @param string $connector                 the connector to be used
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function having_block($parenthesis, $connector = 'AND') {
 		if (empty($this->data['group_by'])) {
-			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':parenthesis' => $parenthesis, ':connector' => $connector));
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':parenthesis' => $parenthesis, ':connector' => $connector));
 		}
 		$parenthesis = $this->compiler->prepare_parenthesis($parenthesis);
 		$connector = $this->compiler->prepare_connector($connector);
@@ -340,16 +340,16 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $value                     the value the column is constrained with
 	 * @param string $connector                 the connector to be used
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function having($column, $operator, $value, $connector = 'AND') {
 		if (empty($this->data['group_by'])) {
-			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 		}
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
-				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			$column = $this->compiler->prepare_identifier($column);
 			$value0 = $this->compiler->prepare_value($value[0]);
@@ -359,7 +359,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		}
 		else {
 			if (($operator == DB_SQL_Operator::_IN_ OR $operator == DB_SQL_Operator::_NOT_IN_) AND ! is_array($value)) {
-				throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if ($value === NULL) {
 				switch ($operator) {
@@ -445,7 +445,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *                                          the specified SQL statement
 	 * @param string $statement                 the SQL statement to be appended
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Kohana_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
 		$builder = 'DB_' . $this->dialect . '_Select_Builder';
@@ -453,7 +453,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
-			throw new Kohana_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
 		}
 		$statement = trim($statement, "; \t\n\r\0\x0B");
 		$operator = $this->compiler->prepare_operator($operator, 'SET');

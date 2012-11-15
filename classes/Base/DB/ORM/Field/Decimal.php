@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-15
+ * @version 2012-11-14
  *
  * @abstract
  */
@@ -34,7 +34,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception             indicates that the specified value does
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -99,7 +99,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 				settype($default, $this->metadata['type']);
 			}
 			if ( ! $this->validate($default)) {
-				throw new Kohana_BadData_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+				throw new Throwable_Validation_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
 			}
 		}
 
@@ -114,9 +114,9 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Kohana_BadData_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception             indicates that the specified value does
 	 *                                              not validate
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -127,7 +127,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 						$value = number_format( (float) $value, $this->metadata['scale']);
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {
-							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+							throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 						}
 					}
 					else if ( ! $this->metadata['nullable']) {
@@ -135,7 +135,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 					}
 				}
 				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
-					throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
 				$this->value = $value;
@@ -144,7 +144,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 				$this->metadata['modified'] = (bool) $value;
 			break;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}

@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -46,7 +46,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.destructor.de/firebird/charsets.htm
@@ -75,7 +75,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 					: @ibase_connect($connection_string, $username, $password);
 			}
 			if ($this->resource_id === FALSE) {
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => ibase_errmsg()));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => ibase_errmsg()));
 			}
 		}
 	}
@@ -84,15 +84,15 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
 		$command_id = @ibase_trans($this->resource_id, IBASE_READ | IBASE_WRITE);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':sql' => ibase_errmsg()));
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':sql' => ibase_errmsg()));
 		}
 	}
 
@@ -104,11 +104,11 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * @param string $sql						the SQL statement
 	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
@@ -117,7 +117,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		}
 		$command_id = @ibase_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 		$records = array();
 		$size = 0;
@@ -137,16 +137,16 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$stmt = ibase_prepare($this->resource_id, $sql);
 		$command_id = @ibase_execute($stmt);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 		$this->sql = $sql;
 	}
@@ -156,13 +156,13 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @return integer                          the last insert id
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 *
 	 * @see http://www.firebirdfaq.org/faq243/
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
 			$sql = $this->sql;
@@ -176,7 +176,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			return 0;
 		}
 		catch (Exception $ex) {
-			throw new Kohana_SQL_Exception(preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage()));
+			throw new Throwable_SQL_Exception(preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage()));
 		}
 	}
 
@@ -184,15 +184,15 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function rollback() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$command_id = @ibase_rollback($this->resource_id);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 	}
 
@@ -200,15 +200,15 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function commit() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
 		$command_id = @ibase_commit($this->resource_id);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
 		}
 	}
 

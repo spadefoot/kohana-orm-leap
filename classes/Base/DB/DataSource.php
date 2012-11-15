@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_DataSource extends Kohana_Object {
+abstract class Base_DB_DataSource extends Core_Object {
 
 	/**
 	 * This variable stores the settings for the data source.
@@ -40,21 +40,21 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 *
 	 * @access public
 	 * @param mixed $config                          the data source configurations
-	 * @throws Kohana_InvalidArgument_Exception      indicates that there is a data type mismatch
-	 * @throws Kohana_InvalidProperty_Exception      indicates that the database group is undefined
+	 * @throws Throwable_InvalidArgument_Exception      indicates that there is a data type mismatch
+	 * @throws Throwable_InvalidProperty_Exception      indicates that the database group is undefined
 	 */
 	public function __construct($config) {
 		if (empty($config)) {
 			$id = 'database.default';
 			if (($config = Kohana::$config->load($id)) === NULL) {
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
 		}
 		else if (is_string($config)) {
 			$id = 'database.' . $config;
 			if (($config = Kohana::$config->load($id)) === NULL) {
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
 		}
@@ -65,7 +65,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			$this->settings = $config->settings;
 		}
 		else {
-			throw new Kohana_InvalidArgument_Exception('Message: Unable to load data source. Reason: Data type :type is mismatched.', array(':type' => gettype($config)));
+			throw new Throwable_InvalidArgument_Exception('Message: Unable to load data source. Reason: Data type :type is mismatched.', array(':type' => gettype($config)));
 		}
 	}
 
@@ -75,7 +75,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	 * @access public
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
@@ -94,7 +94,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 				return $this->settings[$name];
 			break;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
 			break;
 		}
 	}

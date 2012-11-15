@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2011-12-27
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Builder extends Kohana_Object {
+abstract class Base_DB_ORM_Builder extends Core_Object {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.

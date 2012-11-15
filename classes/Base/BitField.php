@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-10-22
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_BitField extends Kohana_Object implements Countable {
+abstract class Base_BitField extends Core_Object implements Countable {
 
 	/**
 	 * This variable stores the maximum size/boundary of the bit-field.
@@ -83,12 +83,12 @@ abstract class Base_BitField extends Kohana_Object implements Countable {
 	 * @access public
 	 * @param string $field                         the name of the field
 	 * @return integer                              the value of the field
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($field) {
 		if ( ! array_key_exists($field, $this->values)) {
-			throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field));
+			throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field));
 		}
 		return $this->values[$field];
 	}
@@ -99,12 +99,12 @@ abstract class Base_BitField extends Kohana_Object implements Countable {
 	 * @access public
 	 * @param string $field                         the name of the field
 	 * @param mixed $value                          the value of the field
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($field, $value) {
 		if ( ! array_key_exists($field, $this->values)) {
-			throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field, ':value' => $value));
+			throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field, ':value' => $value));
 		}
 		$this->values[$field] = bindec(static::unpack($value, $this->boundary));
 	}
@@ -214,7 +214,7 @@ abstract class Base_BitField extends Kohana_Object implements Countable {
 			$start += $bits;
 		}
 		if ($start > $this->boundary) {
-			throw new Kohana_Exception('Message: Invalid bit-field pattern. Reason: Pattern exceeds the bit boundary of :boundary.', array(':pattern' => $this->pattern, ':boundary' => $this->boundary));
+			throw new Throwable_Exception('Message: Invalid bit-field pattern. Reason: Pattern exceeds the bit boundary of :boundary.', array(':pattern' => $this->pattern, ':boundary' => $this->boundary));
 		}
 	}
 

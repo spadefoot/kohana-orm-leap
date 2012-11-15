@@ -20,7 +20,7 @@ Change Log for LEAP ORM
 * Replace && and || with AND and OR, respectfully.
 * Added adaptors and aliases to Base_DB_ORM_Model::as_array().
 * Added create and update methods to Base_DB_ORM_Model.
-* Replace spl_object_hash() with Kohana_Object::__hashCode().
+* Replace spl_object_hash() with Core_Object::__hashCode().
 * Base_DB_ORM_Field_Blob now uses the Data class.
 * Renamed DB_ORM_Field_Adaptor_Array to DB_ORM_Field_Adaptor_List.
 * Renamed some variables.

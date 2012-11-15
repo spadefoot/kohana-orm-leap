@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-10-08
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Insert_Proxy extends Kohana_Object implements DB_SQL_Statement {
+abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_Statement {
 
 	/**
 	 * This variable stores a reference to the data source.

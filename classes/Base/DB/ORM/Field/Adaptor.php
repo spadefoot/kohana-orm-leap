@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-01-20
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor extends Kohana_Object {
+abstract class Base_DB_ORM_Field_Adaptor extends Core_Object {
 
 	/**
 	 * This variable stores a reference to the implementing model.
@@ -49,12 +49,12 @@ abstract class Base_DB_ORM_Field_Adaptor extends Kohana_Object {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param string $field                         the name of field in the database table
-	 * @throws Kohana_InvalidArgument_Exception     indicates that an invalid field name
+	 * @throws Throwable_InvalidArgument_Exception     indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, $field) {
 		if ( ! is_string($field) OR $model->is_adaptor($field) OR $model->is_alias($field) OR ! $model->is_field($field) OR $model->is_relation($field)) {
-			throw new Kohana_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
+			throw new Throwable_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
 		}
 		$this->model = $model;
 		$this->metadata['field'] = $field;
@@ -66,7 +66,7 @@ abstract class Base_DB_ORM_Field_Adaptor extends Kohana_Object {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public abstract function __get($key);
@@ -77,7 +77,7 @@ abstract class Base_DB_ORM_Field_Adaptor extends Kohana_Object {
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public abstract function __set($key, $value);

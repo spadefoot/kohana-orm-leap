@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category CSV
- * @version 2012-08-21
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
 
 	/**
 	 * This variable stores the file name for the CSV, which will only be used
@@ -131,7 +131,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 * @access public
 	 * @param string $key                         	the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -151,7 +151,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 			case 'eol':
 				return $this->eol;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 			break;
 		}
 	}
@@ -162,7 +162,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 * @access public
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Kohana_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -187,7 +187,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 				$this->eol = (is_string($value)) ? $value : chr(10);
 			break;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}
@@ -378,7 +378,7 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 */
 	public function offsetSet($offset, $value) {
 		if ( ! is_array($value)) {
-			throw new Kohana_InvalidArgument_Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
+			throw new Throwable_InvalidArgument_Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
 		}
 		else if ($offset === NULL) {
 			$this->data[] = $value;
@@ -393,10 +393,10 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 *
 	 * @access public
 	 * @param integer $offset                       the offset to be unset
-	 * @throws Kohana_UnimplementedMethod_Exception indicates the result cannot be modified
+	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		throw new Kohana_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: CSV class cannot be modified.', array());
+		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: CSV class cannot be modified.', array());
 	}
 
 	/**
@@ -423,12 +423,12 @@ abstract class Base_CSV extends Kohana_Object implements ArrayAccess, Countable,
 	 *
 	 * @access public
 	 * @param integer $position                     the seeked position
-	 * @throws Kohana_OutOfBounds_Exception         indicates that the seeked position
+	 * @throws Throwable_OutOfBounds_Exception         indicates that the seeked position
 	 *                                              is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->data[$position])) {
-			throw new Kohana_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->count()));
+			throw new Throwable_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->count()));
 		}
 		$this->position = $position;
 	}

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -33,7 +33,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 */
 	public function open() {
@@ -47,10 +47,10 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$database = $this->data_source->database;
 			$this->resource_id = @mysqli_connect($host, $username, $password, $database);
 			if ($this->resource_id === FALSE) {
-				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => mysqli_connect_error()));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => mysqli_connect_error()));
 			}
 			if ( ! empty($this->data_source->charset) AND ! @mysqli_set_charset($this->resource_id, strtolower($this->data_source->charset))) {
-				throw new Kohana_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 			}
 		}
 	}
@@ -59,17 +59,17 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.autocommit.php
 	 */
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
 		$command_id = @mysqli_autocommit($this->resource_id, FALSE);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 		}
 	}
 
@@ -81,11 +81,11 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
@@ -94,7 +94,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 		}
 		$command_id = @mysqli_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 		}
 		$records = array();
 		$size = 0;
@@ -114,15 +114,15 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command_id = @mysqli_query($this->resource_id, $sql);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 		}
 		$this->sql = $sql;
 		@mysqli_free_result($command_id);
@@ -133,15 +133,15 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @return integer                          the last insert id
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		$insert_id = @mysqli_insert_id($this->resource_id);
 		if ($insert_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 		}
 		return $insert_id;
 	}
@@ -150,17 +150,17 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.rollback.php
 	 */
 	public function rollback() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$command_id = @mysqli_rollback($this->resource_id);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 		}
 		@mysqli_autocommit($this->resource_id, TRUE);
 	}
@@ -169,17 +169,17 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.commit.php
 	 */
 	public function commit() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
 		$command_id = @mysqli_commit($this->resource_id);
 		if ($command_id === FALSE) {
-			throw new Kohana_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
 		}
 		@mysqli_autocommit($this->resource_id, TRUE);
 	}
@@ -191,12 +191,12 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception             indicates that no connection could
 	 *                                          be found
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		$string = "'" . mysqli_real_escape_string($this->resource_id, $string) . "'";

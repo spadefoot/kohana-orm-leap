@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_Statement {
+abstract class Base_DB_ORM_Update_Proxy extends Core_Object implements DB_SQL_Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
@@ -79,7 +79,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 	 * @param string $function                      the name of the called function
 	 * @param array $arguments                      an array with the parameters passed
 	 * @return mixed                                the result of the called function
-	 * @throws Kohana_UnimplementedMethod_Exception indicates that the called function is
+	 * @throws Throwable_UnimplementedMethod_Exception indicates that the called function is
 	 *                                              inaccessible
 	 */
 	public function __call($function, $arguments) {
@@ -92,7 +92,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Kohana_Object implements DB_SQL_
 				return $result;
 			}
 		}
-		throw new Kohana_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
+		throw new Throwable_UnimplementedMethod_Exception('Message: Call to undefined member function. Reason: Function :function has not been defined in class :class.', array(':class' => get_class($this->extension), ':function' => $function, ':arguments' => $arguments));
 	}
 
 	/**

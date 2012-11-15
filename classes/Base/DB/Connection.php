@@ -21,11 +21,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-16
+ * @version 2012-11-14
  *
  * @abstract
  */
-abstract class Base_DB_Connection extends Kohana_Object {
+abstract class Base_DB_Connection extends Core_Object {
 
 	/**
 	 * This variable stores the connection configurations.
@@ -78,7 +78,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access public
 	 * @param string $key							the name of the property
 	 * @return mixed								the value of the property
-	 * @throws Kohana_InvalidProperty_Exception		indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception		indicates that the specified property is
 	 * 												either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -86,7 +86,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 			case 'data_source':
 				return new $this->data_source;
 			default:
-				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 		}
 	}
 
@@ -94,7 +94,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Kohana_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 */
 	public abstract function open();
@@ -132,7 +132,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public abstract function begin_transaction();
 
@@ -145,7 +145,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @param string $sql                       the SQL statement
 	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public abstract function query($sql, $type = 'array');
 
@@ -156,7 +156,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $sql						the SQL statement
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public abstract function execute($sql);
 
@@ -166,7 +166,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @access public
 	 * @abstract
 	 * @return integer                          the last insert id
-	 * @throws Kohana_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception             indicates that the query failed
 	 */
 	public abstract function get_last_insert_id();
 
@@ -175,12 +175,12 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 *
 	 * @access public
 	 * @return resource                         the resource identifier
-	 * @throws Kohana_Database_Exception        indicates that no connection has been
+	 * @throws Throwable_Database_Exception        indicates that no connection has been
 	 *                                          established
 	 */
 	public function &get_resource_id() {
 		if ( ! $this->is_connected()) {
-			throw new Kohana_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
+			throw new Throwable_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
 		}
 		return $this->resource_id;
 	}
@@ -200,7 +200,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public abstract function rollback();
 
@@ -209,7 +209,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Kohana_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */
 	public abstract function commit();
 
@@ -221,7 +221,7 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Kohana_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception             indicates that no connection could
 	 *                                          be found
 	 */
 	public abstract function quote($string, $escape = NULL);
