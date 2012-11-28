@@ -1,5 +1,9 @@
 Change Log for LEAP ORM
 
+2012-11-28
+* Added role support to the Firebird driver classes (Issue #74)
+* Reverting a bad refactoring to the Base_DB_Oracle_Connection_PDO::open() (Issue #74). 
+
 2012-11-14
 * Updated 3.3 branch with 3.2 changes.
 * Moved and renamed exception classes.

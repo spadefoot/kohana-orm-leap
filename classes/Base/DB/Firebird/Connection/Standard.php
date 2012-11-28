@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-11-14
+ * @version 2012-11-28
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -63,17 +63,16 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$connection_string .= ':' . $this->data_source->database;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
-			if ( ! empty($this->data_source->charset)) {
-				$charset = strtoupper($this->data_source->charset);
-				$this->resource_id = ($this->data_source->is_persistent())
-					? @ibase_pconnect($connection_string, $username, $password, $charset)
-					: @ibase_connect($connection_string, $username, $password, $charset);
+			$charset = $this->data_source->charset;
+			if ( ! empty($charset)) {
+				$charset = strtoupper($charset);
 			}
-			else {
-				$this->resource_id = ($this->data_source->is_persistent())
-					? @ibase_pconnect($connection_string, $username, $password)
-					: @ibase_connect($connection_string, $username, $password);
-			}
+			$role = ( ! empty($this->data_source->role))
+				? $this->data_source->role
+				: NULL;
+			$this->resource_id = ($this->data_source->is_persistent())
+				? @ibase_pconnect($connection_string, $username, $password, $charset, 0, 3, $role)
+				: @ibase_connect($connection_string, $username, $password, $charset, 0, 3, $role);
 			if ($this->resource_id === FALSE) {
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => ibase_errmsg()));
 			}

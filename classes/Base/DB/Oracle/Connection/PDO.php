@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-11-14
+ * @version 2012-11-28
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -37,21 +37,27 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-oci.php
+	 * @see http://www.php.net/manual/en/ref.pdo-oci.connection.php
 	 * @see http://docs.oracle.com/cd/B10501_01/server.920/a96529/ch2.htm#100150
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
 			try {
-				$connection_string  = 'oci:';
-				$connection_string .= 'dbname=//'. $this->data_source->host;
-				$port = $this->data_source->port; // default port is 1521
-				if ( ! empty($port)) {
-					$connection_string .= ':' . $port;
+				$connection_string = 'oci:';
+				if ( ! empty($this->data_source->host)) {
+					$connection_string .= 'dbname=//' . $this->data_source->host;
+					$port = $this->data_source->port; // default port is 1521
+					if ( ! empty($port)) {
+						$connection_string .= ':' . $port;
+					}
+					$connection_string .= '/' . $this->data_source->database;
 				}
-				$connection_string .= '/' . $this->data_source->database;
-				//if ( ! empty($this->data_source->charset)) {
-				//    $connection_string .= ';charset=' . $this->data_source->charset;
-				//}
+				else {
+					$connection_string .= 'dbname='. $this->data_source->database;
+				}
+				if ( ! empty($this->data_source->charset)) {
+				    $connection_string .= ';charset=' . $this->data_source->charset;
+				}
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;

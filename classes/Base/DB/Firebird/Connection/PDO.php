@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-11-14
+ * @version 2012-11-28
  *
  * @see http://www.php.net/manual/en/ref.pdo-firebird.php
  *
@@ -53,6 +53,9 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 				}
 				if ( ! empty($this->data_source->charset)) {
 					$connection_string .= ';charset=' . $this->data_source->charset;
+				}
+				if ( ! empty($this->data_source->role)) {
+					$connection_string .= ';role=' . $this->data_source->role;
 				}
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
