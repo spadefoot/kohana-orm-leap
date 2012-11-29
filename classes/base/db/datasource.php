@@ -91,6 +91,7 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 			case 'port':
 			case 'type':
 			case 'username':
+			case 'role':
 				return $this->settings[$name];
 			break;
 			default:
@@ -168,6 +169,10 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 
 		$this->settings['username'] = (isset($settings['connection']['username']))
 			? (string) $settings['connection']['username']
+			: '';
+		
+		$this->settings['role'] = (isset($settings['connection']['role']))
+			? (string) $settings['connection']['role']
 			: '';
 	}
 

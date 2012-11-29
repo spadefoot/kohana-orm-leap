@@ -13,6 +13,7 @@ $config['default'] = array(
 		'database'      => '',          // string
 		'username'      => 'root',      // string
 		'password'      => 'root',      // string
+		'role'          => '',          // string
 	),
 	'caching'       => FALSE,       // boolean
 	'charset'       => 'utf8',      // string
