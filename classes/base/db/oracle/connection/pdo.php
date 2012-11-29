@@ -37,6 +37,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-oci.php
+	 * @see http://www.php.net/manual/en/ref.pdo-oci.connection.php
 	 * @see http://docs.oracle.com/cd/B10501_01/server.920/a96529/ch2.htm#100150
 	 */
 	public function open() {
