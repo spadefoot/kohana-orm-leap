@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2012-11-29
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-	 * @throws Throwable_Validation_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception       indicates that the specified value does
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -83,7 +83,13 @@ abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
 			if ($default !== NULL) {
-				settype($default, $this->metadata['type']);
+				if (is_integer($default)) {
+					$default = date('H:i:s', $default);
+				}
+				else {
+					$date = date_parse( (string) $default);
+					$default = date('H:i:s', mktime($date['hour'], $date['minute'], $date['second'], $date['month'], $date['day'], $date['year']));
+				}
 			}
 			if ( ! $this->validate($default)) {
 				throw new Throwable_Validation_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
@@ -95,20 +101,50 @@ abstract class Base_DB_ORM_Field_Time extends DB_ORM_Field {
 	}
 
 	/**
-	 * This function validates the specified value against any constraints.
+	 * This function sets the value for the specified key.
 	 *
-	 * @access protected
+	 * @access public
 	 * @override
-	 * @param mixed $value                          the value to be validated
-	 * @return boolean                              whether the specified value validates
+	 * @param string $key                           the name of the property
+	 * @param mixed $value                          the value of the property
+	 * @throws Throwable_Validation_Exception       indicates that the specified value does
+	 *                                              not validate
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 *                                              either inaccessible or undefined
 	 */
-	protected function validate($value) {
-		if ($value !== NULL) {
-			if ( ! preg_match('/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $value)) {
-				return FALSE;
-			}
+	public function __set($key, $value) {
+		switch ($key) {
+			case 'value':
+				if ( ! ($value instanceof DB_SQL_Expression)) {
+					if ($value !== NULL) {
+						if (is_integer($value)) {
+							$value = date('H:i:s', $value);
+						}
+						else {
+							$date = date_parse( (string) $value);
+							$value = date('H:i:s', mktime($date['hour'], $date['minute'], $date['second'], $date['month'], $date['day'], $date['year']));
+						}
+						if ( ! $this->validate($value)) {
+							throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+						}
+					}
+					else if ( ! $this->metadata['nullable']) {
+						$value = $this->metadata['default'];
+					}
+				}
+				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
+					throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+				}
+				$this->metadata['modified'] = TRUE;
+				$this->value = $value;
+				break;
+			case 'modified':
+				$this->metadata['modified'] = (bool) $value;
+				break;
+			default:
+				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				break;
 		}
-		return parent::validate($value);
 	}
 
 }
