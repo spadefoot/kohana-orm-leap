@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-11-28
+ * @version 2012-11-29
  *
  * @abstract
  */
@@ -171,8 +171,8 @@ abstract class Base_DB_DataSource extends Core_Object {
 			? (string) $settings['connection']['username']
 			: '';
 
-		$this->settings['role'] = (isset($settings['role']))
-			? (string) $settings['role']
+		$this->settings['role'] = (isset($settings['connection']['role']))
+			? (string) $settings['connection']['role']
 			: '';
 	}
 
