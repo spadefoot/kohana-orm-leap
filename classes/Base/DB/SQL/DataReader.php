@@ -25,7 +25,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_DataReader extends Core_Object {
+abstract class Base_DB_SQL_DataReader extends Core_Object {
 
 	/**
 	 * This variable stores the command reference being utilized.

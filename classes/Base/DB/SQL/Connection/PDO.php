@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
+abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 
 	/**
 	 * This function stores the number of total connections made.
@@ -67,7 +67,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
-	 * @return DB_DataReader                    the data reader
+	 * @return DB_SQL_DataReader                the SQL data reader
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function reader($sql) {

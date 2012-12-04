@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_DataReader_PDO extends DB_DataReader {
+abstract class Base_DB_SQL_DataReader_PDO extends DB_SQL_DataReader {
 
 	/**
 	 * This function initializes the class.

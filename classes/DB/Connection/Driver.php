@@ -17,13 +17,13 @@
  */
 
 /**
- * This class is used to read data from an SQL database.
+ * This class sets forth the functions for a database connection.
  *
  * @package Leap
- * @category SQL
+ * @category Connection
  * @version 2012-12-04
  *
  * @abstract
  */
-abstract class DB_DataReader extends Base_DB_DataReader {}
+abstract class DB_Connection_Driver extends Base_DB_Connection_Driver {}
 ?>

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -116,12 +116,12 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * This function adds an existing connection to the connection pool.
 	 *
 	 * @access public
-	 * @param DB_Connection $connection             the connection to be added
+	 * @param DB_Connection_Driver $connection      the connection to be added
 	 * @return boolean                              whether the connection was added
-	 * @throws Throwable_Database_Exception            indicates that no new connections
+	 * @throws Throwable_Database_Exception         indicates that no new connections
 	 *                                              can be added
 	 */
-	public function add_connection(DB_Connection $connection) {
+	public function add_connection(DB_Connection_Driver $connection) {
 		if ($connection !== NULL) {
 			$connection_id = $connection->__hashCode();
 			if ( ! isset($this->lookup[$connection_id])) {
@@ -156,8 +156,8 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * @access public
 	 * @param DB_DataSource $source                 the data source configurations
 	 * @param boolean $new                          whether to create a new connection
-	 * @return DB_Connection                        the appropriate connection
-	 * @throws Throwable_Database_Exception            indicates that no new connections
+	 * @return DB_Connection_Driver                 the appropriate connection
+	 * @throws Throwable_Database_Exception         indicates that no new connections
 	 *                                              can be added
 	 */
 	public function get_connection($source = 'default', $new = FALSE) {
@@ -191,7 +191,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 		if ($this->count() >= $this->settings['max_size']) {
 			throw new Throwable_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
 		}
-		$connection = DB_Connection::factory($source);
+		$connection = DB_Connection_Driver::factory($source);
 		$connection->open();
 		$connection_id = $connection->__hashCode();
 		$this->pool[$source->id][$connection_id] = $connection;
@@ -204,9 +204,9 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * connection will then be allowed to close via its destructor when completely unset.
 	 *
 	 * @access public
-	 * @param DB_Connection $connection             the connection to be released
+	 * @param DB_Connection_Driver $connection      the connection to be released
 	 */
-	public function release(DB_Connection $connection) {
+	public function release(DB_Connection_Driver $connection) {
 		if ($connection !== NULL) {
 			$connection_id = $connection->__hashCode();
 			if (isset($this->lookup[$connection_id])) {

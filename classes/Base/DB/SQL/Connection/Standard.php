@@ -25,13 +25,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
+abstract class Base_DB_SQL_Connection_Standard extends DB_Connection_Driver {
 
 	/**
 	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
-	 * @return DB_DataReader                    the data reader
+	 * @return DB_SQL_DataReader                the SQL data reader
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function reader($sql) {

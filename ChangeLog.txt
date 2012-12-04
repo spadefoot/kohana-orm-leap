@@ -1,5 +1,9 @@
 Change Log for LEAP ORM
 
+2012-12-04
+* Refactored connection drivers to incorporate the SQL data reader paradigm (Issue #72 & #73).
+* Moved the base connection driver class to a subfolder.
+
 2012-11-28
 * Added role support to the Firebird driver classes (Issue #74)
 * Reverting a bad refactoring to the Base_DB_Oracle_Connection_PDO::open() (Issue #74). 
@@ -136,7 +140,7 @@ Change Log for LEAP ORM
 2012-02-07
 * Fixed a bug in how Oracle escapes strings per ekarlso's request (Issue #18).
 * Improved how strings are escaped.
-* Renamed Base_DB_Connection::escape_string($string) to Base_DB_Connection::quote($string, $like = FALSE).
+* Renamed Base_DB_Connection_Driver::escape_string($string) to Base_DB_Connection_Driver::quote($string, $like = FALSE).
 * Commented out code in schema.php files so that API guide can be generated per nyunyu95's request (Issue #21).
 * Cleaned-up close function in connection classes.
 * Implemented ArrayAccess and SeekableIterator interfaces in Base_CSV.
@@ -250,9 +254,9 @@ Change Log for LEAP ORM
 * Changed fetch_all() to as_array() in Base_DB_ResultSet.
 
 2011-12-12
-* Addressed the loading of field schema over and over again with class serialization in DB_Connection per Crystal's request (Issue #1).
+* Addressed the loading of field schema over and over again with class serialization in DB_Connection_Driver per Crystal's request (Issue #1).
 * Added MySQLi driver classes for MariaDB.
-* Changed $cached_types to $cached_objects in Base_DB_Connection.
+* Changed $cached_types to $cached_objects in Base_DB_Connection_Driver.
 
 2011-12-11
 * Removed is_null() in Base_DB_DataSource::__construct().

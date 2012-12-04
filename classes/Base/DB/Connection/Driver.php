@@ -25,7 +25,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection extends Core_Object {
+abstract class Base_DB_Connection_Driver extends Core_Object {
 
 	/**
 	 * This variable stores the connection configurations.
@@ -78,7 +78,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * @access public
 	 * @param string $key							the name of the property
 	 * @return mixed								the value of the property
-	 * @throws Throwable_InvalidProperty_Exception		indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception	indicates that the specified property is
 	 * 												either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -94,8 +94,8 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 */
 	public abstract function open();
 
@@ -117,7 +117,7 @@ abstract class Base_DB_Connection extends Core_Object {
 				return $results;
 			}
 			else if ($this->data_source->cache->lifetime !== NULL) {
-				$this->cache_key = 'DB_Connection::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
+				$this->cache_key = 'DB_Connection_Driver::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
 				$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
 				if (($results !== NULL) AND ! $this->data_source->cache->force) {
 					return $results;
@@ -132,7 +132,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public abstract function begin_transaction();
 
@@ -141,7 +141,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @return DB_DataReader                    the data reader
+	 * @return DB_SQL_DataReader                the SQL data reader
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public abstract function reader($sql);
@@ -154,7 +154,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * @param string $sql                       the SQL statement
 	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public abstract function query($sql, $type = 'array');
 
@@ -164,7 +164,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public abstract function execute($sql);
 
@@ -174,7 +174,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * @access public
 	 * @abstract
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public abstract function get_last_insert_id();
 
@@ -183,7 +183,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 *
 	 * @access public
 	 * @return resource                         the resource identifier
-	 * @throws Throwable_Database_Exception        indicates that no connection has been
+	 * @throws Throwable_Database_Exception     indicates that no connection has been
 	 *                                          established
 	 */
 	public function &get_resource_id() {
@@ -208,7 +208,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public abstract function rollback();
 
@@ -217,7 +217,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public abstract function commit();
 
@@ -229,7 +229,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception          indicates that no connection could
 	 *                                          be found
 	 */
 	public abstract function quote($string, $escape = NULL);
@@ -260,7 +260,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	 * @access public
 	 * @static
 	 * @param mixed $config                     the data source configurations
-	 * @return DB_Connection                    the database connection
+	 * @return DB_Connection_Driver             the database connection
 	 */
 	public static function factory($config = array()) {
 		$source = new DB_DataSource($config);
