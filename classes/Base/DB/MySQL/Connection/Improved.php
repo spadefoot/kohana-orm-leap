@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -74,8 +74,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
@@ -92,25 +91,21 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @mysqli_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
-		}
+		$reader = new DB_MySQL_DataReader_Improved($this->resource_id, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = mysqli_fetch_assoc($command_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		@mysqli_free_result($command_id);
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement

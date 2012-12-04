@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @abstract
  */
@@ -137,8 +137,17 @@ abstract class Base_DB_Connection extends Core_Object {
 	public abstract function begin_transaction();
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function creates a data reader for query the specified SQL statement.
+	 *
+	 * @access public
+	 * @abstract
+	 * @return DB_DataReader                    the data reader
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 */
+	public abstract function reader($sql);
+
+	/**
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @abstract
@@ -150,8 +159,7 @@ abstract class Base_DB_Connection extends Core_Object {
 	public abstract function query($sql, $type = 'array');
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @abstract
@@ -246,15 +254,6 @@ abstract class Base_DB_Connection extends Core_Object {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This variable stores an array of serialized class objects, which is
-	 * used when type casting a result set.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected static $cached_objects = array();
-
-	/**
 	 * This function returns a connection to the appropriate database based
 	 * on the specified configurations.
 	 *
@@ -268,42 +267,6 @@ abstract class Base_DB_Connection extends Core_Object {
 		$driver = 'DB_' . $source->dialect . '_Connection_' . $source->driver;
 		$connection = new $driver($source);
 		return $connection;
-	}
-
-	/**
-	 * This function type casts an associated array to the declared return type.
-	 *
-	 * @access protected
-	 * @static
-	 * @param string $type						the return type to be used
-	 * @param array $record						the record to be casted
-	 * @return mixed                            the casted record
-	 *
-	 * @see http://www.richardcastera.com/blog/php-convert-array-to-object-with-stdclass
-	 * @see http://codeigniter.com/forums/viewthread/103493/
-	 */
-	protected static function type_cast($type, Array $record) {
-		switch ($type) {
-			case 'array':
-				return $record;
-			break;
-			case 'object':
-				return (object) $record;
-			break;
-			default:
-				if ( ! isset(static::$cached_objects[$type])) {
-					$object = new $type();
-					static::$cached_objects[$type] = serialize($object);
-				}
-				else {
-					$object = unserialize( (string) static::$cached_objects[$type]);
-				}
-				foreach ($record as $key => $value) {
-					$object->{$key} = $value;
-				}
-				return $object;
-			break;
-		}
 	}
 
 }

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -102,17 +102,12 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$this->execution_mode = (PHP_VERSION_ID > 50301)
-			? OCI_NO_AUTO_COMMIT
-			: OCI_DEFAULT;
-		// Use OCI_NO_AUTO_COMMIT for PHP 5.3.1 >
-		// $this->execution_mode = OCI_NO_AUTO_COMMIT;
-		// Use OCI_DEFAULT as the flag for PHP 5.3.1 <=
-		// $this->execution_mode = OCI_DEFAULT;
+			? OCI_NO_AUTO_COMMIT // Use with PHP > 5.3.1
+			: OCI_DEFAULT;       // Use with PHP <= 5.3.1
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
@@ -130,26 +125,21 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @oci_parse($this->resource_id, $sql);
-		if (($command_id === FALSE) OR ! oci_execute($command_id, $this->execution_mode)) {
-			$oci_error = oci_error($command_id);
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
-		}
+		$reader = new DB_Oracle_DataReader_Standard($this->resource_id, $sql, $this->execution_mode);
 		$records = array();
 		$size = 0;
-		while ($record = oci_fetch_assoc($command_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		@oci_free_statement($command_id);
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement

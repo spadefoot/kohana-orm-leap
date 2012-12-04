@@ -73,8 +73,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
@@ -89,8 +88,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -34,7 +34,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://php.net/manual/en/mysqli.persistconns.php
@@ -63,7 +63,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.autocommit.php
 	 */
@@ -78,14 +78,13 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
@@ -96,29 +95,25 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @mysqli_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
-		}
+		$reader = new DB_MariaDB_DataReader_Improved($this->resource_id, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = mysqli_fetch_assoc($command_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		@mysqli_free_result($command_id);
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -137,7 +132,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
@@ -154,7 +149,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.rollback.php
 	 */
@@ -173,7 +168,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.commit.php
 	 */
@@ -195,7 +190,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception          indicates that no connection could
 	 *                                          be found
 	 */
 	public function quote($string, $escape = NULL) {

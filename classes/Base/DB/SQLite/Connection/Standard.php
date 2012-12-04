@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -67,8 +67,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
@@ -85,25 +84,21 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @sqlite_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => sqlite_error_string(sqlite_last_error($this->resource_id))));
-		}
+		$reader = new DB_SQLite_DataReader_Standard($this->resource_id, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = sqlite_fetch_array($command_id, SQLITE_ASSOC)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		$command_id = NULL;
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement

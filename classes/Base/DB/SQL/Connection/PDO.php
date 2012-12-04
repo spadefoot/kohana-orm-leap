@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-08-16
+ * @version 2012-12-04
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -64,14 +64,30 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function creates a data reader for query the specified SQL statement.
+	 *
+	 * @access public
+	 * @return DB_DataReader                    the data reader
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 */
+	public function reader($sql) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+		}
+		$driver = 'DB_' . $source->dialect . '_DataReader_' . $source->driver;
+		$reader = new $driver($this->connection, $sql);
+		$this->sql = $sql;
+		return $reader;
+	}
+
+	/**
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
@@ -82,24 +98,21 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection {
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command = @$this->connection->query($sql);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $this->connection->errorInfo()));
-		}
+		$reader = new DB_MySQL_DataReader_PDO($this->connection, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = $command->fetch(PDO::FETCH_ASSOC)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement

@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-11-28
+ * @version 2012-12-04
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -46,7 +46,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.destructor.de/firebird/charsets.htm
@@ -83,7 +83,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
@@ -96,14 +96,13 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
 	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
@@ -114,35 +113,31 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @ibase_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
-		}
+		$reader = new DB_Firebird_DataReader_Standard($this->resource_id, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = ibase_fetch_assoc($command_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		@ibase_free_result($command_id);
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$stmt = ibase_prepare($this->resource_id, $sql);
+		$stmt = @ibase_prepare($this->resource_id, $sql);
 		$command_id = @ibase_execute($stmt);
 		if ($command_id === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
@@ -155,7 +150,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 *
 	 * @access public
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
 	 * @see http://www.firebirdfaq.org/faq243/
 	 */
@@ -183,7 +178,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function rollback() {
 		if ( ! $this->is_connected()) {
@@ -199,7 +194,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function commit() {
 		if ( ! $this->is_connected()) {

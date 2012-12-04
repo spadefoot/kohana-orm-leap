@@ -21,11 +21,28 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-05-25
+ * @version 2012-12-04
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
+
+	/**
+	 * This function creates a data reader for query the specified SQL statement.
+	 *
+	 * @access public
+	 * @return DB_DataReader                    the data reader
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 */
+	public function reader($sql) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+		}
+		$driver = 'DB_' . $source->dialect . '_DataReader_' . $source->driver;
+		$reader = new $driver($this->resource_id, $sql);
+		$this->sql = $sql;
+		return $reader;
+	}
 
 	/**
 	 * This function escapes a string to be used in an SQL statement.
@@ -34,7 +51,7 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection {
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception          indicates that no connection could
 	 *                                          be found
 	 *
 	 * @license http://codeigniter.com/user_guide/license.html

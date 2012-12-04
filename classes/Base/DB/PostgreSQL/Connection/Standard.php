@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -76,8 +76,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
@@ -97,17 +96,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @pg_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
-		}
+		$reader = new DB_PostgreSQL_DataReader_Standard($this->resource_id, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = pg_fetch_assoc($command_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		@pg_free_result($command_id);
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;

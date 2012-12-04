@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -73,8 +73,7 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will return data
-	 * using the passed string.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
@@ -91,25 +90,21 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$command_id = @mysql_query($sql, $this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => mysql_error($this->resource_id)));
-		}
+		$reader = new DB_MariaDB_DataReader_Standard($this->resource_id, $sql);
 		$records = array();
 		$size = 0;
-		while ($record = mysql_fetch_assoc($command_id)) {
-			$records[] = DB_Connection::type_cast($type, $record);
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
 			$size++;
 		}
-		@mysql_free_result($command_id);
+		$reader->free();
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
 
 	/**
-	 * This function allows for the ability to process a query that will not return
-	 * data using the passed string.
+	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
 	 * @param string $sql						the SQL statement
