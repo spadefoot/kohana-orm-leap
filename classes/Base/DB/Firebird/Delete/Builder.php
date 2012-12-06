@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2011-12-12
+ * @version 2012-12-04
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-delete.html
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_Firebird_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

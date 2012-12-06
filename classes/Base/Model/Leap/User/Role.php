@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-05-15
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -66,6 +66,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * This function returns the data source name.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return string                               the data source name
 	 */
@@ -77,6 +78,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * This function returns the database table's name.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return string                               the database table's name
 	 */
@@ -88,6 +90,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * This function returns the primary key for the database table.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return array                                the primary key
 	 */
@@ -99,6 +102,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * This function returns whether the primary key auto increments.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return boolean                              whether the primary key auto increments
 	 */

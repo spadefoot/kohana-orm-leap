@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-12
+ * @version 2011-12-04
  *
  * @see http://dev.mysql.com/doc/refman/5.0/en/delete.html
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_MariaDB_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

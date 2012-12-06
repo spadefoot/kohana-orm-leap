@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-08-21
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -83,6 +83,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * This function returns the data source name.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return string                               the data source name
 	 */
@@ -94,6 +95,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * This function returns the database table's name.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return string                               the database table's name
 	 */
@@ -105,6 +107,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * This function returns the primary key for the database table.
 	 *
 	 * @access public
+	 * @override
 	 * @static
 	 * @return array                                the primary key
 	 */
@@ -116,6 +119,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * This function saves the record matching using the primary key.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
 	 */

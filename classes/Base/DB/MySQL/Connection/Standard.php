@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 */
@@ -60,6 +61,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function begins a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
@@ -73,6 +75,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
@@ -104,6 +107,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
@@ -123,6 +127,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function returns the last insert id.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                          the last insert id
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
@@ -141,6 +146,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://php.net/manual/en/function.mysql-query.php
@@ -153,6 +159,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function commits a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
@@ -166,6 +173,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
@@ -190,6 +198,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function closes an open connection.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether an open connection was closed
 	 */
 	public function close() {
@@ -206,6 +215,7 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function __destruct() {
 		if (is_resource($this->resource_id)) {

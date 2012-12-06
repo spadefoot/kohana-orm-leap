@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-08-16
+ * @version 2012-12-05
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 * This function combines another SQL statement using the specified operator.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $operator                  the operator to be used to append
 	 *                                          the specified SQL statement
 	 * @param string $statement                 the SQL statement to be appended
@@ -57,6 +58,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

@@ -20,7 +20,8 @@
  * This class indicates that no property with the specified key was found.
  *
  * @package Leap
- * @version 2012-11-14
+ * @category Throwable
+ * @version 2012-12-05
  */
 class Throwable_InvalidProperty_Exception extends Base_Throwable_InvalidProperty_Exception {}
 ?>

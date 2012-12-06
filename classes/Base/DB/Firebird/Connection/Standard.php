@@ -46,6 +46,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
@@ -83,6 +84,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function begins a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function begin_transaction() {
@@ -99,6 +101,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type               		the return type to be used
 	 * @return DB_ResultSet                     the result set
@@ -130,6 +133,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
@@ -149,6 +153,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function returns the last insert id.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                          the last insert id
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
@@ -178,6 +183,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function rollback() {
@@ -194,6 +200,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function commits a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function commit() {
@@ -210,6 +217,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This function closes an open connection.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether an open connection was closed
 	 */
 	public function close() {
@@ -226,6 +234,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function __destruct() {
 		if (is_resource($this->resource_id)) {

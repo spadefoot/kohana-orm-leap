@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-08-21
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -32,6 +32,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * the specified database table/view.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $table					the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet         		an array of fields within the specified
@@ -124,6 +125,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * the specified table.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $table					the table/view to evaluated
 	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
@@ -147,6 +149,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * the database.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet 				an array of tables within the database
 	 *
@@ -177,6 +180,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * the database.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $like                  a like constraint on the query
 	 * @return array 						an array of views within the database
 	 * 
@@ -208,6 +212,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * for the specified SQL data type.
 	 *
 	 * @access protected
+	 * @override
 	 * @param string $type                  the SQL data type
 	 * @return array                        an associated array which describes the properties
 	 *                                      for the specified data type

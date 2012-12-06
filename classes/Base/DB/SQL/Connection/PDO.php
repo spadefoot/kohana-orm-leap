@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -50,7 +50,8 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.begintransaction.php
 	 */
@@ -67,6 +68,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @return DB_SQL_DataReader                the SQL data reader
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
@@ -84,6 +86,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
@@ -98,7 +101,8 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$reader = new DB_MySQL_DataReader_PDO($this->connection, $sql);
+		$driver = 'DB_' . $source->dialect . '_DataReader_' . $source->driver;
+		$reader = new $driver($this->connection, $sql);
 		$records = array();
 		$size = 0;
 		while ($reader->read()) {
@@ -115,8 +119,9 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -133,8 +138,9 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function returns the last insert id.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.lastinsertid.php
 	 */
@@ -154,6 +160,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function is for determining whether a connection is established.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether a connection is established
 	 */
 	public function is_connected() {
@@ -164,7 +171,8 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.rollback.php
 	 */
@@ -181,7 +189,8 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.commit.php
 	 */
@@ -198,10 +207,11 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception          indicates that no connection could
 	 *                                          be found
 	 *
 	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
@@ -224,6 +234,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This function allows for the ability to close the connection that was opened.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether an open connection was closed
 	 */
 	public function close() {
@@ -238,6 +249,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * This destructor will ensure that the connection is closed.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function __destruct() {
 		if ($this->connection !== NULL) {

@@ -490,6 +490,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function returns the total number of tuples found.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                              the total number of tuples found
 	 */
 	public function count() {
@@ -500,6 +501,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function returns the current tuple.
 	 *
 	 * @access public
+	 * @override
 	 * @return array							    the current tuple
 	 */
 	public function current() {
@@ -532,6 +534,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function returns the index to the current tuple.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer							    the index of the current tuple
 	 */
 	public function key() {
@@ -542,6 +545,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function moves forward the index to the next tuple.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function next() {
 		$this->position++;
@@ -551,6 +555,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function determines whether an offset exists.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be evaluated
 	 * @return boolean                              whether the requested offset exists
 	 */
@@ -562,6 +567,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This functions gets value at the specified offset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be fetched
 	 * @return mixed                                the value at the specified offset
 	 */
@@ -573,6 +579,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This functions sets the specified value at the specified offset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be set
 	 * @param mixed $value                          the value to be set
 	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
@@ -585,6 +592,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This functions allows for the specified offset to be unset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be unset
 	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
@@ -596,6 +604,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function returns the current iterator position.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer							the current iterator position
 	 */
 	public function position() {
@@ -606,6 +615,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function rewinds the iterator back to starting position.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function rewind() {
 		$this->position = 0;
@@ -615,8 +625,9 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function sets the position pointer to the seeked position.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $position                     the seeked position
-	 * @throws Throwable_OutOfBounds_Exception         indicates that the seeked position
+	 * @throws Throwable_OutOfBounds_Exception      indicates that the seeked position
 	 *                                              is out of bounds
 	 */
 	public function seek($position) {
@@ -630,7 +641,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function checks if the current iterator position is valid.
 	 *
 	 * @access public
-	 * @return boolean							whether the current iterator position is valid
+	 * @override
+	 * @return boolean							    whether the current iterator position is valid
 	 */
 	public function valid() {
 		return isset($this->tuples[$this->position]);

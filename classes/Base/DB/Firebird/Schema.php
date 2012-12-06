@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-08-21
+ * @version 2012-12-04
  *
  * @abstract
  */
@@ -32,6 +32,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * the specified database table/view.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $table					the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet 				an array of fields within the specified
@@ -276,6 +277,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * the specified table.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $table					the table/view to evaluated
 	 * @return DB_ResultSet 				an array of indexes from the specified
 	 * 										table
@@ -309,6 +311,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * the database.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet 				an array of tables within the database
 	 *
@@ -341,6 +344,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * the database.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet 				an array of views within the database
 	 *

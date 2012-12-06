@@ -33,6 +33,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
@@ -64,6 +65,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function begins a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-autocommit.php
@@ -82,6 +84,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
@@ -113,6 +116,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
@@ -135,6 +139,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function returns the last insert id.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                          the last insert id
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
@@ -156,6 +161,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-rollback.php
@@ -175,6 +181,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function commits a transaction.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-commit.php
@@ -194,6 +201,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
@@ -222,6 +230,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This function closes an open connection.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether an open connection was closed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-close.php
@@ -240,6 +249,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
+	 * @override
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-close.php
 	 */

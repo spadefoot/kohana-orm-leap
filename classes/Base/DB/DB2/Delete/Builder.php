@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2011-12-12
+ * @version 2012-12-04
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000939.htm
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_DB2_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-16
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -106,7 +106,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @param string $value                     the value the column is constrained with
 	 * @param string $connector                 the connector to be used
 	 * @return DB_SQL_Delete_Builder            a reference to the current instance
-	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception          indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
@@ -149,12 +149,12 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
-	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signals whether the
-	 *                                      column will sorted either in ascending or
-	 *                                      descending order
-	 * @param string $nulls                 the weight to be given to null values
-	 * @return DB_SQL_Delete_Builder        a reference to the current instance
+	 * @param string $column                    the column to be sorted
+	 * @param string $ordering                  the ordering token that signals whether the
+	 *                                          column will sorted either in ascending or
+	 *                                          descending order
+	 * @param string $nulls                     the weight to be given to null values
+	 * @return DB_SQL_Delete_Builder            a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->data['order_by'][] = $this->compiler->prepare_ordering($column, $ordering, $nulls);

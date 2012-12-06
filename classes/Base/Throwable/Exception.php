@@ -20,7 +20,8 @@
  * This class acts as the base class for all throwable exceptions.
  *
  * @package Leap
- * @version 2012-11-14
+ * @category Throwable
+ * @version 2012-12-05
  *
  * @abstract
  */

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-28
+ * @version 2012-12-05
  *
  * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/statements_10007.htm#i2067715
  * @see http://psoug.org/reference/update.html
@@ -34,6 +34,7 @@ abstract class Base_DB_Oracle_Update_Builder extends DB_SQL_Update_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

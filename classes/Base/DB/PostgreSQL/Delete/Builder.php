@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2011-12-12
+ * @version 2012-12-05
  *
  * @see http://www.postgresql.org/docs/9.0/static/sql-delete.html
  * @see http://www.pgsql.cz/index.php/PostgreSQL_SQL_Tricks
@@ -36,6 +36,7 @@ abstract class Base_DB_PostgreSQL_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

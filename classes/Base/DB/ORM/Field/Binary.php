@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-	 * @throws Throwable_Validation_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception       indicates that the specified value does
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {

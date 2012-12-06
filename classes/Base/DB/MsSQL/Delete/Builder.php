@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2011-12-12
+ * @version 2012-12-05
  *
  * @see http://msdn.microsoft.com/en-us/library/ms189835.aspx
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_MsSQL_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

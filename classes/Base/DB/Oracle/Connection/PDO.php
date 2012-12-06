@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-11-28
+ * @version 2012-12-05
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 *
@@ -76,6 +77,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
@@ -91,6 +93,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
 	 */

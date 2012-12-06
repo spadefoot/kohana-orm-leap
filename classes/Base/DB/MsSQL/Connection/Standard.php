@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -33,7 +33,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @override
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://stackoverflow.com/questions/1322421/php-sql-server-how-to-set-charset-for-connection
@@ -69,7 +70,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms188929.aspx
 	 */
@@ -81,10 +83,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type 						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
@@ -112,8 +115,9 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -131,8 +135,9 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function returns the last insert id.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
@@ -159,7 +164,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
@@ -169,7 +175,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
 	 */
@@ -181,6 +188,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This function closes an open connection.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether an open connection was closed
 	 */
 	public function close() {
@@ -197,6 +205,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function __destruct() {
 		if (is_resource($this->resource_id)) {

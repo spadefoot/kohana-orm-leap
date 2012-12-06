@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -76,6 +76,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * builder extension.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $function                      the name of the called function
 	 * @param array $arguments                      an array with the parameters passed
 	 * @return mixed                                the result of the called function
@@ -167,6 +168,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated                   whether to add a semi-colon to the end
 	 *                                              of the statement
 	 * @return string                               the SQL statement
@@ -179,6 +181,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * This function returns the raw SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @return string                               the raw SQL statement
 	 */
 	public function __toString() {

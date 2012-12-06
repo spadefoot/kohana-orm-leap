@@ -33,7 +33,7 @@ abstract class Base_DB_ORM_Field_Blob extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-	 * @throws Throwable_Validation_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception       indicates that the specified value does
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -88,9 +88,9 @@ abstract class Base_DB_ORM_Field_Blob extends DB_ORM_Field {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_Validation_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception       indicates that the specified value does
 	 *                                              not validate
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_MySQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
+	 * @override
 	 * @throws Throwable_Database_Exception        indicates that there is problem with
 	 *                                          opening the connection
 	 *

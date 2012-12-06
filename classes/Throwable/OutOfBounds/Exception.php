@@ -20,7 +20,8 @@
  * This class indicates that a value is not a valid key.
  *
  * @package Leap
- * @version 2012-11-14
+ * @category Throwable
+ * @version 2012-12-05
  */
 class Throwable_OutOfBounds_Exception extends Base_Throwable_OutOfBounds_Exception {}
 ?>

@@ -34,6 +34,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * This function initializes the class.
 	 *
 	 * @access public
+	 * @override
 	 * @param mixed $resource                   the resource to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
@@ -55,6 +56,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * This function frees the command reference.
 	 *
 	 * @access public
+	 * @override
 	 *
  	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
@@ -67,6 +69,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * This function advances the reader to the next record.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether another record was fetched
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-fetch-assoc.php

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -81,9 +81,10 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * This function gets the value of the specified field.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $field                         the name of the field
 	 * @return integer                              the value of the field
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($field) {
@@ -97,9 +98,10 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * This function sets the value for the specified field.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $field                         the name of the field
 	 * @param mixed $value                          the value of the field
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($field, $value) {
@@ -114,6 +116,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * like a string, e.g. with PHP's echo and print commands.
 	 *
 	 * @access public
+	 * @override
 	 * @return string                               the value as a binary string
 	 */
 	public function __toString() {
@@ -179,6 +182,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * 32 or 64 bits.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                              the size of the bit-field
 	 */
 	public function count() {

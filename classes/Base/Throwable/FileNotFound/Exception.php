@@ -20,7 +20,8 @@
  * This class indicates that a file could not be found.
  *
  * @package Leap
- * @version 2012-11-14
+ * @category Throwable
+ * @version 2012-12-05
  *
  * @abstract
  */

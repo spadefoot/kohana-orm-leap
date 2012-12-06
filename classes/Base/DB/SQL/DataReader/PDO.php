@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -32,6 +32,7 @@ abstract class Base_DB_SQL_DataReader_PDO extends DB_SQL_DataReader {
 	 * This function initializes the class.
 	 *
 	 * @access public
+	 * @override
 	 * @param mixed $resource                   the resource to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
@@ -49,6 +50,7 @@ abstract class Base_DB_SQL_DataReader_PDO extends DB_SQL_DataReader {
 	 * This function frees the command reference.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function free() {
 		$this->command = NULL;
@@ -59,6 +61,7 @@ abstract class Base_DB_SQL_DataReader_PDO extends DB_SQL_DataReader {
 	 * This function advances the reader to the next record.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                          whether another record was fetched
 	 */
 	public function read() {

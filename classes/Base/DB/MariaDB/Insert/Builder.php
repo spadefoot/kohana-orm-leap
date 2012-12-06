@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-10-10
+ * @version 2012-12-04
  *
  * @see http://dev.mysql.com/doc/refman/5.5/en/insert.html
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_MariaDB_Insert_Builder extends DB_SQL_Insert_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

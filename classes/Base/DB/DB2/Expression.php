@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-11-14
+ * @version 2012-12-04
  *
  * @abstract
  */
@@ -58,6 +58,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function initializes the class with the specified data source.
 	 *
 	 * @access public
+	 * @override
 	 * @param mixed $source                     the data source to be used
 	 */
 	public function __construct($source) {
@@ -68,6 +69,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as an alias.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
@@ -86,6 +88,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a boolean.
 	 *
 	 * @access public
+	 * @override
 	 * @param mixed $expr                       the expression to be prepared
 	 * @return boolean                          the prepared boolean value
 	 */
@@ -97,6 +100,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a connector.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */
@@ -117,6 +121,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as an identifier column.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
@@ -152,6 +157,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a join type.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
@@ -182,6 +188,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a natural number.
 	 *
 	 * @access public
+	 * @override
 	 * @param mixed $expr                       the expression to be prepared
 	 * @return integer                          the prepared natural
 	 */
@@ -193,6 +200,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a operator.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
@@ -246,6 +254,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepare the specified expression as a ordering token.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $column                    the column to be sorted
 	 * @param string $ordering                  the ordering token that signals whether the
 	 *                                          column will sorted either in ascending or
@@ -283,6 +292,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a parenthesis.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */
@@ -302,6 +312,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a value.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @param char $escape                      the escape character
 	 * @return string                           the prepared expression
@@ -364,6 +375,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * This function prepares the specified expression as a wildcard.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 */

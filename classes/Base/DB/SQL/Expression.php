@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -122,6 +122,7 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 	 * This function returns the raw SQL expression.
 	 *
 	 * @access public
+	 * @override
 	 * @return string                               the raw SQL expression
 	 */
 	public function __toString() {

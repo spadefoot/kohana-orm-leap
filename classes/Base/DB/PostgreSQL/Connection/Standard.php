@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -33,7 +33,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @override
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 * 
 	 * @see http://www.php.net/manual/en/function.pg-connect.php
@@ -67,7 +68,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
 	 * @see http://www.postgresql.org/docs/8.3/static/sql-start-transaction.html
 	 */
@@ -79,10 +81,11 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						the SQL statement
 	 * @param string $type						the return type to be used
 	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-query.php
 	 * @see http://www.php.net/manual/en/function.pg-last-error.php
@@ -110,15 +113,16 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	}
 
 	/**
-	* This function allows for the ability to process a query that will not return
-	* data using the passed string.
-	*
-	* @access public
-	* @param string $sql						the SQL statement
-	* @throws Throwable_SQL_Exception              indicates that the executed statement failed
-	*
-	* @see http://www.php.net/manual/en/function.pg-insert.php
-	*/
+	 * This function allows for the ability to process a query that will not return
+	 * data using the passed string.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $sql                      the SQL statement
+	 * @throws Throwable_SQL_Exception         indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/function.pg-insert.php
+	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
@@ -135,8 +139,9 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function returns the last insert id.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
 	 * @see https://github.com/spadefoot/kohana-orm-leap/issues/44
@@ -177,7 +182,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
@@ -187,7 +193,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function commits a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @override
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
@@ -197,10 +204,11 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception          indicates that no connection could
 	 *                                          be found
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-escape-string.php
@@ -223,6 +231,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This function closes an open connection.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean                           whether an open connection was closed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-close.php
@@ -241,6 +250,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
+	 * @override
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-close.php
 	 */

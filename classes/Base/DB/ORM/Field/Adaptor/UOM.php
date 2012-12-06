@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -33,9 +33,9 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
-	 * @throws Throwable_Exception                     indicates that error occurred when loading
+	 * @throws Throwable_Exception                  indicates that error occurred when loading
 	 *                                              a configuration
-	 * @throws Throwable_InvalidArgument_Exception     indicates that an invalid field name
+	 * @throws Throwable_InvalidArgument_Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -67,7 +67,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -93,7 +93,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {

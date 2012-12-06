@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-01-28
+ * @version 2012-12-05
  *
  * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/statements_8005.htm
  * @see http://download.oracle.com/docs/cd/B12037_01/appdev.101/b10807/13_elems014.htm
@@ -34,6 +34,7 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

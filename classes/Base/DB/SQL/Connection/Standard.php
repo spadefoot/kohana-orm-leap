@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -31,6 +31,7 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection_Driver {
 	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @return DB_SQL_DataReader                the SQL data reader
 	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
@@ -48,6 +49,7 @@ abstract class Base_DB_SQL_Connection_Standard extends DB_Connection_Driver {
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string

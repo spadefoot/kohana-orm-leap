@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-08-16
+ * @version 2012-12-04
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
@@ -34,6 +34,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

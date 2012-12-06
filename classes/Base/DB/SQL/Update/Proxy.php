@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -152,6 +152,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core_Object implements DB_SQL_St
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
@@ -164,7 +165,8 @@ abstract class Base_DB_SQL_Update_Proxy extends Core_Object implements DB_SQL_St
 	 * This function returns the raw SQL statement.
 	 *
 	 * @access public
-	 * @return string                               the raw SQL statement
+	 * @override
+	 * @return string                       the raw SQL statement
 	 */
 	public function __toString() {
 		return $this->builder->statement();

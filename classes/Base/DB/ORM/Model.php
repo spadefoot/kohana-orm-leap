@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -81,6 +81,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * This function returns whether a property is set.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $name                          the name of the property
 	 * @return boolean								whether the property is set
 	 */
@@ -92,9 +93,10 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
@@ -119,9 +121,10 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $name                          the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($name, $value) {
@@ -197,7 +200,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * @access public
 	 * @param boolean $reset                        whether to reset each column's value back
 	 *                                              to its original value
-	 * @throws Throwable_Marshalling_Exception         indicates that the record could not be
+	 * @throws Throwable_Marshalling_Exception      indicates that the record could not be
 	 *                                              deleted
 	 */
 	public function delete($reset = FALSE) {

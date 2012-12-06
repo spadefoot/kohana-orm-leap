@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category CSV
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -129,6 +129,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function gets the value of the specified property.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                         	the name of the property
 	 * @return mixed                                the value of the property
 	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
@@ -160,6 +161,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
 	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
@@ -228,6 +230,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function returns a count of the number of rows in the data set.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                              the number of rows
 	 */
 	public function count() {
@@ -321,6 +324,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function returns the current record.
 	 *
 	 * @access public
+	 * @override
 	 * @return mixed						      the current record
 	 */
 	public function current() {
@@ -331,6 +335,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function returns the position to the current record.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer					        the position of the current record
 	 */
 	public function key() {
@@ -342,6 +347,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * when necessary.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function next() {
 		$this->position++;
@@ -351,6 +357,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function determines whether an offset exists.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be evaluated
 	 * @return boolean                              whether the requested offset exists
 	 */
@@ -362,6 +369,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This functions gets value at the specified offset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be fetched
 	 * @return mixed                                the value at the specified offset
 	 */
@@ -373,6 +381,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This functions sets the specified value at the specified offset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be set
 	 * @param mixed $value                          the value to be set
 	 */
@@ -392,6 +401,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This functions allows for the specified offset to be unset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be unset
 	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
@@ -403,6 +413,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function returns the current iterator position.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer					        the current iterator position
 	 */
 	public function position() {
@@ -413,6 +424,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function rewinds the iterator back to starting position.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function rewind() {
 		$this->position = 0;
@@ -422,6 +434,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function sets the position pointer to the seeked position.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $position                     the seeked position
 	 * @throws Throwable_OutOfBounds_Exception         indicates that the seeked position
 	 *                                              is out of bounds
@@ -437,6 +450,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function checks if the current iterator position is valid.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean					        whether the current iterator position is valid
 	 */
 	public function valid() {
@@ -448,6 +462,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * the object is treated like a string, e.g. with PHP's echo and print commands.
 	 *
 	 * @access public
+	 * @override
 	 * @return string                               the string of imploded data
 	 */
 	public function __toString() {

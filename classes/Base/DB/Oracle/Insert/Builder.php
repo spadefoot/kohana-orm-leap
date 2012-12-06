@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-10-10
+ * @version 2012-12-05
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/appdev.101/b10807/13_elems025.htm
  *
@@ -33,6 +33,7 @@ abstract class Base_DB_Oracle_Insert_Builder extends DB_SQL_Insert_Builder {
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement

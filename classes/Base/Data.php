@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -85,6 +85,7 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 * This function returns the data as a hexadecimal.
 	 *
 	 * @access public
+	 * @override
 	 * @return string							the data as a hexadecimal
 	 */
 	public function __toString() {
@@ -137,6 +138,7 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 * This function return the length of the data as a byte string.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer							the length of the data as a byte
 	 *											string
 	 */

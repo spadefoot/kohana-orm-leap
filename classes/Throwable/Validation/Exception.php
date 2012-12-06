@@ -20,7 +20,8 @@
  * This class indicates that bad data was discovered.
  *
  * @package Leap
- * @version 2012-11-14
+ * @category Throwable
+ * @version 2012-12-05
  */
 class Throwable_Validation_Exception extends Base_Throwable_Validation_Exception {}
 ?>

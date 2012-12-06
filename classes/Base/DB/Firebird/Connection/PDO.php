@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-11-28
+ * @version 2012-12-04
  *
  * @see http://www.php.net/manual/en/ref.pdo-firebird.php
  *
@@ -33,7 +33,8 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @override
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-firebird.php

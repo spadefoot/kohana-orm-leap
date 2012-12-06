@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @see http://www.php.net/manual/en/ref.pdo-pgsql.connection.php
  *
@@ -33,7 +33,8 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @override
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-pgsql.connection.php
