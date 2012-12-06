@@ -105,7 +105,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This constructor creates an instance of this class.
 	 *
 	 * @access public
-	 * @param array $config                         the configuration array
+	 * @param array $config                             the configuration array
 	 */
 	public function __construct(Array $config = array()) {
 		$this->file_name = (isset($config['file_name']) AND is_string($config['file_name'])) ? $config['file_name'] : '';
@@ -130,10 +130,10 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param string $key                         	the name of the property
-	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
-	 *                                              either inaccessible or undefined
+	 * @param string $key                               the name of the property
+	 * @return mixed                                    the value of the property
+	 * @throws Throwable_InvalidProperty_Exception      indicates that the specified property is
+	 *                                                  either inaccessible or undefined
 	 */
 	public function __get($key) {
 		switch ($key) {
@@ -162,10 +162,10 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param string $key                           the name of the property
-	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
-	 *                                              either inaccessible or undefined
+	 * @param string $key                               the name of the property
+	 * @param mixed $value                              the value of the property
+	 * @throws Throwable_InvalidProperty_Exception      indicates that the specified property is
+	 *                                                  either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
 		switch ($key) {
@@ -198,7 +198,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function adds a row to the data array.
 	 *
 	 * @access public
-	 * @param array $row                            the row to be appended
+	 * @param array $row                                the row to be appended
 	 */
 	public function add_row(Array $row) {
 		if ( ! empty($row)) {
@@ -210,7 +210,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function returns the contents as an array.
 	 *
 	 * @access public
-	 * @return array                                an array of the contents
+	 * @return array                                    an array of the contents
 	 */
 	 public function as_array() {
 		 return $this->data;
@@ -231,7 +231,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                              the number of rows
+	 * @return integer                                  the number of rows
 	 */
 	public function count() {
 		return count($this->data);
@@ -241,7 +241,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function checks whether the data array is empty.
 	 *
 	 * @access public
-	 * @return boolean                              whether the data array is empty
+	 * @return boolean                                  whether the data array is empty
 	 */
 	public function is_empty() {
 		return empty($this->data);
@@ -251,8 +251,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function outputs the CVS file.
 	 *
 	 * @access public
-	 * @param boolean $as_file                      whether to output the data as a file
-	 *                                              or just echo it
+	 * @param boolean $as_file                          whether to output the data as a file
+	 *                                                  or just echo it
 	 *
 	 * @see http://www.rfc-editor.org/rfc/rfc4180.txt
 	 */
@@ -278,7 +278,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function renders the data as a string.
 	 *
 	 * @access public
-	 * @return string                               the string of imploded data
+	 * @return string                                   the string of imploded data
 	 */
 	public function render() {
 		$buffer = '';
@@ -306,8 +306,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * This function saves the CSV file to disk.
 	 *
 	 * @access public
-	 * @param string $file_name                     the URI for where the CSV file will be stored
-	 * @return boolean                              whether the CSV file was saved
+	 * @param string $file_name                         the URI for where the CSV file will be stored
+	 * @return boolean                                  whether the CSV file was saved
 	 */
 	public function save($file_name = NULL) {
 		if ($file_name !== NULL) {
@@ -325,7 +325,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @return mixed						      the current record
+	 * @return mixed                                    the current record
 	 */
 	public function current() {
 		return $this->data[$this->position];
@@ -336,7 +336,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @return integer					        the position of the current record
+	 * @return integer                                  the position of the current record
 	 */
 	public function key() {
 		return $this->position;
@@ -358,8 +358,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be evaluated
-	 * @return boolean                              whether the requested offset exists
+	 * @param integer $offset                           the offset to be evaluated
+	 * @return boolean                                  whether the requested offset exists
 	 */
 	public function offsetExists($offset) {
 		return isset($this->data[$offset]);
@@ -370,8 +370,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be fetched
-	 * @return mixed                                the value at the specified offset
+	 * @param integer $offset                           the offset to be fetched
+	 * @return mixed                                    the value at the specified offset
 	 */
 	public function offsetGet($offset) {
 		return isset($this->data[$offset]) ? $this->data[$offset] : NULL;
@@ -382,8 +382,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be set
-	 * @param mixed $value                          the value to be set
+	 * @param integer $offset                           the offset to be set
+	 * @param mixed $value                              the value to be set
 	 */
 	public function offsetSet($offset, $value) {
 		if ( ! is_array($value)) {
@@ -402,8 +402,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be unset
-	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
+	 * @param integer $offset                           the offset to be unset
+	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
 		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: CSV class cannot be modified.', array());
@@ -414,7 +414,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @return integer					        the current iterator position
+	 * @return integer                                  the current iterator position
 	 */
 	public function position() {
 		return $this->position;
@@ -435,9 +435,9 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $position                     the seeked position
-	 * @throws Throwable_OutOfBounds_Exception         indicates that the seeked position
-	 *                                              is out of bounds
+	 * @param integer $position                         the seeked position
+	 * @throws Throwable_OutOfBounds_Exception          indicates that the seeked position
+	 *                                                  is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->data[$position])) {
@@ -451,7 +451,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean					        whether the current iterator position is valid
+	 * @return boolean                                  whether the current iterator position is valid
 	 */
 	public function valid() {
 		return isset($this->data[$this->position]);
@@ -463,7 +463,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @override
-	 * @return string                               the string of imploded data
+	 * @return string                                   the string of imploded data
 	 */
 	public function __toString() {
 		return $this->render();
@@ -474,8 +474,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @static
-	 * @param array $config                         the configuration array
-	 * @return CSV                                  an instance of the CSV class
+	 * @param array $config                             the configuration array
+	 * @return CSV                                      an instance of the CSV class
 	 */
 	public static function factory(Array $config = array()) {
 		return new CSV($config);
@@ -486,9 +486,9 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access public
 	 * @static
-	 * @param array $config                         the configuration array
-	 * @return CSV                                  an instance of the CSV class containing
-	 *                                              the contents of the file.
+	 * @param array $config                             the configuration array
+	 * @return CSV                                      an instance of the CSV class containing
+	 *                                                  the contents of the file.
 	 *
 	 * @see http://www.php.net/manual/en/function.fgetcsv.php
 	 */
@@ -532,8 +532,8 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 *
 	 * @access private
 	 * @static
-	 * @param array $row                            the row to be imploded
-	 * @return string                               the string of the imploded row
+	 * @param array $row                                the row to be imploded
+	 * @return string                                   the string of the imploded row
 	 */
 	protected function implode($row) {
 		$buffer = '';

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -135,6 +135,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function returns the total number of records contained in result set.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                              the total number of records
 	 */
 	public function count() {
@@ -145,6 +146,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function returns the current record.
 	 *
 	 * @access public
+	 * @override
 	 * @return mixed						        the current record
 	 */
 	public function current() {
@@ -190,6 +192,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *     // Gets the value of "id" from the current record
 	 *     $id = $results->get('id');
 	 *
+	 * @access public
 	 * @param string $name                          the name of the column
 	 * @param mixed $default                        the default value should the column
 	 *                                              does not exist
@@ -228,6 +231,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function returns the position to the current record.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer					            the position of the current record
 	 */
 	public function key() {
@@ -239,6 +243,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * when necessary.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function next() {
 		$this->position++;
@@ -248,6 +253,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function determines whether an offset exists.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be evaluated
 	 * @return boolean                              whether the requested offset exists
 	 */
@@ -259,6 +265,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This functions gets value at the specified offset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be fetched
 	 * @return mixed                                the value at the specified offset
 	 */
@@ -270,6 +277,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This functions sets the specified value at the specified offset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be set
 	 * @param mixed $value                          the value to be set
 	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
@@ -282,6 +290,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This functions allows for the specified offset to be unset.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $offset                       the offset to be unset
 	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
 	 */
@@ -293,6 +302,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function returns the current iterator position.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer					            the current iterator position
 	 */
 	public function position() {
@@ -303,6 +313,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function rewinds the iterator back to starting position.
 	 *
 	 * @access public
+	 * @override
 	 */
 	public function rewind() {
 		$this->position = 0;
@@ -312,8 +323,9 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function sets the position pointer to the seeked position.
 	 *
 	 * @access public
+	 * @override
 	 * @param integer $position                     the seeked position
-	 * @throws Throwable_OutOfBounds_Exception         indicates that the seeked position
+	 * @throws Throwable_OutOfBounds_Exception      indicates that the seeked position
 	 *                                              is out of bounds
 	 */
 	public function seek($position) {
@@ -327,6 +339,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function checks if the current iterator position is valid.
 	 *
 	 * @access public
+	 * @override
 	 * @return boolean					            whether the current iterator position is valid
 	 */
 	public function valid() {

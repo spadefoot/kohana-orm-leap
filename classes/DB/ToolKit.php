@@ -21,8 +21,8 @@
  * data is stored in a database.
  *
  * @package Leap
- * @category Connection
- * @version 2011-12-04
+ * @category ToolKit
+ * @version 2012-12-05
  */
 class DB_ToolKit extends Base_DB_ToolKit {}
 ?>

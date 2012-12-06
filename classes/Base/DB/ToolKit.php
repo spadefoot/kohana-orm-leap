@@ -21,8 +21,8 @@
  * data is stored in a database.
  *
  * @package Leap
- * @category Connection
- * @version 2012-11-14
+ * @category ToolKit
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -31,8 +31,10 @@ abstract class Base_DB_ToolKit extends Core_Object {
 	/**
 	 * This function converts a sting to a slug that can be used in a URL.
 	 *
-	 * @param string $value
-	 * @return string
+	 * @access public
+	 * @static
+	 * @param string $value                             the value to be processed
+	 * @return string                                   the slug
 	 *
 	 * @see http://www.finalwebsites.com/forums/topic/convert-string-to-slug
 	 * @see http://snipplr.com/view/2809/convert-string-to-slug/

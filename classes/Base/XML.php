@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2012-11-14
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -127,9 +127,10 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * name and returns its path.
 	 *
 	 * @access protected
+	 * @static
 	 * @param string $file                          the file name
 	 * @return string                               the file path
-	 * @throws Throwable_FileNotFound_Exception        indicates that the file does not exist
+	 * @throws Throwable_FileNotFound_Exception     indicates that the file does not exist
 	 */
 	protected static function find_file($file) {
 		if (file_exists($file)) {

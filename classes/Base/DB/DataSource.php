@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-11-29
+ * @version 2012-12-05
  *
  * @abstract
  */
@@ -39,9 +39,9 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * This function loads the configurations.
 	 *
 	 * @access public
-	 * @param mixed $config                          the data source configurations
-	 * @throws Throwable_InvalidArgument_Exception      indicates that there is a data type mismatch
-	 * @throws Throwable_InvalidProperty_Exception      indicates that the database group is undefined
+	 * @param mixed $config                         the data source configurations
+	 * @throws Throwable_InvalidArgument_Exception  indicates that there is a data type mismatch
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the database group is undefined
 	 */
 	public function __construct($config) {
 		if (empty($config)) {
@@ -73,9 +73,10 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
+     * @override
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
@@ -93,10 +94,8 @@ abstract class Base_DB_DataSource extends Core_Object {
 			case 'username':
 			case 'role':
 				return $this->settings[$name];
-			break;
 			default:
 				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
-			break;
 		}
 	}
 
@@ -104,8 +103,8 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * This function handles the initialization of the data source's settings.
 	 *
 	 * @access protected
-	 * @param array $settings                           the settings to be used
-	 * @param string $id                                the data source's id
+	 * @param array $settings                       the settings to be used
+	 * @param string $id                            the data source's id
 	 */
 	protected function init($settings, $id = NULL) {
 		$this->settings = array();
@@ -180,7 +179,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * This function determines whether the connection is persistent.
 	 *
 	 * @access public
-	 * @return boolean                              whether the connection is persistent
+	 * @return boolean                          whether the connection is persistent
 	 */
 	public function is_persistent() {
 		return $this->settings['persistent'];
