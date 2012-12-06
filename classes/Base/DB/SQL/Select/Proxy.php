@@ -301,6 +301,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param boolean $terminated           whether to add a semi-colon to the end
 	 *                                      of the statement
 	 * @return string                       the SQL statement
@@ -313,10 +314,25 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function returns the raw SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @return string                               the raw SQL statement
 	 */
 	public function __toString() {
 		return $this->builder->statement();
+	}
+
+	/**
+	 * This function returns a data reader that is initialized with the SQL
+	 * statement.
+	 *
+	 * @access public
+	 * @param string $type               	the return type to be used
+	 * @return DB_ResultSet                 the result set
+	 */
+	public function reader() {
+		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$reader = $connection->reader($this->statement());
+		return $reader;
 	}
 
 	/**
