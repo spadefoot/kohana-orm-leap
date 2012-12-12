@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -52,14 +52,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			//if ( ! empty($this->data_source->charset)) {
 			//    $connection_string .= " options='--client_encoding=" . strtoupper($this->data_source->charset) . "'";
 			//}
-			$this->resource_id = ($this->data_source->is_persistent())
+			$this->resource = ($this->data_source->is_persistent())
 				? @pg_pconnect($connection_string)
 				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
-			if ($this->resource_id === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => pg_last_error()));
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @pg_last_error()));
 			}
 			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
-				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 			}
 		}
 	}
@@ -78,41 +78,6 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	}
 
 	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-query.php
-	 * @see http://www.php.net/manual/en/function.pg-last-error.php
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = new DB_PostgreSQL_DataReader_Standard($this->resource_id, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
-	}
-
-	/**
 	 * This function allows for the ability to process a query that will not return
 	 * data using the passed string.
 	 *
@@ -127,12 +92,12 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command_id = @pg_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		$command = @pg_query($this->resource, $sql);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 		}
 		$this->sql = $sql;
-		@pg_free_result($command_id);
+		@pg_free_result($command);
 	}
 
 	/**
@@ -153,26 +118,26 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		
 		// Option #1: Using 'SELECT lastval();'
 		
-		$command_id = @pg_query($this->resource_id, 'SELECT lastval();');
+		$command = @pg_query($this->resource, 'SELECT lastval();');
 		
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 		}
 		
-		$record = @pg_fetch_row($command_id);
+		$record = @pg_fetch_row($command);
 		
 		if ($record === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 		}
 		
 		return $record[0];
 		
-		// Option #2: Using pg_last_oid($this->resource_id)
+		// Option #2: Using pg_last_oid($this->resource)
 		
-		//$insert_id = @pg_last_oid($this->resource_id);
+		//$insert_id = @pg_last_oid($this->resource);
 		
 		//if ($insert_id === FALSE) {
-		//	throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => pg_last_error($this->resource_id)));
+		//	throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 		//}
 		
 		//return $insert_id;
@@ -218,7 +183,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
-		$string = "'" . pg_escape_string($this->resource_id, $string) . "'";
+		$string = "'" . pg_escape_string($this->resource, $string) . "'";
 
 		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -238,10 +203,10 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @pg_close($this->resource_id)) {
+			if ( ! @pg_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -255,8 +220,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @see http://www.php.net/manual/en/function.pg-close.php
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@pg_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@pg_close($this->resource);
 		}
 	}
 

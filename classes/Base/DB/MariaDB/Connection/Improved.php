@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-12-04
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -50,12 +50,12 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
 			$database = $this->data_source->database;
-			$this->resource_id = @mysqli_connect($host, $username, $password, $database);
-			if ($this->resource_id === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => mysqli_connect_error()));
+			$this->resource = @mysqli_connect($host, $username, $password, $database);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @mysqli_connect_error()));
 			}
-			if ( ! empty($this->data_source->charset) AND ! @mysqli_set_charset($this->resource_id, strtolower($this->data_source->charset))) {
-				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			if ( ! empty($this->data_source->charset) AND ! @mysqli_set_charset($this->resource, strtolower($this->data_source->charset))) {
+				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 			}
 		}
 	}
@@ -73,42 +73,10 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @mysqli_autocommit($this->resource_id, FALSE);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+		$command = @mysqli_autocommit($this->resource, FALSE);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
-	}
-
-	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = new DB_MariaDB_DataReader_Improved($this->resource_id, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
 	}
 
 	/**
@@ -123,12 +91,12 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command_id = @mysqli_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+		$command = @mysqli_query($this->resource, $sql);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
 		$this->sql = $sql;
-		@mysqli_free_result($command_id);
+		@mysqli_free_result($command);
 	}
 
 	/**
@@ -143,9 +111,9 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @mysqli_insert_id($this->resource_id);
+		$insert_id = @mysqli_insert_id($this->resource);
 		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
 		return $insert_id;
 	}
@@ -163,11 +131,11 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @mysqli_rollback($this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+		$command = @mysqli_rollback($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
-		@mysqli_autocommit($this->resource_id, TRUE);
+		@mysqli_autocommit($this->resource, TRUE);
 	}
 
 	/**
@@ -183,11 +151,11 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @mysqli_commit($this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => mysqli_error($this->resource_id)));
+		$command = @mysqli_commit($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
-		@mysqli_autocommit($this->resource_id, TRUE);
+		@mysqli_autocommit($this->resource, TRUE);
 	}
 
 	/**
@@ -206,7 +174,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
-		$string = "'" . mysqli_real_escape_string($this->resource_id, $string) . "'";
+		$string = "'" . mysqli_real_escape_string($this->resource, $string) . "'";
 
 		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -224,10 +192,10 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @mysqli_close($this->resource_id)) {
+			if ( ! @mysqli_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -239,8 +207,8 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * @override
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@mysqli_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@mysqli_close($this->resource);
 		}
 	}
 

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-04
+ * @version 2012-12-11
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -51,11 +51,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			$connection_string .= 'PROTOCOL=TCPIP;';
 			$connection_string .= 'UID=' . $this->data_source->username . ';';
 			$connection_string .= 'PWD=' . $this->data_source->password . ';';
-			$this->resource_id = ($this->data_source->is_persistent())
+			$this->resource = ($this->data_source->is_persistent())
 				? @db2_pconnect($connection_string, '', '')
 				: @db2_connect($connection_string, '', '');
-			if ($this->resource_id === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => db2_conn_error()));
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @db2_conn_error()));
 			}
 			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
 		}
@@ -74,42 +74,10 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @db2_autocommit($this->resource_id, DB2_AUTOCOMMIT_OFF);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => db2_conn_error($this->resource_id)));
+		$command = @db2_autocommit($this->resource, DB2_AUTOCOMMIT_OFF);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
-	}
-
-	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = new DB_DB2_DataReader_Standard($this->resource_id, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
 	}
 
 	/**
@@ -127,12 +95,12 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command_id = @db2_exec($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => db2_stmt_error($command_id)));
+		$command = @db2_exec($this->resource, $sql);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @db2_stmt_error($command)));
 		}
 		$this->sql = $sql;
-		@db2_free_result($command_id);
+		@db2_free_result($command);
 	}
 
 	/**
@@ -149,9 +117,9 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @db2_last_insert_id($this->resource_id);
+		$insert_id = @db2_last_insert_id($this->resource);
 		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => db2_conn_error($this->resource_id)));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
 		settype($insert_id, 'integer');
 		return $insert_id;
@@ -170,11 +138,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @db2_rollback($this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => db2_conn_error($this->resource_id)));
+		$command = @db2_rollback($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
-		@db2_autocommit($this->resource_id, DB2_AUTOCOMMIT_ON);
+		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
 	}
 
 	/**
@@ -190,11 +158,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @db2_commit($this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => db2_conn_error($this->resource_id)));
+		$command = @db2_commit($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
-		@db2_autocommit($this->resource_id, DB2_AUTOCOMMIT_ON);
+		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
 	}
 
 	/**
@@ -237,10 +205,10 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @db2_close($this->resource_id)) {
+			if ( ! @db2_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -254,8 +222,8 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 * @see http://www.php.net/manual/en/function.db2-close.php
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@db2_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@db2_close($this->resource);
 		}
 	}
 

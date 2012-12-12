@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -44,10 +44,10 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			$connection_string = $this->data_source->database;
 			$error = NULL;
-			$this->resource_id = ($this->data_source->is_persistent())
+			$this->resource = ($this->data_source->is_persistent())
 				? @sqlite_popen($connection_string, 0666, $error)
 				: @sqlite_open($connection_string, 0666, $error);
-			if ($this->resource_id === FALSE) {
+			if ($this->resource === FALSE) {
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $error));
 			}
 			// "Once an encoding has been set for a database, it cannot be changed."
@@ -69,38 +69,6 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = new DB_SQLite_DataReader_Standard($this->resource_id, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
-	}
-
-	/**
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
@@ -113,8 +81,8 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$error = NULL;
-		$command_id = @sqlite_exec($this->resource_id, $sql, $error);
-		if ($command_id === FALSE) {
+		$command = @sqlite_exec($this->resource, $sql, $error);
+		if ($command === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $error));
 		}
 		$this->sql = $sql;
@@ -132,9 +100,9 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @sqlite_last_insert_rowid($this->resource_id);
+		$insert_id = @sqlite_last_insert_rowid($this->resource);
 		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->resource_id))));
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->resource))));
 		}
 		return $insert_id;
 	}
@@ -203,10 +171,10 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @sqlite_close($this->resource_id)) {
+			if ( ! @sqlite_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -218,8 +186,8 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @override
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@sqlite_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@sqlite_close($this->resource);
 		}
 	}
 

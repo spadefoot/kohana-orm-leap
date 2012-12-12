@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @abstract
  */
@@ -44,12 +44,12 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	protected $data_source;
 
 	/**
-	 * This variable is used to store the connection's resource identifier.
+	 * This variable is used to store the connection's resource.
 	 *
 	 * @access protected
-	 * @var resource
+	 * @var mixed
 	 */
-	protected $resource_id;
+	protected $resource;
 
 	/**
 	 * This variable stores the last SQL statement executed.
@@ -68,9 +68,17 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	public function __construct(DB_DataSource $data_source) {
 		$this->cache_key = NULL;
 		$this->data_source = $data_source;
-		$this->resource_id = NULL;
+		$this->resource = NULL;
 		$this->sql = '';
 	}
+
+	/**
+	 * This destructor ensures that the connection is closed.
+	 *
+	 * @access public
+	 * @abstract
+	 */
+	public abstract function __destruct();
 
 	/**
 	 * This function returns the value associated with the specified property.
@@ -92,13 +100,13 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	}
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This function begins a transaction.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
+	 * @abstract
+	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
 	 */
-	public abstract function open();
+	public abstract function begin_transaction();
 
 	/**
 	 * This function manages query caching.
@@ -129,35 +137,22 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	}
 
 	/**
-	 * This function begins a transaction.
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @abstract
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public abstract function close();
+
+	/**
+	 * This function commits a transaction.
 	 *
 	 * @access public
 	 * @abstract
 	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
 	 */
-	public abstract function begin_transaction();
-
-	/**
-	 * This function creates a data reader for query the specified SQL statement.
-	 *
-	 * @access public
-	 * @abstract
-	 * @return DB_SQL_DataReader                    the SQL data reader
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
-	 */
-	public abstract function reader($sql);
-
-	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @abstract
-	 * @param string $sql                           the SQL statement
-	 * @param string $type                          the return type to be used
-	 * @return DB_ResultSet                         the result set
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
-	 */
-	public abstract function query($sql, $type = 'array');
+	public abstract function commit();
 
 	/**
 	 * This function processes an SQL statement that will NOT return data.
@@ -180,28 +175,125 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	public abstract function get_last_insert_id();
 
 	/**
-	 * This function returns the connection's resource identifier.
+	 * This function returns the connection's resource.
 	 *
 	 * @access public
-	 * @return resource                             the resource identifier
+	 * @return mixed                                the resource being used
 	 * @throws Throwable_Database_Exception         indicates that no connection has been
 	 *                                              established
 	 */
-	public function &get_resource_id() {
+	public function get_resource() {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_Database_Exception('Message: Unable to fetch resource id. Reason: No connection has been established.');
+			throw new Throwable_Database_Exception('Message: Unable to fetch resource. Reason: No connection has been established.');
 		}
-		return $this->resource_id;
+		return $this->resource;
 	}
 
 	/**
 	 * This function is for determining whether a connection is established.
 	 *
 	 * @access public
+	 * @abstract
 	 * @return boolean                              whether a connection is established
 	 */
-	public function is_connected() {
-		return is_resource($this->resource_id);
+	public abstract function is_connected();
+
+	/**
+	 * This function opens a connection using the data source provided.
+	 *
+	 * @access public
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
+	 */
+	public abstract function open();
+
+	/**
+	 * This function processes an SQL statement that will return data.
+	 *
+	 * @access public
+	 * @param string $sql						    the SQL statement
+	 * @param string $type						    the return type to be used
+	 * @return DB_ResultSet                         the result set
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 */
+	public function query($sql, $type = 'array') {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+		}
+		$result_set = $this->cache($sql, $type);
+		if ($result_set !== NULL) {
+			$this->sql = $sql;
+			return $result_set;
+		}
+		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
+		$reader = new $driver($this->resource, $sql);
+		$records = array();
+		$size = 0;
+		while ($reader->read()) {
+			$records[] = $reader->row($type);
+			$size++;
+		}
+		$reader->free();
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
+		$this->sql = $sql;
+		return $result_set;
+	}
+
+	/**
+	 * This function escapes a string to be used in an SQL statement.
+	 *
+	 * @access public
+	 * @param string $string                        the string to be escaped
+	 * @param char $escape                          the escape character
+	 * @return string                               the quoted string
+	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 *                                              be found
+	 *
+	 * @license http://codeigniter.com/user_guide/license.html
+	 *
+	 * @see http://codeigniter.com/forums/viewthread/179202/
+	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
+	 */
+	public function quote($string, $escape = NULL) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
+		$removables = array(
+			'/%0[0-8bcef]/',
+			'/%1[0-9a-f]/',
+			'/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S',
+		);
+		do {
+			$string = preg_replace($removables, '', $string, -1, $count);
+		}
+		while ($count);
+
+		$string = "'" . str_replace("'", "''", $string) . "'";
+		
+		if (is_string($escape) OR ! empty($escape)) {
+			$string .= " ESCAPE '{$escape}'";
+	    }
+
+		return $string;
+	}
+
+	/**
+	 * This function creates a data reader for query the specified SQL statement.
+	 *
+	 * @access public
+	 * @param string $sql						    the SQL statement
+	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 */
+	public function reader($sql) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+		}
+		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
+		$reader = new $driver($this->resource, $sql);
+		$this->sql = $sql;
+		return $reader;
 	}
 
 	/**
@@ -212,45 +304,6 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
 	 */
 	public abstract function rollback();
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
-	 */
-	public abstract function commit();
-
-	/**
-	 * This function escapes a string to be used in an SQL statement.
-	 *
-	 * @access public
-	 * @abstract
-	 * @param string $string                        the string to be escaped
-	 * @param char $escape                          the escape character
-	 * @return string                               the quoted string
-	 * @throws Throwable_SQL_Exception              indicates that no connection could
-	 *                                              be found
-	 */
-	public abstract function quote($string, $escape = NULL);
-
-	/**
-	 * This function closes an open connection.
-	 *
-	 * @access public
-	 * @abstract
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public abstract function close();
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @abstract
-	 */
-	public abstract function __destruct();
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -264,9 +317,9 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @return DB_Connection_Driver                 the database connection
 	 */
 	public static function factory($config = array()) {
-		$source = new DB_DataSource($config);
-		$driver = 'DB_' . $source->dialect . '_Connection_' . $source->driver;
-		$connection = new $driver($source);
+		$data_source = new DB_DataSource($config);
+		$driver = 'DB_' . $data_source->dialect . '_Connection_' . $data_source->driver;
+		$connection = new $driver($data_source);
 		return $connection;
 	}
 

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
  *
@@ -54,11 +54,10 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
-				$this->resource_id = static::$counter++;
+				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
 			catch (PDOException $ex) {
-				$this->connection = NULL;
+				$this->resource = NULL;
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-12-04
+ * @version 2012-12-11
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -58,9 +58,9 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$database = $this->data_source->database;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
-			$this->resource_id = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
-			if ($this->resource_id === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => drizzle_error($handle)));
+			$this->resource = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @drizzle_error($handle)));
 			}
 			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
 		}
@@ -99,7 +99,8 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$reader = new DB_Drizzle_DataReader_Standard($this->resource_id, $sql);
+		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
+		$reader = new $driver($this->resource, $sql);
 		$records = array();
 		$size = 0;
 		while ($reader->read()) {
@@ -125,15 +126,15 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command_id = @drizzle_query($this->resource_id, $sql);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => drizzle_con_error($this->resource_id)));
+		$command = @drizzle_query($this->resource, $sql);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($this->resource)));
 		}
 		$this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql))
-			? @drizzle_result_insert_id($command_id)
+			? @drizzle_result_insert_id($command)
 			: FALSE;
 		$this->sql = $sql;
-		@drizzle_result_free($command_id);
+		@drizzle_result_free($command);
 	}
 
 	/**
@@ -196,7 +197,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
-		$string = "'" . drizzle_escape_string($this->resource_id, $string) . "'";
+		$string = "'" . drizzle_escape_string($this->resource, $string) . "'";
 
 		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -214,10 +215,10 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @drizzle_con_close($this->resource_id)) {
+			if ( ! @drizzle_con_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -229,8 +230,8 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @override
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@drizzle_con_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@drizzle_con_close($this->resource);
 		}
 	}
 

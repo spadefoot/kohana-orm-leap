@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-04
+ * @version 2012-12-11
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -71,11 +71,11 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			$role = ( ! empty($this->data_source->role))
 				? $this->data_source->role
 				: NULL;
-			$this->resource_id = ($this->data_source->is_persistent())
+			$this->resource = ($this->data_source->is_persistent())
 				? @ibase_pconnect($connection_string, $username, $password, $charset, 0, 3, $role)
 				: @ibase_connect($connection_string, $username, $password, $charset, 0, 3, $role);
-			if ($this->resource_id === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => ibase_errmsg()));
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @ibase_errmsg()));
 			}
 		}
 	}
@@ -91,42 +91,10 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @ibase_trans($this->resource_id, IBASE_READ | IBASE_WRITE);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':sql' => ibase_errmsg()));
+		$command = @ibase_trans($this->resource, IBASE_READ | IBASE_WRITE);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':sql' => @ibase_errmsg()));
 		}
-	}
-
-	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type               		the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = new DB_Firebird_DataReader_Standard($this->resource_id, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
 	}
 
 	/**
@@ -141,10 +109,10 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$stmt = @ibase_prepare($this->resource_id, $sql);
-		$command_id = @ibase_execute($stmt);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => ibase_errmsg()));
+		$statement = @ibase_prepare($this->resource, $sql);
+		$command = @ibase_execute($statement);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 		$this->sql = $sql;
 	}
@@ -190,9 +158,9 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @ibase_rollback($this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
+		$command = @ibase_rollback($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 	}
 
@@ -207,9 +175,9 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @ibase_commit($this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => ibase_errmsg()));
+		$command = @ibase_commit($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 	}
 
@@ -222,10 +190,10 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @ibase_close($this->resource_id)) {
+			if ( ! @ibase_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -237,8 +205,8 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * @override
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@ibase_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@ibase_close($this->resource);
 		}
 	}
 

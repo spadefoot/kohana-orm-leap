@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -58,6 +58,14 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	protected $settings = array();
 
 	/**
+	 * This function prevents the class from being cloned.
+	 *
+	 * @access protected
+	 * @override
+	 */
+	protected function __clone() {}
+
+	/**
 	 * This constructor creates an instance of this class.
 	 *
 	 * @access protected
@@ -65,14 +73,6 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	protected function __construct() {
 		$this->settings['max_size'] = PHP_INT_MAX; // the maximum number of connections that may be held in the pool
 	}
-
-	/**
-	 * This function prevents the class from being cloned.
-	 *
-	 * @access protected
-	 * @override
-	 */
-	protected function __clone() {}
 
 	/**
 	 * This function returns the value associated with the specified property.

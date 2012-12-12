@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/ref.pdo-sqlite.php
  *
@@ -50,11 +50,10 @@ abstract class Base_DB_SQLite_Connection_PDO extends DB_SQL_Connection_PDO {
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, '', '', $attributes);
-				$this->resource_id = static::$counter++;
+				$this->resource = new PDO($connection_string, '', '', $attributes);
 			}
 			catch (PDOException $ex) {
-				$this->connection = NULL;
+				$this->resource = NULL;
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			// "Once an encoding has been set for a database, it cannot be changed."

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-04
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/ref.pdo-firebird.php
  *
@@ -62,11 +62,10 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
-				$this->resource_id = static::$counter++;
+				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
 			catch (PDOException $ex) {
-				$this->connection = NULL;
+				$this->resource = NULL;
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 		}

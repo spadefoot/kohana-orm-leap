@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -30,12 +30,24 @@
 abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 
 	/**
+	 * This function processes an SQL statement that will NOT return data.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $sql						    the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 */
+	public function execute($sql) {
+		parent::execute($this->trim($sql));
+	}
+
+	/**
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-oci.php
 	 * @see http://www.php.net/manual/en/ref.pdo-oci.connection.php
@@ -63,11 +75,10 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->connection = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
-				$this->resource_id = static::$counter++;
+				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
 			catch (PDOException $ex) {
-				$this->connection = NULL;
+				$this->resource = NULL;
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 		}
@@ -78,28 +89,36 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @param string $sql						    the SQL statement
+	 * @param string $type						    the return type to be used
+	 * @return DB_ResultSet                         the result set
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
-		$sql = trim($sql, "; \t\n\r\0\x0B");
-		$result_set = parent::query($sql, $type);
-		return $result_set;
+		return parent::query($this->trim($sql), $type);
 	}
 
 	/**
-	 * This function processes an SQL statement that will NOT return data.
+	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @param string $sql						    the SQL statement
+	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function execute($sql) {
-		$sql = trim($sql, "; \t\n\r\0\x0B");
-		parent::execute($sql);
+	public function reader($sql) {
+		return parent::reader($this->trim($sql));
+	}
+
+	/**
+	 * This function trims the semicolon off an SQL statement.
+	 *
+	 * @access protected
+	 * @param string $sql						    the SQL statement
+	 * @return string                               the SQL statement after being trimmed
+	 */
+	protected function trim($sql) {
+		return trim($sql, "; \t\n\r\0\x0B");
 	}
 
 }

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -31,20 +31,16 @@
 abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 
 	/**
-	 * This function stores the number of total connections made.
+	 * This destructor will ensure that the connection is closed.
 	 *
-	 * @access protected
-	 * @var integer
+	 * @access public
+	 * @override
 	 */
-	protected static $counter = 0;
-
-	/**
-	 * This variable stores the PDO connection.
-	 *
-	 * @access protected
-	 * @var PDO
-	 */
-	protected $connection = NULL;
+	public function __destruct() {
+		if ($this->resource !== NULL) {
+		   unset($this->resource);
+		}
+	}
 
 	/**
 	 * This function begins a transaction.
@@ -57,62 +53,43 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 */
 	public function begin_transaction() {
 		try {
-			$this->connection->beginTransaction();
+			$this->resource->beginTransaction();
 		}
 		catch (Exception $ex) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
-
 	/**
-	 * This function creates a data reader for query the specified SQL statement.
+	 * This function allows for the ability to close the connection that was opened.
 	 *
 	 * @access public
 	 * @override
-	 * @return DB_SQL_DataReader                the SQL data reader
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @return boolean                          whether an open connection was closed
 	 */
-	public function reader($sql) {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+	public function close() {
+		if ($this->is_connected()) {
+			unset($this->resource);
+			$this->resource = NULL;
 		}
-		$driver = 'DB_' . $source->dialect . '_DataReader_' . $source->driver;
-		$reader = new $driver($this->connection, $sql);
-		$this->sql = $sql;
-		return $reader;
+		return TRUE;
 	}
 
 	/**
-	 * This function processes an SQL statement that will return data.
+	 * This function commits a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/pdo.commit.php
 	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+	public function commit() {
+		try {
+			$this->resource->commit();
 		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
+		catch (Exception $ex) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
-		$driver = 'DB_' . $source->dialect . '_DataReader_' . $source->driver;
-		$reader = new $driver($this->connection, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
 	}
 
 	/**
@@ -127,9 +104,9 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command = @$this->connection->exec($sql);
+		$command = @$this->resource->exec($sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $this->connection->errorInfo()));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $this->resource->errorInfo()));
 		}
 		$this->sql = $sql;
 	}
@@ -149,7 +126,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
-			return $this->connection->lastInsertId();
+			return $this->resource->lastInsertId();
 		}
 		catch (Exception $ex) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
@@ -164,43 +141,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * @return boolean                          whether a connection is established
 	 */
 	public function is_connected() {
-		return ! empty($this->connection);
-	}
-
-	/**
-	 * This function rollbacks a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/pdo.rollback.php
-	 */
-	public function rollback() {
-		try {
-			$this->connection->rollBack();
-		}
-		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
-		}
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/pdo.commit.php
-	 */
-	public function commit() {
-		try {
-			$this->connection->commit();
-		}
-		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
-		}
+		return ! empty($this->resource);
 	}
 
 	/**
@@ -221,7 +162,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
-		$string = $this->connection->quote($string);
+		$string = $this->resource->quote($string);
 
 		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -231,29 +172,20 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	}
 
 	/**
-	 * This function allows for the ability to close the connection that was opened.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                          whether an open connection was closed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/pdo.rollback.php
 	 */
-	public function close() {
-		if ($this->is_connected()) {
-			unset($this->connection);
-			$this->connection = NULL;
+	public function rollback() {
+		try {
+			$this->resource->rollBack();
 		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor will ensure that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function __destruct() {
-		if ($this->connection !== NULL) {
-		   unset($this->connection);
+		catch (Exception $ex) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -71,16 +71,16 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$password = $this->data_source->password;
 			if ( ! empty($this->data_source->charset)) {
 				$charset = strtoupper($this->data_source->charset);
-				$this->resource_id = ($this->data_source->is_persistent())
+				$this->resource = ($this->data_source->is_persistent())
 					? @oci_pconnect($username, $password, $connection_string, $charset)
 					: @oci_connect($username, $password, $connection_string, $charset);
 			}
 			else {
-				$this->resource_id = ($this->data_source->is_persistent())
+				$this->resource = ($this->data_source->is_persistent())
 					? @oci_pconnect($username, $password, $connection_string)
 					: @oci_connect($username, $password, $connection_string);
 			}
-			if ($this->resource_id === FALSE) {
+			if ($this->resource === FALSE) {
 				$oci_error = oci_error();
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $oci_error['message']));
 			}
@@ -109,6 +109,24 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
+	 * This function creates a data reader for query the specified SQL statement.
+	 *
+	 * @access public
+	 * @param string $sql						    the SQL statement
+	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 */
+	public function reader($sql) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+		}
+		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
+		$reader = new $driver($this->resource, $sql, $this->execution_mode);
+		$this->sql = $sql;
+		return $reader;
+	}
+
+	/**
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
@@ -122,13 +140,13 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
-		$sql = trim($sql, "; \t\n\r\0\x0B");
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$reader = new DB_Oracle_DataReader_Standard($this->resource_id, $sql, $this->execution_mode);
+		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
+		$reader = new $driver($this->resource, $sql, $this->execution_mode);
 		$records = array();
 		$size = 0;
 		while ($reader->read()) {
@@ -153,14 +171,13 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$sql = trim($sql, "; \t\n\r\0\x0B");
-		$command_id = @oci_parse($this->resource_id, $sql);
-		if (($command_id === FALSE) OR ! oci_execute($command_id, $this->execution_mode)) {
-			$oci_error = oci_error($command_id);
+		$command = @oci_parse($this->resource, trim($sql, "; \t\n\r\0\x0B"));
+		if (($command === FALSE) OR ! oci_execute($command, $this->execution_mode)) {
+			$oci_error = oci_error($command);
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 		$this->sql = $sql;
-		@oci_free_statement($command_id);
+		@oci_free_statement($command);
 	}
 
 	/**
@@ -209,9 +226,9 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @oci_rollback($this->resource_id);
-		if ($command_id === FALSE) {
-			$oci_error = oci_error($this->resource_id);
+		$command = @oci_rollback($this->resource);
+		if ($command === FALSE) {
+			$oci_error = oci_error($this->resource);
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 	}
@@ -230,9 +247,9 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
-		$command_id = @oci_commit($this->resource_id);
-		if ($command_id === FALSE) {
-			$oci_error = oci_error($this->resource_id);
+		$command = @oci_commit($this->resource);
+		if ($command === FALSE) {
+			$oci_error = oci_error($this->resource);
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $oci_error['message']));
 		}
 	}
@@ -248,10 +265,10 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @oci_close($this->resource_id)) {
+			if ( ! @oci_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -265,8 +282,8 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @see http://www.php.net/manual/en/function.oci-close.php
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@oci_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@oci_close($this->resource);
 		}
 	}
 

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -40,7 +40,7 @@ abstract class Base_DB_Oracle_DataReader_Standard extends DB_SQL_DataReader_Stan
 	 * @param integer $mode                     the execution mode to be used
 	 */
 	public function __construct($resource, $sql, $mode = 32) {
-		$command = @oci_parse($resource, $sql);
+		$command = @oci_parse($resource, trim($sql, "; \t\n\r\0\x0B"));
 		if (($command === FALSE) OR ! oci_execute($command, $mode)) {
 			$error = @oci_error($command);
 			$reason = (is_array($error) AND isset($error['message']))

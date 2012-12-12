@@ -21,68 +21,21 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Connection_Standard extends DB_Connection_Driver {
 
 	/**
-	 * This function creates a data reader for query the specified SQL statement.
+	 * This function is for determining whether a connection is established.
 	 *
 	 * @access public
 	 * @override
-	 * @return DB_SQL_DataReader                the SQL data reader
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @return boolean                              whether a connection is established
 	 */
-	public function reader($sql) {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
-		}
-		$driver = 'DB_' . $source->dialect . '_DataReader_' . $source->driver;
-		$reader = new $driver($this->resource_id, $sql);
-		$this->sql = $sql;
-		return $reader;
-	}
-
-	/**
-	 * This function escapes a string to be used in an SQL statement.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $string                    the string to be escaped
-	 * @param char $escape                      the escape character
-	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception          indicates that no connection could
-	 *                                          be found
-	 *
-	 * @license http://codeigniter.com/user_guide/license.html
-	 *
-	 * @see http://codeigniter.com/forums/viewthread/179202/
-	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
-	 */
-	public function quote($string, $escape = NULL) {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
-		}
-
-		$removables = array(
-			'/%0[0-8bcef]/',
-			'/%1[0-9a-f]/',
-			'/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S',
-		);
-		do {
-			$string = preg_replace($removables, '', $string, -1, $count);
-		}
-		while ($count);
-
-		$string = "'" . str_replace("'", "''", $string) . "'";
-		
-		if (is_string($escape) OR ! empty($escape)) {
-			$string .= " ESCAPE '{$escape}'";
-	    }
-
-		return $string;
+	public function is_connected() {
+		return is_resource($this->resource);
 	}
 
 }

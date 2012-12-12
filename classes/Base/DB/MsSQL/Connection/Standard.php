@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-05
+ * @version 2012-12-11
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -49,16 +49,16 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 				}
 				$username = $this->data_source->username;
 				$password = $this->data_source->password;
-				$this->resource_id = ($this->data_source->is_persistent())
+				$this->resource = ($this->data_source->is_persistent())
 					? mssql_pconnect($connection_string, $username, $password)
 					: mssql_connect($connection_string, $username, $password, TRUE);
 			}
 			catch (ErrorException $ex) {
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
-			$database = @mssql_select_db($this->data_source->database, $this->resource_id);
+			$database = @mssql_select_db($this->data_source->database, $this->resource);
 			if ($database === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => mssql_get_last_message()));
+				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mssql_get_last_message()));
 			}
 			if ( ! empty($this->data_source->charset)) {
 				ini_set('mssql.charset', $this->data_source->charset);
@@ -80,38 +80,6 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	}
 
 	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type 						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = new DB_MsSQL_DataReader_Standard($this->resource_id, $sql);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
-		$this->sql = $sql;
-		return $result_set;
-	}
-
-	/**
 	 * This function processes an SQL statement that will NOT return data.
 	 *
 	 * @access public
@@ -123,11 +91,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command_id = @mssql_query($sql, $this->resource_id);
-		if ($command_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => mssql_get_last_message()));
+		$command = @mssql_query($sql, $this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mssql_get_last_message()));
 		}
-		@mssql_free_result($command_id);
+		@mssql_free_result($command);
 		$this->sql = $sql;
 	}
 
@@ -193,10 +161,10 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @mssql_close($this->resource_id)) {
+			if ( ! @mssql_close($this->resource)) {
 				return FALSE;
 			}
-			$this->resource_id = NULL;
+			$this->resource = NULL;
 		}
 		return TRUE;
 	}
@@ -208,8 +176,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * @override
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
-			@mssql_close($this->resource_id);
+		if (is_resource($this->resource)) {
+			@mssql_close($this->resource);
 		}
 	}
 
