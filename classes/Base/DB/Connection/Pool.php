@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-04
+ * @version 2012-12-05
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -70,6 +70,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * This function prevents the class from being cloned.
 	 *
 	 * @access protected
+	 * @override
 	 */
 	protected function __clone() {}
 
@@ -77,9 +78,10 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
-	 * @param string $key          	                the name of the property
+	 * @override
+	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -96,9 +98,10 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -141,6 +144,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * This function returns the number of connections in the connection pool.
 	 *
 	 * @access public
+	 * @override
 	 * @return integer                              the number of connections in the
 	 *                                              connection pool
 	 */
