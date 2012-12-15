@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -32,8 +32,8 @@ abstract class Base_DB_ORM extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $model                 the model's name
-	 * @return DB_ORM_Delete_Proxy          an instance of the class
+	 * @param string $model                         the model's name
+	 * @return DB_ORM_Delete_Proxy                  an instance of the class
 	 */
 	public static function delete($model) {
 		$proxy = new DB_ORM_Delete_Proxy($model);
@@ -61,8 +61,8 @@ abstract class Base_DB_ORM extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $model                 the model's name
-	 * @return DB_ORM_Insert_Proxy          an instance of the class
+	 * @param string $model                         the model's name
+	 * @return DB_ORM_Insert_Proxy                  an instance of the class
 	 */
 	public static function insert($model) {
 		$proxy = new DB_ORM_Insert_Proxy($model);
@@ -74,10 +74,10 @@ abstract class Base_DB_ORM extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $model                 the model's name
-	 * @param array $primary_key            the column values of the primary key
-	 *                                      that will be used to load the model
-	 * @return mixed                        an instance of the specified model
+	 * @param string $model                         the model's name
+	 * @param array $primary_key                    the column values of the primary key
+	 *                                              that will be used to load the model
+	 * @return mixed                                an instance of the specified model
 	 */
 	public static function model($model, $primary_key = array()) {
 		$model = DB_ORM_Model::factory($model);
@@ -101,9 +101,9 @@ abstract class Base_DB_ORM extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $model                 the model's name
-	 * @param array $columns                the columns to be selected
-	 * @return DB_ORM_Select_Proxy          an instance of the class
+	 * @param string $model                         the model's name
+	 * @param array $columns                        the columns to be selected
+	 * @return DB_ORM_Select_Proxy                  an instance of the class
 	 */
 	public static function select($model, Array $columns = array()) {
 		$proxy = new DB_ORM_Select_Proxy($model, $columns);
@@ -115,8 +115,8 @@ abstract class Base_DB_ORM extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $model                 the model's name
-	 * @return DB_ORM_Update_Proxy          an instance of the class
+	 * @param string $model                         the model's name
+	 * @return DB_ORM_Update_Proxy                  an instance of the class
 	 */
 	public static function update($model) {
 		$proxy = new DB_ORM_Update_Proxy($model);

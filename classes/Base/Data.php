@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-12-05
+ * @version 2012-12-15
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -73,8 +73,8 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param string $data						the data
-	 * @param boolean $type						the current type of data
+	 * @param string $data                          the data
+	 * @param boolean $type                         the current type of data
 	 */
 	public function __construct($data, $type = 1) {
 		$this->hexcode = static::unpack($data, $type);
@@ -86,7 +86,7 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 *
 	 * @access public
 	 * @override
-	 * @return string							the data as a hexadecimal
+	 * @return string                               the data as a hexadecimal
 	 */
 	public function __toString() {
 		return $this->hexcode;
@@ -96,8 +96,8 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 * This function returns the data as a binary string.
 	 *
 	 * @access public
-	 * @param string $format					the string formatting to be used
-	 * @return string							the data as a binary string
+	 * @param string $format                        the string formatting to be used
+	 * @return string                               the data as a binary string
 	 */
 	public function as_binary($format = '%s') {
 		$binary = base_convert($this->hexcode, 16, 2);
@@ -111,8 +111,8 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 * This function returns the data as a hexadecimal.
 	 *
 	 * @access public
-	 * @param string $format					the string formatting to be used
-	 * @return string							the data as a hexadecimal
+	 * @param string $format                        the string formatting to be used
+	 * @return string                               the data as a hexadecimal
 	 */
 	public function as_hexcode($format = '%s') {
 		if ($format != '%s') {
@@ -125,9 +125,9 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 * This function returns the data as a string.
 	 *
 	 * @access public
-	 * @param string $format					the string formatting to be used
-	 * @param boolean $pack						whether to pack the hexcode as a string
-	 * @return string							the data as a string
+	 * @param string $format                        the string formatting to be used
+	 * @param boolean $pack                         whether to pack the hexcode as a string
+	 * @return string                               the data as a string
 	 */
 	public function as_string($format = '%s', $pack = TRUE) {
 		$string = ($pack) ? static::pack($this->hexcode) : $this->hexcode;
@@ -139,8 +139,8 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 *
 	 * @access public
 	 * @override
-	 * @return integer							the length of the data as a byte
-	 *											string
+	 * @return integer                              the length of the data as a byte
+	 *                                              string
 	 */
 	public function count() {
 		if ($this->length < 0) {
@@ -156,8 +156,8 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 *
 	 * @access protected
 	 * @static
-	 * @param string $data						the data to be converted
-	 * @return string							a string
+	 * @param string $data                          the data to be converted
+	 * @return string                               a string
 	 */
 	protected static function pack($hexcode) {
 		if (is_string($hexcode)) {
@@ -171,9 +171,9 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 *
 	 * @access protected
 	 * @static
-	 * @param string $data						the data to be converted
-	 * @param integer $type						the type of data to be converted
-	 * @return string							a hexadecimal string
+	 * @param string $data                          the data to be converted
+	 * @param integer $type                         the type of data to be converted
+	 * @return string                               a hexadecimal string
 	 */
 	protected static function unpack($data, $type) {
 		if (is_string($data)) {

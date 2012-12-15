@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-05
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -64,9 +64,9 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * result sets are accessible alike.
 	 *
 	 * @access public
-	 * @param array $records					    an array of records
-	 * @param integer $size						    the total number of records
-	 * @param string $type               		    the return type being used
+	 * @param array $records                            an array of records
+	 * @param integer $size                             the total number of records
+	 * @param string $type                              the return type being used
 	 */
 	public function __construct(Array $records, $size, $type = 'array') {
 		$this->records = $records;
@@ -79,7 +79,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function returns an array of records of the desired object type.
 	 *
 	 * @access public
-	 * @return array                                an array of records
+	 * @return array                                    an array of records
 	 */
 	public function as_array() {
 		return $this->records;
@@ -90,8 +90,8 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * in the result set.
 	 *
 	 * @access public
-	 * @param array $config                         the configuration array
-	 * @return CSV                                  an instance of the CSV class
+	 * @param array $config                             the configuration array
+	 * @return CSV                                      an instance of the CSV class
 	 */
 	public function as_csv(Array $config = array()) {
 		$csv = new CSV($config);
@@ -136,7 +136,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                              the total number of records
+	 * @return integer                                  the total number of records
 	 */
 	public function count() {
 		return $this->size;
@@ -147,7 +147,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @return mixed						        the current record
+	 * @return mixed                                    the current record
 	 */
 	public function current() {
 		return $this->records[$this->position];
@@ -158,8 +158,8 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * the specified position.
 	 *
 	 * @access public
-	 * @param integer $index                        the record's index
-	 * @return mixed                                the record
+	 * @param integer $index                            the record's index
+	 * @return mixed                                    the record
 	 */
 	public function fetch($index = -1) {
 		settype($index, 'integer');
@@ -193,10 +193,10 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *     $id = $results->get('id');
 	 *
 	 * @access public
-	 * @param string $name                          the name of the column
-	 * @param mixed $default                        the default value should the column
-	 *                                              does not exist
-	 * @return mixed                                the value for the named column
+	 * @param string $name                              the name of the column
+	 * @param mixed $default                            the default value should the column
+	 *                                                  does not exist
+	 * @return mixed                                    the value for the named column
 	 */
 	public function get($name, $default = NULL) {
 		$record = $this->current();
@@ -221,7 +221,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * This function returns whether any records were loaded.
 	 *
 	 * @access public
-	 * @return boolean                              whether any records were loaded
+	 * @return boolean                                  whether any records were loaded
 	 */
 	public function is_loaded() {
 		return ($this->size > 0);
@@ -232,7 +232,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @return integer					            the position of the current record
+	 * @return integer                                  the position of the current record
 	 */
 	public function key() {
 		return $this->position;
@@ -254,8 +254,8 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be evaluated
-	 * @return boolean                              whether the requested offset exists
+	 * @param integer $offset                           the offset to be evaluated
+	 * @return boolean                                  whether the requested offset exists
 	 */
 	public function offsetExists($offset) {
 		return isset($this->records[$offset]);
@@ -266,8 +266,8 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be fetched
-	 * @return mixed                                the value at the specified offset
+	 * @param integer $offset                           the offset to be fetched
+	 * @return mixed                                    the value at the specified offset
 	 */
 	public function offsetGet($offset) {
 		return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
@@ -278,9 +278,9 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be set
-	 * @param mixed $value                          the value to be set
-	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
+	 * @param integer $offset                           the offset to be set
+	 * @param mixed $value                              the value to be set
+	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
 		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset, ':value' => $value));
@@ -291,8 +291,8 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be unset
-	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
+	 * @param integer $offset                           the offset to be unset
+	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
 		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset));
@@ -303,7 +303,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @return integer					            the current iterator position
+	 * @return integer                                  the current iterator position
 	 */
 	public function position() {
 		return $this->position;
@@ -324,9 +324,9 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $position                     the seeked position
-	 * @throws Throwable_OutOfBounds_Exception      indicates that the seeked position
-	 *                                              is out of bounds
+	 * @param integer $position                         the seeked position
+	 * @throws Throwable_OutOfBounds_Exception          indicates that the seeked position
+	 *                                                  is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->records[$position])) {
@@ -340,7 +340,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean					            whether the current iterator position is valid
+	 * @return boolean                                  whether the current iterator position is valid
 	 */
 	public function valid() {
 		return isset($this->records[$this->position]);

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Object
- * @version 2012-11-14
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -31,7 +31,7 @@ abstract class Base_Core_Object {
 	 * This function returns the hash code for the object.
 	 *
 	 * @access public
-	 * @return string					the hash code for the object
+	 * @return string                               the hash code for the object
 	 */
 	public function __hashCode() {
 		return spl_object_hash($this);

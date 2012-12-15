@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-11
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -85,15 +85,17 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $key							the name of the property
-	 * @return mixed								the value of the property
-	 * @throws Throwable_InvalidProperty_Exception	indicates that the specified property is
-	 * 												either inaccessible or undefined
+	 * @param string $key                           the name of the property
+	 * @return mixed                                the value of the property
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
 		switch ($key) {
 			case 'data_source':
-				return new $this->data_source;
+				return $this->data_source;
+			case 'sql':
+				return $this->sql;
 			default:
 				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 		}
@@ -211,8 +213,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
-	 * @param string $sql						    the SQL statement
-	 * @param string $type						    the return type to be used
+	 * @param string $sql                           the SQL statement
+	 * @param string $type                          the return type to be used
 	 * @return DB_ResultSet                         the result set
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
@@ -252,7 +254,6 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @license http://codeigniter.com/user_guide/license.html
 	 *
 	 * @see http://codeigniter.com/forums/viewthread/179202/
-	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
@@ -270,10 +271,10 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 		while ($count);
 
 		$string = "'" . str_replace("'", "''", $string) . "'";
-		
+
 		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
-	    }
+		}
 
 		return $string;
 	}
@@ -282,7 +283,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
-	 * @param string $sql						    the SQL statement
+	 * @param string $sql                           the SQL statement
 	 * @return DB_SQL_DataReader                    the SQL data reader
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */

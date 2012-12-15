@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-11-14
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -32,8 +32,8 @@ abstract class Base_DB_SQL extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param mixed $config                 the data source configurations
-	 * @return DB_SQL_Delete_Proxy          an instance of the class
+	 * @param mixed $config                         the data source configurations
+	 * @return DB_SQL_Delete_Proxy                  an instance of the class
 	 */
 	public static function delete($config = 'default') {
 		$proxy = new DB_SQL_Delete_Proxy($config);
@@ -61,8 +61,8 @@ abstract class Base_DB_SQL extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param mixed $config                 the data source configurations
-	 * @return DB_SQL_Insert_Proxy          an instance of the class
+	 * @param mixed $config                         the data source configurations
+	 * @return DB_SQL_Insert_Proxy                  an instance of the class
 	 */
 	public static function insert($config = 'default') {
 		$proxy = new DB_SQL_Insert_Proxy($config);
@@ -74,9 +74,9 @@ abstract class Base_DB_SQL extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param mixed $config                 the data source configurations
-	 * @param array $columns                the columns to be selected
-	 * @return DB_SQL_Select_Proxy          an instance of the class
+	 * @param mixed $config                         the data source configurations
+	 * @param array $columns                        the columns to be selected
+	 * @return DB_SQL_Select_Proxy                  an instance of the class
 	 */
 	public static function select($config = 'default', Array $columns = array()) {
 		$proxy = new DB_SQL_Select_Proxy($config, $columns);
@@ -88,8 +88,8 @@ abstract class Base_DB_SQL extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param mixed $config                 the data source configurations
-	 * @return DB_SQL_Update_Proxy          an instance of the class
+	 * @param mixed $config                         the data source configurations
+	 * @return DB_SQL_Update_Proxy                  an instance of the class
 	 */
 	public static function update($config = 'default') {
 		$proxy = new DB_SQL_Update_Proxy($config);
