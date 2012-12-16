@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-12-04
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -39,7 +39,7 @@ abstract class Base_DB_Drizzle_DataReader_Standard extends DB_SQL_DataReader_Sta
 	 */
 	public function __construct($resource, $sql, $mode = 32) {
 		$command = @drizzle_query($resource, $sql);
-		if (($command === FALSE) || ! @drizzle_result_buffer($command)) {
+		if (($command === FALSE) OR ! @drizzle_result_buffer($command)) {
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($resource)));
 		}
 		$this->command = $command;

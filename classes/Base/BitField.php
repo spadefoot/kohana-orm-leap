@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-12-05
+ * @version 2012-12-15
  *
  * @abstract
  */
@@ -263,7 +263,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 				return $binary;
 			}
 		}
-		else if (is_object($value) && ($value instanceof BitField)) {
+		else if (is_object($value) AND ($value instanceof BitField)) {
 			return $value->as_binary();
 		}
 		return str_pad('0', $boundary, '0', STR_PAD_LEFT);

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-11
+ * @version 2012-12-15
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -81,8 +81,11 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 					: @oci_connect($username, $password, $connection_string);
 			}
 			if ($this->resource === FALSE) {
-				$oci_error = oci_error();
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $oci_error['message']));
+				$error = @oci_error();
+				$reason = (is_array($error) AND isset($error['message']))
+					? $error['message']
+					: 'Unable to connect to database.';
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
 			}
 			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 		}
@@ -172,9 +175,19 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command = @oci_parse($this->resource, trim($sql, "; \t\n\r\0\x0B"));
-		if (($command === FALSE) OR ! oci_execute($command, $this->execution_mode)) {
-			$oci_error = oci_error($command);
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $oci_error['message']));
+		if ($command === FALSE) {
+			$error = @oci_error($this->resource);
+			$reason = (is_array($error) AND isset($error['message']))
+				? $error['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $reason));
+		}
+		if ( ! oci_execute($command, $this->execution_mode)) {
+			$error = @oci_error($command);
+			$reason = (is_array($error) AND isset($error['message']))
+				? $error['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = $sql;
 		@oci_free_statement($command);
@@ -228,8 +241,11 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		}
 		$command = @oci_rollback($this->resource);
 		if ($command === FALSE) {
-			$oci_error = oci_error($this->resource);
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $oci_error['message']));
+			$error = @oci_error($this->resource);
+			$reason = (is_array($error) AND isset($error['message']))
+				? $error['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
 	}
 
@@ -249,8 +265,11 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		}
 		$command = @oci_commit($this->resource);
 		if ($command === FALSE) {
-			$oci_error = oci_error($this->resource);
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $oci_error['message']));
+			$error = @oci_error($this->resource);
+			$reason = (is_array($error) AND isset($error['message']))
+				? $error['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
 	}
 

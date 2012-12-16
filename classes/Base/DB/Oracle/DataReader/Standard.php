@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-11
+ * @version 2012-12-15
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -41,11 +41,18 @@ abstract class Base_DB_Oracle_DataReader_Standard extends DB_SQL_DataReader_Stan
 	 */
 	public function __construct($resource, $sql, $mode = 32) {
 		$command = @oci_parse($resource, trim($sql, "; \t\n\r\0\x0B"));
-		if (($command === FALSE) OR ! oci_execute($command, $mode)) {
+		if ($command === FALSE) {
+			$error = @oci_error($resource);
+			$reason = (is_array($error) AND isset($error['message']))
+				? $error['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $reason));
+		}
+		if ( ! oci_execute($command, $mode)) {
 			$error = @oci_error($command);
 			$reason = (is_array($error) AND isset($error['message']))
 				? $error['message']
-				: 'Unable to perform query.';
+				: 'Unable to perform command.';
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->command = $command;
