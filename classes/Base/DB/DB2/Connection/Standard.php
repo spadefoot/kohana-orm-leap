@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-11
+ * @version 2012-12-17
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -97,7 +97,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		}
 		$command = @db2_exec($this->resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @db2_stmt_error($command)));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @db2_stmt_errormsg($command)));
 		}
 		$this->sql = $sql;
 		@db2_free_result($command);
