@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-12-11
+ * @version 2012-12-25
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -31,12 +31,130 @@
 abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Standard {
 
 	/**
+	 * This destructor ensures that the connection is closed.
+	 *
+	 * @access public
+	 * @override
+	 */
+	public function __destruct() {
+		if ($this->resource !== NULL) {
+			@mysqli_close($this->resource);
+		}
+	}
+
+	/**
+	 * This function begins a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/mysqli.autocommit.php
+	 */
+	public function begin_transaction() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
+		}
+		$command = @mysqli_autocommit($this->resource, FALSE);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+		}
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @mysqli_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 *
+	 * @see http://www.php.net/manual/en/mysqli.commit.php
+	 */
+	public function commit() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
+		}
+		$command = @mysqli_commit($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+		}
+		@mysqli_autocommit($this->resource, TRUE);
+	}
+
+	/**
+	 * This function processes an SQL statement that will NOT return data.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $sql						    the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 */
+	public function execute($sql) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+		}
+		$command = @mysqli_query($this->resource, $sql);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+		}
+		$this->sql = $sql;
+		@mysqli_free_result($command);
+	}
+
+	/**
+	 * This function returns the last insert id.
+	 *
+	 * @access public
+	 * @override
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 */
+	public function get_last_insert_id() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
+		$insert_id = @mysqli_insert_id($this->resource);
+		if ($insert_id === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+		}
+		return $insert_id;
+	}
+
+	/**
+	 * This function is for determining whether a connection is established.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether a connection is established
+	 */
+	public function is_connected() {
+		return ! empty($this->resource);
+	}
+
+	/**
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://php.net/manual/en/mysqli.persistconns.php
 	 * @see http://kb.askmonty.org/en/character-sets-and-collations
@@ -61,113 +179,15 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function begins a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/mysqli.autocommit.php
-	 */
-	public function begin_transaction() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @mysqli_autocommit($this->resource, FALSE);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
-		}
-	}
-
-	/**
-	 * This function processes an SQL statement that will NOT return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
-	 */
-	public function execute($sql) {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
-		}
-		$command = @mysqli_query($this->resource, $sql);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
-		}
-		$this->sql = $sql;
-		@mysqli_free_result($command);
-	}
-
-	/**
-	 * This function returns the last insert id.
-	 *
-	 * @access public
-	 * @override
-	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
-	 */
-	public function get_last_insert_id() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
-		}
-		$insert_id = @mysqli_insert_id($this->resource);
-		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
-		}
-		return $insert_id;
-	}
-
-	/**
-	 * This function rollbacks a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/mysqli.rollback.php
-	 */
-	public function rollback() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @mysqli_rollback($this->resource);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
-		}
-		@mysqli_autocommit($this->resource, TRUE);
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
-	 *
-	 * @see http://www.php.net/manual/en/mysqli.commit.php
-	 */
-	public function commit() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @mysqli_commit($this->resource);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
-		}
-		@mysqli_autocommit($this->resource, TRUE);
-	}
-
-	/**
 	 * This function escapes a string to be used in an SQL statement.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $string                    the string to be escaped
-	 * @param char $escape                      the escape character
-	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception          indicates that no connection could
-	 *                                          be found
+	 * @param string $string                        the string to be escaped
+	 * @param char $escape                          the escape character
+	 * @return string                               the quoted string
+	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 *                                              be found
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
@@ -184,32 +204,23 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function closes an open connection.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                          whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @mysqli_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
+	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
 	 *
-	 * @access public
-	 * @override
+	 * @see http://www.php.net/manual/en/mysqli.rollback.php
 	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@mysqli_close($this->resource);
+	public function rollback() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
+		$command = @mysqli_rollback($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+		}
+		@mysqli_autocommit($this->resource, TRUE);
 	}
 
 }
