@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-16
+ * @version 2012-12-26
  *
  * @abstract
  */
@@ -84,7 +84,9 @@ abstract class Base_DB_Connection extends Kohana_Object {
 	public function __get($key) {
 		switch ($key) {
 			case 'data_source':
-				return new $this->data_source;
+				return $this->data_source;
+			case 'sql':
+				return $this->sql;
 			default:
 				throw new Kohana_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 		}

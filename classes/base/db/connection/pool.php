@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-08-18
+ * @version 2012-12-26
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -236,7 +236,7 @@ abstract class Base_DB_Connection_Pool extends Kohana_Object implements Countabl
 	 * @static
 	 */
 	public static function autorelease() {
-		$instance = DB_Connection_Pool::instance();
+		$instance = static::instance();
 		$instance->lookup = array();
 		$instance->pool = array();
 	}

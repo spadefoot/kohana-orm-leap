@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-10-15
+ * @version 2012-12-26
  *
  * @abstract
  */
@@ -124,7 +124,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
 					if ($value !== NULL) {
-						$value = number_format( (float) $value, $this->metadata['scale']);
+						$value = number_format( (float) $value, $this->metadata['scale'], '.', '');
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {
 							throw new Kohana_BadData_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
