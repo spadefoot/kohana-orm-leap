@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-08-16
+ * @version 2012-12-26
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  *
@@ -230,9 +230,20 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * @access public
 	 */
 	public function __destruct() {
-		if (is_resource($this->resource_id)) {
+		if ($this->resource_id !== NULL) {
 			@mysqli_close($this->resource_id);
 		}
+	}
+
+	/**
+	 * This function is for determining whether a connection is established.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether a connection is established
+	 */
+	public function is_connected() {
+		return ! empty($this->resource_id);
 	}
 
 }
