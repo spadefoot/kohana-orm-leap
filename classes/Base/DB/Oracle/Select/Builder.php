@@ -49,7 +49,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
 		}
 		$statement = trim($statement, "; \t\n\r\0\x0B");
-		$operator = $this->compiler->prepare_operator($operator, 'SET');
+		$operator = $this->precompiler->prepare_operator($operator, 'SET');
 		$this->data['combine'][] = "{$operator} ({$statement})";
 		return $this;
 	}

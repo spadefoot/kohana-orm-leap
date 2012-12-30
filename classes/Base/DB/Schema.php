@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2012-11-14
+ * @version 2012-12-30
  *
  * @abstract
  */
@@ -40,9 +40,9 @@ abstract class Base_DB_Schema extends Core_Object {
 	 * interface.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Expression_Interface
+	 * @var DB_SQL_Precompiler
 	 */
-	protected $compiler = NULL;
+	protected $precompiler = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -52,8 +52,8 @@ abstract class Base_DB_Schema extends Core_Object {
 	 */
 	public function __construct($config) {
 		$this->source = new DB_DataSource($config);
-		$compiler = 'DB_' . $this->source->dialect . '_Expression';
-		$this->compiler = new $compiler();
+		$precompiler = 'DB_' . $this->source->dialect . '_Precompiler';
+		$this->precompiler = new $precompiler();
 	}
 
 	/**

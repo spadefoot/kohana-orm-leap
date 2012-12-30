@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a DB2 expression.
+ * This class provides a set of functions for preparing a PostgreSQL expression.
  *
  * @package Leap
- * @category DB2
- * @version 2012-12-04
+ * @category PostgreSQL
+ * @version 2012-12-30
  *
  * @abstract
  */
-abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_PostgreSQL_Precompiler implements DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -73,9 +73,6 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
-	 *
-	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
-	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
@@ -125,11 +122,10 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_DB2_Select_Builder) {
+		if ($expr instanceof DB_PostgreSQL_Select_Builder) {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
@@ -158,18 +154,16 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param string $expr                       the expression to be prepared
+	 * @return string                            the prepared expression
 	 *
-	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyjoin.htm
-	 * @see http://www.craigsmullins.com/outer-j.htm
+	 * @see http://www.postgresql.org/docs/8.2/static/queries-table-expressions.html
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
 				case DB_SQL_JoinType::_CROSS_:
-				case DB_SQL_JoinType::_EXCEPTION_:
 				case DB_SQL_JoinType::_INNER_:
 				case DB_SQL_JoinType::_LEFT_:
 				case DB_SQL_JoinType::_LEFT_OUTER_:
@@ -177,6 +171,14 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 				case DB_SQL_JoinType::_RIGHT_OUTER_:
 				case DB_SQL_JoinType::_FULL_:
 				case DB_SQL_JoinType::_FULL_OUTER_:
+				case DB_SQL_JoinType::_NATURAL_:
+				case DB_SQL_JoinType::_NATURAL_INNER_:
+				case DB_SQL_JoinType::_NATURAL_LEFT_:
+				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
+				case DB_SQL_JoinType::_NATURAL_RIGHT_:
+				case DB_SQL_JoinType::_NATURAL_RIGHT_OUTER_:
+				case DB_SQL_JoinType::_NATURAL_FULL_:
+				case DB_SQL_JoinType::_NATURAL_FULL_OUTER_:
 					return $expr;
 				break;
 			}
@@ -205,10 +207,10 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyexcept.htm
-	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyintersect.htm
-	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafykeyu.htm
-	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafykeyuall.htm
+	 * @see http://developer.postgresql.org/pgdocs/postgres/functions.html
+	 * @see http://developer.postgresql.org/pgdocs/postgres/functions-comparison.html
+	 * @see http://developer.postgresql.org/pgdocs/postgres/functions-matching.html
+	 * @see http://www.postgresql.org/docs/8.3/interactive/queries-union.html
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -232,6 +234,8 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 					case DB_SQL_Operator::_NOT_IN_:
 					case DB_SQL_Operator::_IS_:
 					case DB_SQL_Operator::_IS_NOT_:
+					case DB_SQL_Operator::_SIMILAR_TO_:
+					case DB_SQL_Operator::_NOT_SIMILAR_TO_:
 						return $expr;
 					break;
 				}
@@ -239,7 +243,9 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 			else if ($group == 'SET') {
 				switch ($expr) {
 					case DB_SQL_Operator::_EXCEPT_:
+					case DB_SQL_Operator::_EXCEPT_ALL_:
 					case DB_SQL_Operator::_INTERSECT_:
+					case DB_SQL_Operator::_INTERSECT_ALL_:
 					case DB_SQL_Operator::_UNION_:
 					case DB_SQL_Operator::_UNION_ALL_:
 						return $expr;
@@ -262,7 +268,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $nulls                     the weight to be given to null values
 	 * @return string                           the prepared clause
 	 *
-	 * @see http://stackoverflow.com/questions/4067309/whats-the-equivalent-of-oracles-nulls-first-in-db2
+	 * @see http://www.postgresql.org/docs/9.0/static/sql-select.html
 	 */
 	public function prepare_ordering($column, $ordering, $nulls) {
 		$column = $this->prepare_identifier($column);
@@ -275,16 +281,15 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 				$ordering = 'ASC';
 			break;
 		}
-		$expr = '';
+		$expr = "{$column} {$ordering}";
 		switch (strtoupper($nulls)) {
 			case 'FIRST':
-				$expr .= "CASE WHEN {$column} IS NULL THEN 0 ELSE 1 END, ";
+				$expr .= ' NULLS FIRST';
 			break;
 			case 'LAST':
-				$expr .= "CASE WHEN {$column} IS NULL THEN 1 ELSE 0 END, ";
+				$expr .= ' NULLS LAST';
 			break;
 		}
-		$expr .= "{$column} {$ordering}";
 		return $expr;
 	}
 
@@ -316,16 +321,18 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @param char $escape                      the escape character
 	 * @return string                           the prepared expression
+	 *
+	 * @see http://www.postgresql.org/docs/7.4/static/datatype-boolean.html
 	 */
 	public function prepare_value($expr, $escape = NULL) {
 		if ($expr === NULL) {
 			return 'NULL';
 		}
 		else if ($expr === TRUE) {
-			return "'1'";
+			return "'t'"; // TRUE, 't', 'true', 'y', 'yes', '1'
 		}
 		else if ($expr === FALSE) {
-			return "'0'";
+			return "'f'"; // FALSE, 'f', 'false', 'n', 'no', '0'
 		}
 		else if (is_array($expr)) {
 			$buffer = array();
@@ -335,7 +342,7 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_DB2_Select_Builder) {
+			if ($expr instanceof DB_PostgreSQL_Select_Builder) {
 				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
@@ -416,14 +423,14 @@ abstract class Base_DB_DB2_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
 	 *
-	 * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.sqlref%2Fsrc%2Ftpc%2Fdb2z_reservedwords.htm
+	 * @see http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = XML::load('config/sql/db2.xml');
+			static::$xml = XML::load('config/sql/postgresql.xml');
 		}
 		$token = strtoupper($token);
-		$nodes = static::$xml->xpath("/sql/dialect[@name='db2' and @version='10']/keywords[keyword = '{$token}']");
+		$nodes = static::$xml->xpath("/sql/dialect[@name='postgresql' and @version='7.3']/keywords[keyword = '{$token}']");
 		return ! empty($nodes);
 	}
 

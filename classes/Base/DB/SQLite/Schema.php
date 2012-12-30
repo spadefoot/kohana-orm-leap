@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a way to access the scheme for a SQLite database.
+ * This class provides a way to access the scheme for an SQLite database.
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-05
+ * @version 2012-12-30
  *
  * @abstract
  */
@@ -40,7 +40,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 */
 	public function fields($table, $like = '') {
 		/*
-		$table = $this->compiler->prepare_value($table);
+		$table = $this->precompiler->prepare_value($table);
 		$regex = $this->like_to_regex($like);
 
 		$sql = "PRAGMA table_info({$table});";
@@ -144,7 +144,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$sql = "SELECT [tbl_name] AS [name] FROM [sqlite_master] WHERE [type] = 'table' AND [tbl_name] NOT IN ('sqlite_sequence')";
 
 		if ( ! empty($like)) {
-			$like = $this->compiler->prepare_value($like);
+			$like = $this->precompiler->prepare_value($like);
 			$sql .= ' AND [tbl_name] LIKE ' . $like;
 		}
 

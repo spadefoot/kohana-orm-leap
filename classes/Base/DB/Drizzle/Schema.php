@@ -40,10 +40,10 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 */
 	public function fields($table, $like = '') {
 		/*
-		$sql = 'SHOW FULL COLUMNS FROM ' . $this->compiler->prepare_identifier($table);
+		$sql = 'SHOW FULL COLUMNS FROM ' . $this->precompiler->prepare_identifier($table);
 
 		if ( ! empty($like)) {
-			$like = $this->compiler->prepare_value($like);
+			$like = $this->precompiler->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
 
@@ -161,7 +161,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 */
 	public function indexes($table) {
 		/*
-		$table = $this->compiler->prepare_identifier($table);
+		$table = $this->precompiler->prepare_identifier($table);
 
 		$sql = 'SHOW INDEX FROM ' . $table . ';';
 

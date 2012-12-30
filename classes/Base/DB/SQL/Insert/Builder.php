@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-10-09
+ * @version 2012-12-30
  *
  * @abstract
  */
@@ -32,9 +32,9 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * interface.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Expression_Interface
+	 * @var DB_SQL_Precompiler
 	 */
-	protected $compiler = NULL;
+	protected $precompiler = NULL;
 
 	/**
 	 * This variable stores the build data for the SQL statement.
@@ -60,8 +60,8 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 */
 	public function __construct(DB_DataSource $source) {
 		$this->dialect = $source->dialect;
-		$compiler = 'DB_' . $this->dialect . '_Expression';
-		$this->compiler = new $compiler($source);
+		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
+		$this->precompiler = new $precompiler($source);
 		$this->data = array();
 		$this->data['into'] = NULL;
 		$this->data['columns'] = array();
@@ -76,7 +76,7 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Insert_Builder            a reference to the current instance
 	 */
 	public function into($table) {
-		$table = $this->compiler->prepare_identifier($table);
+		$table = $this->precompiler->prepare_identifier($table);
 		$this->data['into'] = $table;
 		return $this;
 	}
@@ -91,9 +91,9 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Insert_Builder            a reference to the current instance
 	 */
 	public function column($column, $value, $row = 0) {
-		$column = $this->compiler->prepare_identifier($column);
-		$value = $this->compiler->prepare_value($value);
-		$row = $this->compiler->prepare_natural($row);
+		$column = $this->precompiler->prepare_identifier($column);
+		$value = $this->precompiler->prepare_value($value);
+		$row = $this->precompiler->prepare_natural($row);
 		$this->data['columns'][$column] = NULL;
 		$this->data['rows'][$row][$column] = $value;
 		return $this;

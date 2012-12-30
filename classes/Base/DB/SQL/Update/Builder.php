@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-08-16
+ * @version 2012-12-30
  *
  * @abstract
  */
@@ -32,9 +32,9 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * interface.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Expression_Interface
+	 * @var DB_SQL_Precompiler
 	 */
-	protected $compiler = NULL;
+	protected $precompiler = NULL;
 
 	/**
 	 * This variable stores the build data for the SQL statement.
@@ -60,8 +60,8 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 */
 	public function __construct(DB_DataSource $source) {
 		$this->dialect = $source->dialect;
-		$compiler = 'DB_' . $this->dialect . '_Expression';
-		$this->compiler = new $compiler($source);
+		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
+		$this->precompiler = new $precompiler($source);
 		$this->data = array();
 		$this->data['table'] = NULL;
 		$this->data['column'] = array();
@@ -79,7 +79,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder            a reference to the current instance
 	 */
 	public function table($table) {
-		$this->data['table'] = $this->compiler->prepare_identifier($table);
+		$this->data['table'] = $this->precompiler->prepare_identifier($table);
 		return $this;
 	}
 
@@ -92,8 +92,8 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder            a reference to the current instance
 	 */
 	public function set($column, $value) {
-		$column = $this->compiler->prepare_identifier($column);
-		$value = $this->compiler->prepare_value($value);
+		$column = $this->precompiler->prepare_identifier($column);
+		$value = $this->precompiler->prepare_value($value);
 		$this->data['column'][$column] = "{$column} = {$value}";
 		return $this;
 	}
@@ -107,8 +107,8 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder            a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
-		$parenthesis = $this->compiler->prepare_parenthesis($parenthesis);
-		$connector = $this->compiler->prepare_connector($connector);
+		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
+		$connector = $this->precompiler->prepare_connector($connector);
 		$this->data['where'][] = array($connector, $parenthesis);
 		return $this;
 	}
@@ -125,15 +125,15 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
-		$operator = $this->compiler->prepare_operator($operator, 'COMPARISON');
+		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
 		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
-			$column = $this->compiler->prepare_identifier($column);
-			$value0 = $this->compiler->prepare_value($value[0]);
-			$value1 = $this->compiler->prepare_value($value[1]);
-			$connector = $this->compiler->prepare_connector($connector);
+			$column = $this->precompiler->prepare_identifier($column);
+			$value0 = $this->precompiler->prepare_value($value[0]);
+			$value1 = $this->precompiler->prepare_value($value[1]);
+			$connector = $this->precompiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
@@ -150,12 +150,12 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 					break;
 				}
 			}
-			$column = $this->compiler->prepare_identifier($column);
+			$column = $this->precompiler->prepare_identifier($column);
 			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
 				? '\\\\'
 				: NULL;
-			$value = $this->compiler->prepare_value($value, $escape);
-			$connector = $this->compiler->prepare_connector($connector);
+			$value = $this->precompiler->prepare_value($value, $escape);
+			$connector = $this->precompiler->prepare_connector($connector);
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
 		}
 		return $this;
@@ -173,7 +173,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder        a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
-		$this->data['order_by'][] = $this->compiler->prepare_ordering($column, $ordering, $nulls);
+		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
 		return $this;
 	}
 
@@ -185,7 +185,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder            a reference to the current instance
 	 */
 	public function limit($limit) {
-		$this->data['limit'] = $this->compiler->prepare_natural($limit);
+		$this->data['limit'] = $this->precompiler->prepare_natural($limit);
 		return $this;
 	}
 
@@ -197,7 +197,7 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder            a reference to the current instance
 	 */
 	public function offset($offset) {
-		$this->data['offset'] = $this->compiler->prepare_natural($offset);
+		$this->data['offset'] = $this->precompiler->prepare_natural($offset);
 		return $this;
 	}
 

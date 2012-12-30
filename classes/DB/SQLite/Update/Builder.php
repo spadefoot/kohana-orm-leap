@@ -17,11 +17,11 @@
  */
 
 /**
- * This class builds a SQLite update statement.
+ * This class builds an SQLite update statement.
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-06
+ * @version 2012-12-30
  */
 class DB_SQLite_Update_Builder extends Base_DB_SQLite_Update_Builder {}
 ?>

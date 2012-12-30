@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing a PostgreSQL expression.
+ * This class provides a set of functions for preparing an Oracle expression.
  *
  * @package Leap
- * @category PostgreSQL
- * @version 2011-06-09
+ * @category Oracle
+ * @version 2012-12-30
  */
-class DB_PostgreSQL_Expression extends Base_DB_PostgreSQL_Expression {}
+class DB_Oracle_Precompiler extends Base_DB_Oracle_Precompiler {}
 ?>

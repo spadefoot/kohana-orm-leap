@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-11-14
+ * @version 2012-12-30
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -675,8 +675,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * @see http://drupal.org/node/141051
 	 */
 	public static function is_keyword($token, $dialect) {
-		$compiler = 'DB_' . $dialect . '_Expression';
-		$result = $compiler::is_keyword($token);
+		$precompiler = 'DB_' . $dialect . '_Precompiler';
+		$result = $precompiler::is_keyword($token);
 		return $result;
 	}
 

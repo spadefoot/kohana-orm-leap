@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a way to access the scheme for a SQLite database.
+ * This class provides a way to access the scheme for an SQLite database.
  *
  * @package Leap
  * @category SQLite
- * @version 2011-06-21
+ * @version 2012-12-30
  */
 class DB_SQLite_Schema extends Base_DB_SQLite_Schema {}
 ?>

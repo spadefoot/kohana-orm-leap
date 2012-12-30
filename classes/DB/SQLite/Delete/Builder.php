@@ -17,11 +17,11 @@
  */
 
 /**
- * This class builds a SQLite delete statement.
+ * This class builds an SQLite delete statement.
  *
  * @package Leap
  * @category SQLite
- * @version 2011-12-06
+ * @version 2012-12-30
  */
 class DB_SQLite_Delete_Builder extends Base_DB_SQLite_Delete_Builder {}
 ?>

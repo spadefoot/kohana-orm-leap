@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing a SQLite expression.
+ * This class provides a set of functions for preparing a Firebird SQL expression.
  *
  * @package Leap
- * @category SQLite
- * @version 2011-06-09
+ * @category Firebird
+ * @version 2012-12-30
  */
-class DB_SQLite_Expression extends Base_DB_SQLite_Expression {}
+class DB_Firebird_Precompiler extends Base_DB_Firebird_Precompiler {}
 ?>

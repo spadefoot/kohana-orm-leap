@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MariaDB expression.
+ * This class provides a set of functions for preparing an SQLite expression.
  *
  * @package Leap
- * @category MariaDB
- * @version 2011-11-20
+ * @category SQLite
+ * @version 2012-12-30
  */
-class DB_MariaDB_Expression extends Base_DB_MariaDB_Expression {}
+class DB_SQLite_Precompiler extends Base_DB_SQLite_Precompiler {}
 ?>

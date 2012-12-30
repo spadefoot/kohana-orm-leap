@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing an SQLite expression.
+ * This class provides a set of functions for preparing a Firebird SQL expression.
  *
  * @package Leap
- * @category SQLite
- * @version 2012-12-05
+ * @category Firebird
+ * @version 2012-12-30
  *
  * @abstract
  */
-abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_Firebird_Precompiler implements DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -122,11 +122,10 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
-	 * @see http://www.ispirer.com/wiki/sqlways/mysql/identifiers
+	 * @see http://www.ispirer.com/wiki/sqlways/interbase-firebird/identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_SQLite_Select_Builder) {
+		if ($expr instanceof DB_Firebird_Select_Builder) {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
@@ -136,7 +135,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid identifier expression specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable_InvalidArgument_Exception('Message: Invalid identifier expression specified. Token: Token must be a string.', array(':expr' => $expr));
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
 			$expr = rtrim($expr, "; \t\n\r\0\x0B");
@@ -158,7 +157,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
+	 * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
@@ -168,11 +167,16 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 				case DB_SQL_JoinType::_INNER_:
 				case DB_SQL_JoinType::_LEFT_:
 				case DB_SQL_JoinType::_LEFT_OUTER_:
+				case DB_SQL_JoinType::_RIGHT_:
+				case DB_SQL_JoinType::_RIGHT_OUTER_:
+				case DB_SQL_JoinType::_FULL_:
+				case DB_SQL_JoinType::_FULL_OUTER_:
 				case DB_SQL_JoinType::_NATURAL_:
-				case DB_SQL_JoinType::_NATURAL_CROSS_;
-				case DB_SQL_JoinType::_NATURAL_INNER_;
+				case DB_SQL_JoinType::_NATURAL_INNER_:
 				case DB_SQL_JoinType::_NATURAL_LEFT_:
 				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
+				case DB_SQL_JoinType::_NATURAL_RIGHT_:
+				case DB_SQL_JoinType::_NATURAL_RIGHT_OUTER_:
 					return $expr;
 				break;
 			}
@@ -200,8 +204,6 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $expr                      the expression to be prepared
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
-	 *
-	 * @see http://www.sqlite.org/lang_select.html
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -209,17 +211,8 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			$expr = strtoupper($expr);
 			if ($group == 'COMPARISON') {
 				switch ($expr) {
-					case DB_SQL_Operator::_REGEX:
-					case 'REGEXP':
-						return 'REGEXP';
-					break;
-					case DB_SQL_Operator::_NOT_REGEX:
-					case 'NOT REGEXP':
-						return 'NOT REGEXP';
-					break;
 					case DB_SQL_Operator::_NOT_EQUAL_TO_:
-						return DB_SQL_Operator::_NOT_EQUIVALENT_;
-					break;
+						$expr = DB_SQL_Operator::_NOT_EQUIVALENT_;
 					case DB_SQL_Operator::_NOT_EQUIVALENT_:
 					case DB_SQL_Operator::_EQUAL_TO_:
 					case DB_SQL_Operator::_BETWEEN_:
@@ -234,20 +227,15 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 					case DB_SQL_Operator::_NOT_IN_:
 					case DB_SQL_Operator::_IS_:
 					case DB_SQL_Operator::_IS_NOT_:
-					case DB_SQL_Operator::_GLOB_:
-					case DB_SQL_Operator::_NOT_GLOB_:
-					case DB_SQL_Operator::_MATCH_:
-					case DB_SQL_Operator::_NOT_MATCH_:
 						return $expr;
 					break;
 				}
 			}
 			else if ($group == 'SET') {
 				switch ($expr) {
-					case DB_SQL_Operator::_EXCEPT_:
-					case DB_SQL_Operator::_INTERSECT_:
 					case DB_SQL_Operator::_UNION_:
 					case DB_SQL_Operator::_UNION_ALL_:
+					case DB_SQL_Operator::_UNION_DISTINCT_:
 						return $expr;
 					break;
 				}
@@ -267,6 +255,8 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 *                                          descending order
 	 * @param string $nulls                     the weight to be given to null values
 	 * @return string                           the prepared clause
+	 *
+	 * @see http://www.firebirdsql.org/refdocs/langrefupd20-select.html#langrefupd20-orderby
 	 */
 	public function prepare_ordering($column, $ordering, $nulls) {
 		$column = $this->prepare_identifier($column);
@@ -279,16 +269,15 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 				$ordering = 'ASC';
 			break;
 		}
-		$expr = '';
+		$expr = "{$column} {$ordering}";
 		switch (strtoupper($nulls)) {
 			case 'FIRST':
-				$expr .= "CASE WHEN {$column} IS NULL THEN 0 ELSE 1 END, ";
+				$expr .= ' NULLS FIRST';
 			break;
 			case 'LAST':
-				$expr .= "CASE WHEN {$column} IS NULL THEN 1 ELSE 0 END, ";
+				$expr .= ' NULLS LAST';
 			break;
 		}
-		$expr .= "{$column} {$ordering}";
 		return $expr;
 	}
 
@@ -339,7 +328,7 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_SQLite_Select_Builder) {
+			if ($expr instanceof DB_Firebird_Select_Builder) {
 				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
@@ -420,14 +409,14 @@ abstract class Base_DB_SQLite_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
 	 *
-	 * @see http://www.sqlite.org/lang_keywords.html
+	 * @see http://www.firebirdsql.org/file/documentation/reference_manuals/reference_material/html/langrefupd25-reskeywords-full-reswords.html
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = XML::load('config/sql/sqlite.xml');
+			static::$xml = XML::load('config/sql/firebird.xml');
 		}
 		$token = strtoupper($token);
-		$nodes = static::$xml->xpath("/sql/dialect[@name='sqlite' and @version='3.0']/keywords[keyword = '{$token}']");
+		$nodes = static::$xml->xpath("/sql/dialect[@name='firebird' and @version='2.5']/keywords[keyword = '{$token}']");
 		return ! empty($nodes);
 	}
 

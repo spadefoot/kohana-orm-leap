@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a Drizzle expression.
+ * This class provides a set of functions for preparing an SQLite expression.
  *
  * @package Leap
- * @category Drizzle
- * @version 2012-12-04
+ * @category SQLite
+ * @version 2012-12-30
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_SQLite_Precompiler implements DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -34,7 +34,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @static
 	 * @const string
 	 */
-	const _OPENING_QUOTE_CHARACTER_ = '`';
+	const _OPENING_QUOTE_CHARACTER_ = '"';
 
 	/**
 	 * This constant represents a closing identifier quote character.
@@ -43,7 +43,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @static
 	 * @const string
 	 */
-	const _CLOSING_QUOTE_CHARACTER_ = '`';
+	const _CLOSING_QUOTE_CHARACTER_ = '"';
 
 	/**
 	 * This variable stores the data source for which the expression is being
@@ -126,7 +126,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @see http://www.ispirer.com/wiki/sqlways/mysql/identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_Drizzle_Select_Builder) {
+		if ($expr instanceof DB_SQLite_Select_Builder) {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
@@ -158,15 +158,21 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://docs.drizzle.org/join.html
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
 				case DB_SQL_JoinType::_CROSS_:
+				case DB_SQL_JoinType::_INNER_:
 				case DB_SQL_JoinType::_LEFT_:
-				case DB_SQL_JoinType::_RIGHT_:
+				case DB_SQL_JoinType::_LEFT_OUTER_:
+				case DB_SQL_JoinType::_NATURAL_:
+				case DB_SQL_JoinType::_NATURAL_CROSS_;
+				case DB_SQL_JoinType::_NATURAL_INNER_;
+				case DB_SQL_JoinType::_NATURAL_LEFT_:
+				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
 					return $expr;
 				break;
 			}
@@ -194,6 +200,8 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @param string $expr                      the expression to be prepared
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
+	 *
+	 * @see http://www.sqlite.org/lang_select.html
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -201,8 +209,17 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 			$expr = strtoupper($expr);
 			if ($group == 'COMPARISON') {
 				switch ($expr) {
+					case DB_SQL_Operator::_REGEX:
+					case 'REGEXP':
+						return 'REGEXP';
+					break;
+					case DB_SQL_Operator::_NOT_REGEX:
+					case 'NOT REGEXP':
+						return 'NOT REGEXP';
+					break;
 					case DB_SQL_Operator::_NOT_EQUAL_TO_:
-						$expr = DB_SQL_Operator::_NOT_EQUIVALENT_;
+						return DB_SQL_Operator::_NOT_EQUIVALENT_;
+					break;
 					case DB_SQL_Operator::_NOT_EQUIVALENT_:
 					case DB_SQL_Operator::_EQUAL_TO_:
 					case DB_SQL_Operator::_BETWEEN_:
@@ -217,17 +234,20 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 					case DB_SQL_Operator::_NOT_IN_:
 					case DB_SQL_Operator::_IS_:
 					case DB_SQL_Operator::_IS_NOT_:
-					case DB_SQL_Operator::_REGEX_:
-					case DB_SQL_Operator::_NOT_REGEX_:
+					case DB_SQL_Operator::_GLOB_:
+					case DB_SQL_Operator::_NOT_GLOB_:
+					case DB_SQL_Operator::_MATCH_:
+					case DB_SQL_Operator::_NOT_MATCH_:
 						return $expr;
 					break;
 				}
 			}
 			else if ($group == 'SET') {
 				switch ($expr) {
+					case DB_SQL_Operator::_EXCEPT_:
+					case DB_SQL_Operator::_INTERSECT_:
 					case DB_SQL_Operator::_UNION_:
 					case DB_SQL_Operator::_UNION_ALL_:
-					case DB_SQL_Operator::_UNION_DISTINCT_:
 						return $expr;
 					break;
 				}
@@ -247,8 +267,6 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 *                                          descending order
 	 * @param string $nulls                     the weight to be given to null values
 	 * @return string                           the prepared clause
-	 *
-	 * @see http://forums.mysql.com/read.php?10,208709,208927
 	 */
 	public function prepare_ordering($column, $ordering, $nulls) {
 		$column = $this->prepare_identifier($column);
@@ -321,7 +339,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_Drizzle_Select_Builder) {
+			if ($expr instanceof DB_SQLite_Select_Builder) {
 				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
@@ -346,7 +364,7 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);
 		}
-		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) {
+		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
 			return "'{$expr}'";
 		}
 		else if ($expr === '') {
@@ -401,13 +419,15 @@ abstract class Base_DB_Drizzle_Expression implements DB_SQL_Expression_Interface
 	 * @static
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
+	 *
+	 * @see http://www.sqlite.org/lang_keywords.html
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = XML::load('config/sql/mysql.xml');
+			static::$xml = XML::load('config/sql/sqlite.xml');
 		}
 		$token = strtoupper($token);
-		$nodes = static::$xml->xpath("/sql/dialect[@name='mysql' and @version='5.6']/keywords[keyword = '{$token}']");
+		$nodes = static::$xml->xpath("/sql/dialect[@name='sqlite' and @version='3.0']/keywords[keyword = '{$token}']");
 		return ! empty($nodes);
 	}
 

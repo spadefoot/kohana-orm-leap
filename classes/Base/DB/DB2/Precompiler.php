@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MS SQL expression.
+ * This class provides a set of functions for preparing a DB2 expression.
  *
  * @package Leap
- * @category MS SQL
- * @version 2012-12-05
+ * @category DB2
+ * @version 2012-12-30
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_DB2_Precompiler implements DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -34,7 +34,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @static
 	 * @const string
 	 */
-	const _OPENING_QUOTE_CHARACTER_ = '[';
+	const _OPENING_QUOTE_CHARACTER_ = '"';
 
 	/**
 	 * This constant represents a closing identifier quote character.
@@ -43,7 +43,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @static
 	 * @const string
 	 */
-	const _CLOSING_QUOTE_CHARACTER_ = ']';
+	const _CLOSING_QUOTE_CHARACTER_ = '"';
 
 	/**
 	 * This variable stores the data source for which the expression is being
@@ -73,6 +73,9 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
+	 *
+	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
@@ -122,11 +125,11 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://msdn.microsoft.com/en-us/library/ms175874.aspx
-	 * @see http://www.ispirer.com/wiki/sqlways/sql-server/identifiers
+	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_MsSQL_Select_Builder) {
+		if ($expr instanceof DB_DB2_Select_Builder) {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
@@ -158,13 +161,15 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://msdn.microsoft.com/en-us/library/aa259187%28v=sql.80%29.aspx
+	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyjoin.htm
+	 * @see http://www.craigsmullins.com/outer-j.htm
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
 				case DB_SQL_JoinType::_CROSS_:
+				case DB_SQL_JoinType::_EXCEPTION_:
 				case DB_SQL_JoinType::_INNER_:
 				case DB_SQL_JoinType::_LEFT_:
 				case DB_SQL_JoinType::_LEFT_OUTER_:
@@ -199,6 +204,11 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $expr                      the expression to be prepared
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
+	 *
+	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyexcept.htm
+	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyintersect.htm
+	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafykeyu.htm
+	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafykeyuall.htm
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -252,7 +262,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 * @param string $nulls                     the weight to be given to null values
 	 * @return string                           the prepared clause
 	 *
-	 * @see http://www.sqlhacks.com/Retrieve/Sort-Nulls-Last
+	 * @see http://stackoverflow.com/questions/4067309/whats-the-equivalent-of-oracles-nulls-first-in-db2
 	 */
 	public function prepare_ordering($column, $ordering, $nulls) {
 		$column = $this->prepare_identifier($column);
@@ -325,7 +335,7 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_MsSQL_Select_Builder) {
+			if ($expr instanceof DB_DB2_Select_Builder) {
 				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
@@ -410,10 +420,10 @@ abstract class Base_DB_MsSQL_Expression implements DB_SQL_Expression_Interface {
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = XML::load('config/sql/mssql.xml');
+			static::$xml = XML::load('config/sql/db2.xml');
 		}
 		$token = strtoupper($token);
-		$nodes = static::$xml->xpath("/sql/dialect[@name='mssql' and @version='2008.R2']/keywords[keyword = '{$token}']");
+		$nodes = static::$xml->xpath("/sql/dialect[@name='db2' and @version='10']/keywords[keyword = '{$token}']");
 		return ! empty($nodes);
 	}
 

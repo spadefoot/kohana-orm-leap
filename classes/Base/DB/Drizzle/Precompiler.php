@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MariaDB expression.
+ * This class provides a set of functions for preparing a Drizzle expression.
  *
  * @package Leap
- * @category MariaDB
- * @version 2012-12-04
+ * @category Drizzle
+ * @version 2012-12-30
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_Drizzle_Precompiler implements DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -126,7 +126,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @see http://www.ispirer.com/wiki/sqlways/mysql/identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_MariaDB_Select_Builder) {
+		if ($expr instanceof DB_Drizzle_Select_Builder) {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
@@ -158,24 +158,15 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
+	 * @see http://docs.drizzle.org/join.html
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
 				case DB_SQL_JoinType::_CROSS_:
-				case DB_SQL_JoinType::_INNER_:
 				case DB_SQL_JoinType::_LEFT_:
-				case DB_SQL_JoinType::_LEFT_OUTER_:
 				case DB_SQL_JoinType::_RIGHT_:
-				case DB_SQL_JoinType::_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_:
-				case DB_SQL_JoinType::_NATURAL_LEFT_:
-				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_RIGHT_:
-				case DB_SQL_JoinType::_NATURAL_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_STRAIGHT_:
 					return $expr;
 				break;
 			}
@@ -330,7 +321,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_MariaDB_Select_Builder) {
+			if ($expr instanceof DB_Drizzle_Select_Builder) {
 				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
@@ -355,7 +346,7 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);
 		}
-		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
+		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) {
 			return "'{$expr}'";
 		}
 		else if ($expr === '') {
@@ -410,12 +401,9 @@ abstract class Base_DB_MariaDB_Expression implements DB_SQL_Expression_Interface
 	 * @static
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
-	 *
-	 * @see http://dev.mysql.com/doc/refman/5.6/en/reserved-words.html
-	 * @see http://books.google.com/books?id=cKSgkT8AAkwC&pg=PT270&lpg=PT270&dq=mariadb+reserved+keywords&source=bl&ots=S58RmNOK4N&sig=wHm0cKwcNUho8EghBgPlvH0BiPo&hl=en&sa=X&ei=7fsYT6mMF-qTiQKp6u3NCA&sqi=2&ved=0CDUQ6AEwAw#v=onepage&q=mariadb%20reserved%20keywords&f=false
 	 */
 	public static function is_keyword($token) {
-		if (static::$xml) {
+		if (static::$xml === NULL) {
 			static::$xml = XML::load('config/sql/mysql.xml');
 		}
 		$token = strtoupper($token);

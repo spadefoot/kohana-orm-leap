@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing a Firebird SQL expression.
+ * This class provides a set of functions for preparing a Drizzle expression.
  *
  * @package Leap
- * @category Firebird
- * @version 2011-06-09
+ * @category Drizzle
+ * @version 2012-12-30
  */
-class DB_Firebird_Expression extends Base_DB_Firebird_Expression {}
+class DB_Drizzle_Precompiler extends Base_DB_Drizzle_Precompiler {}
 ?>

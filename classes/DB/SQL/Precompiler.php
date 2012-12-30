@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing an Oracle expression.
- *
+ * This interface provides the contract for an expression class.
+ * 
  * @package Leap
- * @category Oracle
- * @version 2011-06-15
+ * @category SQL
+ * @version 2012-12-30
  */
-class DB_Oracle_Expression extends Base_DB_Oracle_Expression {}
+interface DB_SQL_Precompiler extends Base_DB_SQL_Precompiler {}
 ?>

@@ -21,11 +21,11 @@
  * 
  * @package Leap
  * @category SQL
- * @version 2012-02-22
+ * @version 2012-12-30
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
  */
-interface Base_DB_SQL_Expression_Interface {
+interface Base_DB_SQL_Precompiler {
 
 	/**
 	 * This function initializes the class with the specified data source.

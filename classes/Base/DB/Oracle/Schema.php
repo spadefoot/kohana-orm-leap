@@ -48,12 +48,12 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		AND column_name LIKE '%CALLREF%';
 		*/
 		/*
-		$table = $this->compiler->prepare_identifier($table);
+		$table = $this->precompiler->prepare_identifier($table);
 
 		$sql = 'SHOW FULL COLUMNS FROM ' . $table;
 
 		if ( ! empty($like)) {
-			$like = $this->compiler->prepare_value($like);
+			$like = $this->precompiler->prepare_value($like);
 			$sql .= ' LIKE ' . $like;
 		}
 

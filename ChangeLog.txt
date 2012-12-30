@@ -214,7 +214,7 @@ Change Log for LEAP ORM
 * Started to rework schema classes.
 * Adding a new plugin for Drizzle.
 * Fixed class name capitalization in Base_DB_MsSQL_Update_Builder and DB_MsSQL_Update_Builder.
-* Fixed a copy/paste bug in Base_DB_SQLite_Expression::prepare_identifier($expr).
+* Fixed a copy/paste bug in Base_DB_SQLite_Precompiler::prepare_identifier($expr).
 * Updated inline documentation.
 
 2011-12-30

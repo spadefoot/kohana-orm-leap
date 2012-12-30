@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a Oracle expression.
+ * This class provides a set of functions for preparing a MySQL expression.
  *
  * @package Leap
- * @category Oracle
- * @version 2012-12-05
+ * @category MySQL
+ * @version 2012-12-30
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface {
+abstract class Base_DB_MySQL_Precompiler implements DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -34,7 +34,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @static
 	 * @const string
 	 */
-	const _OPENING_QUOTE_CHARACTER_ = '"';
+	const _OPENING_QUOTE_CHARACTER_ = '`';
 
 	/**
 	 * This constant represents a closing identifier quote character.
@@ -43,7 +43,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @static
 	 * @const string
 	 */
-	const _CLOSING_QUOTE_CHARACTER_ = '"';
+	const _CLOSING_QUOTE_CHARACTER_ = '`';
 
 	/**
 	 * This variable stores the data source for which the expression is being
@@ -73,8 +73,6 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
-	 *
-	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
@@ -124,10 +122,11 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $expr                      the expression to be prepared
 	 * @return string                           the prepared expression
 	 *
-	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
+	 * @see http://www.ispirer.com/wiki/sqlways/mysql/identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_Oracle_Select_Builder) {
+		if ($expr instanceof DB_MySQL_Select_Builder) {
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB_SQL_Expression) {
@@ -156,11 +155,10 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                       the expression to be prepared
-	 * @return string                            the prepared expression
+	 * @param string $expr                      the expression to be prepared
+	 * @return string                           the prepared expression
 	 *
-	 * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
-	 * @see http://etutorials.org/SQL/Mastering+Oracle+SQL/Chapter+3.+Joins/3.3+Types+of+Joins/
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/join.html
 	 */
 	public function prepare_join($expr) {
 		if (is_string($expr)) {
@@ -172,16 +170,12 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 				case DB_SQL_JoinType::_LEFT_OUTER_:
 				case DB_SQL_JoinType::_RIGHT_:
 				case DB_SQL_JoinType::_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_FULL_:
-				case DB_SQL_JoinType::_FULL_OUTER_:
 				case DB_SQL_JoinType::_NATURAL_:
-				case DB_SQL_JoinType::_NATURAL_INNER_:
 				case DB_SQL_JoinType::_NATURAL_LEFT_:
 				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
 				case DB_SQL_JoinType::_NATURAL_RIGHT_:
 				case DB_SQL_JoinType::_NATURAL_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_FULL_:
-				case DB_SQL_JoinType::_NATURAL_FULL_OUTER_:
+				case DB_SQL_JoinType::_STRAIGHT_:
 					return $expr;
 				break;
 			}
@@ -209,8 +203,6 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $expr                      the expression to be prepared
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
-	 *
-	 * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/queries004.htm
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -234,16 +226,17 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 					case DB_SQL_Operator::_NOT_IN_:
 					case DB_SQL_Operator::_IS_:
 					case DB_SQL_Operator::_IS_NOT_:
+					case DB_SQL_Operator::_REGEX_:
+					case DB_SQL_Operator::_NOT_REGEX_:
 						return $expr;
 					break;
 				}
 			}
 			else if ($group == 'SET') {
 				switch ($expr) {
-					case DB_SQL_Operator::_INTERSECT_:
-					case DB_SQL_Operator::_MINUS_:
 					case DB_SQL_Operator::_UNION_:
 					case DB_SQL_Operator::_UNION_ALL_:
+					case DB_SQL_Operator::_UNION_DISTINCT_:
 						return $expr;
 					break;
 				}
@@ -264,8 +257,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $nulls                     the weight to be given to null values
 	 * @return string                           the prepared clause
 	 *
-	 * @see http://www.techrepublic.com/blog/datacenter/control-null-data-in-oracle-using-the-order-by-clause/121
-	 * @see http://psoug.org/reference/orderby.html
+	 * @see http://forums.mysql.com/read.php?10,208709,208927
 	 */
 	public function prepare_ordering($column, $ordering, $nulls) {
 		$column = $this->prepare_identifier($column);
@@ -278,15 +270,16 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 				$ordering = 'ASC';
 			break;
 		}
-		$expr = "{$column} {$ordering}";
+		$expr = '';
 		switch (strtoupper($nulls)) {
 			case 'FIRST':
-				$expr .= ' NULLS FIRST';
+				$expr .= "CASE WHEN {$column} IS NULL THEN 0 ELSE 1 END, ";
 			break;
 			case 'LAST':
-				$expr .= ' NULLS LAST';
+				$expr .= "CASE WHEN {$column} IS NULL THEN 1 ELSE 0 END, ";
 			break;
 		}
+		$expr .= "{$column} {$ordering}";
 		return $expr;
 	}
 
@@ -337,7 +330,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_Oracle_Select_Builder) {
+			if ($expr instanceof DB_MySQL_Select_Builder) {
 				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB_SQL_Expression) {
@@ -362,7 +355,7 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 		else if (is_double($expr)) {
 			return sprintf('%F', $expr);
 		}
-		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) { // is_datetime($expr)
+		else if (is_string($expr) AND preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}(\s[0-9]{2}:[0-9]{2}:[0-9]{2})?$/', $expr)) {
 			return "'{$expr}'";
 		}
 		else if ($expr === '') {
@@ -418,14 +411,14 @@ abstract class Base_DB_Oracle_Expression implements DB_SQL_Expression_Interface 
 	 * @param string $token                     the token to be cross-referenced
 	 * @return boolean                          whether the token is a reserved keyword
 	 *
-	 * @see http://docs.oracle.com/cd/B28359_01/appdev.111/b31231/appb.htm
+	 * @see http://dev.mysql.com/doc/refman/5.6/en/reserved-words.html
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = XML::load('config/sql/oracle.xml');
+			static::$xml = XML::load('config/sql/mysql.xml');
 		}
 		$token = strtoupper($token);
-		$nodes = static::$xml->xpath("/sql/dialect[@name='oracle' and @version='11.1']/keywords[keyword = '{$token}']");
+		$nodes = static::$xml->xpath("/sql/dialect[@name='mysql' and @version='5.6']/keywords[keyword = '{$token}']");
 		return ! empty($nodes);
 	}
 

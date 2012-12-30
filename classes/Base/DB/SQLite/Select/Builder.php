@@ -17,11 +17,11 @@
  */
 
 /**
- * This class builds a SQLite select statement.
+ * This class builds an SQLite select statement.
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-05
+ * @version 2012-12-30
  *
  * @see http://www.sqlite.org/lang_select.html
  *

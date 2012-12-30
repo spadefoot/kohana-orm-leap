@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2011-06-09
+ * @version 2012-12-30
  */
-class DB_MySQL_Expression extends Base_DB_MySQL_Expression {}
+class DB_MySQL_Precompiler extends Base_DB_MySQL_Precompiler {}
 ?>

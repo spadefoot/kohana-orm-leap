@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MS SQL expression.
+ * This class provides a set of functions for preparing a PostgreSQL expression.
  *
  * @package Leap
- * @category MS SQL
- * @version 2011-06-09
+ * @category PostgreSQL
+ * @version 2012-12-30
  */
-class DB_MsSQL_Expression extends Base_DB_MsSQL_Expression {}
+class DB_PostgreSQL_Precompiler extends Base_DB_PostgreSQL_Precompiler {}
 ?>

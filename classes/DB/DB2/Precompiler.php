@@ -17,11 +17,11 @@
  */
 
 /**
- * This class provides a set of functions for preparing a Drizzle expression.
+ * This class provides a set of functions for preparing a DB2 expression.
  *
  * @package Leap
- * @category Drizzle
- * @version 2011-12-31
+ * @category DB2
+ * @version 2012-12-30
  */
-class DB_Drizzle_Expression extends Base_DB_Drizzle_Expression {}
+class DB_DB2_Precompiler extends Base_DB_DB2_Precompiler {}
 ?>

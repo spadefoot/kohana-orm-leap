@@ -17,11 +17,11 @@
  */
 
 /**
- * This interface provides the contract for an expression class.
- * 
+ * This class provides a set of functions for preparing a MariaDB expression.
+ *
  * @package Leap
- * @category SQL
- * @version 2011-12-06
+ * @category MariaDB
+ * @version 2012-12-30
  */
-interface DB_SQL_Expression_Interface extends Base_DB_SQL_Expression_Interface {}
+class DB_MariaDB_Precompiler extends Base_DB_MariaDB_Precompiler {}
 ?>
