@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-05
+ * @version 2012-12-30
  *
  * @see http://dev.kohanaframework.org/projects/mptt
  * @see https://github.com/kiall/kohana3-orm_mptt
@@ -865,7 +865,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function siblings($self = FALSE, $ordering = 'ASC') {
         if ($this->root()) {
-            return new DB_ResultSet(array(), 0);
+            return new DB_ResultSet(array());
         }
 
 		$builder = DB_ORM::select(get_class($this))

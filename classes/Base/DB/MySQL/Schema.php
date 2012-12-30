@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-12-05
+ * @version 2012-12-30
  *
  * @abstract
  */
@@ -181,7 +181,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			$i++;
 		}
 
-		return new DB_ResultSet($buffer, $i, 'array');
+		return new DB_ResultSet($buffer, 'array');
 		*/
 	}
 

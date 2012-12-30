@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-15
+ * @version 2012-12-30
  *
  * @abstract
  */
@@ -64,14 +64,26 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * result sets are accessible alike.
 	 *
 	 * @access public
-	 * @param array $records                            an array of records
-	 * @param integer $size                             the total number of records
+	 * @param mixed $buffer                             either an array of records or a data reader
 	 * @param string $type                              the return type being used
 	 */
-	public function __construct(Array $records, $size, $type = 'array') {
-		$this->records = $records;
+	public function __construct($buffer, $type = 'array') {
+		if (is_array($buffer)) {
+			$this->records = $buffer;
+			$this->size = count($buffer);
+		}
+		else {
+			$this->records = array();
+			$this->size = 0;
+			if (is_object($buffer) AND ($buffer instanceof DB_SQL_DataReader)) {
+				while ($buffer->read()) {
+					$this->records[] = $buffer->row($type);
+					$this->size++;
+				}
+				$buffer->free();
+			}
+		}
 		$this->position = 0;
-		$this->size = $size;
 		$this->type = $type;
 	}
 

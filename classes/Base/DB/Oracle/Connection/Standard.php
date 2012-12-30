@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-29
+ * @version 2012-12-30
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -150,14 +150,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		}
 		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
 		$reader = new $driver($this, $sql, $this->execution_mode);
-		$records = array();
-		$size = 0;
-		while ($reader->read()) {
-			$records[] = $reader->row($type);
-			$size++;
-		}
-		$reader->free();
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($records, $size, $type));
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
