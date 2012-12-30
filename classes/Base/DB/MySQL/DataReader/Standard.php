@@ -56,8 +56,11 @@ abstract class Base_DB_MySQL_DataReader_Standard extends DB_SQL_DataReader_Stand
 	 * @override
 	 */
 	public function free() {
-		@mysql_free_result($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@mysql_free_result($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

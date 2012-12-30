@@ -67,8 +67,11 @@ abstract class Base_DB_Oracle_DataReader_Standard extends DB_SQL_DataReader_Stan
 	 * @override
 	 */
 	public function free() {
-		@oci_free_statement($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@oci_free_statement($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

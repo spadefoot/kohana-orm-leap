@@ -56,8 +56,11 @@ abstract class Base_DB_MsSQL_DataReader_Standard extends DB_SQL_DataReader_Stand
 	 * @override
 	 */
 	public function free() {
-		@mssql_free_result($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@mssql_free_result($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

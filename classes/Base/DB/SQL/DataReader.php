@@ -55,6 +55,15 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	public abstract function __construct(DB_Connection_Driver $connection, $sql, $mode = 32);
 
 	/**
+	 * This destructor ensures that the command reference has been freed.
+	 *
+	 * @access public
+	 */
+	public function __destruct() {
+		$this->free();
+	}
+
+	/**
 	 * This function frees the command reference.
 	 *
 	 * @access public

@@ -54,8 +54,11 @@ abstract class Base_DB_Drizzle_DataReader_Standard extends DB_SQL_DataReader_Sta
 	 * @override
 	 */
 	public function free() {
-		@drizzle_result_free($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@drizzle_result_free($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

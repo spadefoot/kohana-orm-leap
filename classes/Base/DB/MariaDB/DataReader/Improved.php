@@ -56,8 +56,11 @@ abstract class Base_DB_MariaDB_DataReader_Improved extends DB_SQL_DataReader_Sta
 	 * @override
 	 */
 	public function free() {
-		@mysqli_free_result($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@mysqli_free_result($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

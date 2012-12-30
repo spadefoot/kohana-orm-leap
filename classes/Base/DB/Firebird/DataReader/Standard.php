@@ -54,8 +54,11 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 * @override
 	 */
 	public function free() {
-		@ibase_free_result($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@ibase_free_result($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

@@ -56,8 +56,11 @@ abstract class Base_DB_PostgreSQL_DataReader_Standard extends DB_SQL_DataReader_
 	 * @override
 	 */
 	public function free() {
-		@pg_free_result($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@pg_free_result($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

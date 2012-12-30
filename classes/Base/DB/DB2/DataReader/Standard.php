@@ -65,8 +65,11 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
 	public function free() {
-		@db2_free_result($this->command);
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			@db2_free_result($this->command);
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**

@@ -56,8 +56,10 @@ abstract class Base_DB_SQLite_DataReader_Standard extends DB_SQL_DataReader_Stan
 	 * @override
 	 */
 	public function free() {
-		$this->command = NULL;
-		$this->record = FALSE;
+		if ($this->command !== NULL) {
+			$this->command = NULL;
+			$this->record = FALSE;
+		}
 	}
 
 	/**
