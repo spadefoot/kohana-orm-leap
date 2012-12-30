@@ -1,5 +1,8 @@
 Change Log for LEAP ORM
 
+2012-12-29
+* Refactored constructors for reader classes.
+
 2012-12-05
 * Added @override property in inline documentation.
 

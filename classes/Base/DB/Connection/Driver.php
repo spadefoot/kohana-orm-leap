@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-15
+ * @version 2012-12-29
  *
  * @abstract
  */
@@ -228,7 +228,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 			return $result_set;
 		}
 		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this->resource, $sql);
+		$reader = new $driver($this, $sql);
 		$records = array();
 		$size = 0;
 		while ($reader->read()) {
@@ -292,7 +292,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
 		}
 		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this->resource, $sql);
+		$reader = new $driver($this, $sql);
 		$this->sql = $sql;
 		return $reader;
 	}

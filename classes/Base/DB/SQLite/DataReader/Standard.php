@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-05
+ * @version 2012-12-29
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -35,11 +35,12 @@ abstract class Base_DB_SQLite_DataReader_Standard extends DB_SQL_DataReader_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @param mixed $resource                   the resource to be used
+	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public function __construct($resource, $sql, $mode = 32) {
+	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
+		$resource = $connection->get_resource();
 		$command = @sqlite_query($resource, $sql);
 		if ($command === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => sqlite_error_string(sqlite_last_error($resource))));

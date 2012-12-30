@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-17
+ * @version 2012-12-29
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -35,7 +35,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @param mixed $resource                   the resource to be used
+	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 *
@@ -43,9 +43,13 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * @see http://www.php.net/manual/en/function.db2-execute.php
 	 * @see http://www.php.net/manual/en/function.db2-stmt-error.php
 	 */
-	public function __construct($resource, $sql, $mode = 32) {
+	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
+		$resource = $connection->get_resource();
 		$command = @db2_prepare($resource, $sql);
-		if (($command === FALSE) OR ! @db2_execute($command)) {
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @db2_conn_errormsg($resource)));
+		}
+		if ( ! @db2_execute($command)) {
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @db2_stmt_errormsg($command)));
 		}
 		$this->command = $command;
@@ -58,7 +62,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * @access public
 	 * @override
 	 *
- 	 * @see http://www.php.net/manual/en/function.db2-free-result.php
+	 * @see http://www.php.net/manual/en/function.db2-free-result.php
 	 */
 	public function free() {
 		@db2_free_result($this->command);

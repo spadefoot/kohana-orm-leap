@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-04
+ * @version 2012-12-29
  *
  * @abstract
  */
@@ -33,11 +33,12 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 *
 	 * @access public
 	 * @override
-	 * @param mixed $resource                   the resource to be used
+	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public function __construct($resource, $sql, $mode = 32) {
+	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
+		$resource = $connection->get_resource();
 		$command = @ibase_query($resource, $sql);
 		if ($command === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @ibase_errmsg()));
