@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-05
+ * @version 2012-12-31
  *
  * @abstract
  */
@@ -97,6 +97,22 @@ abstract class Base_DB_DataSource extends Core_Object {
 			default:
 				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
 		}
+	}
+
+	/**
+	 * This function determines whether a specific property has been set.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $name                          the name of the property
+	 * @return boolean                              indicates whether the specified property
+	 *                                              has been set
+	 */
+	public function __isset($name) {
+		if (isset($this->settings[$name]) && ($name != 'persistent')) {
+			return (FALSE === empty($this->settings[$name]));
+		}
+		return NULL;
 	}
 
 	/**
