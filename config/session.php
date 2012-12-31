@@ -10,4 +10,3 @@ $config['leap'] = array(
 );
 
 return $config;
-?>

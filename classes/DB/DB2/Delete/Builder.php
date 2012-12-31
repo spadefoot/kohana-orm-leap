@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2011-2012 Spadefoot
+ * Copyright © 2011–2013 Spadefoot Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,3 @@
  * @version 2011-12-11
  */
 class DB_DB2_Delete_Builder extends Base_DB_DB2_Delete_Builder {}
-?>

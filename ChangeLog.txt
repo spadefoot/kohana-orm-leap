@@ -1,5 +1,9 @@
 Change Log for LEAP ORM
 
+2013-01-01
+* Updated copyright information.
+* Removed ?> at the end of every PHP file.
+
 2012-12-29
 * Refactored constructors for reader classes.
 

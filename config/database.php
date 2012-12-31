@@ -20,4 +20,3 @@ $config['default'] = array(
 );
 
 return $config;
-?>

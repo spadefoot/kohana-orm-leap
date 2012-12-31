@@ -1,7 +1,8 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2012 CubedEye
+ * Copyright © 2011–2013 Spadefoot Team.
+ * Copyright © 2012 CubedEye.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +25,3 @@
  * @version 2012-03-27
  */
 class Model_Leap_Role extends Base_Model_Leap_Role {}
-?>

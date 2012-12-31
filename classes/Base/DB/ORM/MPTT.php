@@ -1003,4 +1003,3 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	}
 
 }
-?>

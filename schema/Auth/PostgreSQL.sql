@@ -3,7 +3,8 @@
 -- (the "Software"). By obtaining the Software you agree to comply with the terms and conditions of
 -- this license.
 --
--- Copyright © 2007–2012 Kohana Team. All rights reserved.
+-- Copyright © 2011–2013 Spadefoot Team.
+-- Copyright © 2007–2012 Kohana Team.
 --
 -- Redistribution and use in source and binary forms, with or without modification, are permitted
 -- provided that the following conditions are met:

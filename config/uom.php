@@ -72,4 +72,3 @@ $config['weight'] = array(
 );
 
 return $config;
-?>

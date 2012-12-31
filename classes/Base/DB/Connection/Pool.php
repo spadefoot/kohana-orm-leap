@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Copyright 2011-2012 Spadefoot
+ * Copyright © 2011–2013 Spadefoot Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -261,4 +261,3 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	}
 
 }
-?>

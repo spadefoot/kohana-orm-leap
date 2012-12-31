@@ -19,4 +19,3 @@ $config = array(
 );
 
 return $config;
-?>
