@@ -101,6 +101,22 @@ abstract class Base_DB_DataSource extends Kohana_Object {
 	}
 
 	/**
+	 * This function determines whether a specific property has been set.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $name                          the name of the property
+	 * @return boolean                              indicates whether the specified property
+	 *                                              has been set
+	 */
+	public function __isset($name) {
+		if (isset($this->settings[$name]) && ($name != 'persistent')) {
+			return (FALSE === empty($this->settings[$name]));
+		}
+		return NULL;
+	}
+
+	/**
 	 * This function handles the initialization of the data source's settings.
 	 *
 	 * @access protected
