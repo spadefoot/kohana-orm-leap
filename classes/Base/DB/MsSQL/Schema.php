@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-05
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -71,18 +71,18 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
 		$builder = DB_SQL::select($this->source)
 			->column('sys.tables.name', 'table_name')
@@ -111,61 +111,133 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function tables($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('TABLE_NAME', 'table_name')
-			->from('INFORMATION_SCHEMA.TABLES')
-			->where('TABLE_TYPE', DB_SQL_Operator::_EQUAL_TO_, 'BASE TABLE')
-			->order_by(DB_SQL::expr('LOWER([TABLE_NAME])'));
+			->column('[TABLE_SCHEMA]', 'schema')
+			->column('[TABLE_NAME]', 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
+			->from('[INFORMATION_SCHEMA].[TABLES]')
+			->where('[TABLE_TYPE]', DB_SQL_Operator::_EQUAL_TO_, 'BASE_TABLE')
+			->where(DB_SQL::expr("OBJECTPROPERTY(OBJECT_ID([TABLE_NAME]), 'IsMsShipped')"), DB_SQL_Operator::_EQUAL_TO_, 0)
+			->order_by(DB_SQL::expr('UPPER([TABLE_SCHEMA])'))
+			->order_by(DB_SQL::expr('UPPER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('[TABLE_NAME]', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://www.alberton.info/sql_server_meta_info.html
+	 * @see http://it.toolbox.com/wiki/index.php/Find_all_the_triggers_in_a_database
+	 * @see http://stackoverflow.com/questions/4305691/need-to-list-all-triggers-in-sql-server-database-with-table-name-and-tables-sch
+	 */
+	public function triggers($table, $like = '') {
+		$builder = DB_SQL::select($this->source)
+			->column('[t4].[NAME]', 'schema')
+			->column('[t1].[NAME]', 'table')
+			->column('[t0].[NAME]', 'trigger')
+			->column(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsInsertTrigger') = 1 THEN 'INSERT' WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsUpdateTrigger') = 1 THEN 'UPDATE' WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsDeleteTrigger') = 1 THEN 'DELETE' END"), 'event')
+			->column(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsInsteadOfTrigger') = 1 THEN 'INSTEAD OF' ELSE 'AFTER' END"), 'timing')
+			->column('[t2].[TEXT]', 'action')
+			->column(DB_SQL::expr('NULL'), 'created')
+			->from('[SYSOBJECTS]', '[t0]')
+			->join(NULL, '[SYSOBJECTS]', '[t1]')
+			->on('[t1].[ID]', '=', '[t0].[PARENT_OBJ]')
+			->join(NULL, '[SYSCOMMENTS]', '[t2]')
+			->on('[t2].[ID]', '=', '[t0].[ID]')
+			->join('LEFT', '[SYS].[TABLES]', '[t3]')
+			->on('[t3].[OBJECT_ID]', '=', '[t0].[PARENT_OBJ]')
+			->join('LEFT', '[SYS].[SCHEMAS]', '[t4]')
+			->on('[t4].[SCHEMA_ID]', '=', '[t3].[SCHEMA_ID]')
+			->where('[t0].[XTYPE]', DB_SQL_Operator::_EQUAL_TO_, 'TR')
+			->where('[t1].[NAME]', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsTriggerDisabled') = 1 THEN 0 ELSE 1 END"), DB_SQL_Operator::_EQUAL_TO_, 1)
+			->order_by(DB_SQL::expr('UPPER([t4].[NAME])'))
+			->order_by(DB_SQL::expr('UPPER([t1].[NAME])'))
+			->order_by(DB_SQL::expr('UPPER([t0].[NAME])'));
+
+		if ( ! empty($like)) {
+			$builder->where('[t0].[NAME]', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function views($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('TABLE_NAME', 'table_name')
-			->from('INFORMATION_SCHEMA.TABLES')
-			->where('TABLE_TYPE', DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
-			->order_by(DB_SQL::expr('LOWER([TABLE_NAME])'));
+			->column('[TABLE_SCHEMA]', 'schema')
+			->column('[TABLE_NAME]', 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->from('[INFORMATION_SCHEMA].[TABLES]')
+			->where('[TABLE_TYPE]', DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
+			->where(DB_SQL::expr("OBJECTPROPERTY(OBJECT_ID([TABLE_NAME]), 'IsMsShipped')"), DB_SQL_Operator::_EQUAL_TO_, 0)
+			->order_by(DB_SQL::expr('UPPER([TABLE_SCHEMA])'))
+			->order_by(DB_SQL::expr('UPPER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('[TABLE_NAME]', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

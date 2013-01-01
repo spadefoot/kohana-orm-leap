@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-05
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -121,19 +121,19 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return DB_ResultSet 				an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 *
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 * @see http://forums.oracle.com/forums/thread.jspa?threadID=424532
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
 		$sql = "SELECT INDEX_NAME, TABLE_NAME, TABLE_OWNER FROM SYS.ALL_INDEXES ORDER BY TABLE_OWNER, TABLE_NAME, INDEX_NAME;";
 
@@ -145,64 +145,123 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 *
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
+	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 */
 	public function tables($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('table_name', 'name')
-			//->from('dba_tables')
-			//->from('all_tables')
-			->from('user_tables')
-			->order_by(DB_SQL::expr('LOWER("table_name")'));
+			->column('OWNER', 'schema')
+			->column('TABLE_NAME', 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
+			->from('SYS.ALL_TABLES')
+			->order_by(DB_SQL::expr('UPPER("OWNER")'))
+			->order_by(DB_SQL::expr('UPPER("TABLE_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_2107.htm
+	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_7004.htm#i2235611
+	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
+	 */
+	public function triggers($table, $like = '') {
+		$builder = DB_SQL::select($this->source)
+			->column('OWNER', 'schema')
+			->column('TABLE_NAME', 'table')
+			->column('TRIGGER_NAME', 'trigger')
+			->column('TRIGGERING_EVENT', 'event')
+			->column('TRIGGER_TYPE', 'timing') // BEFORE STATEMENT, BEFORE EACH ROW, BEFORE EVENT, AFTER STATEMENT, AFTER EACH ROW, and AFTER EVENT
+			->column('TRIGGER_BODY', 'action')
+			->column(DB_SQL::expr('NULL'), 'created')
+			->from('SYS.ALL_TRIGGERS')
+			->where('TABLE_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('STATUS', DB_SQL_Operator::_EQUAL_TO_, 'ENABLED')
+			->order_by(DB_SQL::expr('UPPER("OWNER")'))
+			->order_by(DB_SQL::expr('UPPER("TABLE_NAME")'))
+			->order_by(DB_SQL::expr('UPPER("TRIGGER_NAME")'));
+
+		if ( ! empty($like)) {
+			$builder->where('TRIGGER_NAME', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
 	 * 
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
+	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 */
 	public function views($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('view_name', 'name')
-			//->from('dba_views')
-			//->from('all_views')
-			->from('user_views')
-			->order_by(DB_SQL::expr('LOWER("view_name")'));
+			->column('OWNER', 'schema')
+			->column('VIEW_NAME', 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->from('SYS.ALL_VIEWS')
+			->order_by(DB_SQL::expr('UPPER("OWNER")'))
+			->order_by(DB_SQL::expr('UPPER("VIEW_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('view_name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('VIEW_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

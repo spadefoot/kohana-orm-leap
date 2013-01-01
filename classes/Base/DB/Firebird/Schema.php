@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-04
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -273,18 +273,19 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return DB_ResultSet 				an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 *
 	 * @see http://www.felix-colibri.com/papers/db/interbase/using_interbase_system_tables/using_interbase_system_tables.html
+	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table_name')
@@ -307,69 +308,140 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.firebirdfaq.org/faq174/
+	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function tables($like = '') {
-		/*
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+
 		$builder = DB_SQL::select($this->source)
-			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('RDB$RELATIONS')
-			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
 			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$SYSTEM_FLAG',  DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
+			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
 			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
+			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
 			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://www.alberton.info/firebird_sql_meta_info.html
+	 */
+	public function triggers($table, $like = '') {
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column('RDB$RELATION_NAME', 'table')
+			->column('RDB$TRIGGER_NAME', 'trigger')
+			->column(DB_SQL::expr("CASE 'RDB\$TRIGGER_TYPE' WHEN 1 THEN 'INSERT' WHEN 2 THEN 'INSERT' WHEN 3 THEN 'UPDATE' WHEN 4 THEN 'UPDATE' ELSE 'DELETE' END"), 'event')
+			->column(DB_SQL::expr("CASE 'RDB\$TRIGGER_TYPE' & 2 WHEN 0 THEN 'AFTER' ELSE 'BEFORE' END"), 'timing')
+			->column('RDB$TRIGGER_SOURCE', 'action')
+			->column(DB_SQL::expr('NULL'), 'created')
+			->from('RDB$TRIGGERS')
+			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
+			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
+			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
+			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
+			->where('RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('RDB$TRIGGER_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 0)
+			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'))
+			->order_by(DB_SQL::expr('UPPER("RDB$TRIGGER_NAME")'));
+
+		if ( ! empty($like)) {
+			$builder->where(DB_SQL::expr('TRIM("RDB$TRIGGER_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
 	 *
 	 * @see http://www.firebirdfaq.org/faq174/
+	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function views($like = '') {
-		/*
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+
 		$builder = DB_SQL::select($this->source)
-			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table_name')
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('RDB$RELATIONS')
-			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
 			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
 			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$SYSTEM_FLAG',  DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
+			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
 			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
+			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
 			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 }

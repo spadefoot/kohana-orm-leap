@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2012-12-30
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -70,35 +70,74 @@ abstract class Base_DB_Schema extends Core_Object {
 	public abstract function fields($table, $like = '');
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @abstract
-	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 */
-	public abstract function indexes($table);
+	public abstract function indexes($table, $like = '');
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @abstract
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 */
 	public abstract function tables($like = '');
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
 	 *
 	 * @access public
+	 * @abstract
+	 * @param string $table					the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 */
+	public abstract function triggers($table, $like = '');
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @abstract
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet                 a result set of database views
 	 */
 	public abstract function views($like = '');
 

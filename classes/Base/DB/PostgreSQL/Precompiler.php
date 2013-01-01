@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-30
+ * @version 2012-12-31
  *
  * @abstract
  */
@@ -207,10 +207,14 @@ abstract class Base_DB_PostgreSQL_Precompiler implements DB_SQL_Precompiler {
 	 * @param string $group                     the operator grouping
 	 * @return string                           the prepared expression
 	 *
+	 * @see http://www.postgresql.org/docs/9.2/static/functions.html
 	 * @see http://developer.postgresql.org/pgdocs/postgres/functions.html
 	 * @see http://developer.postgresql.org/pgdocs/postgres/functions-comparison.html
 	 * @see http://developer.postgresql.org/pgdocs/postgres/functions-matching.html
 	 * @see http://www.postgresql.org/docs/8.3/interactive/queries-union.html
+	 * @see http://www.postgresql.org/docs/6.5/static/operators1716.htm
+	 * @see http://www.postgresql.org/docs/6.5/static/operators1967.htm
+	 * @see http://www.postgresql.org/docs/6.5/static/operators2026.htm
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -219,23 +223,45 @@ abstract class Base_DB_PostgreSQL_Precompiler implements DB_SQL_Precompiler {
 			if ($group == 'COMPARISON') {
 				switch ($expr) {
 					case DB_SQL_Operator::_NOT_EQUAL_TO_:
-						$expr = DB_SQL_Operator::_NOT_EQUIVALENT_;
 					case DB_SQL_Operator::_NOT_EQUIVALENT_:
+						return DB_SQL_Operator::_NOT_EQUIVALENT_;
 					case DB_SQL_Operator::_EQUAL_TO_:
 					case DB_SQL_Operator::_BETWEEN_:
 					case DB_SQL_Operator::_NOT_BETWEEN_:
+					case '<<':   // is contained within
+					case '<<=':  // is contained within or equals
+					case '>>':   // contains
+					case '>>=':  // contains or equals
 					case DB_SQL_Operator::_LIKE_:
+					case '~~':   // like
 					case DB_SQL_Operator::_NOT_LIKE_:
+					case '!~~':  // not like
 					case DB_SQL_Operator::_LESS_THAN_:
 					case DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_:
 					case DB_SQL_Operator::_GREATER_THAN_:
 					case DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_:
 					case DB_SQL_Operator::_IN_:
 					case DB_SQL_Operator::_NOT_IN_:
+					case '!!=':  // not in
 					case DB_SQL_Operator::_IS_:
 					case DB_SQL_Operator::_IS_NOT_:
 					case DB_SQL_Operator::_SIMILAR_TO_:
 					case DB_SQL_Operator::_NOT_SIMILAR_TO_:
+					case '~':   // Match (regex), case sensitive
+					case '~*':  // Match (regex), case insensitive
+					case '!~':  // Does not match (regex), case sensitive
+					case '!~*': // Does not match (regex), case insensitive
+					case '#<':  // Interval less than?
+					case '#<=': // Interval less than or equal to?
+					case '#<>': // Interval not equal?
+					case '#=':  // Interval equal?
+					case '#>':  // Interval greater than?
+					case '#>=': // Interval greater than or equal to?
+					case '<#>': // Convert to time interval
+					case '<<':  // Interval less than?
+					case '|':   // Start of interval
+					case '~=':  // Same as
+					case '<?>': // Time inside interval?
 						return $expr;
 					break;
 				}

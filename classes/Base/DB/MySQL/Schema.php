@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2012-12-30
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -150,16 +150,16 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return DB_ResultSet 				an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
 		$table = $this->precompiler->prepare_identifier($table);
 
@@ -186,63 +186,123 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function tables($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('TABLE_NAME', 'table_name')
-			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', DB_SQL_Operator::_LIKE_, $this->source->database)
-			->where('TABLE_TYPE', DB_SQL_Operator::_LIKE_, 'BASE_TABLE')
+			->column('TABLE_SCHEMA', 'schema')
+			->column('TABLE_NAME', 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
+			->from('INFORMATION_SCHEMA.TABLES')
+			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'BASE_TABLE')
+			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.6/en/triggers-table.html
+	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-triggers.html
+	 */
+	public function triggers($table, $like = '') {
+		$builder = DB_SQL::select($this->source)
+			->column('EVENT_OBJECT_SCHEMA', 'schema')
+			->column('EVENT_OBJECT_TABLE', 'table')
+			->column('TRIGGER_NAME', 'trigger')
+			->column('EVENT_MANIPULATION', 'event')
+			->column('ACTION_TIMING', 'timing')
+			->column('ACTION_STATEMENT', 'action')
+			->column('CREATED', 'created')
+			->from('INFORMATION_SCHEMA.TRIGGERS')
+			//->where('EVENT_OBJECT_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			->where(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_SCHEMA`)'))
+			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'))
+			->order_by(DB_SQL::expr('UPPER(`TRIGGER_NAME`)'));
+
+		if ( ! empty($like)) {
+			$builder->where('TRIGGER_NAME', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
 	 *
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function views($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('TABLE_NAME', 'table_name')
-			->from('information_schema.TABLES')
-			->where('TABLE_SCHEMA', DB_SQL_Operator::_LIKE_, $this->source->database)
-			->where('TABLE_TYPE', DB_SQL_Operator::_LIKE_, 'VIEW')
+			->column('TABLE_SCHEMA', 'schema')
+			->column('TABLE_NAME', 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->from('INFORMATION_SCHEMA.TABLES')
+			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
+			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

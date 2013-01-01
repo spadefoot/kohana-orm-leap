@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-30
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -108,18 +108,18 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return array 						an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/157392/how-do-i-find-out-if-a-sqlite-index-is-unique-with-sql
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
 		$sql = "PRAGMA INDEX_LIST('" . $table . "');";
 
@@ -131,46 +131,170 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
+	 *
+	 * @see http://www.sqlite.org/faq.html#q7
 	 */
 	public function tables($like = '') {
-		/*
-		$sql = "SELECT [tbl_name] AS [name] FROM [sqlite_master] WHERE [type] = 'table' AND [tbl_name] NOT IN ('sqlite_sequence')";
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column('name', 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
+			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
+			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'table')
+			->where('name', DB_SQL_Operator::_NOT_LIKE_, 'sqlite_%')
+			->order_by(DB_SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
-			$like = $this->precompiler->prepare_value($like);
-			$sql .= ' AND [tbl_name] LIKE ' . $like;
+			$builder->where('name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$sql .= ' ORDER BY LOWER([tbl_name])';
-		$sql .= ';';
-
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$results = $connection->query($sql);
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://www.sqlite.org/lang_createtrigger.html
+	 * @see http://linuxgazette.net/109/chirico1.html
+	 */
+	public function triggers($table, $like = '') {
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column('tbl_name', 'table')
+			->column('name', 'trigger')
+			->column(DB_SQL::expr('NULL'), 'event')
+			->column(DB_SQL::expr('NULL'), 'timing')
+			//->column(DB_SQL::expr("'ROW'"), 'for')
+			->column('sql', 'action')
+			->column(DB_SQL::expr('NULL'), 'created')
+			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
+			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'trigger')
+			->where('tbl_name', DB_SQL_Operator::_NOT_LIKE_, 'sqlite_%')
+			->order_by(DB_SQL::expr('UPPER([tbl_name])'))
+			->order_by(DB_SQL::expr('UPPER([name])'));
+
+		if ( ! empty($like)) {
+			$builder->where('[name]', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		$reader = $builder->reader();
+		
+		$records = array();
+
+		while ($reader->read()) {
+			$record = $reader->row('array');
+			if (isset($record['action'])) {
+				$sql = trim($record['action'], "; \t\n\r\0\x0B")
+				
+				if (preg_match('/\s+INSERT\s+/i', $sql)) {
+					$record['event'] = 'INSERT';
+				}
+				else if (preg_match('/\s+UPDATE\s+/i', $sql)) {
+					$record['event'] = 'UPDATE';
+				}
+				else if (preg_match('/\s+DELETE\s+OF\s+/i', $sql)) {
+					$record['event'] = 'DELETE';
+				}
+				
+				if (preg_match('/\s+BEFORE\s+/i', $sql)) {
+					$record['timing'] = 'BEFORE';
+				}
+				else if (preg_match('/\s+AFTER\s+/i', $sql)) {
+					$record['timing'] = 'AFTER';
+				}
+				else if (preg_match('/\s+INSTEAD\s+OF\s+/i', $sql)) {
+					$record['timing'] = 'INSTEAD OF';
+				}
+				
+				$offest = stripos($sql, 'BEGIN') + 5;
+				$length = (strlen($sql) - $offset) - 3;
+				$record['action'] = trim(substr($sql, $offset, $length), "; \t\n\r\0\x0B");
+			}
+			$records[] = $record;
+		}
+
+		$reader->free();
+		
+		$results = new DB_ResultSet($records);
+		
+		return $results;
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
+	 *
+	 * @see http://www.sqlite.org/faq.html#q7
 	 */
 	public function views($like = '') {
-		/*
-		return array();
-		*/
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+		
+		$builder = DB_SQL::select($this->source)
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column('name', 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
+			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'view')
+			->where('name', DB_SQL_Operator::_NOT_LIKE_, 'sqlite_%')
+			->order_by(DB_SQL::expr('UPPER([name])'));
+
+		if ( ! empty($like)) {
+			$builder->where('name', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

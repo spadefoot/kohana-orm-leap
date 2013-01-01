@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-05
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -71,19 +71,19 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return DB_ResultSet 				an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
 	 * @see http://code.activestate.com/recipes/576557/
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
 		$sql = "SELECT
 			t.relname AS table_name,
@@ -113,68 +113,129 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.alberton.info/postgresql_meta_info.html
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function tables($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('table_name', 'name')
+			->column('table_schema', 'schema')
+			->column('table_name', 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('information_schema.tables')
 			->where('table_type', DB_SQL_Operator::_EQUAL_TO_, 'BASE TABLE')
 			->where('table_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
-			->order_by(DB_SQL::expr('LOWER("table_name")'));
+			->order_by(DB_SQL::expr('UPPER("table_schema")'))
+			->order_by(DB_SQL::expr('UPPER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://www.postgresql.org/docs/8.1/static/infoschema-triggers.html
+	 */
+	public function triggers($table, $like = '') {
+		$builder = DB_SQL::select($this->source)
+			->column('event_object_schema', 'schema')
+			->column('event_object_table', 'table')
+			->column('trigger_name', 'trigger')
+			->column('event_manipulation', 'event')
+			->column('condition_timing', 'timing')
+			//->column('action_orientation', 'for') // ROW or STATEMENT
+			->column('action_statement', 'action')
+			->column(DB_SQL::expr('NULL'), 'created')
+			->from('information_schema.triggers')
+			->where('event_object_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
+			->where('event_object_table', '!~', '^pg_')3
+			->where(DB_SQL::expr('UPPER("event_object_table")'), DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER("event_object_schema")'))
+			->order_by(DB_SQL::expr('UPPER("event_object_table")'))
+			->order_by(DB_SQL::expr('UPPER("trigger_name")'));
+
+		if ( ! empty($like)) {
+			$builder->where('trigger_name', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
 	 *
 	 * @see http://www.alberton.info/postgresql_meta_info.html
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function views($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('table_name', 'name')
+			->column('table_schema', 'schema')
+			->column('table_name', 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('information_schema.tables')
 			->where('table_type', DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
 			->where('table_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
-			->where('table_name', DB_SQL_Operator::_NOT_LIKE_, 'pg_%')
-			->order_by(DB_SQL::expr('LOWER("table_name")'));
+			->where('table_name', '!~', '^pg_')
+			->order_by(DB_SQL::expr('UPPER("table_schema")'))
+			->order_by(DB_SQL::expr('UPPER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

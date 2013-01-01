@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-30
+ * @version 2013-01-01
  *
  * @abstract
  */
@@ -113,103 +113,174 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all indexes from
-	 * the specified table.
+	 * This function returns a result set of indexes for the specified table.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
-	 * @return DB_ResultSet 				an array of indexes from the specified
-	 * 										table
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 *                                      table
 	 *
-	 * @see http://www.dbforums.com/db2/1614810-how-see-indexes-db2-tables.html
 	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4
+	 * @see http://www.dbforums.com/db2/1614810-how-see-indexes-db2-tables.html
 	 * @see http://www.tek-tips.com/viewthread.cfm?qid=128876&page=108
 	 */
-	public function indexes($table) {
+	public function indexes($table, $like = '') {
 		/*
-		$sql = "SELECT
-			INDNAME,
-			DEFINER,
-			TABSCHEMA,
-			TABNAME,
-			COLNAMES,
-			COLCOUNT,
-			UNIQUERULE,
-			INDEXTYPE
-		FROM
-			SYSCAT.INDEXES
-		WHERE
-			TABSCHEMA NOT LIKE 'SYS%'
-			AND TABNAME = 'TABLE_NAME'";
+		SELECT 	A.INDNAME, A.TABSCHEMA, A.TABNAME,  
+					  	B.COLNAME, B.COLSEQ, B.COLORDER
+		FROM 
+		       	SYSCAT.INDEXES AS A, 
+					  	SYSCAT.INDEXCOLUSE AS B
+		WHERE  	A.INDSCHEMA = B.INDSCHEMA AND 
+						A.INDNAME = B.INDNAME AND 
+		       	A.TABSCHEMA NOT LIKE 'SYS%' AND 
+						A.TABNAME = 'TABLE_NAME' 
+		ORDER BY 	A.INDNAME, B.COLSEQ
+		*/
+		/*
+		$builder = DB_SQL::select($this->source)
+			->column('INDNAME', 'name')
+			->column('INDEXTYPE', 'type')
+			->column('COLNAMES', 'columns')
+			->column('UNIQUERULE', 'unique')
+			->from('SYSCAT.INDEXES')
+			->where('TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
+			->where('TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER("INDNAME")'));
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$results = $connection->query($sql);
+		if ( ! empty($like)) {
+			$builder->where('INDNAME', DB_SQL_Operator::_LIKE_, $like);
+		}
 
-		return $results;
+		return $builder->query();
 		*/
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all tables within
-	 * the database.
+	 * This function returns a result set of database tables.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of tables within the database
+	 * @return DB_ResultSet                 a result set of database tables
 	 *
+	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4
 	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0411melnyk/
 	 * @see http://www.dbforums.com/db2/1002209-select-all-tables-database.html
 	 * @see http://www.selectorweb.com/db2.html
 	 */
 	public function tables($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('tabname', 'name')
-			->from('syscat.tables')
-			->where('tabschema', DB_SQL_Operator::_EQUAL_TO_, 'SYSCAT')
-			->order_by(DB_SQL::expr('LOWER("tabname")'));
+			->column('TABSCHEMA', 'schema')
+			->column('TABNAME', 'table')
+			->column(DB_SQL::expr("'BASE'"), 'type')
+			->from('SYSCAT.TABLES')
+			->where('TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
+			->where('TYPE', DB_SQL_Operator::_EQUAL_TO_, 'T')
+			->order_by(DB_SQL::expr('UPPER("TABSCHEMA")'))
+			->order_by(DB_SQL::expr('UPPER("TABNAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('tabname', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TABNAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all views within
-	 * the database.
+	 * This function returns a result set of triggers for the specified table.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | trigger       | string        |
+	 * | event         | string        |
+	 * | timing        | string        |
+	 * | action        | string        |
+	 * | created       | date/time     |
+	 * +---------------+---------------+
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table					the table to evaluated
+	 * @param string $like                  a like constraint on the query
+	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 *                                      table
+	 *
+	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4
+	 */
+	public function triggers($table, $like = '') {
+		$builder = DB_SQL::select($this->source)
+			->column('TABSCHEMA', 'schema')
+			->column('TABNAME', 'table')
+			->column('TRIGNAME', 'trigger')
+			->column('TRIGEVENT', 'event')
+			->column('TRIGTIME', 'timing')
+			->column('TEXT', 'action')
+			->column('CREATE_TIME', 'created')
+			->from('SYSCAT.TRIGGERS')
+			->where('TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
+			->where('TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('VALID', DB_SQL_Operator::_NOT_EQUIVALENT_, 'Y')
+			->order_by(DB_SQL::expr('UPPER("TABSCHEMA")'))
+			->order_by(DB_SQL::expr('UPPER("TABNAME")'))
+			->order_by(DB_SQL::expr('UPPER("TRIGNAME")'));
+
+		if ( ! empty($like)) {
+			$builder->where('TRIGNAME', DB_SQL_Operator::_LIKE_, $like);
+		}
+
+		return $builder->query();
+	}
+
+	/**
+	 * This function returns a result set of database views.
+	 *
+	 * +---------------+---------------+
+	 * | field         | data type     |
+	 * +---------------+---------------+
+	 * | schema        | string        |
+	 * | table         | string        |
+	 * | type          | string        |
+	 * +---------------+---------------+
 	 *
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of views within the database
+	 * @return DB_ResultSet                 a result set of database views
 	 *
+	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4
 	 * @see http://lpetr.org/blog/archives/find-a-list-of-views-marked-inoperative
 	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0411melnyk/
 	 */
 	public function views($like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('viewname', 'name')
-			->from('syscat.views')
-			->where('viewschema', DB_SQL_Operator::_EQUAL_TO_, 'SYSCAT')
-			->where('valid', DB_SQL_Operator::_NOT_EQUIVALENT_, 'Y')
-			->order_by(DB_SQL::expr('LOWER("tabname")'));
+			->column('VIEWSCHEMA', 'schema')
+			->column('VIEWNAME', 'table')
+			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->from('SYSCAT.VIEWS')
+			->where('VIEWSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
+			->where('VALID', DB_SQL_Operator::_NOT_EQUIVALENT_, 'Y')
+			->order_by(DB_SQL::expr('UPPER("VIEWSCHEMA")'))
+			->order_by(DB_SQL::expr('UPPER("VIEWNAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('viewname', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('VIEWNAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$results = $builder->query();
-
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
