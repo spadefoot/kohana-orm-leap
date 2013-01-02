@@ -310,13 +310,13 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database tables.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -335,10 +335,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('RDB$RELATIONS')
-			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
-			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
+			->where(DB_SQL::expr("COALESCE('RDB\$SYSTEM_FLAG', 0)"), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
@@ -352,17 +349,19 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of triggers for the specified table.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | trigger       | string        |
-	 * | event         | string        |
-	 * | timing        | string        |
-	 * | action        | string        |
-	 * | created       | date/time     |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table to which the trigger is defined on.  |
+	 * | trigger       | string        | The name of the trigger.                                   |
+	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
+	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
+	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
+	 * | action        | string        | The action that will be triggered                          |
+	 * | seq_index     | integer       | The sequence index of the trigger.                         |
+	 * | created       | date/time     | The date/time of when the trigger was created.             |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -383,17 +382,17 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column('RDB$TRIGGER_NAME', 'trigger')
 			->column(DB_SQL::expr("CASE 'RDB\$TRIGGER_TYPE' WHEN 1 THEN 'INSERT' WHEN 2 THEN 'INSERT' WHEN 3 THEN 'UPDATE' WHEN 4 THEN 'UPDATE' ELSE 'DELETE' END"), 'event')
 			->column(DB_SQL::expr("CASE 'RDB\$TRIGGER_TYPE' & 2 WHEN 0 THEN 'AFTER' ELSE 'BEFORE' END"), 'timing')
+			->column(DB_SQL::expr("'ROW'"), 'per')
 			->column('RDB$TRIGGER_SOURCE', 'action')
+			->column('RDB$TRIGGER_SEQUENCE', 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('RDB$TRIGGERS')
-			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
-			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
+			->where(DB_SQL::expr("COALESCE('RDB\$SYSTEM_FLAG', 0)"), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
 			->where('RDB$TRIGGER_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 0)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'))
-			->order_by(DB_SQL::expr('UPPER("RDB$TRIGGER_NAME")'));
+			->order_by(DB_SQL::expr('UPPER("RDB$TRIGGER_NAME")'))
+			->order_by('RDB$TRIGGER_SEQUENCE');
 
 		if ( ! empty($like)) {
 			$builder->where(DB_SQL::expr('TRIM("RDB$TRIGGER_NAME")'), DB_SQL_Operator::_LIKE_, $like);
@@ -405,13 +404,13 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database views.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -430,10 +429,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('RDB$RELATIONS')
-			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$SYSTEM_FLAG', DB_SQL_Operator::_EQUAL_TO_, 0, DB_SQL_Connector::_OR_)
-			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
+			->where(DB_SQL::expr("COALESCE('RDB\$SYSTEM_FLAG', 0)"), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 

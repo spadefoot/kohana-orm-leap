@@ -133,13 +133,13 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database tables.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -171,17 +171,19 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of triggers for the specified table.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | trigger       | string        |
-	 * | event         | string        |
-	 * | timing        | string        |
-	 * | action        | string        |
-	 * | created       | date/time     |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table to which the trigger is defined on.  |
+	 * | trigger       | string        | The name of the trigger.                                   |
+	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
+	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
+	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
+	 * | action        | string        | The action that will be triggered                          |
+	 * | seq_index     | integer       | The sequence index of the trigger.                         |
+	 * | created       | date/time     | The date/time of when the trigger was created.             |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -203,8 +205,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 			->column('name', 'trigger')
 			->column(DB_SQL::expr('NULL'), 'event')
 			->column(DB_SQL::expr('NULL'), 'timing')
-			//->column(DB_SQL::expr("'ROW'"), 'for')
+			->column(DB_SQL::expr("'ROW'"), 'per')
 			->column('sql', 'action')
+			->column(DB_SQL::expr('0'), 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
 			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'trigger')
@@ -262,13 +265,13 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database views.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override

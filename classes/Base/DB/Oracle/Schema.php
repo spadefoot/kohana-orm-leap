@@ -147,13 +147,13 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database tables.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -183,17 +183,19 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of triggers for the specified table.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | trigger       | string        |
-	 * | event         | string        |
-	 * | timing        | string        |
-	 * | action        | string        |
-	 * | created       | date/time     |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table to which the trigger is defined on.  |
+	 * | trigger       | string        | The name of the trigger.                                   |
+	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
+	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
+	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
+	 * | action        | string        | The action that will be triggered                          |
+	 * | seq_index     | integer       | The sequence index of the trigger.                         |
+	 * | created       | date/time     | The date/time of when the trigger was created.             |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -212,8 +214,10 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 			->column('TABLE_NAME', 'table')
 			->column('TRIGGER_NAME', 'trigger')
 			->column('TRIGGERING_EVENT', 'event')
-			->column('TRIGGER_TYPE', 'timing') // BEFORE STATEMENT, BEFORE EACH ROW, BEFORE EVENT, AFTER STATEMENT, AFTER EACH ROW, and AFTER EVENT
+			->column(DB_SQL::expr("CASE UPPER(\"TRIGGER_TYPE\") WHEN 'BEFORE EACH ROW' THEN 'BEFORE' WHEN 'BEFORE STATEMENT' THEN 'BEFORE' WHEN 'BEFORE EVENT' THEN 'BEFORE' WHEN 'AFTER EACH ROW' THEN 'AFTER' WHEN 'AFTER STATEMENT' THEN 'AFTER' WHEN 'AFTER EVENT' THEN 'AFTER' ELSE NULL END"), 'timing')
+			->column(DB_SQL::expr("CASE UPPER(\"TRIGGER_TYPE\") WHEN 'BEFORE STATEMENT' THEN 'STATEMENT' WHEN 'AFTER STATEMENT' THEN 'STATEMENT' WHEN 'BEFORE EVENT' THEN 'EVENT' WHEN 'AFTER EVENT' THEN 'EVENT' ELSE 'ROW' END"), 'per')
 			->column('TRIGGER_BODY', 'action')
+			->column(DB_SQL::expr('0'), 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('SYS.ALL_TRIGGERS')
 			->where('TABLE_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
@@ -232,13 +236,13 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database views.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override

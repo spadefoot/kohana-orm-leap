@@ -84,13 +84,13 @@ abstract class Base_DB_Schema extends Core_Object {
 	/**
 	 * This function returns a result set of database tables.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @abstract
@@ -102,17 +102,19 @@ abstract class Base_DB_Schema extends Core_Object {
 	/**
 	 * This function returns a result set of triggers for the specified table.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | trigger       | string        |
-	 * | event         | string        |
-	 * | timing        | string        |
-	 * | action        | string        |
-	 * | created       | date/time     |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table to which the trigger is defined on.  |
+	 * | trigger       | string        | The name of the trigger.                                   |
+	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
+	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
+	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
+	 * | action        | string        | The action that will be triggered                          |
+	 * | seq_index     | integer       | The sequence index of the trigger.                         |
+	 * | created       | date/time     | The date/time of when the trigger was created.             |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @abstract
@@ -126,13 +128,13 @@ abstract class Base_DB_Schema extends Core_Object {
 	/**
 	 * This function returns a result set of database views.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @abstract

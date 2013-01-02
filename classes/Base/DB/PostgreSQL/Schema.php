@@ -115,13 +115,13 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database tables.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -153,17 +153,19 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of triggers for the specified table.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | trigger       | string        |
-	 * | event         | string        |
-	 * | timing        | string        |
-	 * | action        | string        |
-	 * | created       | date/time     |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table to which the trigger is defined on.  |
+	 * | trigger       | string        | The name of the trigger.                                   |
+	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
+	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
+	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
+	 * | action        | string        | The action that will be triggered                          |
+	 * | seq_index     | integer       | The sequence index of the trigger.                         |
+	 * | created       | date/time     | The date/time of when the trigger was created.             |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
@@ -181,8 +183,9 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 			->column('trigger_name', 'trigger')
 			->column('event_manipulation', 'event')
 			->column('condition_timing', 'timing')
-			//->column('action_orientation', 'for') // ROW or STATEMENT
+			->column('action_orientation', 'per')
 			->column('action_statement', 'action')
+			->column('action_order', 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('information_schema.triggers')
 			->where('event_object_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
@@ -190,7 +193,8 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 			->where(DB_SQL::expr('UPPER("event_object_table")'), DB_SQL_Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER("event_object_schema")'))
 			->order_by(DB_SQL::expr('UPPER("event_object_table")'))
-			->order_by(DB_SQL::expr('UPPER("trigger_name")'));
+			->order_by(DB_SQL::expr('UPPER("trigger_name")'))
+			->order_by('action_order');
 
 		if ( ! empty($like)) {
 			$builder->where('trigger_name', DB_SQL_Operator::_LIKE_, $like);
@@ -202,13 +206,13 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of database views.
 	 *
-	 * +---------------+---------------+
-	 * | field         | data type     |
-	 * +---------------+---------------+
-	 * | schema        | string        |
-	 * | table         | string        |
-	 * | type          | string        |
-	 * +---------------+---------------+
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | type          | string        | The type of table.              .                          |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
