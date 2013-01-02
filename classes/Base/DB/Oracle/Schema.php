@@ -33,10 +33,10 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet         		an array of fields within the specified
-	 * 										table
+	 * @return DB_ResultSet                 an array of fields within the specified
+	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
 	 */
@@ -125,9 +125,9 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
@@ -199,9 +199,9 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_2107.htm

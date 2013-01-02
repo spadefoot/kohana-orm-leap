@@ -33,10 +33,10 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of fields within the specified
-	 * 										table
+	 * @return DB_ResultSet                 an array of fields within the specified
+	 *                                      table
 	 */
 	public function fields($table, $like = '') {
 		/*
@@ -117,9 +117,9 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4
@@ -216,9 +216,9 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4

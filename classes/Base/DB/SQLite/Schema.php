@@ -33,10 +33,10 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
-	 * 										table
+	 * @return array                        an array of fields within the specified
+	 *                                      table
 	 */
 	public function fields($table, $like = '') {
 		/*
@@ -112,9 +112,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/157392/how-do-i-find-out-if-a-sqlite-index-is-unique-with-sql
@@ -187,9 +187,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.sqlite.org/lang_createtrigger.html
@@ -320,8 +320,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * This function converts a like clause to a regular expression.
 	 *
 	 * @access protected
-	 * @param string $like					the like clause to be converted
-	 * @return string						the resulting regular expression
+	 * @param string $like                  the like clause to be converted
+	 * @return string                       the resulting regular expression
 	 *
 	 * @see http://www.regular-expressions.info/mysql.html
 	 */

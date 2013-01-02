@@ -33,10 +33,10 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of fields within the specified
-	 * 										table
+	 * @return DB_ResultSet                 an array of fields within the specified
+	 *                                      table
 	 */
 	public function fields($table, $like = '') {
 		/*
@@ -154,9 +154,9 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 */
 	public function indexes($table, $like = '') {
@@ -240,9 +240,9 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/triggers-table.html

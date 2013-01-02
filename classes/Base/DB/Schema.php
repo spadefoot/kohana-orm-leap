@@ -62,10 +62,10 @@ abstract class Base_DB_Schema extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
-	 * 										table
+	 * @return array                        an array of fields within the specified
+	 *                                      table
 	 */
 	public abstract function fields($table, $like = '');
 
@@ -74,9 +74,9 @@ abstract class Base_DB_Schema extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 */
 	public abstract function indexes($table, $like = '');
@@ -118,9 +118,9 @@ abstract class Base_DB_Schema extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 */
 	public abstract function triggers($table, $like = '');

@@ -33,10 +33,10 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of fields within the specified
-	 * 										table
+	 * @return DB_ResultSet                 an array of fields within the specified
+	 *                                      table
 	 *
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 */
@@ -75,9 +75,9 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
@@ -169,9 +169,9 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.postgresql.org/docs/8.1/static/infoschema-triggers.html

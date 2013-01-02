@@ -33,10 +33,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				an array of fields within the specified
-	 * 										table
+	 * @return DB_ResultSet                 an array of fields within the specified
+	 *                                      table
 	 *
 	 * @see http://wiert.wordpress.com/2009/08/13/interbasefirebird-query-to-show-which-fields-in-your-database-are-not-based-on-a-domain/
 	 * @see http://wiert.wordpress.com/2009/08/13/interbasefirebird-querying-the-system-tables-to-get-your-actually-used-fieldcolumn-types/
@@ -277,9 +277,9 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://www.felix-colibri.com/papers/db/interbase/using_interbase_system_tables/using_interbase_system_tables.html
@@ -365,9 +365,9 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html

@@ -33,10 +33,10 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table/view to evaluated
+	 * @param string $table                 the table/view to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return array 						an array of fields within the specified
-	 * 										table
+	 * @return array                        an array of fields within the specified
+	 *                                      table
 	 */
 	public function fields($table, $like = '') {
 		/*
@@ -75,9 +75,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of indexes for the specified
+	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
@@ -165,9 +165,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table					the table to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet 				a result set of triggers for the specified
+	 * @return DB_ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
