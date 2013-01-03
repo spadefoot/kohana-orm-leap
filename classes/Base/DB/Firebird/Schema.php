@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -275,6 +275,19 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
@@ -286,25 +299,37 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function indexes($table, $like = '') {
-		/*
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+
 		$builder = DB_SQL::select($this->source)
-			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table_name')
-			->column(DB_SQL::expr('TRIM("RDB$INDEX_SEGMENTS"."RDB$FIELD_NAME")'), 'field_name')
-			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), 'index_name')
-			->column(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'), 'sequence')
-			->column(DB_SQL::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'is_primary_key')
-			->column(DB_SQL::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'is_unique')
-			->from('RDB$INDICES')
-			->join(DB_SQL_JoinType::_LEFT_, 'RDB$INDEX_SEGMENTS')
-			->on('RDB$INDEX_SEGMENTS.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
+			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table')
+			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), 'index')
+			->column(DB_SQL::expr('TRIM("RDB$INDEX_SEGMENTS"."RDB$FIELD_NAME")'), 'column')
+			->column(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'), 'seq_index')
+			->column('', 'ordering')
+			->column(DB_SQL::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'unique')
+			->column(DB_SQL::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'primary')
+			->from('RDB$INDEX_SEGMENTS')
+			->join(DB_SQL_JoinType::_LEFT_, 'RDB$INDICES')
+			->on('RDB$INDICES.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDEX_SEGMENTS.RDB$INDEX_NAME')
 			->join(DB_SQL_JoinType::_LEFT_, 'RDB$RELATION_CONSTRAINTS')
+			->where(DB_SQL::expr('COALESCE("RDB$INDICES"."RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
-			->where('RDB$INDICES.RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr("'" . $table . "'"));
+			->where('RDB$INDICES.RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE', DB_SQL_Operator::_IS_, NULL)
+			->where('RDB$INDICES.RDB$INDEX_INACTIVE', DB_SQL_Operator::_EQUAL_TO_, 1)
+			->order_by(DB_SQL::expr('UPPER("A"."TABSCHEMA")'))
+			->order_by(DB_SQL::expr('UPPER("RDB$INDICES"."RDB$RELATION_NAME")'))
+			->order_by(DB_SQL::expr('UPPER("RDB$INDICES"."RDB$INDEX_NAME")'))
+			->order_by(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'));
 
-		$results = $builder->query();
+		if ( ! empty($like)) {
+			$builder->where(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+		}
 
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
@@ -335,7 +360,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('RDB$RELATIONS')
-			->where(DB_SQL::expr("COALESCE('RDB\$SYSTEM_FLAG', 0)"), DB_SQL_Operator::_EQUAL_TO_, 0)
+			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
@@ -358,7 +383,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+
@@ -387,7 +412,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column('RDB$TRIGGER_SEQUENCE', 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('RDB$TRIGGERS')
-			->where(DB_SQL::expr("COALESCE('RDB\$SYSTEM_FLAG', 0)"), DB_SQL_Operator::_EQUAL_TO_, 0)
+			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
 			->where('RDB$TRIGGER_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 0)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'))
@@ -429,7 +454,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('RDB$RELATIONS')
-			->where(DB_SQL::expr("COALESCE('RDB\$SYSTEM_FLAG', 0)"), DB_SQL_Operator::_EQUAL_TO_, 0)
+			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Session
- * @version 2012-11-14
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -164,7 +164,7 @@ abstract class Base_Session_Leap extends Session {
 			// Create a new session id
 			$id = str_replace('.', '-', uniqid(NULL, TRUE));
             $count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
-                ->where($this->_columns['session_id'], '=', $id)
+                ->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
                 ->query()
                 ->count();
 		}

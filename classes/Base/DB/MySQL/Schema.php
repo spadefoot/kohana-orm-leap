@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -152,37 +152,66 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-index.html
 	 */
 	public function indexes($table, $like = '') {
-		/*
-		$table = $this->precompiler->prepare_identifier($table);
-
-		$sql = 'SHOW INDEX FROM ' . $table . ';';
-
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$records = $connection->query($sql)->as_array();
 
-		$buffer = array();
-		$i = 0;
+		$schema = $this->precompiler->prepare_identifier($this->source->database);
+		$table = $this->precompiler->prepare_identifier($table);
+		
+		$sql = "SHOW INDEXES FROM {$table} FROM {$schema}";
+		
+		if ( ! empty($like)) {
+			$sql .= " WHERE 'Key_name' LIKE " . $this->precompiler->prepare_value($like);
+		}
+		
+		$sql .= ';';
+		
+		$reader = $connection->reader($sql);
 
-		foreach ($records as $record) {
-			$buffer[$i]['table_name'] = $record['Table'];
-			$buffer[$i]['field_name'] = $record['Column_name'];
-			$buffer[$i]['index_name'] = $record['Key_name'];
-			$buffer[$i]['sequence'] = (int) $record['Seq_in_index'];
-			$buffer[$i]['is_primary_key'] = ($record['Key_name'] == 'PRIMARY');
-			$buffer[$i]['is_unique'] = ($record['Non_unique'] == '0');
-			$i++;
+		$records = array();
+
+		while ($reader->read()) {
+			$record = $reader->row('array');
+			$buffer = array(
+				'schema' => $this->source->database,
+				'table' => $record['Table'],
+				'index' => $record['Key_name'],
+				'column' => $record['Column_name'],
+				'seq_index' => $record['Seq_in_index'],
+				'ordering' => ($record['Collation'] == 'A') ? 'ASC' : NULL,
+				'unique' => ($record['Non_unique'] == '0'),
+				'primary' => ($record['Key_name'] == 'PRIMARY'),
+			);
+			$records[] = $buffer;
 		}
 
-		return new DB_ResultSet($buffer, 'array');
-		*/
+		$reader->free();
+		
+		$results = new DB_ResultSet($records);
+		
+		return $results;
 	}
 
 	/**
@@ -233,7 +262,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+

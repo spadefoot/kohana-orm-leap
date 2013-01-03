@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -73,6 +73,19 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
@@ -80,36 +93,43 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
+	 * @see http://www.alberton.info/postgresql_meta_info.html
 	 * @see http://stackoverflow.com/questions/2204058/show-which-columns-an-index-is-on-in-postgresql
 	 * @see http://code.activestate.com/recipes/576557/
+	 * @see http://www.postgresql.org/docs/current/static/catalog-pg-index.html
 	 */
 	public function indexes($table, $like = '') {
-		/*
-		$sql = "SELECT
-			t.relname AS table_name,
-			i.relname AS index_name,
-			a.attname AS column_name
-		FROM
-			pg_class t,
-			pg_class i,
-			pg_index ix,
-			pg_attribute a
-		WHERE
-			t.oid = ix.indrelid
-			AND i.oid = ix.indexrelid
-			AND a.attrelid = t.oid
-			AND a.attnum = ANY(ix.indkey)
-			AND t.relkind = 'r'
-			AND t.relname LIKE 'test%'
-		ORDER BY
-			t.relname,
-			i.relname;";
+		$builder = DB_SQL::select($this->source)
+			->column('s.schname', 'schema')
+			->column('t.relname', 'table')
+			->column('i.relname', 'index')
+			->column('c.attname', 'column')
+			->column('c.attnum', 'seq_index')
+			->column(DB_SQL::expr('NULL'), 'ordering')
+			->column(DB_SQL::expr("CASE \"ix\".\"indisunique\" WHEN 't' THEN 1 ELSE 0 END"), 'unique')
+			->column(DB_SQL::expr("CASE \"ix\".\"indisprimary\" WHEN 't' THEN 1 ELSE 0 END"), 'primary')
+			->from('pg_class', 't')
+			->join('LEFT', 'pg_index', 'ix')
+			->on('ix.indrelid', DB_SQL_Operator::_EQUAL_TO_, 't.oid')
+			->join('LEFT', 'pg_class', 'i')
+			->on('i.oid', DB_SQL_Operator::_EQUAL_TO_, 'ix.indexrelid')
+			->join('LEFT', 'pg_attribute', 'c')
+			->on('c.attrelid', DB_SQL_Operator::_EQUAL_TO_, 't.oid')
+			->on('c.attnum', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('ANY("ix"."indkey")'))			
+			->join('LEFT', DB_SQL::expr('(SELECT "r"."table_schema" AS "schname", "r"."table_schema" AS "relname" FROM "information_schema"."tables" AS "r" WHERE "r"."table_type" = \'BASE TABLE\' AND "r"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 's')
+			->on('s.relname', DB_SQL_Operator::_EQUAL_TO_, 't.relname')
+			->where('t.relkind', DB_SQL_Operator::_EQUAL_TO_, 'r')
+			->where('t.relname', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER("s"."schname")'))
+			->order_by(DB_SQL::expr('UPPER("t"."relname")'))
+			->order_by(DB_SQL::expr('UPPER("i"."relname")'))
+			->order_by('c.attnum');
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$results = $connection->query($sql);
+		if ( ! empty($like)) {
+			$builder->where('i.relname', DB_SQL_Operator::_LIKE_, $like);
+		}
 
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
@@ -162,7 +182,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+

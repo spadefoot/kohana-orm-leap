@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -123,6 +123,19 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
@@ -130,18 +143,46 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
+	 * @see http://www.techonthenet.com/oracle/questions/find_pkeys.php
+	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_1064.htm#i1577532
+	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_1069.htm
+	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_1037.htm
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 * @see http://forums.oracle.com/forums/thread.jspa?threadID=424532
+	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
+	 * @see http://viralpatel.net/blogs/understanding-primary-keypk-constraint-in-oracle/
+	 * @see http://www.techonthenet.com/oracle/questions/find_pkeys.php
 	 */
 	public function indexes($table, $like = '') {
-		/*
-		$sql = "SELECT INDEX_NAME, TABLE_NAME, TABLE_OWNER FROM SYS.ALL_INDEXES ORDER BY TABLE_OWNER, TABLE_NAME, INDEX_NAME;";
+		$builder = DB_SQL::select($this->source)
+			->column('t0.TABLE_OWNER', 'schema')
+			->column('t0.TABLE_NAME', 'table')
+			->column('t0.INDEX_NAME', 'index')
+			->column('t0.COLUMN_NAME', 'column')
+			->column('t0.COLUMN_POSITION', 'seq_index')
+			->column(DB_SQL::expr("CASE \"t0\".\"DESCEND\" WHEN 'Y' THEN 'DESC' ELSE 'ASC' END"), 'ordering')
+			->column(DB_SQL::expr("CASE \"t2\".\"CONSTRAINT_TYPE\" WHEN 'P' THEN 1 WHEN 'U' THEN 1 ELSE 0 END"), 'unique')
+			->column(DB_SQL::expr("CASE \"t2\".\"CONSTRAINT_TYPE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
+			->from('SYS.ALL_IND_COLUMNS', 't0')
+			//->join('LEFT', 'SYS.ALL_INDEXES', 't1')
+			//->on('t1.OWNER', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
+			//->on('t1.INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_NAME')
+			->join('LEFT', 'SYS.ALL_CONSTRAINTS', 't2')
+			->on('t2.INDEX_OWNER', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
+			->on('t2.INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_NAME')
+			->where('t0.TABLE_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			//->where('t1.STATUS', DB_SQL_Operator::_EQUAL_TO_, 'VALID')
+			->where('t2.STATUS', DB_SQL_Operator::_EQUAL_TO_, 'ENABLED')
+			->order_by(DB_SQL::expr('UPPER("t0"."TABLE_OWNER")'))
+			->order_by(DB_SQL::expr('UPPER("t0"."TABLE_NAME")'))
+			->order_by(DB_SQL::expr('UPPER("t0"."INDEX_NAME")'))
+			->order_by('t0.COLUMN_POSITION');
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$results = $connection->query($sql);
+		if ( ! empty($like)) {
+			$builder->where('t0.INDEX_NAME', DB_SQL_Operator::_LIKE_, $like);
+		}
 
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
@@ -192,7 +233,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+

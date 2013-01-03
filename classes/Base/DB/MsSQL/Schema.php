@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -73,6 +73,19 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
@@ -80,34 +93,41 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
+	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
 	 */
 	public function indexes($table, $like = '') {
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('sys.tables.name', 'table_name')
-			->column('sys.columns.name', 'field_name')
-			->column('sys.indexes.name', 'index_name')
-			->column('sys.index_columns.key_ordinal', 'sequence')
-			->column('sys.indexes.is_primary_key')
-			->column('sys.indexes.is_unique')
-			->from('sys.tables')
-			->join(DB_SQL_JoinType::_CROSS_, 'sys.indexes')
-			->join(DB_SQL_JoinType::_CROSS_, 'sys.index_columns')
-			->join(DB_SQL_JoinType::_CROSS_, 'sys.columns')
-			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[indexes].[object_id]'))
-			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[index_columns].[object_id]'))
-			->where('sys.tables.object_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[columns].[object_id]'))
-			->where('sys.indexes.index_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[index_columns].[index_id]'))
-			->where('sys.index_columns.column_id', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('[sys].[columns].[column_id]'))
-			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
-			->where('sys.tables.name', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr("'" . $table . "'")); // TODO prevent SQL insertion attack
+			->column('SYS.SCHEMAS.NAME', 'schema')
+			->column('SYS.TABLES.NAME', 'table')
+			->column('SYS.INDEXES.NAME', 'index')
+			->column('SYS.COLUMNS.NAME', 'column')
+			->column('SYS.INDEX_COLUMNS.KEY_ORDINAL', 'seq_index')
+			->column('SYS.INDEXES.IS_PRIMARY_KEY', 'primary')
+			->column('SYS.INDEXES.IS_UNIQUE', 'unique')
+			->from('SYS.TABLES')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.SCHEMAS')
+			->on('SYS.TABLES.SCHEMA_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.SCHEMAS.SCHEMA_ID')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.INDEXES')
+			->on('SYS.INDEXES.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.TABLES.OBJECT_ID')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.INDEX_COLUMNS')
+			->on('SYS.INDEX_COLUMNS.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.TABLES.OBJECT_ID')
+			->on('SYS.INDEX_COLUMNS.INDEX_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.INDEXES.INDEX_ID')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.COLUMNS')
+			->on('SYS.COLUMNS.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.TABLES.OBJECT_ID')
+			->on('SYS.COLUMNS.COLUMN_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.INDEX_COLUMNS.COLUMN_ID')
+			->where('SYS.TABLES.NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('SYS.INDEXES.IS_DISABLED', DB_SQL_Operator::_EQUAL_TO_, 0)
+			->order_by(DB_SQL::expr('UPPER([SYS].[SCHEMAS].[NAME])'))
+			->order_by(DB_SQL::expr('UPPER([SYS].[TABLES].[NAME])'))
+			->order_by(DB_SQL::expr('UPPER([SYS].[INDEXES].[NAME])'))
+			->order_by('SYS.INDEX_COLUMNS.KEY_ORDINAL');
 
-		$results = $builder->query();
+		if ( ! empty($like)) {
+			$builder->where('SYS.INDEXES.NAME', DB_SQL_Operator::_LIKE_, $like);
+		}
 
-		return $results;
-		*/
+		return $builder->query();
 	}
 
 	/**
@@ -158,7 +178,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+
@@ -187,13 +207,13 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('[SYSOBJECTS]', '[t0]')
 			->join(NULL, '[SYSOBJECTS]', '[t1]')
-			->on('[t1].[ID]', '=', '[t0].[PARENT_OBJ]')
+			->on('[t1].[ID]', DB_SQL_Operator::_EQUAL_TO_, '[t0].[PARENT_OBJ]')
 			->join(NULL, '[SYSCOMMENTS]', '[t2]')
-			->on('[t2].[ID]', '=', '[t0].[ID]')
+			->on('[t2].[ID]', DB_SQL_Operator::_EQUAL_TO_, '[t0].[ID]')
 			->join('LEFT', '[SYS].[TABLES]', '[t3]')
-			->on('[t3].[OBJECT_ID]', '=', '[t0].[PARENT_OBJ]')
+			->on('[t3].[OBJECT_ID]', DB_SQL_Operator::_EQUAL_TO_, '[t0].[PARENT_OBJ]')
 			->join('LEFT', '[SYS].[SCHEMAS]', '[t4]')
-			->on('[t4].[SCHEMA_ID]', '=', '[t3].[SCHEMA_ID]')
+			->on('[t4].[SCHEMA_ID]', DB_SQL_Operator::_EQUAL_TO_, '[t3].[SCHEMA_ID]')
 			->where('[t0].[XTYPE]', DB_SQL_Operator::_EQUAL_TO_, 'TR')
 			->where('[t1].[NAME]', DB_SQL_Operator::_EQUAL_TO_, $table)
 			->where(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsTriggerDisabled') = 1 THEN 0 ELSE 1 END"), DB_SQL_Operator::_EQUAL_TO_, 1)

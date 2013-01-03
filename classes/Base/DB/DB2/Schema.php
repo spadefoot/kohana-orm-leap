@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -115,6 +115,19 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
@@ -123,39 +136,37 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *                                      table
 	 *
 	 * @see http://www.devx.com/dbzone/Article/29585/0/page/4
+	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001047.htm
+	 * @see http://pic.dhe.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.sql.ref.doc/doc/r0002316.html
 	 * @see http://www.dbforums.com/db2/1614810-how-see-indexes-db2-tables.html
 	 * @see http://www.tek-tips.com/viewthread.cfm?qid=128876&page=108
 	 */
 	public function indexes($table, $like = '') {
-		/*
-		SELECT 	A.INDNAME, A.TABSCHEMA, A.TABNAME,  
-					  	B.COLNAME, B.COLSEQ, B.COLORDER
-		FROM 
-		       	SYSCAT.INDEXES AS A, 
-					  	SYSCAT.INDEXCOLUSE AS B
-		WHERE  	A.INDSCHEMA = B.INDSCHEMA AND 
-						A.INDNAME = B.INDNAME AND 
-		       	A.TABSCHEMA NOT LIKE 'SYS%' AND 
-						A.TABNAME = 'TABLE_NAME' 
-		ORDER BY 	A.INDNAME, B.COLSEQ
-		*/
-		/*
 		$builder = DB_SQL::select($this->source)
-			->column('INDNAME', 'name')
-			->column('INDEXTYPE', 'type')
-			->column('COLNAMES', 'columns')
-			->column('UNIQUERULE', 'unique')
-			->from('SYSCAT.INDEXES')
-			->where('TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
-			->where('TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER("INDNAME")'));
+			->column('A.TABSCHEMA', 'schema')
+			->column('A.TABNAME', 'table')
+			->column('A.INDNAME', 'index')
+			->column('B.COLNAME', 'column')
+			->column('B.COLSEQ', 'seq_index')
+			->column(DB_SQL::expr("CASE \"B\".\"COLORDER\" WHEN 'A' THEN 'ASC' WHEN 'D' THEN 'DESC' ELSE NULL END"), 'ordering')
+			->column(DB_SQL::expr("CASE \"A\".\"UNIQUERULE\" WHEN 'D' THEN 0 ELSE 1 END"), 'unique')
+			->column(DB_SQL::expr("CASE \"A\".\"UNIQUERULE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
+			->from('SYSCAT.INDEXCOLUSE', 'B')
+			->join('LEFT', 'SYSCAT.INDEXES', 'A')
+			->on('B.INDSCHEMA', DB_SQL_Operator::_EQUAL_TO_, 'B.INDSCHEMA')
+			->on('B.INDNAME', DB_SQL_Operator::_EQUAL_TO_, 'A.INDNAME')
+			->where('A.TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
+			->where('A.TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER("A"."TABSCHEMA")'))
+			->order_by(DB_SQL::expr('UPPER("A"."TABNAME")'))
+			->order_by(DB_SQL::expr('UPPER("A"."INDNAME")'))
+			->order_by('B.COLSEQ');
 
 		if ( ! empty($like)) {
-			$builder->where('INDNAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('A.INDNAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
-		*/
 	}
 
 	/**
@@ -209,7 +220,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+

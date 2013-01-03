@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2013-01-01
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -110,6 +110,19 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	/**
 	 * This function returns a result set of indexes for the specified table.
 	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | index         | string        | The name of the index.          .                          |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the index.                           |
+	 * | ordering      | string        | The ordering of the index.                                 |
+	 * | unique        | boolean       | Indicates whether index on column is unique.               |
+	 * | primary       | boolean       | Indicates whether index on column is a primary key.        |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 *
 	 * @access public
 	 * @override
 	 * @param string $table                 the table to evaluated
@@ -118,16 +131,48 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/157392/how-do-i-find-out-if-a-sqlite-index-is-unique-with-sql
+	 * @see http://marc.info/?l=sqlite-users&m=107868394932015
+	 * @see http://my.safaribooksonline.com/book/databases/sql/9781449394592/sqlite-pragmas/id3054722
+	 * @see http://my.safaribooksonline.com/book/databases/sql/9781449394592/sqlite-pragmas/id3054537
 	 */
 	public function indexes($table, $like = '') {
-		/*
-		$sql = "PRAGMA INDEX_LIST('" . $table . "');";
-
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+
+		$pathinfo = pathinfo($this->source->database);
+		$schema = $pathinfo['filename'];
+		
+		$table = trim(preg_replace('/[^a-z0-9$_ ]/i', '', $table));
+
+		$sql = "PRAGMA INDEX_LIST('{$table}');";
+
 		$results = $connection->query($sql);
 
+		$records = array();
+
+		foreach ($results as $index) {
+			if (empty($like) OR preg_match(DB_ToolKit::regex($like), $index['name'])) {
+				$reader = $connection->reader("PRAGMA INDEX_INFO('{$index['name']}');");
+				while ($reader->read()) {
+					$column = $reader->row('array');
+					$record = array(
+						'schema' => $schema,
+						'table' => $table,
+						'index' => $index['name'],
+						'column' => $column['name'],
+						'seq_index' => $column['cid'],
+						'ordering' => NULL,
+						'unique' => $index['unique'],
+						'primary' => 0,
+					);
+					$records[] = $record;
+				}
+				$reader->free();
+			}
+		}
+		
+		$results = new DB_ResultSet($records);
+
 		return $results;
-		*/
 	}
 
 	/**
@@ -180,7 +225,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * | event         | string        | 'INSERT', 'DELETE', or 'UPDATE'                            |
 	 * | timing        | string        | 'BEFORE', 'AFTER', or 'INSTEAD OF'                         |
 	 * | per           | string        | 'ROW', 'STATEMENT', or 'EVENT'                             |
-	 * | action        | string        | The action that will be triggered                          |
+	 * | action        | string        | The action that will be triggered.                         |
 	 * | seq_index     | integer       | The sequence index of the trigger.                         |
 	 * | created       | date/time     | The date/time of when the trigger was created.             |
 	 * +---------------+---------------+------------------------------------------------------------+
@@ -314,36 +359,6 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 */
 	protected function data_type($type) {
 
-	}
-
-	/**
-	 * This function converts a like clause to a regular expression.
-	 *
-	 * @access protected
-	 * @param string $like                  the like clause to be converted
-	 * @return string                       the resulting regular expression
-	 *
-	 * @see http://www.regular-expressions.info/mysql.html
-	 */
-	protected function like_to_regex($like) {
-		/*
-		if ( ! empty($like)) {
-			$length = strlen($like);
-			if (preg_match('/^%.*%$/' , $like)) {
-				return '/^.*' . substr($like, 1, $length - 2) . '.*$/';
-			}
-			else if (preg_match('/^.*%$/', $like)) {
-				return '/^' . substr($like, 0, $length - 1) . '.*$/';
-			}
-			else if (preg_match('/^%.*$/', $like)) {
-				return '/^.*' . substr($like, 1, $length - 1) . '$/';
-			}
-			else {
-				return '/^' . $like . '$/';
-			}
-		}
-		return '';
-		*/
 	}
 
 }

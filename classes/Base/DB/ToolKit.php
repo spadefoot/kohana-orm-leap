@@ -22,11 +22,58 @@
  *
  * @package Leap
  * @category ToolKit
- * @version 2012-12-05
+ * @version 2013-01-03
  *
  * @abstract
  */
 abstract class Base_DB_ToolKit extends Core_Object {
+
+	/**
+	 * This function converts a like clause to a regular expression.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $like                              the like clause to be converted
+	 * @param char $escape                              the escape character
+	 * @return string                                   the resulting regular expression
+	 *
+	 * @see http://stackoverflow.com/questions/3683746/escaping-mysql-wild-cards
+	 * @see http://stackoverflow.com/questions/47052/what-code-would-i-use-to-convert-a-sql-like-expression-to-a-regex-on-the-fly
+	 */
+	public static function regex($like, $escape = NULL) {
+		$regex = '';
+
+		$length = strlen($like);
+
+		for ($a = 0; $a < $length; $a++) {
+			$char = $string[$a];
+			if ($char == $escape) {
+				$b = $a + 1;
+				$next = ($b < $length) ? $string[$b] : '';
+				if (in_array($next, array('%', '_', $escape))) {
+					$a = $b;
+				}
+				$regex .= preg_quote($char);
+			}
+			else {
+				switch ($char) {
+					case '%':
+						$regex .= '.*';
+					break;
+				 	case '_':
+						$regex .= '.';
+					break;
+					default:
+						$regex .= preg_quote($char);
+					break;
+				}
+			}
+		}
+
+		$regex = '/^' . $regex . '$/';
+		
+		return $regex;
+	}
 
 	/**
 	 * This function converts a sting to a slug that can be used in a URL.
