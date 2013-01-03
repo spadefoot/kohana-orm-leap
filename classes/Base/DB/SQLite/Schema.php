@@ -145,11 +145,11 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$sql = "PRAGMA INDEX_LIST('{$table}');";
 
-		$results = $connection->query($sql);
+		$indexes = $connection->query($sql);
 
 		$records = array();
 
-		foreach ($results as $index) {
+		foreach ($indexes as $index) {
 			if (empty($like) OR preg_match(DB_ToolKit::regex($like), $index['name'])) {
 				$reader = $connection->reader("PRAGMA INDEX_INFO('{$index['name']}');");
 				while ($reader->read()) {
