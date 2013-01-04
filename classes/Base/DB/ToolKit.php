@@ -46,10 +46,10 @@ abstract class Base_DB_ToolKit extends Core_Object {
 		$length = strlen($like);
 
 		for ($a = 0; $a < $length; $a++) {
-			$char = $string[$a];
+			$char = $like[$a];
 			if ($char == $escape) {
 				$b = $a + 1;
-				$next = ($b < $length) ? $string[$b] : '';
+				$next = ($b < $length) ? $like[$b] : '';
 				if (in_array($next, array('%', '_', $escape))) {
 					$a = $b;
 				}
