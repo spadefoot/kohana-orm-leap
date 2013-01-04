@@ -51,9 +51,12 @@ abstract class Base_DB_ToolKit extends Core_Object {
 				$b = $a + 1;
 				$next = ($b < $length) ? $like[$b] : '';
 				if (in_array($next, array('%', '_', $escape))) {
+					$regex .= preg_quote($next);
 					$a = $b;
 				}
-				$regex .= preg_quote($char);
+				else {
+					$regex .= preg_quote($char);
+				}
 			}
 			else {
 				switch ($char) {
