@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-03
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -98,33 +98,33 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 */
 	public function indexes($table, $like = '') {
 		$builder = DB_SQL::select($this->source)
-			->column('SYS.SCHEMAS.NAME', 'schema')
-			->column('SYS.TABLES.NAME', 'table')
-			->column('SYS.INDEXES.NAME', 'index')
-			->column('SYS.COLUMNS.NAME', 'column')
-			->column('SYS.INDEX_COLUMNS.KEY_ORDINAL', 'seq_index')
-			->column('SYS.INDEXES.IS_PRIMARY_KEY', 'primary')
-			->column('SYS.INDEXES.IS_UNIQUE', 'unique')
-			->from('SYS.TABLES')
-			->join(DB_SQL_JoinType::_LEFT_, 'SYS.SCHEMAS')
-			->on('SYS.TABLES.SCHEMA_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.SCHEMAS.SCHEMA_ID')
-			->join(DB_SQL_JoinType::_LEFT_, 'SYS.INDEXES')
-			->on('SYS.INDEXES.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.TABLES.OBJECT_ID')
-			->join(DB_SQL_JoinType::_LEFT_, 'SYS.INDEX_COLUMNS')
-			->on('SYS.INDEX_COLUMNS.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.TABLES.OBJECT_ID')
-			->on('SYS.INDEX_COLUMNS.INDEX_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.INDEXES.INDEX_ID')
-			->join(DB_SQL_JoinType::_LEFT_, 'SYS.COLUMNS')
-			->on('SYS.COLUMNS.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.TABLES.OBJECT_ID')
-			->on('SYS.COLUMNS.COLUMN_ID', DB_SQL_Operator::_EQUAL_TO_, 'SYS.INDEX_COLUMNS.COLUMN_ID')
-			->where('SYS.TABLES.NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where('SYS.INDEXES.IS_DISABLED', DB_SQL_Operator::_EQUAL_TO_, 0)
-			->order_by(DB_SQL::expr('UPPER([SYS].[SCHEMAS].[NAME])'))
-			->order_by(DB_SQL::expr('UPPER([SYS].[TABLES].[NAME])'))
-			->order_by(DB_SQL::expr('UPPER([SYS].[INDEXES].[NAME])'))
-			->order_by('SYS.INDEX_COLUMNS.KEY_ORDINAL');
+			->column('t1.NAME', 'schema')
+			->column('t0.NAME', 'table')
+			->column('t2.NAME', 'index')
+			->column('t4.NAME', 'column')
+			->column('t3.KEY_ORDINAL', 'seq_index')
+			->column('t2.IS_PRIMARY_KEY', 'primary')
+			->column('t2.IS_UNIQUE', 'unique')
+			->from('SYS.TABLES', 't0')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.SCHEMAS', 't1')
+			->on('t1.SCHEMA_ID', DB_SQL_Operator::_EQUAL_TO_, 't0.SCHEMA_ID')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.INDEXES', 't2')
+			->on('t2.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 't0.OBJECT_ID')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.INDEX_COLUMNS', 't3')
+			->on('t3.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 't0.OBJECT_ID')
+			->on('t3.INDEX_ID', DB_SQL_Operator::_EQUAL_TO_, 't2.INDEX_ID')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.COLUMNS', 't4')
+			->on('t4.OBJECT_ID', DB_SQL_Operator::_EQUAL_TO_, 't0.OBJECT_ID')
+			->on('t4.COLUMN_ID', DB_SQL_Operator::_EQUAL_TO_, 't3.COLUMN_ID')
+			->where('t0.NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('t2.IS_DISABLED', DB_SQL_Operator::_EQUAL_TO_, 0)
+			->order_by(DB_SQL::expr('UPPER([t1].[NAME])'))
+			->order_by(DB_SQL::expr('UPPER([t0].[NAME])'))
+			->order_by(DB_SQL::expr('UPPER([t2].[NAME])'))
+			->order_by('t3.KEY_ORDINAL');
 
 		if ( ! empty($like)) {
-			$builder->where('SYS.INDEXES.NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('t2.NAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -210,9 +210,9 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 			->on('[t1].[ID]', DB_SQL_Operator::_EQUAL_TO_, '[t0].[PARENT_OBJ]')
 			->join(NULL, '[SYSCOMMENTS]', '[t2]')
 			->on('[t2].[ID]', DB_SQL_Operator::_EQUAL_TO_, '[t0].[ID]')
-			->join('LEFT', '[SYS].[TABLES]', '[t3]')
+			->join(DB_SQL_JoinType::_LEFT_, '[SYS].[TABLES]', '[t3]')
 			->on('[t3].[OBJECT_ID]', DB_SQL_Operator::_EQUAL_TO_, '[t0].[PARENT_OBJ]')
-			->join('LEFT', '[SYS].[SCHEMAS]', '[t4]')
+			->join(DB_SQL_JoinType::_LEFT_, '[SYS].[SCHEMAS]', '[t4]')
 			->on('[t4].[SCHEMA_ID]', DB_SQL_Operator::_EQUAL_TO_, '[t3].[SCHEMA_ID]')
 			->where('[t0].[XTYPE]', DB_SQL_Operator::_EQUAL_TO_, 'TR')
 			->where('[t1].[NAME]', DB_SQL_Operator::_EQUAL_TO_, $table)

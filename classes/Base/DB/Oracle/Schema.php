@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-03
+ * @version 2013-01-04
  *
  * @abstract
  */
@@ -164,10 +164,10 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 			->column(DB_SQL::expr("CASE \"t2\".\"CONSTRAINT_TYPE\" WHEN 'P' THEN 1 WHEN 'U' THEN 1 ELSE 0 END"), 'unique')
 			->column(DB_SQL::expr("CASE \"t2\".\"CONSTRAINT_TYPE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
 			->from('SYS.ALL_IND_COLUMNS', 't0')
-			//->join('LEFT', 'SYS.ALL_INDEXES', 't1')
+			//->join(DB_SQL_JoinType::_LEFT_, 'SYS.ALL_INDEXES', 't1')
 			//->on('t1.OWNER', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
 			//->on('t1.INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_NAME')
-			->join('LEFT', 'SYS.ALL_CONSTRAINTS', 't2')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYS.ALL_CONSTRAINTS', 't2')
 			->on('t2.INDEX_OWNER', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
 			->on('t2.INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_NAME')
 			->where('t0.TABLE_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)

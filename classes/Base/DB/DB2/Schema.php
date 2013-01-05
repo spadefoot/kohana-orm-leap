@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-03
+ * @version 2013-01-04
  *
  * @abstract
  */
@@ -143,27 +143,27 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 */
 	public function indexes($table, $like = '') {
 		$builder = DB_SQL::select($this->source)
-			->column('A.TABSCHEMA', 'schema')
-			->column('A.TABNAME', 'table')
-			->column('A.INDNAME', 'index')
-			->column('B.COLNAME', 'column')
-			->column('B.COLSEQ', 'seq_index')
-			->column(DB_SQL::expr("CASE \"B\".\"COLORDER\" WHEN 'A' THEN 'ASC' WHEN 'D' THEN 'DESC' ELSE NULL END"), 'ordering')
-			->column(DB_SQL::expr("CASE \"A\".\"UNIQUERULE\" WHEN 'D' THEN 0 ELSE 1 END"), 'unique')
-			->column(DB_SQL::expr("CASE \"A\".\"UNIQUERULE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
-			->from('SYSCAT.INDEXCOLUSE', 'B')
-			->join('LEFT', 'SYSCAT.INDEXES', 'A')
-			->on('B.INDSCHEMA', DB_SQL_Operator::_EQUAL_TO_, 'B.INDSCHEMA')
-			->on('B.INDNAME', DB_SQL_Operator::_EQUAL_TO_, 'A.INDNAME')
-			->where('A.TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
-			->where('A.TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER("A"."TABSCHEMA")'))
-			->order_by(DB_SQL::expr('UPPER("A"."TABNAME")'))
-			->order_by(DB_SQL::expr('UPPER("A"."INDNAME")'))
-			->order_by('B.COLSEQ');
+			->column('t1.TABSCHEMA', 'schema')
+			->column('t1.TABNAME', 'table')
+			->column('t1.INDNAME', 'index')
+			->column('t0.COLNAME', 'column')
+			->column('t0.COLSEQ', 'seq_index')
+			->column(DB_SQL::expr("CASE \"t0\".\"COLORDER\" WHEN 'A' THEN 'ASC' WHEN 'D' THEN 'DESC' ELSE NULL END"), 'ordering')
+			->column(DB_SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'D' THEN 0 ELSE 1 END"), 'unique')
+			->column(DB_SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
+			->from('SYSCAT.INDEXCOLUSE', 't0')
+			->join(DB_SQL_JoinType::_LEFT_, 'SYSCAT.INDEXES', 't1')
+			->on('t1.INDSCHEMA', DB_SQL_Operator::_EQUAL_TO_, 't0.INDSCHEMA')
+			->on('t1.INDNAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDNAME')
+			->where('t1.TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
+			->where('t1.TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER("t1"."TABSCHEMA")'))
+			->order_by(DB_SQL::expr('UPPER("t1"."TABNAME")'))
+			->order_by(DB_SQL::expr('UPPER("t1"."INDNAME")'))
+			->order_by('t0.COLSEQ');
 
 		if ( ! empty($like)) {
-			$builder->where('A.INDNAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('t1.INDNAME', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

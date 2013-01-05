@@ -179,15 +179,15 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 
 		$schema = $this->precompiler->prepare_identifier($this->source->database);
 		$table = $this->precompiler->prepare_identifier($table);
-		
+
 		$sql = "SHOW INDEXES FROM {$table} FROM {$schema}";
-		
+
 		if ( ! empty($like)) {
 			$sql .= " WHERE 'Key_name' LIKE " . $this->precompiler->prepare_value($like);
 		}
-		
+
 		$sql .= ';';
-		
+
 		$reader = $connection->reader($sql);
 
 		$records = array();
@@ -208,9 +208,9 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		}
 
 		$reader->free();
-		
+
 		$results = new DB_ResultSet($records);
-		
+
 		return $results;
 	}
 

@@ -63,7 +63,7 @@ abstract class Base_DB_ToolKit extends Core_Object {
 					case '%':
 						$regex .= '.*';
 					break;
-				 	case '_':
+					case '_':
 						$regex .= '.';
 					break;
 					default:
@@ -74,7 +74,7 @@ abstract class Base_DB_ToolKit extends Core_Object {
 		}
 
 		$regex = '/^' . $regex . '$/';
-		
+
 		return $regex;
 	}
 

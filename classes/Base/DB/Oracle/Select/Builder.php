@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-05
+ * @version 2013-01-04
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -38,7 +38,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 *                                          the specified SQL statement
 	 * @param string $statement                 the SQL statement to be appended
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Throwable_SQL_Exception             indicates an invalid SQL build instruction
+	 * @throws Throwable_SQL_Exception          indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
 		$select_builder = 'DB_' . $this->dialect . '_Select_Builder';
@@ -59,9 +59,9 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 *
 	 * @access public
 	 * @override
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @param boolean $terminated               whether to add a semi-colon to the end
+	 *                                          of the statement
+	 * @return string                           the SQL statement
 	 *
 	 * @see http://www.oracle.com/technetwork/issue-archive/2006/06-sep/o56asktom-086197.html
 	 * @see http://stackoverflow.com/questions/470542/how-do-i-limit-the-number-of-rows-returned-by-an-oracle-query

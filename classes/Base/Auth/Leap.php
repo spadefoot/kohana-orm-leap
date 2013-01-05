@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-11-14
+ * @version 2013-01-04
  *
  * @abstract
  */
@@ -71,6 +71,8 @@ abstract class Base_Auth_Leap extends Auth {
 	 *
 	 * @access public
 	 * @param mixed $config                     the config information to be used
+	 * @throws Throwable_Exception              indicates that error occurred when loading
+	 *                                          a configuration
 	 */
 	public function __construct($config = NULL) {
 		parent::__construct($config);

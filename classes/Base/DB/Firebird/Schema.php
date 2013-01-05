@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-03
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -308,7 +308,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), 'index')
 			->column(DB_SQL::expr('TRIM("RDB$INDEX_SEGMENTS"."RDB$FIELD_NAME")'), 'column')
 			->column(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'), 'seq_index')
-			->column('', 'ordering')
+			->column(DB_SQL::expr('0'), 'ordering')
 			->column(DB_SQL::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'unique')
 			->column(DB_SQL::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'primary')
 			->from('RDB$INDEX_SEGMENTS')
@@ -319,8 +319,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
 			->where('RDB$INDICES.RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
 			->where('RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$INDICES.RDB$INDEX_INACTIVE', DB_SQL_Operator::_EQUAL_TO_, 1)
-			->order_by(DB_SQL::expr('UPPER("A"."TABSCHEMA")'))
+			->where('RDB$INDICES.RDB$INDEX_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 1)
 			->order_by(DB_SQL::expr('UPPER("RDB$INDICES"."RDB$RELATION_NAME")'))
 			->order_by(DB_SQL::expr('UPPER("RDB$INDICES"."RDB$INDEX_NAME")'))
 			->order_by(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'));
@@ -414,7 +413,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->from('RDB$TRIGGERS')
 			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
 			->where('RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where('RDB$TRIGGER_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 0)
+			->where('RDB$TRIGGER_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 1)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'))
 			->order_by(DB_SQL::expr('UPPER("RDB$TRIGGER_NAME")'))
 			->order_by('RDB$TRIGGER_SEQUENCE');

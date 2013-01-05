@@ -140,7 +140,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$pathinfo = pathinfo($this->source->database);
 		$schema = $pathinfo['filename'];
-		
+
 		$table = trim(preg_replace('/[^a-z0-9$_ ]/i', '', $table));
 
 		$sql = "PRAGMA INDEX_LIST('{$table}');";
@@ -169,7 +169,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 				$reader->free();
 			}
 		}
-		
+
 		$results = new DB_ResultSet($records);
 
 		return $results;
@@ -265,14 +265,14 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		}
 
 		$reader = $builder->reader();
-		
+
 		$records = array();
 
 		while ($reader->read()) {
 			$record = $reader->row('array');
 			if (isset($record['action'])) {
 				$sql = trim($record['action'], "; \t\n\r\0\x0B")
-				
+
 				if (preg_match('/\s+INSERT\s+/i', $sql)) {
 					$record['event'] = 'INSERT';
 				}
@@ -282,7 +282,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 				else if (preg_match('/\s+DELETE\s+OF\s+/i', $sql)) {
 					$record['event'] = 'DELETE';
 				}
-				
+
 				if (preg_match('/\s+BEFORE\s+/i', $sql)) {
 					$record['timing'] = 'BEFORE';
 				}
@@ -292,7 +292,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 				else if (preg_match('/\s+INSTEAD\s+OF\s+/i', $sql)) {
 					$record['timing'] = 'INSTEAD OF';
 				}
-				
+
 				$offest = stripos($sql, 'BEGIN') + 5;
 				$length = (strlen($sql) - $offset) - 3;
 				$record['action'] = trim(substr($sql, $offset, $length), "; \t\n\r\0\x0B");
@@ -301,9 +301,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		}
 
 		$reader->free();
-		
+
 		$results = new DB_ResultSet($records);
-		
+
 		return $results;
 	}
 
@@ -328,7 +328,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	public function views($like = '') {
 		$pathinfo = pathinfo($this->source->database);
 		$schema = $pathinfo['filename'];
-		
+
 		$builder = DB_SQL::select($this->source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column('name', 'table')

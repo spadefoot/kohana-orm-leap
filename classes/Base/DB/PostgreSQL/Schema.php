@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-03
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -100,33 +100,33 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 */
 	public function indexes($table, $like = '') {
 		$builder = DB_SQL::select($this->source)
-			->column('s.schname', 'schema')
-			->column('t.relname', 'table')
-			->column('i.relname', 'index')
-			->column('c.attname', 'column')
-			->column('c.attnum', 'seq_index')
+			->column('t4.schname', 'schema')
+			->column('t0.relname', 'table')
+			->column('t2.relname', 'index')
+			->column('t3.attname', 'column')
+			->column('t3.attnum', 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'ordering')
-			->column(DB_SQL::expr("CASE \"ix\".\"indisunique\" WHEN 't' THEN 1 ELSE 0 END"), 'unique')
-			->column(DB_SQL::expr("CASE \"ix\".\"indisprimary\" WHEN 't' THEN 1 ELSE 0 END"), 'primary')
-			->from('pg_class', 't')
-			->join('LEFT', 'pg_index', 'ix')
-			->on('ix.indrelid', DB_SQL_Operator::_EQUAL_TO_, 't.oid')
-			->join('LEFT', 'pg_class', 'i')
-			->on('i.oid', DB_SQL_Operator::_EQUAL_TO_, 'ix.indexrelid')
-			->join('LEFT', 'pg_attribute', 'c')
-			->on('c.attrelid', DB_SQL_Operator::_EQUAL_TO_, 't.oid')
-			->on('c.attnum', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('ANY("ix"."indkey")'))			
-			->join('LEFT', DB_SQL::expr('(SELECT "r"."table_schema" AS "schname", "r"."table_schema" AS "relname" FROM "information_schema"."tables" AS "r" WHERE "r"."table_type" = \'BASE TABLE\' AND "r"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 's')
-			->on('s.relname', DB_SQL_Operator::_EQUAL_TO_, 't.relname')
-			->where('t.relkind', DB_SQL_Operator::_EQUAL_TO_, 'r')
-			->where('t.relname', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER("s"."schname")'))
-			->order_by(DB_SQL::expr('UPPER("t"."relname")'))
-			->order_by(DB_SQL::expr('UPPER("i"."relname")'))
-			->order_by('c.attnum');
+			->column(DB_SQL::expr("CASE \"t1\".\"indisunique\" WHEN 't' THEN 1 ELSE 0 END"), 'unique')
+			->column(DB_SQL::expr("CASE \"t1\".\"indisprimary\" WHEN 't' THEN 1 ELSE 0 END"), 'primary')
+			->from('pg_class', 't0')
+			->join(DB_SQL_JoinType::_LEFT_, 'pg_index', 't1')
+			->on('t1.indrelid', DB_SQL_Operator::_EQUAL_TO_, 't0.oid')
+			->join(DB_SQL_JoinType::_LEFT_, 'pg_class', 't2')
+			->on('t2.oid', DB_SQL_Operator::_EQUAL_TO_, 't1.indexrelid')
+			->join(DB_SQL_JoinType::_LEFT_, 'pg_attribute', 't3')
+			->on('t3.attrelid', DB_SQL_Operator::_EQUAL_TO_, 't0.oid')
+			->on('t3.attnum', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('ANY("t1"."indkey")'))			
+			->join(DB_SQL_JoinType::_LEFT_, DB_SQL::expr('(SELECT "t5"."table_schema" AS "schname", "t5"."table_schema" AS "relname" FROM "information_schema"."tables" AS "t5" WHERE "t5"."table_type" = \'BASE TABLE\' AND "t5"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 't4')
+			->on('t4.relname', DB_SQL_Operator::_EQUAL_TO_, 't0.relname')
+			->where('t0.relkind', DB_SQL_Operator::_EQUAL_TO_, 'r')
+			->where('t0.relname', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by(DB_SQL::expr('UPPER("t4"."schname")'))
+			->order_by(DB_SQL::expr('UPPER("t0"."relname")'))
+			->order_by(DB_SQL::expr('UPPER("t2"."relname")'))
+			->order_by('t3.attnum');
 
 		if ( ! empty($like)) {
-			$builder->where('i.relname', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('t2.relname', DB_SQL_Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

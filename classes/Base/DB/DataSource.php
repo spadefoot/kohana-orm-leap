@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-31
+ * @version 2013-01-03
  *
  * @abstract
  */
@@ -73,7 +73,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
-     * @override
+	 * @override
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
 	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
@@ -109,7 +109,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 *                                              has been set
 	 */
 	public function __isset($name) {
-		if (isset($this->settings[$name]) && ($name != 'persistent')) {
+		if (isset($this->settings[$name]) AND ($name != 'persistent')) {
 			return (FALSE === empty($this->settings[$name]));
 		}
 		return NULL;
