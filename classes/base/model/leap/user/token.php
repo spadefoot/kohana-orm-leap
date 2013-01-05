@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-08-21
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -118,10 +118,11 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * @access public
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
+	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
 	 */
-	public function save($reload = FALSE) {
+	public function save($reload = FALSE, $mode = NULL) {
 		$this->token = $this->create_token();
-		parent::save($reload);
+		parent::save($reload, $mode);
 	}
 
 	/**
