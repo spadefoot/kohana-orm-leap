@@ -123,6 +123,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * @override
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
+	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
 	 */
 	public function save($reload = FALSE, $mode = NULL) {
 		$this->token = $this->create_token();
