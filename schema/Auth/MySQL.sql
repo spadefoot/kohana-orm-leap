@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `user_roles` (
 	`user_id` INT(10) UNSIGNED NOT NULL,
 	`role_id` INT(10) UNSIGNED NOT NULL,
 	PRIMARY KEY (`user_id`,`role_id`),
-	KEY `fk_role_id` (`role_id`)
+	INDEX `role_id_fkey` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ----
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 	`expires` INT(11) UNSIGNED NOT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE KEY `user_tokens_token_ukey` (`token`),
-	KEY `fk_user_id` (`user_id`)
+	INDEX `user_id_fkey` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ----

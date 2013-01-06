@@ -24,3 +24,5 @@ CREATE TABLE "sessions" (
 	"contents" text NOT NULL,
 	CONSTRAINT "sessions_id_pkey" PRIMARY KEY ("id")
 );
+
+CREATE INDEX "sessions_last_active_idx" ON "sessions" ("last_active");

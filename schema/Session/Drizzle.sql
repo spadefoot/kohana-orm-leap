@@ -22,5 +22,6 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 	`id` VARCHAR(24) NOT NULL,
 	`last_active` INT NOT NULL,
 	`contents` TEXT NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	INDEX (`last_active`)
 ) ENGINE=InnoDB;
