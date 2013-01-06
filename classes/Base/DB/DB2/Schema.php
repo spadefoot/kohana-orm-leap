@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-04
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -177,7 +177,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * +---------------+---------------+------------------------------------------------------------+
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
-	 * | type          | string        | The type of table.              .                          |
+	 * | type          | string        | The type of table.                                         |
 	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
@@ -269,7 +269,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * +---------------+---------------+------------------------------------------------------------+
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
-	 * | type          | string        | The type of table.              .                          |
+	 * | type          | string        | The type of table.                                         |
 	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public

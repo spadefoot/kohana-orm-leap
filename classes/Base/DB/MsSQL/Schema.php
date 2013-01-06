@@ -78,7 +78,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * +---------------+---------------+------------------------------------------------------------+
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
-	 * | index         | string        | The name of the index.          .                          |
+	 * | index         | string        | The name of the index.                                     |
 	 * | column        | string        | The name of the column.                                    |
 	 * | seq_index     | integer       | The sequence index of the index.                           |
 	 * | ordering      | string        | The ordering of the index.                                 |
@@ -138,7 +138,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * +---------------+---------------+------------------------------------------------------------+
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
-	 * | type          | string        | The type of table.              .                          |
+	 * | type          | string        | The type of table.                                         |
 	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
@@ -236,7 +236,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * +---------------+---------------+------------------------------------------------------------+
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
-	 * | type          | string        | The type of table.              .                          |
+	 * | type          | string        | The type of table.                                         |
 	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
