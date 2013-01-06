@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2012-12-15
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -56,8 +56,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @static
 	 * @param string $file                          the file name
 	 * @return XML                                  an instance of this class
-	 * @throws Throwable_InvalidArgument_Exception  indicates that the an argument is of the
-	 *                                              wrong data type
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 * @throws Throwable_FileNotFound_Exception     indicates that the file does not exist
 	 */
 	public static function load($file) {

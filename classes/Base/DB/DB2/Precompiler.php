@@ -50,9 +50,9 @@ abstract class Base_DB_DB2_Precompiler extends DB_SQL_Precompiler {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                         the expression to be prepared
-	 * @return string                              the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception indicates a data type mismatch
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 *
 	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0000720.htm
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers

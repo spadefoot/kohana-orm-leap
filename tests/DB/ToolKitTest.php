@@ -21,14 +21,40 @@
  *
  * @package Leap
  * @category DB
- * @version 2011-12-26
+ * @version 2013-01-06
  *
  * @group spadefoot.leap
  */
 class DB_ToolKitTest extends Unittest_Testcase {
 
 	/**
-	 * This function provides the test data for self::test_slug().
+	 * This function provides the test data for test_regex().
+	 *
+	 * @access public
+	 */
+	public function provider_regex() {
+		return array(
+			array(array('spade%', NULL), '/^spade.*$/'),
+			array(array('%foot', NULL), '/^.*foot$/'),
+			array(array('spade_', NULL), '/^spade.$/'),
+			array(array('_foot', NULL), '/^.foot$/'),
+			array(array('spade_%', NULL), '/^spade..*$/'),
+			array(array('spade%_', NULL), '/^spade.*.$/'),
+			array(array('spade\%', NULL), '/^spade%$/'),
+			array(array('spade%%', NULL), '/^spade%%$/'),
+			array(array('spade%%', '%'), '/^spade%$/'),
+			array(array('spade%%%', '%'), '/^spade%%$/'),
+			array(array('spade__', NULL), '/^spade__$/'),
+			array(array('spade__', '_'), '/^spade_$/'),
+			array(array('spade__', '%'), '/^spade__$/'),
+			array(array('spade%_', '%'), '/^spade_$/'),
+			array(array('spade__', '\\'), '/^spade__$/'),
+			array(array('$padefoot', NULL), '/^\$padefoot$/'),
+		);
+	}
+
+	/**
+	 * This function provides the test data for test_slug().
 	 *
 	 * @access public
 	 */
@@ -40,6 +66,19 @@ class DB_ToolKitTest extends Unittest_Testcase {
 			array('$slug%&#_test?', 'slug-test'),
 			array('%&#_', ''),
 		);
+	}
+
+	/**
+	 * This function tests DB_ToolKit::regex().
+	 *
+	 * @access public
+	 * @param mixed $test_data                          the test data
+	 * @param string $expected                          the expected value
+	 *
+	 * @dataProvider provider_regex
+	 */
+	public function test_regex($test_data, $expected) {
+		$this->assertSame($expected, DB_ToolKit::regex($test_data[0], $test_data[1]), 'Failed when testing regex().');
 	}
 
 	/**

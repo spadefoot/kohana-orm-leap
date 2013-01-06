@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-12-15
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -205,6 +205,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 *
 	 * @access public
 	 * @param mixed $value                          the value to be mapped
+	 * @throws Throwable_Exception                  indicates an invalid pattern
 	 */
 	public function map($value) {
 		$this->values = array();

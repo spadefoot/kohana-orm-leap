@@ -21,46 +21,35 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-12-30
+ * @version 2013-01-06
  *
- * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
- * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
- * @see http://plugins.svn.wordpress.org/drizzle/trunk/db.php
- * @see http://ronaldbradford.com/blog/a-beginners-look-at-drizzle-datatypes-and-tables-2009-04-01/
+ * @see http://www.php.net/manual/en/book.mysql.php
  *
  * @abstract
  */
 abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This variable stores the last insert id.
-	 *
-	 * @access protected
-	 * @var integer
-	 */
-	protected $insert_id = FALSE;
-
-	/**
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
+	 * @throws Throwable_Database_Exception     indicates that there is problem with
 	 *                                          opening the connection
-	 *
-	 * @see http://wiki.drizzle.org/MySQL_Differences
 	 */
 	public function open() {
 		if ( ! $this->is_connected()) {
-			$handle = drizzle_create();
 			$host = $this->data_source->host;
-			$port = $this->data_source->port;
-			$database = $this->data_source->database;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
-			$this->resource = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
+			$this->resource = ($this->data_source->is_persistent())
+				? @mysql_pconnect($host, $username, $password)
+				: @mysql_connect($host, $username, $password, TRUE);
 			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @drizzle_error($handle)));
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @mysql_error()));
+			}
+			if ( ! @mysql_select_db($this->data_source->database, $this->resource)) {
+				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
 			}
 			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
 		}
@@ -71,40 +60,13 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
-	 * @see http://docs.drizzle.org/start_transaction.html
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
+	 * @see http://php.net/manual/en/function.mysql-query.php
 	 */
 	public function begin_transaction() {
 		$this->execute('START TRANSACTION;');
-	}
-
-	/**
-	 * This function processes an SQL statement that will return data.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $sql						the SQL statement
-	 * @param string $type						the return type to be used
-	 * @return DB_ResultSet                     the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
-	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
-		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->insert_id = FALSE;
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this, $sql);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
-		$this->insert_id = FALSE;
-		$this->sql = $sql;
-		return $result_set;
 	}
 
 	/**
@@ -113,21 +75,18 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @override
 	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
-		$command = @drizzle_query($this->resource, $sql);
+		$command = @mysql_query($sql, $this->resource);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($this->resource)));
+			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
 		}
-		$this->insert_id = (preg_match("/^\\s*(insert|replace) /i", $sql))
-			? @drizzle_result_insert_id($command)
-			: FALSE;
 		$this->sql = $sql;
-		@drizzle_result_free($command);
+		@mysql_free_result($command);
 	}
 
 	/**
@@ -136,16 +95,17 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @override
 	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function get_last_insert_id() {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		if ($this->insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
+		$insert_id = @mysql_insert_id($this->resource);
+		if ($insert_id === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
 		}
-		return $this->insert_id;
+		return $insert_id;
 	}
 
 	/**
@@ -153,9 +113,9 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
-	 * @see http://docs.drizzle.org/rollback.html
+	 * @see http://php.net/manual/en/function.mysql-query.php
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
@@ -166,9 +126,10 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
 	 *
-	 * @see http://docs.drizzle.org/commit.html
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
+	 * @see http://php.net/manual/en/function.mysql-query.php
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
@@ -182,7 +143,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @param string $string                    the string to be escaped
 	 * @param char $escape                      the escape character
 	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception             indicates that no connection could
+	 * @throws Throwable_SQL_Exception          indicates that no connection could
 	 *                                          be found
 	 */
 	public function quote($string, $escape = NULL) {
@@ -190,7 +151,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
-		$string = "'" . drizzle_escape_string($this->resource, $string) . "'";
+		$string = "'" . mysql_real_escape_string($string, $this->resource) . "'";
 
 		if (is_string($escape) OR ! empty($escape)) {
 			$string .= " ESCAPE '{$escape}'";
@@ -208,7 +169,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @drizzle_con_close($this->resource)) {
+			if ( ! @mysql_close($this->resource)) {
 				return FALSE;
 			}
 			$this->resource = NULL;
@@ -224,7 +185,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function __destruct() {
 		if (is_resource($this->resource)) {
-			@drizzle_con_close($this->resource);
+			@mysql_close($this->resource);
 		}
 	}
 

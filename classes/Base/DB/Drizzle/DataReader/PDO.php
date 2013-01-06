@@ -17,10 +17,13 @@
  */
 
 /**
- * This class handles an improved MySQL connection.
+ * This class is used to read data from a Drizzle database using the PDO
+ * driver.
  *
  * @package Leap
- * @category MySQL
+ * @category Drizzle
  * @version 2013-01-06
+ *
+ * @abstract
  */
-class DB_MySQL_Connection_Improved extends Base_DB_MySQL_Connection_Improved {}
+abstract class Base_DB_Drizzle_DataReader_PDO extends DB_SQL_DataReader_PDO {}

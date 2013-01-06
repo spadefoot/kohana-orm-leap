@@ -21,14 +21,14 @@
  *
  * @package Leap
  * @category DB
- * @version 2012-12-30
+ * @version 2013-01-06
  *
  * @group spadefoot.leap
  */
 class DB_ResultSetTest extends Unittest_Testcase {
 
 	/**
-	 * This function provides the test data for self::test_constructor().
+	 * This function provides the test data for test_constructor().
 	 *
 	 * @access public
 	 */

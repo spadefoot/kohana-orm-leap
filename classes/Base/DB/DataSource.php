@@ -155,12 +155,12 @@ abstract class Base_DB_DataSource extends Core_Object {
 			$this->settings['dialect'] = (string) $settings['type'];
 		}
 		else {
-			$this->settings['dialect'] = 'mysql';
+			$this->settings['dialect'] = 'MySQL';
 		}
 
 		$this->settings['driver'] = (isset($settings['driver']))
 			? (string) $settings['driver']
-			: 'standard';
+			: 'Standard';
 
 		$this->settings['host'] = (isset($settings['connection']['hostname']))
 			? (string) $settings['connection']['hostname']
@@ -180,7 +180,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 
 		$this->settings['type'] = (isset($settings['type']))
 			? (string) $settings['type']
-			: 'sql'; // e.g. sql, nosql, ldap
+			: 'SQL'; // e.g. SQL, NoSQL, LDAP
 
 		$this->settings['username'] = (isset($settings['connection']['username']))
 			? (string) $settings['connection']['username']

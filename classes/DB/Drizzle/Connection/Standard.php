@@ -21,6 +21,6 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2011-12-31
+ * @version 2013-01-06
  */
 class DB_Drizzle_Connection_Standard extends Base_DB_Drizzle_Connection_Standard {}

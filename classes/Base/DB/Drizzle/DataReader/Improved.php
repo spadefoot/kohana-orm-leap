@@ -17,18 +17,18 @@
  */
 
 /**
- * This class is used to read data from a Drizzle database using the standard
+ * This class is used to read data from a Drizzle database using the improved
  * driver.
  *
  * @package Leap
  * @category Drizzle
  * @version 2013-01-06
  *
- * @see http://www.php.net/manual/en/book.mysql.php
+ * @see http://www.php.net/manual/en/book.mysqli.php
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_DataReader_Standard extends DB_SQL_DataReader_Standard {
+abstract class Base_DB_Drizzle_DataReader_Improved extends DB_SQL_DataReader_Standard {
 
 	/**
 	 * This function initializes the class.
@@ -41,9 +41,9 @@ abstract class Base_DB_Drizzle_DataReader_Standard extends DB_SQL_DataReader_Sta
 	 */
 	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
 		$resource = $connection->get_resource();
-		$command = @mysql_query($sql, $resource);
+		$command = @mysqli_query($resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mysql_error($resource)));
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mysqli_error($resource)));
 		}
 		$this->command = $command;
 		$this->record = FALSE;
@@ -57,7 +57,7 @@ abstract class Base_DB_Drizzle_DataReader_Standard extends DB_SQL_DataReader_Sta
 	 */
 	public function free() {
 		if ($this->command !== NULL) {
-			@mysql_free_result($this->command);
+			@mysqli_free_result($this->command);
 			$this->command = NULL;
 			$this->record = FALSE;
 		}
@@ -71,7 +71,7 @@ abstract class Base_DB_Drizzle_DataReader_Standard extends DB_SQL_DataReader_Sta
 	 * @return boolean                          whether another record was fetched
 	 */
 	public function read() {
-		$this->record = @mysql_fetch_assoc($this->command);
+		$this->record = @mysqli_fetch_assoc($this->command);
 		return ($this->record !== FALSE);
 	}
 

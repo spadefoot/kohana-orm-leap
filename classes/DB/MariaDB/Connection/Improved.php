@@ -17,10 +17,10 @@
  */
 
 /**
- * This class handles an imporved MariaDB connection.
+ * This class handles an improved MariaDB connection.
  *
  * @package Leap
  * @category MariaDB
- * @version 2011-12-12
+ * @version 2013-01-06
  */
 class DB_MariaDB_Connection_Improved extends Base_DB_MariaDB_Connection_Improved {}

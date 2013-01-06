@@ -17,11 +17,11 @@
  */
 
 /**
- * This class is used to read data from a Dizzle database using the standard
+ * This class is used to read data from a Drizzle database using the standard
  * driver.
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-12-04
+ * @version 2013-01-06
  */
 class DB_Drizzle_DataReader_Standard extends Base_DB_Drizzle_DataReader_Standard {}

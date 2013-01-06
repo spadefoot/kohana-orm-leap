@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category CSV
- * @version 2012-12-05
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -384,6 +384,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * @override
 	 * @param integer $offset                           the offset to be set
 	 * @param mixed $value                              the value to be set
+	 * @throws Throwable_InvalidArgument_Exception      indicates a data type mismatch
 	 */
 	public function offsetSet($offset, $value) {
 		if ( ! is_array($value)) {
