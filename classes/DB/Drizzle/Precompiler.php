@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing a Drizzle expression.
+ * This class provides a set of functions for preparing Drizzle expressions.
  *
  * @package Leap
  * @category Drizzle
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_Drizzle_Precompiler extends Base_DB_Drizzle_Precompiler {}

@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing an SQLite expression.
+ * This class provides a set of functions for preparing SQLite expressions.
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_SQLite_Precompiler extends Base_DB_SQLite_Precompiler {}

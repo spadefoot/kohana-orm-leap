@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing an Oracle expression.
+ * This class provides a set of functions for preparing Oracle expressions.
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_Oracle_Precompiler extends Base_DB_Oracle_Precompiler {}

@@ -17,128 +17,179 @@
  */
 
 /**
- * This interface provides the contract for an expression class.
+ * This class provides a set of functions for preparing SQL expressions.
  * 
  * @package Leap
  * @category SQL
- * @version 2012-12-30
+ * @version 2013-01-06
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
+ *
+ * @abstract
  */
-interface Base_DB_SQL_Precompiler {
+abstract class Base_DB_SQL_Precompiler extends Core_Object {
+
+	/**
+	 * This variable stores the data source for which the expression is being
+	 * prepared for.
+	 *
+	 * @access protected
+	 * @var mixed
+	 */
+	protected $source;
 
 	/**
 	 * This function initializes the class with the specified data source.
 	 *
 	 * @access public
-	 * @param mixed $source                     the data source to be used
+	 * @param mixed $source                         the data source to be used
 	 */
-	public function __construct($source);
+	public function __construct($source) {
+		$this->source = $source;
+	}
 
 	/**
 	 * This function prepares the specified expression as an alias.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
+	 * @abstract
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_alias($expr);
+	public abstract function prepare_alias($expr);
 
 	/**
 	 * This function prepares the specified expression as a boolean.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param mixed $expr                           the expression to be prepared
+	 * @return boolean                              the prepared boolean value
 	 */
-	public function prepare_boolean($expr);
+	public function prepare_boolean($expr) {
+		return (bool) $expr;
+	}
 
 	/**
 	 * This function prepares the specified expression as a connector.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_connector($expr);
+	public function prepare_connector($expr) {
+		if (is_string($expr)) {
+			$expr = strtoupper($expr);
+			switch ($expr) {
+				case DB_SQL_Connector::_AND_:
+				case DB_SQL_Connector::_OR_:
+					return $expr;
+				break;
+			}
+		}
+		throw new Throwable_InvalidArgument_Exception('Message: Invalid connector token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+	}
 
 	/**
 	 * This function prepares the specified expression as an identifier column.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @abstract
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_identifier($expr);
+	public abstract function prepare_identifier($expr);
 
 	/**
 	 * This function prepares the specified expression as a join type.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @abstract
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_join($expr);
+	public abstract function prepare_join($expr);
 
 	/**
 	 * This function prepares the specified expression as a natural number.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param mixed $expr                           the expression to be prepared
+	 * @return integer                              the prepared natural
 	 */
-	public function prepare_natural($expr);
+	public function prepare_natural($expr) {
+		return (is_numeric($expr)) ? (int) abs($expr) : 0;
+	}
 
 	/**
 	 * This function prepares the specified expression as a operator.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @param string $group                     the operator grouping
-	 * @return string                           the prepared expression
+	 * @abstract
+	 * @param string $expr                          the expression to be prepared
+	 * @param string $group                         the operator grouping
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_operator($expr, $group);
+	public abstract function prepare_operator($expr, $group);
 
 	/**
 	 * This function prepare the specified expression as a ordering token.
 	 *
 	 * @access public
-	 * @param string $column                    the column to be sorted
-	 * @param string $ordering                  the ordering token that signals whether the
-	 *                                          column will sorted either in ascending or
-	 *                                          descending order
-	 * @param string $nulls                     the weight to be given to null values
-	 * @return string                           the prepared clause
+	 * @abstract
+	 * @param string $column                        the column to be sorted
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              column will sorted either in ascending or
+	 *                                              descending order
+	 * @param string $nulls                         the weight to be given to null values
+	 * @return string                               the prepared clause
 	 */
-	public function prepare_ordering($column, $ordering, $nulls);
+	public abstract function prepare_ordering($column, $ordering, $nulls);
 
 	/**
 	 * This function prepares the specified expression as a parenthesis.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_parenthesis($expr);
+	public function prepare_parenthesis($expr) {
+		if (is_string($expr)) {
+			switch ($expr) {
+				case DB_SQL_Builder::_OPENING_PARENTHESIS_:
+				case DB_SQL_Builder::_CLOSING_PARENTHESIS_:
+					return $expr;
+				break;
+			}
+		}
+		throw new Throwable_InvalidArgument_Exception('Message: Invalid parenthesis token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+	}
 
 	/**
 	 * This function prepares the specified expression as a value.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @param char $escape                      the escape character
-	 * @return string                           the prepared expression
+	 * @abstract
+	 * @param string $expr                          the expression to be prepared
+	 * @param char $escape                          the escape character
+	 * @return string                               the prepared expression
 	 */
-	public function prepare_value($expr, $escape = NULL);
+	public abstract function prepare_value($expr, $escape = NULL);
 
 	/**
 	 * This function prepares the specified expression as a wildcard.
 	 *
 	 * @access public
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @abstract
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
-	public function prepare_wildcard($expr);
+	public abstract function prepare_wildcard($expr);
 
 }

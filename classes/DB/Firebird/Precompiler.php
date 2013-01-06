@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing a Firebird SQL expression.
+ * This class provides a set of functions for preparing Firebird expressions.
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_Firebird_Precompiler extends Base_DB_Firebird_Precompiler {}

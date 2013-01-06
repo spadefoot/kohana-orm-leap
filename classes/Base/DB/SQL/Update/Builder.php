@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-05
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -202,13 +202,14 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Update_Builder                    a reference to the current instance
 	 */
 	public function reset() {
-		$this->data = array();
-		$this->data['table'] = NULL;
-		$this->data['column'] = array();
-		$this->data['where'] = array();
-		$this->data['order_by'] = array();
-		$this->data['limit'] = 0;
-		$this->data['offset'] = 0;
+		$this->data = array(
+			'column' => array(),
+			'limit' => 0,
+			'offset' => 0,
+			'order_by' => array(),
+			'table' => NULL,
+			'where' => array(),
+		);
 		return $this;
 	}
 

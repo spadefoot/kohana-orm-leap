@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MS SQL expression.
+ * This class provides a set of functions for preparing MS SQL expressions.
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_MsSQL_Precompiler extends Base_DB_MsSQL_Precompiler {}

@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing a PostgreSQL expression.
+ * This class provides a set of functions for preparing PostgreSQL expressions.
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_PostgreSQL_Precompiler extends Base_DB_PostgreSQL_Precompiler {}

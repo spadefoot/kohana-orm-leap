@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-05
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -118,10 +118,11 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
 	 */
 	public function reset() {
-		$this->data = array();
-		$this->data['into'] = NULL;
-		$this->data['columns'] = array();
-		$this->data['rows'] = array();
+		$this->data = array(
+			'columns' => array(),
+			'into' => NULL,
+			'rows' => array(),
+		);
 		return $this;
 	}
 

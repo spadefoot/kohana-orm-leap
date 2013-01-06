@@ -17,15 +17,15 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MS SQL expression.
+ * This class provides a set of functions for preparing MS SQL expressions.
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-30
+ * @version 2013-01-06
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
+abstract class Base_DB_MsSQL_Precompiler extends DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -46,33 +46,13 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	const _CLOSING_QUOTE_CHARACTER_ = ']';
 
 	/**
-	 * This variable stores the data source for which the expression is being
-	 * prepared for.
-	 *
-	 * @access protected
-	 * @var mixed
-	 */
-	protected $source;
-
-	/**
-	 * This function initializes the class with the specified data source.
-	 *
-	 * @access public
-	 * @override
-	 * @param mixed $source                     the data source to be used
-	 */
-	public function __construct($source) {
-		$this->source = $source;
-	}
-
-	/**
 	 * This function prepares the specified expression as an alias.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception indicates that there is a data type mismatch
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
@@ -82,45 +62,13 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	}
 
 	/**
-	 * This function prepares the specified expression as a boolean.
-	 *
-	 * @access public
-	 * @override
-	 * @param mixed $expr                       the expression to be prepared
-	 * @return boolean                          the prepared boolean value
-	 */
-	public function prepare_boolean($expr) {
-		return (bool) $expr;
-	}
-
-	/**
-	 * This function prepares the specified expression as a connector.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
-	 */
-	public function prepare_connector($expr) {
-		if (is_string($expr)) {
-			$expr = strtoupper($expr);
-			switch ($expr) {
-				case DB_SQL_Connector::_AND_:
-				case DB_SQL_Connector::_OR_:
-					return $expr;
-				break;
-			}
-		}
-		throw new Throwable_InvalidArgument_Exception('Message: Invalid connector token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
-	}
-
-	/**
 	 * This function prepares the specified expression as an identifier column.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms175874.aspx
 	 * @see http://www.ispirer.com/wiki/sqlways/sql-server/identifiers
@@ -155,8 +103,9 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/aa259187%28v=sql.80%29.aspx
 	 */
@@ -180,25 +129,14 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	}
 
 	/**
-	 * This function prepares the specified expression as a natural number.
-	 *
-	 * @access public
-	 * @override
-	 * @param mixed $expr                       the expression to be prepared
-	 * @return integer                          the prepared natural
-	 */
-	public function prepare_natural($expr) {
-		return (is_numeric($expr)) ? (int) abs($expr) : 0;
-	}
-
-	/**
 	 * This function prepares the specified expression as a operator.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @param string $group                     the operator grouping
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @param string $group                         the operator grouping
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
 	public function prepare_operator($expr, $group) {
 		if (is_string($group) AND is_string($expr)) {
@@ -245,12 +183,12 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $column                    the column to be sorted
-	 * @param string $ordering                  the ordering token that signals whether the
-	 *                                          column will sorted either in ascending or
-	 *                                          descending order
-	 * @param string $nulls                     the weight to be given to null values
-	 * @return string                           the prepared clause
+	 * @param string $column                        the column to be sorted
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              column will sorted either in ascending or
+	 *                                              descending order
+	 * @param string $nulls                         the weight to be given to null values
+	 * @return string                               the prepared clause
 	 *
 	 * @see http://www.sqlhacks.com/Retrieve/Sort-Nulls-Last
 	 */
@@ -279,33 +217,13 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	}
 
 	/**
-	 * This function prepares the specified expression as a parenthesis.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
-	 */
-	public function prepare_parenthesis($expr) {
-		if (is_string($expr)) {
-			switch ($expr) {
-				case DB_SQL_Builder::_OPENING_PARENTHESIS_:
-				case DB_SQL_Builder::_CLOSING_PARENTHESIS_:
-					return $expr;
-				break;
-			}
-		}
-		throw new Throwable_InvalidArgument_Exception('Message: Invalid parenthesis token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
-	}
-
-	/**
 	 * This function prepares the specified expression as a value.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @param char $escape                      the escape character
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @param char $escape                          the escape character
+	 * @return string                               the prepared expression
 	 */
 	public function prepare_value($expr, $escape = NULL) {
 		if ($expr === NULL) {
@@ -366,8 +284,9 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $expr                      the expression to be prepared
-	 * @return string                           the prepared expression
+	 * @param string $expr                          the expression to be prepared
+	 * @return string                               the prepared expression
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 */
 	public function prepare_wildcard($expr) {
 		if ( ! is_string($expr)) {
@@ -403,8 +322,8 @@ abstract class Base_DB_MsSQL_Precompiler implements DB_SQL_Precompiler {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $token                     the token to be cross-referenced
-	 * @return boolean                          whether the token is a reserved keyword
+	 * @param string $token                         the token to be cross-referenced
+	 * @return boolean                              whether the token is a reserved keyword
 	 *
 	 * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.sqlref%2Fsrc%2Ftpc%2Fdb2z_reservedwords.htm
 	 */

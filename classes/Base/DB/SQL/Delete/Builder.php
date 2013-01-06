@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-05
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -187,12 +187,13 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
 	public function reset() {
-		$this->data = array();
-		$this->data['from'] = NULL;
-		$this->data['where'] = array();
-		$this->data['order_by'] = array();
-		$this->data['limit'] = 0;
-		$this->data['offset'] = 0;
+		$this->data = array(
+			'from' => NULL,
+			'limit' => 0,
+			'offset' => 0,
+			'order_by' => array(),
+			'where' => array(),
+		);
 		return $this;
 	}
 

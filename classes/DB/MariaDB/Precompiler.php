@@ -17,10 +17,10 @@
  */
 
 /**
- * This class provides a set of functions for preparing a MariaDB expression.
+ * This class provides a set of functions for preparing MariaDB expressions.
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-12-30
+ * @version 2013-01-06
  */
 class DB_MariaDB_Precompiler extends Base_DB_MariaDB_Precompiler {}

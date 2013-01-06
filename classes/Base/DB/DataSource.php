@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-03
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -40,7 +40,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 *
 	 * @access public
 	 * @param mixed $config                         the data source configurations
-	 * @throws Throwable_InvalidArgument_Exception  indicates that there is a data type mismatch
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
 	 * @throws Throwable_InvalidProperty_Exception  indicates that the database group is undefined
 	 */
 	public function __construct($config) {

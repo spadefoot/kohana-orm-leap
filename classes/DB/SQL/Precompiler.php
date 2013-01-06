@@ -17,10 +17,12 @@
  */
 
 /**
- * This interface provides the contract for an expression class.
+ * This class provides a set of functions for preparing SQL expressions.
  * 
  * @package Leap
  * @category SQL
- * @version 2012-12-30
+ * @version 2013-01-06
+ *
+ * @abstract
  */
-interface DB_SQL_Precompiler extends Base_DB_SQL_Precompiler {}
+abstract class DB_SQL_Precompiler extends Base_DB_SQL_Precompiler {}

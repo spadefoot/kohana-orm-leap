@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-05
+ * @version 2013-01-06
  *
  * @abstract
  */
@@ -456,19 +456,20 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @return DB_SQL_Select_Builder                a reference to the current instance
 	 */
 	public function reset() {
-		$this->data = array();
-		$this->data['distinct'] = FALSE;
-		$this->data['wildcard'] = '*';
-		$this->data['column'] = array();
-		$this->data['from'] = NULL;
-		$this->data['join'] = array();
-		$this->data['where'] = array();
-		$this->data['group_by'] = array();
-		$this->data['having'] = array();
-		$this->data['order_by'] = array();
-		$this->data['limit'] = 0;
-		$this->data['offset'] = 0;
-		$this->data['combine'] = array();
+		$this->data = array(
+			'column' => array(),
+			'combine' => array(),
+			'distinct' => FALSE,
+			'from' => NULL,
+			'group_by' => array(),
+			'having' => array(),
+			'join' => array(),
+			'limit' => 0,
+			'offset' => 0,
+			'order_by' => array(),
+			'where' => array(),
+			'wildcard' => '*',
+		);
 		return $this;
 	}
 
