@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-30
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -56,26 +56,21 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource $source             the data source to be used
+	 * @param DB_DataSource $source                    the data source to be used
 	 */
 	public function __construct(DB_DataSource $source) {
 		$this->dialect = $source->dialect;
 		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler($source);
-		$this->data = array();
-		$this->data['from'] = NULL;
-		$this->data['where'] = array();
-		$this->data['order_by'] = array();
-		$this->data['limit'] = 0;
-		$this->data['offset'] = 0;
+		$this->reset();
 	}
 
 	/**
 	 * This function sets which table will be modified.
 	 *
 	 * @access public
-	 * @param string $table                     the database table to be modified
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
+	 * @param string $table                             the database table to be modified
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
 	public function from($table) {
 		$this->data['from'] = $this->precompiler->prepare_identifier($table);
@@ -86,9 +81,9 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function either opens or closes a "where" group.
 	 *
 	 * @access public
-	 * @param string $parenthesis               the parenthesis to be used
-	 * @param string $connector                 the connector to be used
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
+	 * @param string $parenthesis                       the parenthesis to be used
+	 * @param string $connector                         the connector to be used
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
@@ -101,12 +96,12 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function adds a "where" constraint.
 	 *
 	 * @access public
-	 * @param string $column                    the column to be constrained
-	 * @param string $operator                  the operator to be used
-	 * @param string $value                     the value the column is constrained with
-	 * @param string $connector                 the connector to be used
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
-	 * @throws Throwable_SQL_Exception          indicates an invalid SQL build instruction
+	 * @param string $column                            the column to be constrained
+	 * @param string $operator                          the operator to be used
+	 * @param string $value                             the value the column is constrained with
+	 * @param string $connector                         the connector to be used
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @throws Throwable_SQL_Exception                  indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
@@ -149,12 +144,12 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
-	 * @param string $column                    the column to be sorted
-	 * @param string $ordering                  the ordering token that signals whether the
-	 *                                          column will sorted either in ascending or
-	 *                                          descending order
-	 * @param string $nulls                     the weight to be given to null values
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
+	 * @param string $column                            the column to be sorted
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param string $nulls                             the weight to be given to null values
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
@@ -165,8 +160,8 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function sets a "limit" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $limit                    the "limit" constraint
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
+	 * @param integer $limit                            the "limit" constraint
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->data['limit'] = $this->precompiler->prepare_natural($limit);
@@ -177,11 +172,27 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function sets an "offset" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $offset                   the "offset" constraint
-	 * @return DB_SQL_Delete_Builder            a reference to the current instance
+	 * @param integer $offset                           the "offset" constraint
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->data['offset'] = $this->precompiler->prepare_natural($offset);
+		return $this;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 */
+	public function reset() {
+		$this->data = array();
+		$this->data['from'] = NULL;
+		$this->data['where'] = array();
+		$this->data['order_by'] = array();
+		$this->data['limit'] = 0;
+		$this->data['offset'] = 0;
 		return $this;
 	}
 

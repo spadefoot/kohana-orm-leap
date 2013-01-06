@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-05
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -48,7 +48,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param mixed $config                  	the data source configurations
+	 * @param mixed $config                             the data source configurations
 	 */
 	public function __construct($config) {
 		$this->source = new DB_DataSource($config);
@@ -60,8 +60,8 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets which table will be modified.
 	 *
 	 * @access public
-	 * @param string $table                  	the database table to be modified
-	 * @return DB_SQL_Insert_Proxy           	a reference to the current instance
+	 * @param string $table                             the database table to be modified
+	 * @return DB_SQL_Insert_Proxy           	        a reference to the current instance
 	 */
 	public function into($table) {
 		$this->builder->into($table);
@@ -72,10 +72,10 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets the associated value with the specified column.
 	 *
 	 * @access public
-	 * @param string $column                 	the column to be set
-	 * @param string $value                  	the value to be set
-	 * @param integer $row						the index of the row
-	 * @return DB_SQL_Insert_Proxy           	a reference to the current instance
+	 * @param string $column                 	        the column to be set
+	 * @param string $value                  	        the value to be set
+	 * @param integer $row						        the index of the row
+	 * @return DB_SQL_Insert_Proxy           	        a reference to the current instance
 	 */
 	public function column($column, $value, $row = 0) {
 		$this->builder->column($column, $value, $row);
@@ -86,9 +86,9 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets a row of columns/values pairs.
 	 *
 	 * @access public
-	 * @param array $values						the columns/values pairs to be set
-	 * @param integer $row						the index of the row
-	 * @return DB_SQL_Insert_Proxy  			a reference to the current instance
+	 * @param array $values						        the columns/values pairs to be set
+	 * @param integer $row						        the index of the row
+	 * @return DB_SQL_Insert_Proxy  			        a reference to the current instance
 	 */
 	public function row(Array $values, $row = 0) {
 		$this->builder->row($values, $row);
@@ -100,9 +100,9 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @param boolean $terminated           	whether to add a semi-colon to the end
-	 *                                      	of the statement
-	 * @return string                       	the SQL statement
+	 * @param boolean $terminated           	        whether to add a semi-colon to the end
+	 *                                      	        of the statement
+	 * @return string                       	        the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);
@@ -113,7 +113,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @return string                           the raw SQL statement
+	 * @return string                                   the raw SQL statement
 	 */
 	public function __toString() {
 		return $this->builder->statement();
@@ -123,8 +123,8 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This function executes the SQL statement via the DAO class.
 	 *
 	 * @access public
-	 * @param boolean $auto_increment		  	whether to query for the last insert id
-	 * @return integer                      	the last insert id
+	 * @param boolean $auto_increment		  	        whether to query for the last insert id
+	 * @return integer                      	        the last insert id
 	 */
 	public function execute() {
 		$auto_increment = ((func_num_args() > 0) AND (func_get_arg(0) === TRUE));
@@ -132,6 +132,17 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 		$connection->execute($this->statement());
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_SQL_Insert_Proxy                      a reference to the current instance
+	 */
+	public function reset() {
+		$this->builder->reset();
+		return $this;
 	}
 
 }

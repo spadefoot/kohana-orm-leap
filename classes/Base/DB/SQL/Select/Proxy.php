@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-05
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -47,8 +47,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param mixed $config                 the data source configurations
-	 * @param array $columns                the columns to be selected
+	 * @param mixed $config                         the data source configurations
+	 * @param array $columns                        the columns to be selected
 	 */
 	public function __construct($config, Array $columns = array()) {
 		$this->source = new DB_DataSource($config);
@@ -60,9 +60,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets whether to constrain the SQL statement to only distinct records.
 	 *
 	 * @access public
-	 * @param boolean $distinct             whether to constrain the SQL statement to only
-	 *                                      distinct records
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param boolean $distinct                     whether to constrain the SQL statement to only
+	 *                                              distinct records
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function distinct($distinct = TRUE) {
 		$this->builder->distinct($distinct);
@@ -73,8 +73,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets the wildcard to be used.
 	 *
 	 * @access public
-	 * @param string $wildcard              the wildcard to be used
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $wildcard                      the wildcard to be used
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function all($wildcard = '*') {
 		$this->builder->all($wildcard);
@@ -85,9 +85,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function explicits sets the specified column to be selected.
 	 *
 	 * @access public
-	 * @param string $column                the column to be selected
-	 * @param string $alias                 the alias to be used for the specified column
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be selected
+	 * @param string $alias                         the alias to be used for the specified column
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
 		$this->builder->column($column, $alias);
@@ -98,9 +98,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function will a column to be counted.
 	 *
 	 * @access public
-	 * @param string $column                the column to be counted
-	 * @param string $alias                 the alias to be used for the specified column
-	 * @return DB_SQL_Select_Builder        a reference to the current instance
+	 * @param string $column                        the column to be counted
+	 * @param string $alias                         the alias to be used for the specified column
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
 	 */
 	public function count($column = '*', $alias = 'count') {
 		$this->builder->count($column, $alias);
@@ -111,9 +111,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets the table that will be accessed.
 	 *
 	 * @access public
-	 * @param string $table                 the table to be accessed
-	 * @param string $alias                 the alias to be used for the specified table
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $table                         the table to be accessed
+	 * @param string $alias                         the alias to be used for the specified table
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
 		$this->builder->from($table, $alias);
@@ -124,10 +124,10 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function joins a table.
 	 *
 	 * @access public
-	 * @param string $type                  the type of join
-	 * @param string $table                 the table to be joined
-	 * @param string $alias                 the alias to be used for the specified table
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $type                          the type of join
+	 * @param string $table                         the table to be joined
+	 * @param string $alias                         the alias to be used for the specified table
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
 		$this->builder->join($type, $table, $alias);
@@ -138,11 +138,11 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets an "on" constraint for the last join specified.
 	 *
 	 * @access public
-	 * @param string $column0               the column to be constrained on
-	 * @param string $operator              the operator to be used
-	 * @param string $column1               the constraint column
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
-	 * @throws Throwable_SQL_Exception      indicates an invalid SQL build instruction
+	 * @param string $column0                       the column to be constrained on
+	 * @param string $operator                      the operator to be used
+	 * @param string $column1                       the constraint column
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
+	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
 		$this->builder->on($column0, $operator, $column1);
@@ -153,8 +153,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets a "using" constraint for the last join specified.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function using($column) {
 		$this->builder->using($column);
@@ -165,9 +165,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function either opens or closes a "where" group.
 	 *
 	 * @access public
-	 * @param string $parenthesis           the parenthesis to be used
-	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);
@@ -178,11 +178,11 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function adds a "where" constraint.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @param string $operator              the operator to be used
-	 * @param string $value                 the value the column is constrained with
-	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @param string $operator                      the operator to be used
+	 * @param string $value                         the value the column is constrained with
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -193,8 +193,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function adds a "group by" clause.
 	 *
 	 * @access public
-	 * @param string $column                the column to be grouped
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be grouped
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function group_by($column) {
 		$this->builder->group_by($column);
@@ -205,9 +205,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function either opens or closes a "having" group.
 	 *
 	 * @access public
-	 * @param string $parenthesis           the parenthesis to be used
-	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function having_block($parenthesis, $connector = 'AND') {
 		$this->builder->having_block($parenthesis, $connector);
@@ -218,11 +218,11 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function adds a "having" constraint.
 	 *
 	 * @access public
-	 * @param string $column                the column to be constrained
-	 * @param string $operator              the operator to be used
-	 * @param string $value                 the value the column is constrained with
-	 * @param string $connector             the connector to be used
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be constrained
+	 * @param string $operator                      the operator to be used
+	 * @param string $value                         the value the column is constrained with
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function having($column, $operator, $value, $connector = 'AND') {
 		$this->builder->having($column, $operator, $value, $connector);
@@ -233,12 +233,12 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets how a column will be sorted.
 	 *
 	 * @access public
-	 * @param string $column                the column to be sorted
-	 * @param string $ordering              the ordering token that signals whether the
-	 *                                      column will sorted either in ascending or
-	 *                                      descending order
-	 * @param string $nulls                 the weight to be given to null values
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $column                        the column to be sorted
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              column will sorted either in ascending or
+	 *                                              descending order
+	 * @param string $nulls                         the weight to be given to null values
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $ordering, $nulls);
@@ -249,8 +249,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets a "limit" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $limit                the "limit" constraint
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -261,8 +261,8 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets an "offset" constraint on the statement.
 	 *
 	 * @access public
-	 * @param integer $offset               the "offset" constraint
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param integer $offset                       the "offset" constraint
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
@@ -274,9 +274,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * the statement.
 	 *
 	 * @access public
-	 * @param integer $offset               the "offset" constraint
-	 * @param integer $limit                the "limit" constraint
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param integer $offset                       the "offset" constraint
+	 * @param integer $limit                        the "limit" constraint
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function page($offset, $limit) {
 		$this->builder->page($offset, $limit);
@@ -287,10 +287,10 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function combines another SQL statement using the specified operator.
 	 *
 	 * @access public
-	 * @param string $operator              the operator to be used to append
-	 *                                      the specified SQL statement
-	 * @param string $statement             the SQL statement to be appended
-	 * @return DB_SQL_Select_Proxy          a reference to the current instance
+	 * @param string $operator                      the operator to be used to append
+	 *                                              the specified SQL statement
+	 * @param string $statement                     the SQL statement to be appended
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
 	 */
 	public function combine($operator, $statement) {
 		$this->builder->combine($operator, $statement);
@@ -302,9 +302,9 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @param boolean $terminated                   whether to add a semi-colon to the end
+	 *                                              of the statement
+	 * @return string                               the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);
@@ -315,7 +315,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @return string                       the raw SQL statement
+	 * @return string                               the raw SQL statement
 	 */
 	public function __toString() {
 		return $this->builder->statement();
@@ -326,7 +326,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * statement.
 	 *
 	 * @access public
-	 * @return DB_SQL_DataReader            the data reader
+	 * @return DB_SQL_DataReader                    the data reader
 	 */
 	public function reader() {
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
@@ -338,13 +338,24 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * This function performs a query using the built SQL statement.
 	 *
 	 * @access public
-	 * @param string $type               	the return type to be used
-	 * @return DB_ResultSet                 the result set
+	 * @param string $type               	        the return type to be used
+	 * @return DB_ResultSet                         the result set
 	 */
 	public function query($type = 'array') {
 		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
 		$result_set = $connection->query($this->statement(), $type);
 		return $result_set;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
+	 */
+	public function reset() {
+		$this->builder->reset();
+		return $this;
 	}
 
 }

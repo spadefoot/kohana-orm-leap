@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-05
+ * @version 2013-01-05
  *
  * @abstract
  */
@@ -63,7 +63,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This constructor instantiates this class using the specified model's name.
 	 *
 	 * @access public
-	 * @param string $model                         the model's name
+	 * @param string $model                             the model's name
 	 */
 	public function __construct($model) {
 		$name = $model;
@@ -86,11 +86,11 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @param string $function                      the name of the called function
-	 * @param array $arguments                      an array with the parameters passed
-	 * @return mixed                                the result of the called function
-	 * @throws Throwable_UnimplementedMethod_Exception indicates that the called function is
-	 *                                              inaccessible
+	 * @param string $function                          the name of the called function
+	 * @param array $arguments                          an array with the parameters passed
+	 * @return mixed                                    the result of the called function
+	 * @throws Throwable_UnimplementedMethod_Exception  indicates that the called function is
+	 *                                                  inaccessible
 	 */
 	public function __call($function, $arguments) {
 		if ($this->extension !== NULL) {
@@ -109,9 +109,9 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This function sets the associated value with the specified column.
 	 *
 	 * @access public
-	 * @param string $column                        the column to be set
-	 * @param string $value                         the value to be set
-	 * @return DB_ORM_Insert_Proxy                  a reference to the current instance
+	 * @param string $column                            the column to be set
+	 * @param string $value                             the value to be set
+	 * @return DB_ORM_Insert_Proxy                      a reference to the current instance
 	 */
 	public function column($column, $value) {
 		$this->builder->column($column, $value, 0);
@@ -123,9 +123,9 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @param boolean $terminated                   whether to add a semi-colon to the end
-	 *                                              of the statement
-	 * @return string                               the SQL statement
+	 * @param boolean $terminated                       whether to add a semi-colon to the end
+	 *                                                  of the statement
+	 * @return string                                   the SQL statement
 	 */
 	public function statement($terminated = TRUE) {
 		return $this->builder->statement($terminated);
@@ -136,7 +136,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @override
-	 * @return string                               the raw SQL statement
+	 * @return string                                   the raw SQL statement
 	 */
 	public function __toString() {
 		return $this->builder->statement(TRUE);
@@ -146,7 +146,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * This function executes the SQL statement.
 	 *
 	 * @access public
-	 * @return integer                              the last insert id
+	 * @return integer                                  the last insert id
 	 */
 	public function execute() {
 		$model = $this->model;
@@ -155,6 +155,17 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 		$connection->execute($this->statement());
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_ORM_Insert_Proxy                      a reference to the current instance
+	 */
+	public function reset() {
+		$this->builder->reset();
+		return $this;
 	}
 
 }
