@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-30
+ * @version 2013-01-10
  *
  * @abstract
  */
@@ -106,9 +106,7 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 	 */
 	public function value($object = NULL) {
 		if (is_string($object) OR is_array($object) OR ($object instanceof DB_DataSource)) {
-			$source = new DB_DataSource($object);
-			$object = 'DB_' . $source->dialect . '_Precompiler';
-			$object = new $object($source);
+			$object = DB_SQL::precompiler($object);
 		}
 		$expr = $this->expr;
 		if (($object instanceof DB_SQL_Precompiler) AND ! empty($this->params)) {

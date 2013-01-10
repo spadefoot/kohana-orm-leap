@@ -130,6 +130,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function add a new node as a child to the current node.
 	 *
 	 * @access public
+	 * @param string $name                              the name to given to the node
+	 * @param array $fields                             an associated array of additional field
+	 *                                                  name/value pairs
 	 * @return DB_ORM_MPTT                              the newly added node
 	 * @throws Throwable_Marshalling_Exception          indicates that the node could not
 	 *                                                  be added
@@ -138,7 +141,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @see http://www.sitepoint.com/hierarchical-data-database-3/
 	 * @see http://iamcam.wordpress.com/2006/04/14/hierarchical-data-in-a-database2b-modified-preorder-tree-traversal-insertions/
 	 */
-	public function add_child() {
+	public function add_child($name, Array $fields = NULL) {
 		if ( ! static::is_savable()) {
 			throw new Throwable_Marshalling_Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
 		}
@@ -171,14 +174,22 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$lft = $this->fields['lft']->value + 1;
 		$rgt = $this->fields['lft']->value + 2;
 
-		$insert = DB_SQL::insert($source)
+		$builder = DB_SQL::insert($source)
 			->into($table)
 			->column('scope', $this->fields['scope']->value)
+			->column('name', $name)
 			->column('parent_id', $this->fields['id']->value)
 			->column('lft', $lft)
-			->column('rgt', $rgt)
-			->statement();
+			->column('rgt', $rgt);
 		
+		if (is_array($fields)) {
+			foreach ($fields as $field => $value) {
+				$builder->column($field, $value);
+			}
+		}
+		
+		$insert = $builder->statement();
+
 		$connection->execute($insert);
 		$id = $connection->get_last_insert_id();
 
@@ -207,10 +218,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$child = new $model();
 		$child->id = $id;
 		$child->scope = $this->fields['scope']->value;
+		$child->name = $name;
 		$child->parent_id = $this->fields['id']->value;
 		$child->lft = $lft;
 		$child->rgt = $rgt;
-		
+		if (is_array($fields)) {
+			foreach ($fields as $field => $value) {
+				$child->{$field} = $value;
+			}
+		}
+
 		return $child;
 	}
 
@@ -657,42 +674,57 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * This function create a new scope (i.e. it doubles as a 'new_root' method allowing
-	 * for multiple trees to be stored in the same table.
+	 * This function creates a new root node in the specified scope.
 	 *
-	 * @todo PORT
 	 * @access public
 	 * @param integer $scope                            the new scope to be create
-	 * @param array $additional_fields                  any additional fields
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
+	 * @param string $name                              the name to given to the node
+	 * @param array $fields                             an associated array of additional field
+	 *                                                  name/value pairs
+	 * @return DB_ORM_MPTT                              the newly created root node
 	 **/
-	public function create_root($scope, Array $additional_fields = array()) {
-		// Make sure the specified scope doesn't already exist.
-		$search = DB_ORM::select(get_class($this))
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope)
-			->query();
+	public function add_root($scope, $name, Array $fields = NULL) {
+		$connection = DB_Connection_Pool::instance()->get_connection($source);
 
-		if ($search->count() > 0) {
-			return FALSE;
-		}
+		$connection->begin_transaction();
 
-		// Create a new root node in the new scope.
-		$this->{$this->left_column} = 1;
-		$this->{$this->right_column} = 2;
-		$this->{$this->level_column} = 0;
-		$this->{$this->scope_column} = $scope;
-
-		// Other fields may be required.
-		if ( ! empty($additional_fields)) {
-			foreach ($additional_fields as $column => $value) {
-				$this->{$column} = $value;
+		$builder = DB_SQL::insert(static::data_source())
+			->into(static::table())
+			->column('scope', $scope)
+			->column('name', $name)
+			->column('parent_id', NULL)
+			->column('lft', 1)
+			->column('rgt', 2);
+		
+		if (is_array($fields)) {
+			foreach ($fields as $field => $value) {
+				$builder->column($field, $value);
 			}
 		}
+		
+		$insert = $builder->statement();
 
-		parent::save();
+		$connection->execute($insert);
+		$id = $connection->get_last_insert_id();
+		
+		$connection->commit();
 
-		return $this;
+		$model = get_called_class();
+
+		$root = new $model();
+		$root->id = $id;
+		$root->scope = $scope;
+		$root->name = $name;
+		$root->parent_id = NULL;
+		$root->lft = 1;
+		$root->rgt = 2;
+		if (is_array($fields)) {
+			foreach ($fields as $field => $value) {
+				$root->{$field} = $value;
+			}
+		}
+		
+		return $child;
 	}
 
 	/**
