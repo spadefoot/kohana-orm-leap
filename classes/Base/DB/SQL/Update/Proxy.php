@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-09
+ * @version 2013-01-10
  *
  * @abstract
  */
@@ -61,7 +61,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core_Object implements DB_SQL_St
 	 * @access public
 	 * @param string $table                         the database table to be modified
 	 * @param string $alias                         the alias to be used for the specified table
-	 * @return DDB_SQL_Update_Proxy                 a reference to the current instance
+	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
 	 */
 	public function table($table, $alias = NULL) {
 		$this->builder->table($table, $alias);
