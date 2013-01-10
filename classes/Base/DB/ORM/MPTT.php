@@ -133,7 +133,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param string $name                              the name to given to the node
 	 * @param array $fields                             an associated array of additional field
 	 *                                                  name/value pairs
-	 * @return DB_ORM_MPTT                              the newly added node
+	 * @return DB_ORM_MPTT                              the newly added child node
 	 * @throws Throwable_Marshalling_Exception          indicates that the node could not
 	 *                                                  be added
 	 *
@@ -146,14 +146,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			throw new Throwable_Marshalling_Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
 		}
 
-		$source = static::data_source();
+		$data_source = static::data_source();
 		$table = static::table();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($source);
+		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
 
 		$connection->begin_transaction();
 
-		$update = DB_SQL::update($source)
+		$update = DB_SQL::update($data_source)
 			->set('rgt', DB_ORM::expr('rgt + 2'))
 			->table($table)
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -162,7 +162,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$connection->execute($update);
 		
-		$update = DB_SQL::update($source)
+		$update = DB_SQL::update($data_source)
 			->set('lft', DB_ORM::expr('lft + 2'))
 			->table($table)
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -174,7 +174,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$lft = $this->fields['lft']->value + 1;
 		$rgt = $this->fields['lft']->value + 2;
 
-		$builder = DB_SQL::insert($source)
+		$builder = DB_SQL::insert($data_source)
 			->into($table)
 			->column('scope', $this->fields['scope']->value)
 			->column('name', $name)
@@ -193,7 +193,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$connection->execute($insert);
 		$id = $connection->get_last_insert_id();
 
-		$select = DB_SQL::select($source)
+		$select = DB_SQL::select($data_source)
 			->column('t1.parent_id')
 			->from($table, 't1')
 			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -202,7 +202,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
 			->limit(1);
 
-		$update = DB_SQL::update($source)
+		$update = DB_SQL::update($data_source)
 			->set('t0.parent_id', $select)
 			->table($table, 't0')
 			->where('t0.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -244,9 +244,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  node
 	 */
 	public function ancestors($ordering = 'ASC', $limit = 0, $root = TRUE) {
-		$source = static::data_source();
+		$data_source = static::data_source();
 
-		$builder = DB_SQL::select($source)
+		$builder = DB_SQL::select($data_source)
 			->all('t1.*')
 			->from(static::table(), 't1')
 			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -261,7 +261,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		}
 
 		if ($ordering == 'ASC') {
-			$builder = DB_SQL::select($source)
+			$builder = DB_SQL::select($data_source)
 				->all('t0.*')
 				->from($builder, 't0')
 				->order_by('t0.lft', 'ASC');
@@ -302,14 +302,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			throw new Throwable_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 
-		$source = static::data_source();
+		$data_source = static::data_source();
 		$table = static::table();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($source);
+		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
 
 		$connection->begin_transaction();
 
-		$select = DB_SQL::select($source)
+		$select = DB_SQL::select($data_source)
 			->column('t1.parent_id')
 			->from($table, 't1')
 			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -319,7 +319,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
 			->limit(1);
 
-		$update = DB_SQL::update($source)
+		$update = DB_SQL::update($data_source)
 			->set('t0.parent_id', $select)
 			->set('t0.lft', DB_ORM::expr('t0.lft - 2'))
 			->set('t0.rgt', DB_ORM::expr('t0.rgt - 2'))
@@ -330,7 +330,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$connection->execute($update);
 
-		$delete = DB_SQL::delete($source)
+		$delete = DB_SQL::delete($data_source)
 			->from($table)
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value)
@@ -684,11 +684,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT                              the newly created root node
 	 **/
 	public function add_root($scope, $name, Array $fields = NULL) {
-		$connection = DB_Connection_Pool::instance()->get_connection($source);
+		$data_source = static::data_source();
+		
+		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
 
 		$connection->begin_transaction();
 
-		$builder = DB_SQL::insert(static::data_source())
+		$builder = DB_SQL::insert($data_source)
 			->into(static::table())
 			->column('scope', $scope)
 			->column('name', $name)
@@ -724,7 +726,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			}
 		}
 		
-		return $child;
+		return $root;
 	}
 
 	/**
@@ -735,15 +737,17 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param string $ordering                          the ordering token that signals whether the
 	 *                                                  left column will sorted either in ascending or
 	 *                                                  descending order
+	 * @param integer $limit                            the "limit" constraint
 	 * @return DB_ResultSet                             a result set containing all nodes in the
 	 *                                                  specified tree's scope
 	 */
-	public static function full_tree($scope, $ordering = 'ASC') {
+	public static function full_tree($scope, $ordering = 'ASC', $limit = 0) {
 		$model = get_called_class();
 		
 		$results = DB_ORM::select($model)
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $scope)
 			->order_by('lft', $ordering)
+			->limit($limit)
 			->query();
 
 		return $results;
