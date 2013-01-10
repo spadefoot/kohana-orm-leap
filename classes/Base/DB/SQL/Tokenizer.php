@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-30
+ * @version 2013-01-09
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -154,8 +154,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This construct initializes the class.
 	 *
 	 * @access public
-	 * @param string $statement                     the SQL statement to be tokenized
-	 * @param string $dialect                       the SQL dialect
+	 * @param string $statement                         the SQL statement to be tokenized
+	 * @param string $dialect                           the SQL dialect
 	 */
 	public function __construct($statement, $dialect) {
 		$position = 0;
@@ -480,7 +480,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * This function returns an array of the found tuples.
 	 *
 	 * @access public
-	 * @return array                                an array of tuples
+	 * @return array                                    an array of tuples
 	 */
 	public function as_array() {
 		return $this->tuples;
@@ -491,7 +491,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                              the total number of tuples found
+	 * @return integer                                  the total number of tuples found
 	 */
 	public function count() {
 		return $this->size;
@@ -502,7 +502,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @return array							    the current tuple
+	 * @return array                                    the current tuple
 	 */
 	public function current() {
 		return $this->tuples[$this->position];
@@ -513,8 +513,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * the specified position.
 	 *
 	 * @access public
-	 * @param integer $index                        the tuple's index
-	 * @return mixed                                the tuple
+	 * @param integer $index                            the tuple's index
+	 * @return mixed                                    the tuple
 	 */
 	public function fetch($index = -1) {
 		settype($index, 'integer');
@@ -535,7 +535,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @return integer							    the index of the current tuple
+	 * @return integer                                  the index of the current tuple
 	 */
 	public function key() {
 		return $this->position;
@@ -556,8 +556,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be evaluated
-	 * @return boolean                              whether the requested offset exists
+	 * @param integer $offset                           the offset to be evaluated
+	 * @return boolean                                  whether the requested offset exists
 	 */
 	public function offsetExists($offset) {
 		return isset($this->tuples[$offset]);
@@ -568,8 +568,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be fetched
-	 * @return mixed                                the value at the specified offset
+	 * @param integer $offset                           the offset to be fetched
+	 * @return mixed                                    the value at the specified offset
 	 */
 	public function offsetGet($offset) {
 		return isset($this->tuples[$offset]) ? $this->tuples[$offset] : NULL;
@@ -580,9 +580,9 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be set
-	 * @param mixed $value                          the value to be set
-	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
+	 * @param integer $offset                           the offset to be set
+	 * @param mixed $value                              the value to be set
+	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
 		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Tokenizer cannot be modified.', array());
@@ -593,8 +593,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $offset                       the offset to be unset
-	 * @throws Throwable_UnimplementedMethod_Exception indicates the result cannot be modified
+	 * @param integer $offset                           the offset to be unset
+	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
 		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Tokenizer cannot be modified..', array());
@@ -605,7 +605,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @return integer							the current iterator position
+	 * @return integer                                  the current iterator position
 	 */
 	public function position() {
 		return $this->position;
@@ -626,9 +626,9 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @param integer $position                     the seeked position
-	 * @throws Throwable_OutOfBounds_Exception      indicates that the seeked position
-	 *                                              is out of bounds
+	 * @param integer $position                         the seeked position
+	 * @throws Throwable_OutOfBounds_Exception          indicates that the seeked position
+	 *                                                  is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->tuples[$position])) {
@@ -642,7 +642,7 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean							    whether the current iterator position is valid
+	 * @return boolean                                  whether the current iterator position is valid
 	 */
 	public function valid() {
 		return isset($this->tuples[$this->position]);
@@ -655,10 +655,10 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access protected
 	 * @static
-	 * @param string &$string                   the string to be used
-	 * @param integer $index                    the character's index
-	 * @param integer $length                   the string's length
-	 * @return char                             the character at the specified index
+	 * @param string &$string                           the string to be used
+	 * @param integer $index                            the character's index
+	 * @param integer $length                           the string's length
+	 * @return char                                     the character at the specified index
 	 */
 	protected static function char_at(&$string, $index, $length) {
 		return ($index < $length) ? $string[$index] : '';
@@ -669,8 +669,8 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 *
 	 * @access public
 	 * @static
-	 * @param string $token                     the token to be cross-referenced
-	 * @return boolean                          whether the token is a reserved keyword
+	 * @param string $token                             the token to be cross-referenced
+	 * @return boolean                                  whether the token is a reserved keyword
 	 *
 	 * @see http://drupal.org/node/141051
 	 */

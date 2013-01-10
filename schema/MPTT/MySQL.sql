@@ -20,10 +20,10 @@
 
 CREATE TABLE IF NOT EXISTS `mptt` (
 	`id` INT(11) NOT NULL,
-	`name` VARCHAR(35) NOT NULL DEFAULT '',
+	`scope` INT(11) NOT NULL,
+	`name` VARCHAR(70) NOT NULL DEFAULT '',
+	`parent_id` INT(11),
 	`lft` INT(11) NOT NULL,
 	`rgt` INT(11) NOT NULL,
-	`lvl` INT(11) NOT NULL,
-	`scope` INT(11) NOT NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

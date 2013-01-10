@@ -20,9 +20,9 @@
 
 CREATE TABLE [mptt] (
 	[id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	[name] [varchar](35) NOT NULL DEFAULT (''),
+	[scope] [int] NOT NULL,
+	[name] [varchar](70) NOT NULL DEFAULT (''),
+	[parent_id] [int],
 	[lft] [int] NOT NULL,
-	[rgt] [int] NOT NULL,
-	[lvl] [int] NOT NULL,
-	[scope] [int] NOT NULL
+	[rgt] [int] NOT NULL
 );

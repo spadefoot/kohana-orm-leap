@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-05
+ * @version 2013-01-09
  *
  * @abstract
  */
@@ -72,7 +72,7 @@ abstract class Base_DB_ORM_Relation extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {

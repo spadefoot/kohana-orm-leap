@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-15
+ * @version 2013-01-09
  *
  * @abstract
  */
@@ -67,6 +67,22 @@ abstract class Base_DB_SQL extends Core_Object {
 	public static function insert($config = 'default') {
 		$proxy = new DB_SQL_Insert_Proxy($config);
 		return $proxy;
+	}
+
+	/**
+	 * This function returns an instance of the appropriate pre-compiler for the
+	 * specified data source/config.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                         the data source configurations
+	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
+	 */
+	public static function precompiler($config = 'default') {
+		$data_source = new DB_DataSource($config);
+		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
+		$object = new $precompiler($data_source);
+		return $object;
 	}
 
 	/**

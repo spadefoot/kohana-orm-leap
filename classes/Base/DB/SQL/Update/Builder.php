@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-06
+ * @version 2013-01-09
  *
  * @abstract
  */
@@ -70,10 +70,16 @@ abstract class Base_DB_SQL_Update_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $table                             the database table to be modified
+	 * @param string $alias                             the alias to be used for the specified table
 	 * @return DB_SQL_Update_Builder                    a reference to the current instance
 	 */
-	public function table($table) {
-		$this->data['table'] = $this->precompiler->prepare_identifier($table);
+	public function table($table, $alias = NULL) {
+		$table = $this->precompiler->prepare_identifier($table);
+		if ($alias !== NULL) {
+			$alias = $this->precompiler->prepare_alias($alias);
+			$table = "{$table} AS {$alias}";
+		}
+		$this->data['table'] = $table;
 		return $this;
 	}
 

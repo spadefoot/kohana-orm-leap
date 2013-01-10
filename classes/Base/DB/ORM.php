@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-15
+ * @version 2013-01-09
  *
  * @abstract
  */
@@ -94,6 +94,22 @@ abstract class Base_DB_ORM extends Core_Object {
 			$model->load();
 		}
 		return $model;
+	}
+
+	/**
+	 * This function returns an instance of the appropriate pre-compiler for the
+	 * specified model.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $model                         the model's name
+	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
+	 */
+	public static function precompiler($model) {
+		$data_source = $model::data_source();
+		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
+		$object = new $precompiler($data_source);
+		return $object;
 	}
 
 	/**

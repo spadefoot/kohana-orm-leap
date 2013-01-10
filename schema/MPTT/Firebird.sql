@@ -20,11 +20,11 @@
 
 CREATE TABLE "mptt" (
 	"id" INTEGER NOT NULL,
-	"name" VARCHAR(32) NOT NULL DEFAULT '',
+	"scope" INTEGER NOT NULL,
+	"name" VARCHAR(70) NOT NULL DEFAULT '',
+	"parent_id" INTEGER,
 	"lft" INTEGER NOT NULL,
 	"rgt" INTEGER NOT NULL,
-	"lvl" INTEGER NOT NULL,
-	"scope" INTEGER NOT NULL,
 	CONSTRAINT "mptt_id_pkey" PRIMARY KEY ("id")
 );
 

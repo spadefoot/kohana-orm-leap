@@ -20,10 +20,10 @@
 
 CREATE TABLE IF NOT EXISTS `mptt` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(35) NOT NULL DEFAULT '',
+	`scope` INT NOT NULL,
+	`name` VARCHAR(70) NOT NULL DEFAULT '',
+	`parent_id` INT,
 	`lft` INT NOT NULL,
 	`rgt` INT NOT NULL,
-	`lvl` INT NOT NULL,
-	`scope` INT NOT NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;

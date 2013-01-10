@@ -3,8 +3,8 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2010-2012 Kiall Mac Innes, Mathew Davies, Mike Parkin, and Paul Banks
- * Copyright (c) 2012 Spadefoot
+ * Copyright © 2011–2013 Spadefoot Team.
+ * Copyright © 2010-2012 Kiall Mac Innes, Mathew Davies, Mike Parkin, and Paul Banks.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -28,8 +28,15 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-30
+ * @version 2013-01-10
  *
+ * @see http://imrannazar.com/Modified-Preorder-Tree-Traversal
+ * @see http://www.sitepoint.com/hierarchical-data-database-2/
+ * @see http://iamcam.wordpress.com/2006/03/24/storing-hierarchical-data-in-a-database-part-2a-modified-preorder-tree-traversal/
+ * @see http://www.zaachi.com/en/items/modified-preorder-tree-traversal-algoritmus-1.html
+ * @see http://stackoverflow.com/questions/3344359/database-sorting-hierarchical-data-modified-preorder-tree-traversal-how-to-r
+ * @see http://www.honk.com.au/index.php/2010/04/22/convert-adjacency-list-model-to-a-modified-preorder-tree-traversal-mptt-model-hierarchy/
+ * @see http://stackoverflow.com/questions/7661913/modified-preorder-tree-traversal-selecting-nodes-1-level-deep
  * @see http://dev.kohanaframework.org/projects/mptt
  * @see https://github.com/kiall/kohana3-orm_mptt
  * @see https://github.com/smgladkovskiy/jelly-mptt
@@ -40,101 +47,44 @@
 abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 	/**
-	 * This variable stores the name of the name column.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $name_column = 'name';
-
-	/**
-	 * This variable stores the name of the left column.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $left_column = 'lft';
-
-	/**
-	 * This variable stores the name of the right column.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $right_column = 'rgt';
-
-	/**
-	 * This variable stores the name of the level column.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $level_column = 'lvl';
-
-	/**
-	 * This variable stores the name of the scope column.
-	 *
-	 * @access public
-	 * @var string
-	 **/
-	public $scope_column = 'scope';
-
-	/**
-	 * This variable stores the full pre-calculated path.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $path_column = 'path';
-
-	/**
-	 * This variable stores the single path element.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $path_part_column = 'path_part';
-
-	/**
-	 * This variable stores whether path calculation is enabled/disabled.
-	 *
-	 * @access protected
-	 * @var boolean
-	 */
-	protected $path_calculation_enabled = FALSE;
-
-	/**
-	 * This variable stores the path separator to be used.
-	 *
-	 * @access public
-	 * @var char
-	 */
-	public $path_separator = '/';
-
-	/**
-	 * The view to be used to create the unordered list
-	 *
-	 * @access public
-	 * @var string
-	 */
-	public $ul_view = 'partial/asset/left_menu';
-
-	/**
 	 * This constructor instantiates this class.
 	 *
 	 * @access public
 	 */
-	public function __construct(Array $columns = NULL) {
+	public function __construct() {
 		parent::__construct();
 
-		$primary_key = static::primary_key();
-		if (count($primary_key) != 1) {
-			throw new Throwable_Exception('Message: Unable to initialize model. Reason: May not use a composite primary key with MPTT.');
-		}
-		
-		if ($columns !== NULL) {
-			$this->columns += $columns; // id, title, parent_id, left_id, right_id, level_id, scope_id
-		}
+		$this->fields = array(
+			'id' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+			'scope' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+			'name' => new DB_ORM_Field_String($this, array(
+				'max_length' => 35,
+				'nullable' => TRUE,
+			)),
+			'parent_id' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => TRUE,
+				'unsigned' => TRUE,
+			)),
+			'lft' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+			'rgt' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+		);
 	}
 
 	/**
@@ -142,247 +92,274 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $name                          the name of the property
-	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
-	 *                                              either inaccessible or undefined
+	 * @param string $name                              the name of the property
+	 * @return mixed                                    the value of the property
+	 * @throws Throwable_InvalidProperty_Exception      indicates that the specified property is
+	 *                                                  either inaccessible or undefined
 	 */
 	public function __get($name) {
 		switch ($name) {
-			case 'parent':
-				return $this->parent();
-			case 'parents':
-				return $this->parents();
+			case 'ancestors':
+				return $this->ancestors('ASC');
 			case 'children':
 				return $this->children();
+			case 'descendants':
+				return $this->descendants();
 			case 'first_child':
-				return $this->children(FALSE, 'ASC', 1);
+				return $this->children('ASC', 1);
 			case 'last_child':
-				return $this->children(FALSE, 'DESC', 1);
+				return $this->children('DESC', 1);
+			case 'leaves':
+				return $this->leaves();
+			case 'level':
+				return $this->level();
+			case 'parent':
+				return $this->parent();
+			case 'path':
+				return $this->path();
 			case 'siblings':
 				return $this->siblings();
 			case 'root':
 				return $this->root();
-			case 'leaves':
-				return $this->leaves();
-			case 'descendants':
-				return $this->descendants();
 			default:
 				return parent::__get($name);
 		}
 	}
 
-//	/**
-//	 * This function returns a multidimensional array
-//	 *
-//	 * @return mixed
-//	 */
-//	public function as_multi_array() {
-//		$descendants = $this->descendants(TRUE)->query();
-//
-//		$descendants_array = array();
-//		foreach ($descendants as $descendant) {
-//			$descendants_array[] = $descendant->data();
-//		}
-//
-//		$stack = array();
-//
-//		for ($i = 0; $i < count($descendants_array); $i++) {
-//			$d = &$descendants_array[$i];
-//			$d['Children'] = array();
-//
-//			while ((count($stack) > 0) AND ($stack[count($stack) - 1][$this->right_column] < $d[$this->right_column])) {
-//				array_pop($stack);
-//			}
-//
-//			if (count($stack) > 0) {
-//				$stack[count($stack) - 1]['Children'][] = &$d;
-//			}
-//
-//			$stack[] = &$d;
-//		}
-//
-//		return $stack[0];
-//	}
+	/**
+	 * This function add a new node as a child to the current node.
+	 *
+	 * @access public
+	 * @return DB_ORM_MPTT                              the newly added node
+	 * @throws Throwable_Marshalling_Exception          indicates that the node could not
+	 *                                                  be added
+	 *
+	 * @see http://imrannazar.com/Modified-Preorder-Tree-Traversal
+	 * @see http://www.sitepoint.com/hierarchical-data-database-3/
+	 * @see http://iamcam.wordpress.com/2006/04/14/hierarchical-data-in-a-database2b-modified-preorder-tree-traversal-insertions/
+	 */
+	public function add_child() {
+		if ( ! static::is_savable()) {
+			throw new Throwable_Marshalling_Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
+		}
 
-//	/**
-//	 * This function return an HTML unordered list
-//	 *
-//	 * @return string
-//	 */
-//	public function as_ul() {
-//		$descendants = $this->descendants(TRUE)
-//            ->query();
-//
-//		$tree = array();
-//		foreach ($descendants as $descendant) {
-//			$tree[] = $descendant->data();
-//		}
-//
-//		$result = View::factory($this->ul_view)
-//			->bind('mptt', $this)
-//			->bind('tree', $tree);
-//
-//		return $result;
-//	}
+		$source = static::data_source();
+		$table = static::table();
+
+		$connection = DB_Connection_Pool::instance()->get_connection($source);
+
+		$connection->begin_transaction();
+
+		$update = DB_SQL::update($source)
+			->set('rgt', DB_ORM::expr('rgt + 2'))
+			->table($table)
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('rgt', DB_SQL_Operator::_GREATER_THAN_, $this->fields['rgt']->value)
+			->statement();
+
+		$connection->execute($update);
+		
+		$update = DB_SQL::update($source)
+			->set('lft', DB_ORM::expr('lft + 2'))
+			->table($table)
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['lft']->value)
+			->statement();
+
+		$connection->execute($update);
+
+		$lft = $this->fields['lft']->value + 1;
+		$rgt = $this->fields['lft']->value + 2;
+
+		$insert = DB_SQL::insert($source)
+			->into($table)
+			->column('scope', $this->fields['scope']->value)
+			->column('parent_id', $this->fields['id']->value)
+			->column('lft', $lft)
+			->column('rgt', $rgt)
+			->statement();
+		
+		$connection->execute($insert);
+		$id = $connection->get_last_insert_id();
+
+		$select = DB_SQL::select($source)
+			->column('t1.parent_id')
+			->from($table, 't1')
+			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t1.lft', DB_SQL_Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
+			->where('t1.rgt', DB_SQL_Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
+			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
+			->limit(1);
+
+		$update = DB_SQL::update($source)
+			->set('t0.parent_id', $select)
+			->table($table, 't0')
+			->where('t0.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t0.lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['lft']->value)
+			->statement();
+
+		$connection->execute($update);
+		
+		$connection->commit();
+		
+		$model = get_class($this);
+
+		$child = new $model();
+		$child->id = $id;
+		$child->scope = $this->fields['scope']->value;
+		$child->parent_id = $this->fields['id']->value;
+		$child->lft = $lft;
+		$child->rgt = $rgt;
+		
+		return $child;
+	}
+
+	/**
+	 * This function returns a result set of ancestor nodes for the current node.
+	 *
+	 * @access public
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  left column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param integer $limit                            the number of ancestors to return
+	 * @param boolean $root                             whether to include the root node
+	 * @return DB_ResultSet                             a result set of ancestor nodes for the current
+	 *                                                  node
+	 */
+	public function ancestors($ordering = 'ASC', $limit = 0, $root = TRUE) {
+		$source = static::data_source();
+
+		$builder = DB_SQL::select($source)
+			->all('t1.*')
+			->from(static::table(), 't1')
+			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t1.id', DB_SQL_Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
+			->where('t1.lft', DB_SQL_Operator::_LESS_THAN_, $this->fields['lft']->value)
+			->where('t1.rgt', DB_SQL_Operator::_GREATER_THAN_, $this->fields['rgt']->value)
+			->order_by('t1.lft', 'DESC')
+			->limit($limit);
+
+		if ( ! $root) {
+			$builder->where('t1.lft', DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
+		}
+
+		if ($ordering == 'ASC') {
+			$builder = DB_SQL::select($source)
+				->all('t0.*')
+				->from($builder, 't0')
+				->order_by('t0.lft', 'ASC');
+		}
+		
+		return $builder->query(get_class($this));
+	}
 
 	/**
 	 * This function returns the children of the current node.
 	 *
 	 * @access public
-	 * @param bool $self                            whether to include the current loaded node
-	 * @param string $ordering                      the ordering token that signals whether the
-	 *                                              left column will sorted either in ascending or
-	 *                                              descending order
-	 * @param integer $limit                        the "limit" constraint
-	 * @return DB_ResultSet                         an array of children nodes
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  left column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param integer $limit                            the "limit" constraint
+	 * @return DB_ResultSet                             a result set of children nodes
 	 */
-	public function children($self = FALSE, $ordering = 'ASC', $limit = NULL) {
-		return $this->descendants($self, $ordering, TRUE, FALSE, $limit);
+	public function children($ordering = 'ASC', $limit = 0) {
+		return $this->descendants($ordering, $limit, TRUE, FALSE);
 	}
-
-	/**
-	 * This function creates a space in the tree to make room for a new node.
-	 *
-	 * @access protected
-	 * @param integer $start                        the start position
-	 * @param integer $size                         the size of the space
-	 */
-	protected function create_space($start, $size = 2) {
-		DB_ORM::update(get_class($this))
-			->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $size))
-			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->execute();
-		DB_ORM::update(get_class($this))
-			->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $size))
-			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->execute();
-	}
-
-//	/**
-//	 * This function returns an array of just the fields
-//	 *
-//	 * @return array
-//	 */
-//	public function data() {
-//		$buffer = array();
-//		foreach ($this->fields as $name => $field) {
-//			$buffer[$name] = $field->value;
-//		}
-//		return $buffer;
-//	}
 
 	/**
 	 * This function removes a node and its descendants.
 	 *
 	 * @access public
 	 * @override
-	 * @param boolean $reset                        whether to reset each column's value back
-	 *                                              to its original value (this parameter has
-	 *                                              no affect on MPTT models)
+	 * @param boolean $reset                            whether to reset each column's value back
+	 *                                                  to its original value
+	 * @throws Throwable_Marshalling_Exception          indicates that the record could not be
+	 *                                                  deleted
+	 *
+	 * @see http://imrannazar.com/Modified-Preorder-Tree-Traversal
+	 * @see http://stackoverflow.com/questions/1473459/getting-modified-preorder-tree-traversal-data-into-an-array
 	 */
 	public function delete($reset = FALSE) {
-		$this->load(); // ? may not be needed
+		if ( ! static::is_savable()) {
+			throw new Throwable_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
+		}
 
-		DB_ORM::delete(get_class($this))
-			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
-			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->execute();
+		$source = static::data_source();
+		$table = static::table();
 
-		$this->delete_space($this->{$this->left_column}, $this->size());
-	}
+		$connection = DB_Connection_Pool::instance()->get_connection($source);
 
-	/**
-	 * This function closes a space in a tree. Mainly used after a node has
-	 * been removed.
-	 *
-	 * @access protected
-	 * @param integer $start                        the start position
-	 * @param integer $size                         the size of the space
-	 */
-	protected function delete_space($start, $size = 2) {
-		DB_ORM::update(get_class($this))
-			->set($this->left_column, DB_ORM::expr($this->left_column . ' - ' . $size))
-			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->execute();
-		DB_ORM::update(get_class($this))
-			->set($this->right_column, DB_ORM::expr($this->right_column . ' - ' . $size))
-			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $start)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->execute();
+		$connection->begin_transaction();
+
+		$select = DB_SQL::select($source)
+			->column('t1.parent_id')
+			->from($table, 't1')
+			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t1.id', DB_SQL_Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
+			->where('t1.lft', DB_SQL_Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
+			->where('t1.rgt', DB_SQL_Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
+			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
+			->limit(1);
+
+		$update = DB_SQL::update($source)
+			->set('t0.parent_id', $select)
+			->set('t0.lft', DB_ORM::expr('t0.lft - 2'))
+			->set('t0.rgt', DB_ORM::expr('t0.rgt - 2'))
+			->table($table, 't0')
+			->where('t0.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t0.lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['rgt']->value)
+			->statement();
+
+		$connection->execute($update);
+
+		$delete = DB_SQL::delete($source)
+			->from($table)
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value)
+			->statement();
+
+		$connection->execute($delete);
+		
+		$connection->commit();
+
+		if ($reset) {
+			$this->reset();
+		}
+		else {
+			$this->metadata['saved'] = NULL;
+		}
 	}
 
 	/**
 	 * This function returns the descendants of the current node.
 	 *
 	 * @access public
-	 * @param boolean $self                         whether to include the current loaded node
-	 * @param string $ordering                      the ordering token that signals whether the
-	 *                                              left column will sorted either in ascending or
-	 *                                              descending order
-	 * @param boolean $direct_children_only         whether to only fetch the direct children
-	 * @param boolean $leaves_only                  whether to only fetch leaves
-	 * @param integer $limit                        the "limit" constraint
-	 * @return DB_ResultSet                         an array of descendant nodes
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  left column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param integer $limit                            the "limit" constraint
+	 * @param boolean $children_only                    whether to only fetch the direct children
+	 * @param boolean $leaves_only                      whether to only fetch leaves
+	 * @return DB_ResultSet                             a result set of descendant nodes
 	 */
-	public function descendants($self = FALSE, $ordering = 'ASC', $direct_children_only = FALSE, $leaves_only = FALSE, $limit = NULL) {
-		$left_operator = ($self) ? DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_GREATER_THAN_;
-		$right_operator = ($self) ? DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_ : DB_SQL_Operator::_LESS_THAN_;
-
+	public function descendants($ordering = 'ASC', $limit = 0, $children_only = FALSE, $leaves_only = FALSE) {
 		$builder = DB_ORM::select(get_class($this))
-			->where($this->left_column, $left_operator, $this->{$this->left_column})
-			->where($this->right_column, $right_operator, $this->{$this->right_column})
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->order_by($this->left_column, $ordering);
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['lft']->value)
+			->where('rgt', DB_SQL_Operator::_LESS_THAN_, $this->fields['rgt']->value)
+			->order_by('lft', $ordering)
+			->limit($limit);
 
-		if ($direct_children_only) {
-			if ($self) {
-				$builder->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-					->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column})
-					->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1, DB_SQL_Connector::_OR_)
-					->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_);
-			}
-			else {
-				$builder->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} + 1);
-			}
+		if ($children_only) {
+			$builder->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
 		}
 
 		if ($leaves_only) {
-			$builder->where($this->right_column, DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr($this->left_column . ' + 1'));
+			$builder->where('rgt', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('lft + 1'));
 		}
 
-		$builder->limit($limit);
-
 		return $builder->query();
-	}
-
-	/**
-	 * This function returns an array of all scope keys (i.e. IDs).
-	 *
-	 * @access protected
-	 * @return DB_ResultSet                             an array of all scope keys (i.e. IDs)
-	 */
-	protected function get_scopes() {
-		$result = DB_SQL::select(static::data_source())
-			->distinct()
-			->column($this->scope_column)
-			->from(static::table())
-			->query();
-		return $result;
-	}
-
-	/**
-	 * This function returns the size of the current node.
-	 *
-	 * @access protected
-	 * @return integer                                  the size of the current node
-	 */
-	protected function size() {
-		return ($this->{$this->right_column} - $this->{$this->left_column}) + 1;
 	}
 
 	/**
@@ -392,124 +369,33 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return boolean                                  whether the current node has children
 	 */
 	public function has_children() {
-		return (($this->{$this->right_column} - $this->{$this->left_column}) > 1);
+		return (($this->fields['rgt']->value - $this->fields['lft']->value) > 1);
 	}
 
 	/**
-	 * This function inserts a node.
-	 *
-	 * @protected
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 * @param integer $copy_left_from                   the id of the node to be copied
-	 * @param integer $left_offset                      the id of the left node offset
-	 * @param integer $level_offset                     the id of the level node offset
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance
-	 * @throws Exception                                indicates that the node cannot be inserted
-	 */
-	protected function insert($target, $copy_left_from, $left_offset, $level_offset) {
-		// Insert should only work on new nodes.. if its already in the tree it needs to be moved!
-		if ($this->metadata['saved']) {
-			return FALSE;
-		}
-
-		if ( ! ($target instanceof $this)) {
-			$target = DB_ORM::model(get_class($this), $target);
-		}
-		else {
-			$target->load(); // Ensure we're using the latest version of $target
-		}
-
-		//$this->lock();
-
-		$this->{$this->left_column} = $target->{$copy_left_from} + $left_offset;
-		$this->{$this->right_column} = $this->{$this->left_column} + 1;
-		$this->{$this->level_column} = $target->{$this->level_column} + $level_offset;
-		$this->{$this->scope_column} = $target->{$this->scope_column};
-
-		$this->create_space($this->{$this->left_column});
-
-		try {
-			parent::create(TRUE);
-		}
-		catch (Exception $ex) {
-			// Clean-up the tree should a problem occur
-			$this->delete_space($this->{$this->left_column});
-			$this->unlock();
-			throw $ex;
-		}
-
-		//parent::save(TRUE);
-
-		//if ($this->path_calculation_enabled) {
-		//	$this->update_path();
-		//	parent::save(TRUE);
-		//}
-
-		// $this->unlock();
-
-		return $this;
-	}
-
-	/**
-	 * This function inserts a new node as the first child of the target node.
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 *                                                  or DB_ORM_MPTT object
-	 * @return DB_ORM_MPTT                              the new node
-	 */
-	public function insert_as_first_child($target) {
-		return $this->insert($target, $this->left_column, 1, 1);
-	}
-
-	/**
-	 * This function inserts a new node as the last child of the target node.
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 *                                                  or DB_ORM_MPTT object
-	 * @return DB_ORM_MPTT                              the new node
-	 */
-	public function insert_as_last_child($target) {
-		return $this->insert($target, $this->right_column, 0, 1);
-	}
-
-	/**
-	 * This function inserts a new node as the next sibling of the target node.
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 *                                                  or DB_ORM_MPTT object
-	 * @return DB_ORM_MPTT                              the new node
-	 */
-	public function insert_as_next_sibling($target) {
-		return $this->insert($target, $this->right_column, 1, 0);
-	}
-
-	/**
-	 * This function inserts a new node as a previous sibling of the target node.
-	 *
-	 * @access public
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 *                                                  or DB_ORM_MPTT object
-	 * @return DB_ORM_MPTT                              the new node
-	 */
-	public function insert_as_prev_sibling($target) {
-		return $this->insert($target, $this->left_column, 0, 0);
-	}
-
-	/**
-	 * This function determines whether the current node is a direct child of the
+	 * This function determines whether the current node is an ancestor of the
 	 * supplied node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $target                       the target node
-	 * @return boolean                                  whether the current node is a direct
-	 *                                                  child of the supplied node
+	 * @param DB_ORM_MPTT $descendant                   the descendant node
+	 * @return boolean                                  whether the current node is an ancestor
+	 *                                                  of the supplied node
 	 */
-	public function is_child(DB_ORM_MPTT $target) {
-		$primary_key = static::primary_key();
-		return ($this->parent->{$primary_key[0]} === $target->{$primary_key[0]});
+	public function is_ancestor(DB_ORM_MPTT $descendant) {
+		return (($descendant->scope == $this->fields['scope']->value) AND ($descendant->lft > $this->fields['lft']->value) AND ($descendant->rgt < $this->fields['rgt']->value));
+	}
+
+	/**
+	 * This function determines whether the current node is the child of the supplied
+	 * node.
+	 *
+	 * @access public
+	 * @param DB_ORM_MPTT $parent                       the parent node
+	 * @return boolean                                  whether the current node is the parent
+	 *                                                  of the supplied node
+	 */
+	public function is_child(DB_ORM_MPTT $parent) {
+		return (($parent->scope == $this->fields['scope']->value) AND ($parent->id == $this->fields['parent_id']->value));
 	}
 
 	/**
@@ -517,225 +403,271 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * supplied node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $target                       the target node
+	 * @param DB_ORM_MPTT $ancestor                     the ancestor node
 	 * @return boolean                                  whether the current node is a descendant
 	 *                                                  of the supplied node
 	 */
-	public function is_descendant(DB_ORM_MPTT $target) {
-		return (($this->{$this->left_column} > $target->{$this->left_column}) AND ($this->{$this->right_column} < $target->{$this->right_column}) AND ($this->{$this->scope_column} == $target->{$this->scope_column}));
+	public function is_descendant(DB_ORM_MPTT $ancestor) {
+		return (($ancestor->scope == $this->fields['scope']->value) AND ($ancestor->lft < $this->fields['lft']->value) AND ($ancestor->rgt > $this->fields['rgt']->value));
 	}
 
 	/**
-	 * This function determines whether the current node is a leaf node.
+	 * This function determines whether the current node is a leaf.
 	 *
 	 * @access public
-	 * @return boolean                                  whether the current node is a leaf node
+	 * @return boolean                                  whether the current node is a leaf
 	 */
 	public function is_leaf() {
 		return ! $this->has_children();
 	}
 
 	/**
-	 * This function determines whether the current node is the direct parent of
-	 * the supplied node.
+	 * This function determines whether the current node is the parent of the supplied
+	 * node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $target                       the target node
-	 * @return boolean                                  whether the current node is the direct
-	 *                                                  parent of the supplied node
+	 * @param DB_ORM_MPTT $child                        the child node
+	 * @return boolean                                  whether the supplied node is a child
+	 *                                                  of the current node
 	 */
-	public function is_parent(DB_ORM_MPTT $target) {
-		$primary_key = static::primary_key();	
-		return ($this->{$primary_key[0]} === $target->parent->{$primary_key[0]});
+	public function is_parent(DB_ORM_MPTT $child) {
+		return (($child->scope == $this->fields['scope']->value) AND ($child->parent_id === $this->fields['id']->value));
 	}
 
 	/**
-	 * This function determines whether the current node is a root node.
+	 * This function determines whether the current node is the root.
 	 *
 	 * @access public
-	 * @return boolean                                  whether the current node is a root node
+	 * @return boolean                                  whether the current node is the root
 	 */
 	public function is_root() {
-		return ($this->{$this->left_column} === 1);
+		return ($this->fields['lft']->value == 1);
 	}
 
 	/**
-	 * This function determines whether the current node is a sibling of the supplied node.
+	 * This function determines whether the current node is a sibling of the supplied
+	 * node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $target                       the target node
-	 * @return boolean                                  whether the current node is a sibling of
-	 *                                                  the supplied node
+	 * @param DB_ORM_MPTT $sibling                      a sibling node
+	 * @return boolean                                  whether the current node is a sibling
+	 *                                                  of the supplied node
 	 */
-	public function is_sibling(DB_ORM_MPTT $target) {
-		$primary_key = static::primary_key();
-		if ($this->{$primary_key[0]} === $target->{$primary_key[0]}) {
-			return FALSE;
-		}
-		return ($this->parent->{$primary_key[0]} === $target->parent->{$primary_key[0]});
+	public function is_sibling(DB_ORM_MPTT $sibling) {
+		return (($sibling->scope == $this->fields['scope']->value) AND ($sibling->parent_id == $this->fields['parent_id']->value) AND ($sibling->id != $this->fields['id']->value));
 	}
 
 	/**
 	 * This function returns all leaves under the current node.
 	 *
 	 * @access public
-	 * @param boolean $self                             whether to include the current loaded node
 	 * @param string $ordering                          the ordering token that signals whether the
 	 *                                                  left column will sorted either in ascending or
 	 *                                                  descending order
+	 * @param integer $limit                            the "limit" constraint
 	 * @return DB_ResultSet                             the leaves under the current node
 	 */
-	public function leaves($self = FALSE, $ordering = 'ASC') {
-		return $this->descendants($self, $ordering, TRUE, TRUE);
+	public function leaves($ordering = 'ASC', $limit = 0) {
+		return $this->descendants($ordering, $limit, FALSE, TRUE);
 	}
 
 	/**
-	 * This function moves the target node.
-	 *
-	 * @access protected
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 * @param boolean $left_column                      use the left column or right column from target
-	 * @param integer $left_offset                      left value for the new node position.
-	 * @param integer $level_offset                     level
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
-	 * @throws Exception                                indicates that an error occurred when moving
-	 *                                                  the target node
-	 */
-	protected function move($target, $left_column, $left_offset, $level_offset, $allow_root_target) {
-		if ( ! $this->is_loaded()) {
-			return FALSE;
-		}
-
-		// Make sure we have the most up to date version of this
-		// $this->lock();
-		$this->load();
-
-		try {
-			if ( ! ($target instanceof $this)) {
-				$target = DB_ORM::model(get_class($this), $target);
-				if ( ! $target->is_loaded()) {
-					// $this->unlock();
-					return FALSE;
-				}
-			}
-			else {
-				$target->load();
-			}
-
-			// Stop $this being moved into a descendant or disallow if target is root
-			$primary_key = static::primary_key();
-			if ($target->is_descendant($this) OR ($this->{$primary_key[0]} === $target->{$primary_key[0]}) OR (($allow_root_target === FALSE) AND $target->is_root())) {
-				// $this->unlock();
-				return FALSE;
-			}
-
-			$left_offset = (($left_column === TRUE)
-				? $target->{$this->left_column}
-				: $target->{$this->right_column}) + $left_offset;
-			$level_offset = $target->{$this->level_column} - $this->{$this->level_column} + $level_offset;
-
-			$size = $this->size();
-
-			$this->create_space($left_offset, $size);
-
-			// if node is moved to a position in the tree "above" its current placement
-			// then its lft/rgt may have been altered by create_space
-			$this->load();
-
-			$offset = ($left_offset - $this->{$this->left_column});
-
-			// Update the values
-			DB_ORM::update(get_class($this))
-				->set($this->left_column, DB_ORM::expr($this->left_column . ' + ' . $offset))
-				->set($this->right_column, DB_ORM::expr($this->right_column . ' + ' . $offset))
-				->set($this->level_column, DB_ORM::expr($this->level_column . ' + ' . $level_offset))
-				->set($this->scope_column, $target->{$this->scope_column})
-				->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
-				->where($this->right_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
-				->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-				->execute();
-
-			$this->delete_space($this->{$this->left_column}, $size);
-
-			//if ($this->path_calculation_enabled) {
-			//	$this->update_path();
-			//	parent::save();
-			//}
-		}
-		catch (Exception $ex) {
-			// $this->unlock();
-			throw $ex;
-		}
-
-		// $this->unlock();
-
-		return $this;
-	}
-
-	/**
-	 * This function moves the current node to the first child of the target node.
+	 * This function returns the level (i.e. depth) at which the current node resides.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
-	 * @throws Exception                                indicates that an error occurred when moving
-	 *                                                  the target node
+	 * @return integer                                  the level at which the current
+	 *                                                  node resides
+	 *
+	 * @see http://stackoverflow.com/questions/7661913/modified-preorder-tree-traversal-selecting-nodes-1-level-deep
 	 */
-	public function move_to_first_child($target) {
-		return $this->move($target, TRUE, 1, 1, TRUE);
+	public function level() {
+		$record = DB_SQL::select(static::data_source())
+			->column(DB_SQL::expr('COUNT(parent_id) - 1'), 'level')
+			->from(static::table())
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
+			->group_by('parent_id')
+			->query()
+			->fetch();
+
+		return ($record) ? $record['level'] : 0;
 	}
 
 	/**
-	 * This function moves the current node to the last child of the target node.
+	 * This function returns a model describing the parent node.
 	 *
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
-	 * @throws Exception                                indicates that an error occurred when moving
-	 *                                                  the target node
+	 * @access public
+	 * @return DB_ORM_MPTT                              a model describing the parent node
 	 */
-	public function move_to_last_child($target) {
-		return $this->move($target, FALSE, 0, 1, TRUE);
+	public function parent() {
+		if ( ! $this->is_root()) {
+			return $this->ancestors('DESC', 1, TRUE)->fetch(0);
+		}
+		return FALSE;
 	}
 
 	/**
-	 * This function moves the current node to the next sibling of the target node.
+	 * This function returns the path to the current node.
 	 *
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
-	 * @throws Exception                                indicates that an error occurred when moving
-	 *                                                  the target node
+	 * @access public
+	 * @return array                                    the path to the current node
+	 *
+	 * @see http://www.sitepoint.com/hierarchical-data-database/
 	 */
-	public function move_to_next_sibling($target) {
-		return $this->move($target, FALSE, 1, 0, FALSE);
+	public function path() {
+		$path = array();
+
+		foreach ($this->ancestors() as $ancestor) {
+			$path[] = $ancestor->id;
+		}
+
+		$path[] = $this->fields['id']->value;
+
+		return $path;
 	}
 
 	/**
-	 * This function moves the current node to the previous sibling of the target node.
+	 * This function returns a model describing the root node.
 	 *
-	 * @param DB_ORM_MPTT|integer $target               the target node or its primary key
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
-	 * @throws Exception                                indicates that an error occurred when moving
-	 *                                                  the target node
+	 * @access public
+	 * @return DB_ORM_MPTT                              a model describing the root node
 	 */
-	public function move_to_prev_sibling($target) {
-		return $this->move($target, TRUE, 0, 0, FALSE);
+	public function root() {
+		$record = DB_ORM::select(get_class($this))
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('lft', DB_SQL_Operator::_EQUAL_TO_, 1)
+			->limit(1)
+			->query()
+			->fetch();
+
+		return $record;
 	}
+
+	/**
+	 * This function saves the record matching using the primary key.
+	 *
+	 * @access public
+	 * @override
+	 * @param boolean $reload                           whether the model should be reloaded
+	 *                                                  after the save is done
+	 * @param boolean $mode                             TRUE=save, FALSE=update, NULL=automatic
+	 * @throws Throwable_Marshalling_Exception          indicates that model could not be saved
+	 */
+	public function save($reload = FALSE, $mode = NULL) {
+		if ( ! static::is_savable()) {
+			throw new Throwable_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
+		}
+
+		$columns = array_keys($this->fields);
+
+		if ( ! empty($columns)) {
+			$builder = DB_SQL::update(static::data_source())
+				->table(static::table())
+				->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
+
+			$ignore_keys = array('scope', 'id', 'parent_id', 'lft', 'rgt', 'lvl');
+
+			// Is there any data to save and it's worth to execute the query?
+			$is_worth = FALSE;
+
+			foreach ($columns as $column) {
+				if ($this->fields[$column]->savable AND $this->fields[$column]->modified AND ! in_array($column, $ignore_keys)) {
+					// Add column values to the query builder
+					$builder->set($column, $this->fields[$column]->value);
+					
+					// It's worth do execute the query.
+					$is_worth = TRUE;
+				}
+
+				// Mark field as not modified
+				$this->fields[$column]->modified = FALSE;
+			}
+
+			// Execute the query only if there is data to save
+			if ($is_worth) {
+				$builder->execute();
+			}
+
+			$this->metadata['saved'] = $this->hash_code();
+		}
+
+		if ($reload) {
+			$this->load();
+		}
+	}
+
+	/**
+	 * This function returns the siblings of the current node.
+	 *
+	 * @access public
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  left column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param boolean $self                             whether to include the current node
+	 * @return DB_ResultSet                             an array of sibling nodes
+	 */
+	public function siblings($ordering = 'ASC', $self = FALSE) {
+        if ( ! $this->root()) {
+			$builder = DB_ORM::select(get_class($this))
+				->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
+				->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
+				->order_by('lft', $ordering);
+
+			if ( ! $self) {
+				$builder->where('id', DB_SQL_Operator::_NOT_EQUIVALENT_, $this->fields['id']->value);
+			}
+
+			return $builder->query();
+		}
+
+		$results = new DB_ResultSet(array());
+		
+		return $results;
+	}
+
+	/**
+	 * This function returns the size of the current node, which is the number of descendants
+	 * it has including itself.
+	 *
+	 * @access public
+	 * @return integer                                  the size of the current node
+	 *
+	 * @see http://iamcam.wordpress.com/2006/03/24/storing-hierarchical-data-in-a-database-part-2a-modified-preorder-tree-traversal/
+	 */
+	public function size() {
+		return ((($this->fields['rgt']->value - $this->fields['lft']->value) - 1) / 2) + 1;
+	}
+
+	/**
+	 * This function returns a tree of nodes, where the root node of the tree is the current
+	 * node.
+	 *
+	 * @access public
+	 * @return array                                    the tree as a multidimensional array
+	 */
+	public function tree() {
+		$tree = array();
+		$tree['node'] = $this->as_array();
+		foreach ($this->children() as $child) {
+			$tree['node']['children'][] = $child->tree();
+		}
+		return $tree;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function create a new scope (i.e. it doubles as a 'new_root' method allowing
 	 * for multiple trees to be stored in the same table.
 	 *
+	 * @todo PORT
+	 * @access public
 	 * @param integer $scope                            the new scope to be create
 	 * @param array $additional_fields                  any additional fields
 	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
 	 *                                                  should an problem occur
 	 **/
-	public function new_scope($scope, Array $additional_fields = array()) {
+	public function create_root($scope, Array $additional_fields = array()) {
 		// Make sure the specified scope doesn't already exist.
 		$search = DB_ORM::select(get_class($this))
 			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope)
@@ -764,242 +696,48 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	}
 
 	/**
-	 * This function returns the parent of the current node.
+	 * This function returns a result set containing all nodes in the specified tree's scope.
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT                          the parent of the current node
+	 * @param integer $scope                            the scope of the desired tree
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  left column will sorted either in ascending or
+	 *                                                  descending order
+	 * @return DB_ResultSet                             a result set containing all nodes in the
+	 *                                                  specified tree's scope
 	 */
-	public function parent() {
-		if ($this->is_root()) {
-			return FALSE;
-		}
-		return $this->parents(TRUE, 'ASC', TRUE)->fetch(0);
+	public static function full_tree($scope, $ordering = 'ASC') {
+		$model = get_called_class();
+		
+		$results = DB_ORM::select($model)
+			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $scope)
+			->order_by('lft', $ordering)
+			->query();
+
+		return $results;
+	}
+
+
+	/**
+	 * This function returns the primary key for the database table.
+	 *
+	 * @access public
+	 * @static
+	 * @return array                                    the primary key
+	 */
+	public static function primary_key() {
+		return array('id');
 	}
 
 	/**
-	 * This function returns the parents of the current node.
+	 * This function returns the database table's name.
 	 *
 	 * @access public
-	 * @param boolean $root                         whether to include the root node
-	 * @param string $ordering                      the ordering token that signals whether the
-	 *                                              left column will sorted either in ascending or
-	 *                                              descending order
-	 * @param boolean $direct_parent_only           whether to only fetch the direct parent
-	 * @return DB_ResultSet                         an array of parent nodes
+	 * @static
+	 * @return string                                   the database table's name
 	 */
-	public function parents($root = TRUE, $ordering = 'ASC', $direct_parent_only = FALSE) {
-		$primary_key = static::primary_key();
-
-		$builder = DB_ORM::select(get_class($this))
-			->where($this->left_column, DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_, $this->{$this->left_column})
-			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_, $this->{$this->right_column})
-			->where($primary_key[0], DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$primary_key[0]})
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->order_by($this->left_column, $ordering);
-
-		if ( ! $root) {
-			$builder->where($this->left_column, DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
-		}
-
-		if ($direct_parent_only) {
-			$builder->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column} - 1);
-			$builder->limit(1);
-		}
-
-		return $builder->query();
-	}
-
-	/**
-	 * This function returns the root node (i.e. model).
-	 *
-	 * @access public
-	 * @param integer $scope
-	 * @return DB_ORM_MPTT|boolean
-	 */
-	public function root($scope = NULL) {
-		if ($scope === NULL) {
-			if ($this->is_loaded()) {
-				$scope = $this->{$this->scope_column};
-			}
-			else {
-				return FALSE;
-			}
-		}
-
-		$record = DB_ORM::select(get_class($this))
-			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, 1)
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $scope)
-			->query()
-			->fetch(0);
-
-		return $record;
-	}
-
-	/**
-	 * This function saves the record matching using the primary key.
-	 *
-	 * @access public
-	 * @override
-	 * @param boolean $reload                           whether the model should be reloaded
-	 *                                                  after the save is done
-	 * @param boolean $mode                             TRUE=save, FALSE=update, NULL=automatic
-	 * @return DB_ORM_MPTT|boolean                      a reference to the current instance or false
-	 *                                                  should an problem occur
-	 */
-	public function save($reload = FALSE, $mode = NULL) {
-		if ($this->is_loaded() === TRUE) {
-			return parent::save($reload, $mode);
-		}
-		return FALSE;
-	}
-
-	/**
-	 * This function returns the siblings of the current node.
-	 *
-	 * @access public
-	 * @param boolean $self                         whether to include the current node
-	 * @param string $ordering                      the ordering token that signals whether the
-	 *                                              left column will sorted either in ascending or
-	 *                                              descending order
-	 * @return DB_ResultSet                         an array of sibling nodes
-	 */
-	public function siblings($self = FALSE, $ordering = 'ASC') {
-        if ($this->root()) {
-            return new DB_ResultSet(array());
-        }
-
-		$builder = DB_ORM::select(get_class($this))
-			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->parent->{$this->left_column})
-			->where($this->right_column, DB_SQL_Operator::_LESS_THAN_, $this->parent->{$this->right_column})
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->scope_column})
-			->where($this->level_column, DB_SQL_Operator::_EQUAL_TO_, $this->{$this->level_column})
-			->order_by($this->left_column, $ordering);
-
-		if ( ! $self) {
-			$primary_key = static::primary_key();
-			$builder->where($primary_key[0], DB_SQL_Operator::_NOT_EQUIVALENT_, $this->{$primary_key[0]});
-		}
-
-		return $builder->query();
-	}
-
-//	public function update_path() {
-//		$path = '';
-//
-//		$parents = $this->parents(FALSE)
-//			->query();
-//
-//		foreach ($parents as $parent) {
-//			$path .= $this->path_separator . trim($parent->{$this->path_part_column});
-//		}
-//
-//		$path .= $this->path_separator . trim($this->{$this->path_part_column});
-//
-//		$path = trim($path, $this->path_separator);
-//
-//		$this->{$this->path_column} = $path;
-//
-//		return $this;
-//	}
-
-	/**
-	 * This function verifies a particular scope.
-	 *
-	 * @access public
-	 * @param $scope                            the scope key to be evaluated
-	 * @return boolean                          whether there are any problems regarding
-	 *                                          the specified scope
-	 */
-	public function verify_scope($scope) {
-		$root = $this->root($scope);
-
-		$end = $root->{$this->right_column};
-
-		// Find nodes that have slipped out of bounds.
-		$record = DB_SQL::select(static::data_source())
-			->count()
-			->from(static::table())
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
-			->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $end)
-			->where($this->right_column, DB_SQL_Operator::_GREATER_THAN_, $end, DB_SQL_Connector::_OR_)
-			->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
-			->query()
-			->fetch(0);
-
-		if ($record->count > 0) {
-			return FALSE;
-		}
-
-		// Find nodes that have the same left and right value
-		$record = DB_SQL::select(static::data_source())
-			->count()
-			->from(static::table())
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
-			->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $this->right_column)
-			->query()
-			->fetch(0);
-
-		if ($record->count > 0) {
-			return FALSE;
-		}
-
-		// Find nodes that right value is less than the left value
-		$record = DB_SQL::select(static::data_source())
-			->count()
-			->from(static::table())
-			->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
-			->where($this->left_column, DB_SQL_Operator::_GREATER_THAN_, $this->right_column)
-			->query()
-			->fetch(0);
-
-		if ($record->count > 0) {
-			return FALSE;
-		}
-
-		// Make sure no 2 nodes share a left/right value
-		$i = 1;
-		while ($i <= $end) {
-			$record = DB_SQL::select(static::data_source())
-				->count()
-				->from(static::table())
-				->where($this->scope_column, DB_SQL_Operator::_EQUAL_TO_, $root->{$this->scope_column})
-				->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_)
-				->where($this->left_column, DB_SQL_Operator::_EQUAL_TO_, $i)
-				->where($this->right_column, DB_SQL_Operator::_EQUAL_TO_, $i, DB_SQL_Connector::_OR_)
-				->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_)
-				->query()
-				->fetch(0);
-
-			if ($record->count > 1) {
-				return FALSE;
-			}
-
-			$i++;
-		}
-
-		// TODO Check to ensure that all nodes have a "correct" level
-
-		return TRUE;
-	}
-
-	/**
-	 * This function verifies that the tree is in good order.  Its speed is irrelevant.
-	 * Its really only for debugging and unit tests
-	 *
-	 * @access public
-	 * @return boolean                              whether the tree is in good order
-	 *
-	 * @todo Look for any nodes no longer contained by the root node.
-	 * @todo Ensure every node has a path to the root via ->parents();
-	 */
-	public function verify_tree() {
-		foreach ($this->get_scopes() as $scope) {
-			if ( ! $this->verify_scope($scope->{$this->scope_column})) {
-				return FALSE;
-			}
-		}
-		return TRUE;
+	public static function table() {
+		return 'mptt';
 	}
 
 }

@@ -18,7 +18,7 @@
 -- Table structure for the "sessions" table
 ----
 
-CREATE TABLE "sessions" (
+CREATE TABLE IF NOT EXISTS "sessions" (
 	"id" varchar(24) NOT NULL,
 	"last_active" integer NOT NULL,
 	"contents" text NOT NULL,

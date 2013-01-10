@@ -18,12 +18,12 @@
 -- Table structure for the "mptt" table
 ----
 
-CREATE TABLE "mptt" (
+CREATE TABLE IF NOT EXISTS "mptt" (
 	"id" serial,
-	"name" varchar(35) NOT NULL DEFAULT '',
+	"scope" integer NOT NULL,
+	"name" varchar(70) NOT NULL DEFAULT '',
+	"parent_id" integer,
 	"lft" integer NOT NULL,
 	"rgt" integer NOT NULL,
-	"lvl" integer NOT NULL,
-	"scope" integer NOT NULL,
 	CONSTRAINT "mptt_id_pkey" PRIMARY KEY ("id")
 );

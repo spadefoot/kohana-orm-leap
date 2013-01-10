@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-05
+ * @version 2013-01-09
  *
  * @abstract
  */
@@ -399,6 +399,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * @param enum $type                            the type of relation to be created (e.g.
 	 *                                              'belongs_to', 'has_many', 'has_one')
 	 * @param array $metadata                       the relation's metadata
+	 * @throws Throwable_InvalidArgument_Exception  indicates an invalid relation defined
 	 */
 	public function relate($name, $type, Array $metadata) {
 		if ( ! is_string($name) OR isset($this->adaptors[$name]) OR isset($this->aliases[$name]) OR isset($this->fields[$name])) {
@@ -435,6 +436,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
 	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
+	 * @throws Throwable_Marshalling_Exception      indicates that model could not be saved
 	 */
 	public function save($reload = FALSE, $mode = NULL) {
 		if ( ! static::is_savable()) {
@@ -487,16 +489,16 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 
 					foreach ($columns as $column) {
 						if ($this->fields[$column]->savable AND $this->fields[$column]->modified) {
-							// It's worth do execute the query.
-							$is_worth = TRUE;
-
 							// Add column values to the query builder
 							$builder->set($column, $this->fields[$column]->value);
 
-							if (in_array($column, $primary_key) OR $this->fields[$column]->value instanceof DB_SQL_Expression) {
+							if (in_array($column, $primary_key) OR ($this->fields[$column]->value instanceof DB_SQL_Expression)) {
 								// Reloading required because primary key has been changed or an SQL expression has been used
 								$reload = TRUE;
 							}
+							
+							// It's worth do execute the query.
+							$is_worth = TRUE;
 						}
 
 						// Mark field as not modified

@@ -30,7 +30,7 @@
 -- Table structure for the "roles" table
 ----
 
-CREATE TABLE "roles" (
+CREATE TABLE IF NOT EXISTS "roles" (
 	"id" serial,
 	"name" varchar(32) NOT NULL,
 	"description" varchar(255) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE "roles" (
 -- Table structure for the "users" table
 ----
 
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" serial,
 	"email" varchar(254) NOT NULL,
 	"username" varchar(32) NOT NULL DEFAULT '',
@@ -76,7 +76,7 @@ CREATE TABLE "users" (
 -- Table structure for the "user_roles" table
 ----
 
-CREATE TABLE "user_roles" (
+CREATE TABLE IF NOT EXISTS "user_roles" (
 	"user_id" integer,
 	"role_id" integer,
 	CONSTRAINT "users_roles_pkey" PRIMARY KEY ("user_id", "role_id")
@@ -86,7 +86,7 @@ CREATE TABLE "user_roles" (
 -- Table structure for the "user_tokens" table
 ----
 
-CREATE TABLE "user_tokens" (
+CREATE TABLE IF NOT EXISTS "user_tokens" (
 	"id" serial,
 	"user_id" integer NOT NULL,
 	"user_agent" varchar(40) NOT NULL,

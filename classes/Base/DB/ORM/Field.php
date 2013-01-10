@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-05
+ * @version 2013-01-09
  *
  * @abstract
  *
@@ -83,7 +83,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -107,9 +107,9 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_Validation_Exception             indicates that the specified value does
+	 * @throws Throwable_Validation_Exception       indicates that the specified value does
 	 *                                              not validate
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
