@@ -66,7 +66,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				'unsigned' => TRUE,
 			)),
 			'name' => new DB_ORM_Field_String($this, array(
-				'max_length' => 35,
+				'max_length' => 70,
 				'nullable' => TRUE,
 			)),
 			'parent_id' => new DB_ORM_Field_Integer($this, array(
