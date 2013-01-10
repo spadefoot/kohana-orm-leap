@@ -161,7 +161,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->statement();
 
 		$connection->execute($update);
-		
+
 		$update = DB_SQL::update($data_source)
 			->set('lft', DB_ORM::expr('lft + 2'))
 			->table($table)
@@ -181,13 +181,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->column('parent_id', $this->fields['id']->value)
 			->column('lft', $lft)
 			->column('rgt', $rgt);
-		
+
 		if (is_array($fields)) {
 			foreach ($fields as $field => $value) {
 				$builder->column($field, $value);
 			}
 		}
-		
+
 		$insert = $builder->statement();
 
 		$connection->execute($insert);
@@ -210,9 +210,9 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->statement();
 
 		$connection->execute($update);
-		
+
 		$connection->commit();
-		
+
 		$model = get_class($this);
 
 		$child = new $model();
@@ -266,7 +266,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				->from($builder, 't0')
 				->order_by('t0.lft', 'ASC');
 		}
-		
+
 		return $builder->query(get_class($this));
 	}
 
@@ -337,7 +337,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->statement();
 
 		$connection->execute($delete);
-		
+
 		$connection->commit();
 
 		if ($reset) {
@@ -591,7 +591,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				if ($this->fields[$column]->savable AND $this->fields[$column]->modified AND ! in_array($column, $ignore_keys)) {
 					// Add column values to the query builder
 					$builder->set($column, $this->fields[$column]->value);
-					
+
 					// It's worth do execute the query.
 					$is_worth = TRUE;
 				}
@@ -624,7 +624,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ResultSet                             an array of sibling nodes
 	 */
 	public function siblings($ordering = 'ASC', $self = FALSE) {
-        if ( ! $this->root()) {
+		if ( ! $this->root()) {
 			$builder = DB_ORM::select(get_class($this))
 				->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
 				->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
@@ -638,7 +638,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		}
 
 		$results = new DB_ResultSet(array());
-		
+
 		return $results;
 	}
 
@@ -677,15 +677,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function creates a new root node in the specified scope.
 	 *
 	 * @access public
+	 * @static
 	 * @param integer $scope                            the new scope to be create
 	 * @param string $name                              the name to given to the node
 	 * @param array $fields                             an associated array of additional field
 	 *                                                  name/value pairs
 	 * @return DB_ORM_MPTT                              the newly created root node
 	 **/
-	public function add_root($scope, $name, Array $fields = NULL) {
+	public static function add_root($scope, $name, Array $fields = NULL) {
 		$data_source = static::data_source();
-		
+
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
 
 		$connection->begin_transaction();
@@ -697,18 +698,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->column('parent_id', NULL)
 			->column('lft', 1)
 			->column('rgt', 2);
-		
+
 		if (is_array($fields)) {
 			foreach ($fields as $field => $value) {
 				$builder->column($field, $value);
 			}
 		}
-		
+
 		$insert = $builder->statement();
 
 		$connection->execute($insert);
 		$id = $connection->get_last_insert_id();
-		
+
 		$connection->commit();
 
 		$model = get_called_class();
@@ -725,7 +726,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				$root->{$field} = $value;
 			}
 		}
-		
+
 		return $root;
 	}
 
@@ -733,6 +734,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function returns a result set containing all nodes in the specified tree's scope.
 	 *
 	 * @access public
+	 * @static
 	 * @param integer $scope                            the scope of the desired tree
 	 * @param string $ordering                          the ordering token that signals whether the
 	 *                                                  left column will sorted either in ascending or
@@ -743,7 +745,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public static function full_tree($scope, $ordering = 'ASC', $limit = 0) {
 		$model = get_called_class();
-		
+
 		$results = DB_ORM::select($model)
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $scope)
 			->order_by('lft', $ordering)
