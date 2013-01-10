@@ -582,7 +582,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 				->table(static::table())
 				->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
 
-			$ignore_keys = array('scope', 'id', 'parent_id', 'lft', 'rgt', 'lvl');
+			$ignore_keys = array('id', 'scope', 'parent_id', 'lft', 'rgt');
 
 			// Is there any data to save and it's worth to execute the query?
 			$is_worth = FALSE;
