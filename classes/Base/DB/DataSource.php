@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-06
+ * @version 2013-01-11
  *
  * @abstract
  */
@@ -136,7 +136,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 
 		$cache = array();
 		$cache['enabled'] = (isset($settings['caching'])) ? (bool) $settings['caching'] : FALSE;
-		$cache['lifetime'] = Kohana::$cache_life;
+		$cache['lifetime'] = (class_exists('Kohana')) ? Kohana::$cache_life : 60;
 		$cache['force'] = FALSE;
 		$this->settings['cache'] = (object) $cache;
 

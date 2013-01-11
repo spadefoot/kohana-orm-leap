@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2013-01-06
+ * @version 2013-01-11
  *
  * @abstract
  */
@@ -75,6 +75,18 @@ abstract class Base_BitField extends Core_Object implements Countable {
 		$this->boundary = (PHP_INT_SIZE == 8) ? 64 : 32;
 		$this->pattern = $pattern;
 		$this->map($value);
+	}
+
+	/**
+	 * This function returns whether a property is set.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $name                          the name of the property
+	 * @return boolean                              whether the property is set
+	 */
+	public function __isset($field) {
+		return array_key_exists($field, $this->values);
 	}
 
 	/**

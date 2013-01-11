@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2012-12-11
+ * @version 2013-01-11
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -35,7 +35,8 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @access public
 	 * @override
 	 * @param string $sql						    the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		parent::execute($this->trim($sql));

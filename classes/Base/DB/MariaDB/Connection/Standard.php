@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-12-11
+ * @version 2013-01-11
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -35,8 +35,8 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://kb.askmonty.org/en/character-sets-and-collations
 	 */
@@ -65,7 +65,8 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
 	 * @see http://php.net/manual/en/function.mysql-query.php
@@ -79,8 +80,9 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @param string $sql						    the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -99,18 +101,31 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @mysql_insert_id($this->resource);
-		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
+		if (is_string($table)) {
+			$sql = $this->sql;
+			$precompiler = DB_SQL::precompiler($this->data_source);
+			$table = $precompiler->prepare_identifier($table);
+			$id = $precompiler->prepare_identifier($id);
+			$insert_id = (int) $this->query("SELECT MAX({$id}) AS `id` FROM {$table};")->get('id', 0);
+			$this->sql = $sql;
+			return $insert_id;
 		}
-		return $insert_id;
+		else {
+			$insert_id = @mysql_insert_id($this->resource);
+			if ($insert_id === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
+			}
+			return $insert_id;
+		}
 	}
 
 	/**
@@ -118,7 +133,8 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://php.net/manual/en/function.mysql-query.php
 	 */
@@ -131,7 +147,8 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
 	 * @see http://php.net/manual/en/function.mysql-query.php
@@ -145,11 +162,11 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @param string $string                    the string to be escaped
-	 * @param char $escape                      the escape character
-	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception          indicates that no connection could
-	 *                                          be found
+	 * @param string $string                        the string to be escaped
+	 * @param char $escape                          the escape character
+	 * @return string                               the quoted string
+	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 *                                              be found
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
@@ -170,7 +187,7 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                          whether an open connection was closed
+	 * @return boolean                              whether an open connection was closed
 	 */
 	public function close() {
 		if ($this->is_connected()) {

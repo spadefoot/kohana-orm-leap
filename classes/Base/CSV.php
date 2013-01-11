@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category CSV
- * @version 2013-01-06
+ * @version 2013-01-11
  *
  * @abstract
  */
@@ -180,7 +180,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 				$this->mime = ($this->delimiter == "\t") ? 'text/tab-separated-values' : 'text/csv'; // 'text/plain'
 			break;
 			case 'header':
-				$this->header = (isset($value) AND is_array($value)) ? $value : array() ;
+				$this->header = (is_array($value)) ? $value : array();
 			break;
 			case 'enclosure':
 				$this->enclosure = (is_string($value)) ? $value : '"';

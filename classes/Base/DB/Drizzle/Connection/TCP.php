@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-06
+ * @version 2013-01-11
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -45,8 +45,8 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception        indicates that there is problem with
-	 *                                             opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://wiki.drizzle.org/MySQL_Differences
 	 */
@@ -71,7 +71,8 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://docs.drizzle.org/start_transaction.html
 	 */
@@ -84,10 +85,10 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql                          the SQL statement
-	 * @param string $type                         the return type to be used
-	 * @return DB_ResultSet                        the result set
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @param string $sql                           the SQL statement
+	 * @param string $type                          the return type to be used
+	 * @return DB_ResultSet                         the result set
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
@@ -112,8 +113,9 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql                          the SQL statement
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @param string $sql                           the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -135,17 +137,30 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                             the last insert id
-	 * @throws Throwable_SQL_Exception             indicates that the query failed
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		if ($this->insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
+		if (is_string($table)) {
+			$sql = $this->sql;
+			$precompiler = DB_SQL::precompiler($this->data_source);
+			$table = $precompiler->prepare_identifier($table);
+			$id = $precompiler->prepare_identifier($id);
+			$insert_id = (int) $this->query("SELECT MAX({$id}) AS `id` FROM {$table};")->get('id', 0);
+			$this->sql = $sql;
+			return $insert_id;
 		}
-		return $this->insert_id;
+		else {
+			if ($this->insert_id === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
+			}
+			return $this->insert_id;
+		}
 	}
 
 	/**
@@ -153,7 +168,8 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://docs.drizzle.org/rollback.html
 	 */
@@ -166,7 +182,8 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception             indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://docs.drizzle.org/commit.html
 	 */

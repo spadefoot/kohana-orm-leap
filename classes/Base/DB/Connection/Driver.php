@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-30
+ * @version 2013-01-11
  *
  * @abstract
  */
@@ -106,7 +106,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public abstract function begin_transaction();
 
@@ -152,7 +153,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public abstract function commit();
 
@@ -162,7 +164,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public abstract function execute($sql);
 
@@ -171,10 +174,12 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public abstract function get_last_insert_id();
+	public abstract function get_last_insert_id($table = NULL, $id = 'id');
 
 	/**
 	 * This function returns the connection's resource.
@@ -295,7 +300,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public abstract function rollback();
 

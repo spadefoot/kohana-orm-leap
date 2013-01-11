@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-11
+ * @version 2013-01-11
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -34,8 +34,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 * 
 	 * @see http://www.php.net/manual/en/function.pg-connect.php
 	 */
@@ -69,7 +69,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.postgresql.org/docs/8.3/static/sql-start-transaction.html
 	 */
@@ -83,8 +84,9 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql                      the SQL statement
-	 * @throws Throwable_SQL_Exception         indicates that the executed statement failed
+	 * @param string $sql                           the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-insert.php
 	 */
@@ -105,42 +107,54 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
 	 * @see https://github.com/spadefoot/kohana-orm-leap/issues/44
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		
-		// Option #1: Using 'SELECT lastval();'
-		
-		$command = @pg_query($this->resource, 'SELECT lastval();');
-		
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
+		if (is_string($table)) {
+			$sql = $this->sql;
+			$precompiler = DB_SQL::precompiler($this->data_source);
+			$table = $precompiler->prepare_identifier($table);
+			$id = $precompiler->prepare_identifier($id);
+			$insert_id = (int) $this->query("SELECT MAX({$id}) AS \"id\" FROM {$table};")->get('id', 0);
+			$this->sql = $sql;
+			return $insert_id;
 		}
+		else {
+			// Option #1: Using 'SELECT lastval();'
 		
-		$record = @pg_fetch_row($command);
+			$command = @pg_query($this->resource, 'SELECT lastval();');
 		
-		if ($record === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
+			if ($command === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
+			}
+		
+			$record = @pg_fetch_row($command);
+		
+			if ($record === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
+			}
+		
+			return $record[0];
+		
+			// Option #2: Using pg_last_oid($this->resource)
+		
+			//$insert_id = @pg_last_oid($this->resource);
+		
+			//if ($insert_id === FALSE) {
+			//	throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
+			//}
+		
+			//return $insert_id;
 		}
-		
-		return $record[0];
-		
-		// Option #2: Using pg_last_oid($this->resource)
-		
-		//$insert_id = @pg_last_oid($this->resource);
-		
-		//if ($insert_id === FALSE) {
-		//	throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
-		//}
-		
-		//return $insert_id;
 	}
 
 	/**
@@ -148,7 +162,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
@@ -159,7 +174,8 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function commit() {
 		$this->execute('COMMIT;');
@@ -170,11 +186,11 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @param string $string                    the string to be escaped
-	 * @param char $escape                      the escape character
-	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception          indicates that no connection could
-	 *                                          be found
+	 * @param string $string                        the string to be escaped
+	 * @param char $escape                          the escape character
+	 * @return string                               the quoted string
+	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 *                                              be found
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-escape-string.php
 	 */
@@ -197,7 +213,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                           whether an open connection was closed
+	 * @return boolean                              whether an open connection was closed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-close.php
 	 */

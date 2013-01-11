@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-11
+ * @version 2013-01-11
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  *
@@ -34,8 +34,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://stackoverflow.com/questions/1322421/php-sql-server-how-to-set-charset-for-connection
 	 */
@@ -71,7 +71,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms188929.aspx
 	 */
@@ -84,8 +85,9 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @param string $sql						    the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -104,24 +106,36 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
-			$sql = $this->sql;
-			if (preg_match('/^INSERT\s+(TOP.+\s+)?INTO\s+(.*?)\s+/i', $sql, $matches)) {
-				$table = Arr::get($matches, 2);
-				$query = ( ! empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS insert_id" : 'SELECT SCOPE_IDENTITY() AS insert_id';
-				$result_set = $this->query($query);
-				$insert_id = ($result_set->is_loaded()) ? ( (int)  Arr::get($result_set->fetch(0), 'insert_id')) : 0;
+			if (is_string($table)) {
+				$sql = $this->sql;
+				$precompiler = DB_SQL::precompiler($this->data_source);
+				$table = $precompiler->prepare_identifier($table);
+				$id = $precompiler->prepare_identifier($id);
+				$insert_id = (int) $this->query("SELECT MAX({$id}) AS [id] FROM {$table};")->get('id', 0);
 				$this->sql = $sql;
 				return $insert_id;
 			}
-			return 0;
+			else {
+				$sql = $this->sql;
+				if (preg_match('/^INSERT\s+(TOP.+\s+)?INTO\s+(.*?)\s+/i', $sql, $matches)) {
+					$table = Arr::get($matches, 2);
+					$query = ( ! empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS insert_id" : 'SELECT SCOPE_IDENTITY() AS insert_id';
+					$insert_id = (int) $this->query($query)->get('insert_id', 0);
+					$this->sql = $sql;
+					return $insert_id;
+				}
+				return 0;
+			}
 		}
 		catch (Exception $ex) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
@@ -133,7 +147,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
@@ -144,7 +159,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
 	 */
@@ -157,7 +173,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                          whether an open connection was closed
+	 * @return boolean                              whether an open connection was closed
 	 */
 	public function close() {
 		if ($this->is_connected()) {

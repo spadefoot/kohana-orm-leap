@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ToolKit
- * @version 2013-01-03
+ * @version 2013-01-11
  *
  * @abstract
  */
@@ -73,7 +73,7 @@ abstract class Base_DB_ToolKit extends Core_Object {
 			}
 		}
 
-		$regex = '/^' . $regex . '$/';
+		$regex = '/^' . $regex . '$/D';
 
 		return $regex;
 	}

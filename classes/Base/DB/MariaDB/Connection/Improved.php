@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2012-12-25
+ * @version 2013-01-11
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -47,7 +47,8 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.autocommit.php
 	 */
@@ -83,7 +84,8 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.commit.php
 	 */
@@ -104,7 +106,8 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @override
 	 * @param string $sql						    the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -123,18 +126,31 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @mysqli_insert_id($this->resource);
-		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+		if (is_string($table)) {
+			$sql = $this->sql;
+			$precompiler = DB_SQL::precompiler($this->data_source);
+			$table = $precompiler->prepare_identifier($table);
+			$id = $precompiler->prepare_identifier($id);
+			$insert_id = (int) $this->query("SELECT MAX({$id}) AS `id` FROM {$table};")->get('id', 0);
+			$this->sql = $sql;
+			return $insert_id;
 		}
-		return $insert_id;
+		else {
+			$insert_id = @mysqli_insert_id($this->resource);
+			if ($insert_id === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
+			}
+			return $insert_id;
+		}
 	}
 
 	/**
@@ -208,7 +224,8 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/mysqli.rollback.php
 	 */

@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-11
+ * @version 2013-01-11
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -34,8 +34,8 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://www.sqlite.org/pragma.html#pragma_encoding
 	 * @see http://stackoverflow.com/questions/263056/how-to-change-character-encoding-of-a-pdo-sqlite-connection-in-php
@@ -59,7 +59,8 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.sqlite.org/lang_transaction.html
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
@@ -73,8 +74,9 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @param string $sql						    the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
@@ -93,18 +95,31 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @sqlite_last_insert_rowid($this->resource);
-		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->resource))));
+		if (is_string($table)) {
+			$sql = $this->sql;
+			$precompiler = DB_SQL::precompiler($this->data_source);
+			$table = $precompiler->prepare_identifier($table);
+			$id = $precompiler->prepare_identifier($id);
+			$insert_id = (int) $this->query("SELECT MAX({$id}) AS \"id\" FROM {$table};")->get('id', 0);
+			$this->sql = $sql;
+			return $insert_id;
 		}
-		return $insert_id;
+		else {
+			$insert_id = @sqlite_last_insert_rowid($this->resource);
+			if ($insert_id === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->resource))));
+			}
+			return $insert_id;
+		}
 	}
 
 	/**
@@ -112,7 +127,8 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.sqlite.org/lang_transaction.html
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
@@ -126,7 +142,8 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.sqlite.org/lang_transaction.html
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
@@ -140,11 +157,11 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @param string $string                    the string to be escaped
-	 * @param char $escape                      the escape character
-	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception          indicates that no connection could
-	 *                                          be found
+	 * @param string $string                        the string to be escaped
+	 * @param char $escape                          the escape character
+	 * @return string                               the quoted string
+	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 *                                              be found
 	 *
 	 * @see http://www.php.net/manual/en/function.sqlite-escape-string.php
 	 */
@@ -167,7 +184,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                          whether an open connection was closed
+	 * @return boolean                              whether an open connection was closed
 	 */
 	public function close() {
 		if ($this->is_connected()) {

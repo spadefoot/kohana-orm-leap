@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-09
+ * @version 2013-01-11
  *
  * @abstract
  */
@@ -83,7 +83,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * @access public
 	 * @override
 	 * @param string $name                          the name of the property
-	 * @return boolean								whether the property is set
+	 * @return boolean                              whether the property is set
 	 */
 	public function __isset($name) {
 		return (isset($this->fields[$name]) OR isset($this->aliases[$name]) OR isset($this->adaptors[$name]) OR isset($this->relations[$name]));

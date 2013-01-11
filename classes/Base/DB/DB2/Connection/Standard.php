@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-17
+ * @version 2013-01-11
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -34,8 +34,8 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
-	 *                                          opening the connection
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-connect.php
 	 * @see http://www.php.net/manual/en/function.db2-conn-error.php
@@ -66,7 +66,8 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-autocommit.php
 	 */
@@ -85,8 +86,9 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						the SQL statement
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @param string $sql						    the SQL statement
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-exec.php
 	 * @see http://www.php.net/manual/en/function.db2-free-result.php
@@ -108,21 +110,34 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @return integer                          the last insert id
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @param string $table                         the table to be queried
+	 * @param string $id                            the name of column's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-last-insert-id.php
 	 */
-	public function get_last_insert_id() {
+	public function get_last_insert_id($table = NULL, $id = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
-		$insert_id = @db2_last_insert_id($this->resource);
-		if ($insert_id === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
+		if (is_string($table)) {
+			$sql = $this->sql;
+			$precompiler = DB_SQL::precompiler($this->data_source);
+			$table = $precompiler->prepare_identifier($table);
+			$id = $precompiler->prepare_identifier($id);
+			$insert_id = (int) $this->query("SELECT MAX({$id}) AS \"id\" FROM {$table};")->get('id', 0);
+			$this->sql = $sql;
+			return $insert_id;
 		}
-		settype($insert_id, 'integer');
-		return $insert_id;
+		else {
+			$insert_id = @db2_last_insert_id($this->resource);
+			if ($insert_id === FALSE) {
+				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
+			}
+			settype($insert_id, 'integer');
+			return $insert_id;
+		}
 	}
 
 	/**
@@ -130,7 +145,8 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-rollback.php
 	 */
@@ -150,7 +166,8 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception          indicates that the executed statement failed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-commit.php
 	 */
@@ -170,11 +187,11 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @param string $string                    the string to be escaped
-	 * @param char $escape                      the escape character
-	 * @return string                           the quoted string
-	 * @throws Throwable_SQL_Exception          indicates that no connection could
-	 *                                          be found
+	 * @param string $string                        the string to be escaped
+	 * @param char $escape                          the escape character
+	 * @return string                               the quoted string
+	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 *                                              be found
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-escape-string.php
 	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/c0010966.htm
@@ -199,7 +216,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                          whether an open connection was closed
+	 * @return boolean                              whether an open connection was closed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-close.php
 	 */
