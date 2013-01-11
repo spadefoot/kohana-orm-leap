@@ -99,7 +99,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						    the SQL statement
+	 * @param string $sql                           the SQL statement
 	 * @throws Throwable_SQL_Exception              indicates that the executed
 	 *                                              statement failed
 	 */

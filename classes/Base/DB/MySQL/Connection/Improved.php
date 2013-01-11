@@ -104,7 +104,7 @@ abstract class Base_DB_MySQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						    the SQL statement
+	 * @param string $sql                           the SQL statement
 	 * @throws Throwable_SQL_Exception              indicates that the executed
 	 *                                              statement failed
 	 */

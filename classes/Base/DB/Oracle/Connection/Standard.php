@@ -135,7 +135,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						    the SQL statement
+	 * @param string $sql                           the SQL statement
 	 * @param string $type						    the return type to be used
 	 * @return DB_ResultSet                         the result set
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
@@ -161,7 +161,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						    the SQL statement
+	 * @param string $sql                           the SQL statement
 	 * @throws Throwable_SQL_Exception              indicates that the executed
 	 *                                              statement failed
 	 */

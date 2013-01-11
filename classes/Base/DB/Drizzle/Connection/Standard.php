@@ -75,7 +75,7 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql						    the SQL statement
+	 * @param string $sql                           the SQL statement
 	 * @throws Throwable_SQL_Exception              indicates that the executed
 	 *                                              statement failed
 	 */
