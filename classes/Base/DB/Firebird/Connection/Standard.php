@@ -149,7 +149,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 				$sql = $this->sql;
 				if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
 					$table = Arr::get($matches, 1);
-					$insert_id = (int) $this->query("SELECT ID FROM {$table} ORDER BY ID DESC ROWS 1;")->get('ID', 0);
+					$insert_id = (int) $this->query("SELECT \"ID\" AS \"id\" FROM {$table} ORDER BY \"ID\" DESC ROWS 1;")->get('id', 0);
 					$this->sql = $sql;
 					return $insert_id;
 				}

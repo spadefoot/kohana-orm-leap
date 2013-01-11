@@ -129,8 +129,8 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 				$sql = $this->sql;
 				if (preg_match('/^INSERT\s+(TOP.+\s+)?INTO\s+(.*?)\s+/i', $sql, $matches)) {
 					$table = Arr::get($matches, 2);
-					$query = ( ! empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS insert_id" : 'SELECT SCOPE_IDENTITY() AS insert_id';
-					$insert_id = (int) $this->query($query)->get('insert_id', 0);
+					$query = ( ! empty($table)) ? "SELECT IDENT_CURRENT('{$table}') AS [id];" : 'SELECT SCOPE_IDENTITY() AS [id];';
+					$insert_id = (int) $this->query($query)->get('id', 0);
 					$this->sql = $sql;
 					return $insert_id;
 				}
