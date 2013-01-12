@@ -37,7 +37,7 @@ abstract class Base_DB_SQLite_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function acquire() {
-        $this->execute($this->data[0]);
+		$this->execute($this->data[0]);
 		return $this;
 	}
 
@@ -52,14 +52,14 @@ abstract class Base_DB_SQLite_Lock_Builder extends DB_SQL_Lock_Builder {
 	 */
 	public function add($table, Array $hints = NULL) {
 		$mode = 'EXCLUSIVE';
-        if ($hints !== NULL) {
-            foreach ($hints as $hint) {
-                if (preg_match('/^(EXCLUSIVE|IMMEDIATE|DEFERRED)$/i', $hint)) {
-                    $mode = strtoupper($hint);
-                }
-            }
-        }
-        $this->data[0] = 'BEGIN ' . $mode . ' TRANSACTION;';
+		if ($hints !== NULL) {
+			foreach ($hints as $hint) {
+				if (preg_match('/^(EXCLUSIVE|IMMEDIATE|DEFERRED)$/i', $hint)) {
+					$mode = strtoupper($hint);
+				}
+			}
+		}
+		$this->data[0] = 'BEGIN ' . $mode . ' TRANSACTION;';
 		return $this;
 	}
 
