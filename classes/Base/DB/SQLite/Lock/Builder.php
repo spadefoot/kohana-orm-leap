@@ -37,7 +37,7 @@ abstract class Base_DB_SQLite_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function acquire() {
-		$this->execute($this->data[0]);
+		$this->connection->execute($this->data[0]);
 		return $this;
 	}
 
