@@ -21,7 +21,7 @@
  * 
  * @package Leap
  * @category SQL
- * @version 2013-01-06
+ * @version 2013-01-11
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
  *
@@ -30,8 +30,7 @@
 abstract class Base_DB_SQL_Precompiler extends Core_Object {
 
 	/**
-	 * This variable stores the data source for which the expression is being
-	 * prepared for.
+	 * This variable stores a reference to the data source.
 	 *
 	 * @access protected
 	 * @var mixed

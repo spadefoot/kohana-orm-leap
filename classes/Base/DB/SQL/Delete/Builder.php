@@ -21,15 +21,14 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-06
+ * @version 2013-01-11
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 
 	/**
-	 * This variable stores a reference to the compiler class that implements the expression
-	 * interface.
+	 * This variable stores a reference to the pre-compiler.
 	 *
 	 * @access protected
 	 * @var DB_SQL_Precompiler
