@@ -88,9 +88,11 @@ abstract class Base_DB_SQL_Lock_Builder extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
+	 * @param string $method                           the method to be used to release
+	 *                                                 the lock(s)
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
-	public abstract function release();
+	public abstract function release($method = 'COMMIT');
 
 	/**
 	 * This function resets the current builder.

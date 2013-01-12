@@ -37,7 +37,7 @@ abstract class Base_DB_MySQL_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function acquire() {
-		$this->connection->execute('LOCK TABLES ' implode(',', $this->data) . ';');
+		$this->connection->execute('LOCK TABLES ' . implode(',', $this->data) . ';');
 		return $this;
 	}
 
@@ -71,9 +71,11 @@ abstract class Base_DB_MySQL_Lock_Builder extends DB_SQL_Lock_Builder {
 	 *
 	 * @access public
 	 * @override
+	 * @param string $method                           the method to be used to release
+	 *                                                 the lock(s)
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
-	public function release() {
+	public function release($method = 'COMMIT') {
 		$this->connection->execute('UNLOCK TABLES;');
 		return $this;
 	}
