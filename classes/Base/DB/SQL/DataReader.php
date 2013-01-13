@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-30
+ * @version 2013-01-13
  *
  * @abstract
  */
@@ -118,6 +118,25 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 				}
 				return $object;
 		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * This function returns an instance of the appropriate SQL data reader.
+	 *
+	 * @access public
+	 * @static
+	 * @param DB_Connection_Driver $connection         the connection to be used
+	 * @param string $sql                              the SQL statement to be queried
+	 * @param integer $mode                            the execution mode to be used
+	 * @return DB_SQL_DataReader                       an instance of the appropriate
+	 *                                                 SQL data reader
+	 */
+	public static function factory(DB_Connection_Driver $connection, $sql, $mode = 32) {
+		$class = 'DB_' . $connection->data_source->dialect . '_DataReader_' . $connection->data_source->driver;
+		$reader = new $class($connection, $sql, $mode);
+		return $reader;
 	}
 
 }

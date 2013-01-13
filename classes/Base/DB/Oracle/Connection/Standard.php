@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-11
+ * @version 2013-01-13
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -124,8 +124,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
 		}
-		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this, $sql, $this->execution_mode);
+		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
 		$this->sql = $sql;
 		return $reader;
 	}
@@ -149,8 +148,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this, $sql, $this->execution_mode);
+		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;

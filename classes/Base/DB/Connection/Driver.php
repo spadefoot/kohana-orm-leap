@@ -243,8 +243,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this, $sql);
+		$reader = DB_SQL_DataReader::factory($this, $sql);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;
@@ -300,8 +299,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
 		}
-		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this, $sql);
+		$reader = DB_SQL_DataReader::factory($this, $sql);
 		$this->sql = $sql;
 		return $reader;
 	}

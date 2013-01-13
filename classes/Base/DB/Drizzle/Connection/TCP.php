@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-11
+ * @version 2013-01-13
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -100,8 +100,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$driver = 'DB_' . $this->data_source->dialect . '_DataReader_' . $this->data_source->driver;
-		$reader = new $driver($this, $sql);
+		$reader = DB_SQL_DataReader::factory($this, $sql);
 		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
 		$this->insert_id = FALSE;
 		$this->sql = $sql;
