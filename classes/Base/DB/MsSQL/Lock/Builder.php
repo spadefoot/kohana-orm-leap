@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-12
+ * @version 2013-01-13
  *
  * @see http://msdn.microsoft.com/en-us/library/ms187373.aspx
  * @see http://stackoverflow.com/questions/5102152/tablock-vs-tablockx
@@ -59,7 +59,8 @@ abstract class Base_DB_MsSQL_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function add($table, Array $hints = NULL) {
-		$sql = 'SELECT * FROM ' . $this->precompiler->prepare_identifier($table) . ' WITH (';
+		$table = $this->precompiler->prepare_identifier($table);
+		$sql = "SELECT * FROM {$table} WITH (";
 		$modes = array();
 		if ($hints !== NULL) {
 			foreach ($hints as $hint) {
@@ -74,9 +75,7 @@ abstract class Base_DB_MsSQL_Lock_Builder extends DB_SQL_Lock_Builder {
 		if (empty($modes)) {
 			$modes[] = 'TABLOCKX';
 		}
-		$sql .= implode(', ', $modes);
-		$sql .= ');';
-		$this->data[] = $sql;
+		$this->data[$table] = $sql . implode(', ', $modes) . ');';
 		return $this;
 	}
 

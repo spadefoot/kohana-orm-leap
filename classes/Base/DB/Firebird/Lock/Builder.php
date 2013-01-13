@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-12
+ * @version 2013-01-13
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-notes-withlock.html
  * @see http://www.firebirdfaq.org/faq182/
@@ -55,7 +55,8 @@ abstract class Base_DB_Firebird_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function add($table, Array $hints = NULL) {
-		$this->data[] = 'SELECT * FROM ' . $this->precompiler->prepare_identifier($table) . ' WHERE "ID" = 1 WITH LOCK;';
+		$table = $this->precompiler->prepare_identifier($table);
+		$this->data[$table] = "SELECT * FROM {$table} WHERE \"ID\" = 1 WITH LOCK;";
 		return $this;
 	}
 

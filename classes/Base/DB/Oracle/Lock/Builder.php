@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-12
+ * @version 2013-01-13
  *
  * @see http://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_9015.htm
  * @see http://docs.oracle.com/cd/B12037_01/appdev.101/b10807/13_elems027.htm
@@ -55,7 +55,8 @@ abstract class Base_DB_Oracle_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function add($table, Array $hints = NULL) {
-		$sql = 'LOCK TABLE ' . $this->precompiler->prepare_identifier($table) . ' IN ';
+		$table = $this->precompiler->prepare_identifier($table);
+		$sql = "LOCK TABLE {$table} IN ";
 		$mode = 'EXCLUSIVE';
 		$wait = '';
 		if ($hints !== NULL) {
@@ -68,7 +69,7 @@ abstract class Base_DB_Oracle_Lock_Builder extends DB_SQL_Lock_Builder {
 				}
 			}
 		}
-		$this->data[] = $sql . $mode . ' MODE' . $wait . ';';
+		$this->data[$table] = $sql . $mode . ' MODE' . $wait . ';';
 		return $this;
 	}
 

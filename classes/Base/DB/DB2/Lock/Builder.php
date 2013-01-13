@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-12
+ * @version 2013-01-13
  *
  * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2.doc.sqlref/rlktb.htm
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/topic/com.ibm.db2.udb.doc/admin/r0000972.htm
@@ -55,7 +55,8 @@ abstract class Base_DB_DB2_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function add($table, Array $hints = NULL) {
-		$sql = 'LOCK TABLE ' . $this->precompiler->prepare_identifier($table) . ' IN ';
+		$table = $this->precompiler->prepare_identifier($table);
+		$sql = "LOCK TABLE {$table} IN ";
 		$mode = 'EXCLUSIVE';
 		if ($hints !== NULL) {
 			foreach ($hints as $hint) {
@@ -64,7 +65,7 @@ abstract class Base_DB_DB2_Lock_Builder extends DB_SQL_Lock_Builder {
 				}
 			}
 		}
-		$this->data[] = $sql . $mode . ' MODE;';
+		$this->data[$table] = $sql . $mode . ' MODE;';
 		return $this;
 	}
 

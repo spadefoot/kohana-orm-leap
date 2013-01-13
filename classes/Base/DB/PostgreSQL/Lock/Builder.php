@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-12
+ * @version 2013-01-13
  *
  * @see http://www.postgresql.org/docs/9.2/static/sql-lock.html
  *
@@ -54,7 +54,8 @@ abstract class Base_DB_PostgreSQL_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
 	public function add($table, Array $hints = NULL) {
-		$sql = 'LOCK TABLE ' . $this->precompiler->prepare_identifier($table) . ' IN ';
+		$table = $this->precompiler->prepare_identifier($table);
+		$sql = "LOCK TABLE {$table} IN ";
 		$mode = 'EXCLUSIVE';
 		$wait = '';
 		if ($hints !== NULL) {
@@ -67,7 +68,7 @@ abstract class Base_DB_PostgreSQL_Lock_Builder extends DB_SQL_Lock_Builder {
 				}
 			}
 		}
-		$this->data[] = $sql . $mode . ' MODE' . $wait . ';';
+		$this->data[$table] = $sql . $mode . ' MODE' . $wait . ';';
 		return $this;
 	}
 
