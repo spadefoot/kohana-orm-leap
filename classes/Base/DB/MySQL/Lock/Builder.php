@@ -59,7 +59,7 @@ abstract class Base_DB_MySQL_Lock_Builder extends DB_SQL_Lock_Builder {
 				}
 			}
 		}
-		if ( ! empty($modes)) {
+		if (empty($modes)) {
 			$modes[] = 'WRITE';
 		}
 		$this->data[] = $this->precompiler->prepare_identifier($table) . ' ' . implode('|', $modes);

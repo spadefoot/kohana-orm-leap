@@ -60,8 +60,8 @@ abstract class Base_DB_DB2_Lock_Builder extends DB_SQL_Lock_Builder {
 		$mode = 'EXCLUSIVE';
 		if ($hints !== NULL) {
 			foreach ($hints as $hint) {
-				if (strtoupper($hint) == 'SHARE') {
-					$mode = 'SHARE';
+				if (preg_match('/^(EXCLUSIVE|SHARE)$/i', $hint)) {
+					$mode = strtoupper($hint);
 				}
 			}
 		}
