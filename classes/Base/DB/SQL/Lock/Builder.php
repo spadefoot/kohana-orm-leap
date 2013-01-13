@@ -55,11 +55,11 @@ abstract class Base_DB_SQL_Lock_Builder extends Core_Object {
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource $source                    the data source to be used
+	 * @param DB_Connection_Driver $connection         the connection to be used
 	 */
-	public function __construct(DB_DataSource $source) {
-		$this->connection = DB_Connection_Pool::instance()->get_connection($source);
-		$this->precompiler = DB_SQL::precompiler($source);
+	public function __construct(DB_Connection_Driver $connection) {
+		$this->connection = $connection;
+		$this->precompiler = DB_SQL::precompiler($connection->data_source);
 		$this->reset();
 	}
 
@@ -92,7 +92,7 @@ abstract class Base_DB_SQL_Lock_Builder extends Core_Object {
 	 *                                                 the lock(s)
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
-	public abstract function release($method = 'COMMIT');
+	public abstract function release($method = '');
 
 	/**
 	 * This function resets the current builder.

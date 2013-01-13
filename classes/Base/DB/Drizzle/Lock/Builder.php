@@ -75,7 +75,7 @@ abstract class Base_DB_Drizzle_Lock_Builder extends DB_SQL_Lock_Builder {
 	 *                                                 the lock(s)
 	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
 	 */
-	public function release($method = 'COMMIT') {
+	public function release($method = '') {
 		$this->connection->execute('UNLOCK TABLES;');
 		return $this;
 	}
