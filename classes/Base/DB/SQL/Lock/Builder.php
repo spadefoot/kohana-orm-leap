@@ -105,4 +105,21 @@ abstract class Base_DB_SQL_Lock_Builder extends Core_Object {
 		return $this;
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * This function returns an instance of the appropriate SQL lock builder.
+	 *
+	 * @access public
+	 * @static
+	 * @param DB_Connection_Driver $connection         the connection to be used
+	 * @return DB_SQL_Lock_Builder                     an instance of the appropriate
+	 *                                                 SQL lock builder
+	 */
+	public static function factory(DB_Connection_Driver $connection) {
+		$class = 'DB_' . $connection->data_source->dialect . '_Lock_Builder';
+		$builder = new $class($connection);
+		return $builder;
+	}
+
 }

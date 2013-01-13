@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-11
+ * @version 2013-01-12
  *
  * @abstract
  */
@@ -44,6 +44,14 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	protected $data_source;
 
 	/**
+	 * This variable stores a reference to the lock builder.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Lock_Builder
+	 */
+	protected $lock;
+
+	/**
 	 * This variable is used to store the connection's resource.
 	 *
 	 * @access protected
@@ -63,11 +71,12 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * This function initializes the class with the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource $data_source            the connection's configurations
+	 * @param DB_DataSource $data_source            the data source to be used
 	 */
 	public function __construct(DB_DataSource $data_source) {
 		$this->cache_key = NULL;
 		$this->data_source = $data_source;
+		$this->lock = DB_SQL_Lock_Builder::factory($this);
 		$this->resource = NULL;
 		$this->sql = '';
 	}
@@ -94,6 +103,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 		switch ($key) {
 			case 'data_source':
 				return $this->data_source;
+			case 'lock':
+				return $this->lock;
 			case 'sql':
 				return $this->sql;
 			default:
