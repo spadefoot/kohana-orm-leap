@@ -28,7 +28,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-10
+ * @version 2013-01-13
  *
  * @see http://imrannazar.com/Modified-Preorder-Tree-Traversal
  * @see http://www.sitepoint.com/hierarchical-data-database-2/
@@ -150,8 +150,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
-
-		$connection->begin_transaction();
+		$connection->lock->add($table)->acquire();
 
 		$update = DB_SQL::update($data_source)
 			->set('rgt', DB_ORM::expr('rgt + 2'))
@@ -211,7 +210,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$connection->execute($update);
 
-		$connection->commit();
+		$connection->lock->release();
 
 		$model = get_class($this);
 
@@ -306,8 +305,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
-
-		$connection->begin_transaction();
+		$connection->lock->add($table)->acquire();
 
 		$select = DB_SQL::select($data_source)
 			->column('t1.parent_id')
@@ -338,7 +336,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$connection->execute($delete);
 
-		$connection->commit();
+		$connection->lock->release();
 
 		if ($reset) {
 			$this->reset();
@@ -686,13 +684,13 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 **/
 	public static function add_root($scope, $name, Array $fields = NULL) {
 		$data_source = static::data_source();
+		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
-
-		$connection->begin_transaction();
+		$connection->lock->add($table)->acquire();
 
 		$builder = DB_SQL::insert($data_source)
-			->into(static::table())
+			->into($table)
 			->column('scope', $scope)
 			->column('name', $name)
 			->column('parent_id', NULL)
@@ -710,7 +708,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$connection->execute($insert);
 		$id = $connection->get_last_insert_id();
 
-		$connection->commit();
+		$connection->lock->release();
 
 		$model = get_called_class();
 
