@@ -102,7 +102,7 @@ abstract class Base_DB_MariaDB_Connection_Standard extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @override
 	 * @param string $table                         the table to be queried
-	 * @param string $column                        the column representing table's id
+	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
