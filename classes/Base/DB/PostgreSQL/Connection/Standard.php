@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-11
+ * @version 2013-01-13
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -108,14 +108,14 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 * @access public
 	 * @override
 	 * @param string $table                         the table to be queried
-	 * @param string $id                            the name of column's id
+	 * @param string $column                        the column representing table's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.pg-last-oid.php
 	 * @see https://github.com/spadefoot/kohana-orm-leap/issues/44
 	 */
-	public function get_last_insert_id($table = NULL, $id = 'id') {
+	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
@@ -123,10 +123,10 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			$sql = $this->sql;
 			$precompiler = DB_SQL::precompiler($this->data_source);
 			$table = $precompiler->prepare_identifier($table);
-			$id = $precompiler->prepare_identifier($id);
-			$insert_id = (int) $this->query("SELECT MAX({$id}) AS \"id\" FROM {$table};")->get('id', 0);
+			$column = $precompiler->prepare_identifier($column);
+			$id = (int) $this->query("SELECT MAX({$column}) AS \"id\" FROM {$table};")->get('id', 0);
 			$this->sql = $sql;
-			return $insert_id;
+			return $id;
 		}
 		else {
 			// Option #1: Using 'SELECT lastval();'
@@ -147,13 +147,13 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 		
 			// Option #2: Using pg_last_oid($this->resource)
 		
-			//$insert_id = @pg_last_oid($this->resource);
+			//$id = @pg_last_oid($this->resource);
 		
-			//if ($insert_id === FALSE) {
+			//if ($id === FALSE) {
 			//	throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 			//}
 		
-			//return $insert_id;
+			//return $id;
 		}
 	}
 

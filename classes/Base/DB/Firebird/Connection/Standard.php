@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-11
+ * @version 2013-01-13
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -125,13 +125,13 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	 * @access public
 	 * @override
 	 * @param string $table                         the table to be queried
-	 * @param string $id                            the name of column's id
+	 * @param string $column                        the column representing table's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 *
 	 * @see http://www.firebirdfaq.org/faq243/
 	 */
-	public function get_last_insert_id($table = NULL, $id = 'id') {
+	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
@@ -140,18 +140,18 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 				$sql = $this->sql;
 				$precompiler = DB_SQL::precompiler($this->data_source);
 				$table = $precompiler->prepare_identifier($table);
-				$id = $precompiler->prepare_identifier($id);
-				$insert_id = (int) $this->query("SELECT MAX({$id}) AS \"id\" FROM {$table};")->get('id', 0);
+				$column = $precompiler->prepare_identifier($column);
+				$id = (int) $this->query("SELECT MAX({$column}) AS \"id\" FROM {$table};")->get('id', 0);
 				$this->sql = $sql;
-				return $insert_id;
+				return $id;
 			}
 			else {
 				$sql = $this->sql;
 				if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
 					$table = Arr::get($matches, 1);
-					$insert_id = (int) $this->query("SELECT \"ID\" AS \"id\" FROM {$table} ORDER BY \"ID\" DESC ROWS 1;")->get('id', 0);
+					$id = (int) $this->query("SELECT \"ID\" AS \"id\" FROM {$table} ORDER BY \"ID\" DESC ROWS 1;")->get('id', 0);
 					$this->sql = $sql;
-					return $insert_id;
+					return $id;
 				}
 				return 0;
 			}

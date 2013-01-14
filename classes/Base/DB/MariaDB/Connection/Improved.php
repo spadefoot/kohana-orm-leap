@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2013-01-11
+ * @version 2013-01-13
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -127,11 +127,11 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 	 * @access public
 	 * @override
 	 * @param string $table                         the table to be queried
-	 * @param string $id                            the name of column's id
+	 * @param string $column                        the column representing table's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function get_last_insert_id($table = NULL, $id = 'id') {
+	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
@@ -139,17 +139,17 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			$sql = $this->sql;
 			$precompiler = DB_SQL::precompiler($this->data_source);
 			$table = $precompiler->prepare_identifier($table);
-			$id = $precompiler->prepare_identifier($id);
-			$insert_id = (int) $this->query("SELECT MAX({$id}) AS `id` FROM {$table};")->get('id', 0);
+			$column = $precompiler->prepare_identifier($column);
+			$id = (int) $this->query("SELECT MAX({$column}) AS `id` FROM {$table};")->get('id', 0);
 			$this->sql = $sql;
-			return $insert_id;
+			return $id;
 		}
 		else {
-			$insert_id = @mysqli_insert_id($this->resource);
-			if ($insert_id === FALSE) {
+			$id = @mysqli_insert_id($this->resource);
+			if ($id === FALSE) {
 				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 			}
-			return $insert_id;
+			return $id;
 		}
 	}
 

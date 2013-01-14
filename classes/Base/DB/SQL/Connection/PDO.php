@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2013-01-11
+ * @version 2013-01-13
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -120,13 +120,13 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * @access public
 	 * @override
 	 * @param string $table                         the table to be queried
-	 * @param string $id                            the name of column's id
+	 * @param string $column                        the column representing table's id
 	 * @return integer                              the last insert id
 	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.lastinsertid.php
 	 */
-	public function get_last_insert_id($table = NULL, $id = 'id') {
+	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
@@ -135,11 +135,11 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 				$sql = $this->sql;
 				$precompiler = DB_SQL::precompiler($this->data_source);
 				$table = $precompiler->prepare_identifier($table);
-				$id = $precompiler->prepare_identifier($id);
+				$column = $precompiler->prepare_identifier($column);
 				$alias = $precompiler->prepare_alias('id');
-				$insert_id = (int) $this->query("SELECT MAX({$id}) AS {$alias} FROM {$table};")->get('id', 0);
+				$id = (int) $this->query("SELECT MAX({$column}) AS {$alias} FROM {$table};")->get('id', 0);
 				$this->sql = $sql;
-				return $insert_id;
+				return $id;
 			}
 			return $this->resource->lastInsertId();
 		}
