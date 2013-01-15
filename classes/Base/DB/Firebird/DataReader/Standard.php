@@ -22,11 +22,27 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-29
+ * @version 2013-01-14
  *
  * @abstract
  */
 abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_Standard {
+
+	/**
+	 * This variable is used to store the connection's resource.
+	 *
+	 * @access protected
+	 * @var resource
+	 */
+	protected $resource;
+
+	/**
+	 * This variable stores the names of all blob fields.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $blobs;
 
 	/**
 	 * This function initializes the class.
@@ -38,13 +54,22 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 * @param integer $mode                     the execution mode to be used
 	 */
 	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
-		$resource = $connection->get_resource();
-		$command = @ibase_query($resource, $sql);
+		$this->resource = $connection->get_resource();
+		$command = @ibase_query($this->resource, $sql);
 		if ($command === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 		$this->command = $command;
 		$this->record = FALSE;
+
+		$this->blobs = array();
+		$count = (int) @ibase_num_fields($command);
+		for ($i = 0; $i < $count; $i++) {
+			$field = ibase_field_info($command, $i);
+			if ($field['type'] == 'BLOB') {
+				$this->blobs[] = $field['name'];
+			}
+		}
 	}
 
 	/**
@@ -58,6 +83,8 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 			@ibase_free_result($this->command);
 			$this->command = NULL;
 			$this->record = FALSE;
+			$this->blobs = array();
+            $this->resource = NULL;
 		}
 	}
 
@@ -67,10 +94,38 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 * @access public
 	 * @override
 	 * @return boolean                          whether another record was fetched
+	 *
+	 * @see http://php.net/manual/en/function.ibase-blob-get.php
 	 */
 	public function read() {
 		$this->record = @ibase_fetch_assoc($this->command);
-		return ($this->record !== FALSE);
+		if ($this->record !== FALSE) {
+			foreach ($this->blobs as $field) {
+				$info = @ibase_blob_info($this->resource, $this->record[$field]);
+				if (is_array($info) AND ! $info['isnull']) {
+					$buffer = '';
+					$handle = @ibase_blob_open($this->resource, $this->record[$field]);
+					if ($handle !== FALSE) {
+						for ($i = 0; $i < $info[1]; $i++) {
+							$size = ($i == ($info[1] - 1))
+								? $info[0] - ($i * $info[2])
+								: $info[2];
+							$value = @ibase_blob_get($handle, $size);
+							if ($value !== FALSE) {
+								$buffer .= $value;
+							}
+						}
+						@ibase_blob_close($handle);
+					}
+					$this->record[$field] = $buffer;
+				}
+				else {
+					$this->record[$field] = NULL;
+				}
+			}
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 }
