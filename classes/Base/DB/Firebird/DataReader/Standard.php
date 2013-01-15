@@ -61,7 +61,6 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 		}
 		$this->command = $command;
 		$this->record = FALSE;
-
 		$this->blobs = array();
 		$count = (int) @ibase_num_fields($command);
 		for ($i = 0; $i < $count; $i++) {
@@ -84,7 +83,7 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 			$this->command = NULL;
 			$this->record = FALSE;
 			$this->blobs = array();
-            $this->resource = NULL;
+			$this->resource = NULL;
 		}
 	}
 
