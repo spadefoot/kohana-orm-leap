@@ -1,24 +1,20 @@
-# LEAP ORM for Kohana PHP Framework
+# LEAP for Kohana PHP Framework
 
-LEAP is an ORM for the [Kohana PHP Framework](http://kohanaframework.org).  It also provides a powerful query builder.  More importantly, it
-works with the following databases: DB2, Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  This ORM has been completely built
-from the ground up and therefore is NOT a hack implemetation.
+LEAP is an database management library for the [Kohana PHP Framework](http://kohanaframework.org) and is designed to work with DB2,
+Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  LEAP acts a common interface between the different
+database dialects and connections.  It provides a powerful query builder and ORM.  LEAP's ORM is based on the active record design
+pattern, which utilizes PHP objects to model database tables.
 
-The Leap ORM is based on the active record design pattern.  It provides a way to model database tables using PHP objects.
+Make sure to "Star" this project if you like it.
 
 ## Motivation
 
-The Kohana PHP framework is one of the cleanest frameworks.  However, Kohana's official ORM is written only for MySQL.  Although some developers
-have attempted to make it work with other databases, it really doesn't work well with any database other than MySQL.  Therefore, the primary goal
-of this project was to create an ORM for Kohana that works with any major database.
-
-Another goal of this project was to make the LEAP ORM a true Kohana module so that it could be just dropped into the Kohana's modules folder and
-work.  Even though ORMs like [Doctrine](http://www.doctrine-project.org/projects/orm) could be adapted for Kohana, doing so requires a lot of work
-to function correctly.  Besides, Doctrine is now so bloated and old that it really needs to be refactored.
-
-A third goal for this project was to create an ORM for Kohana that can harness the power of composite keys, which many other ORMs (e.g. [Kohana's
-official ORM](https://github.com/kohana/orm), [Jelly](https://github.com/creatoro/jelly), and [Sprig](https://github.com/sittercity/sprig/)) cannot
-handle.  The LEAP ORM for Kohana, on the other hand, is able to load models using composite keys.
+LEAP is meant to be a simple, clean project.  The primary goal of LEAP is to create an ORM for the Kohana PHP Framework that works
+with all major databases and is meant to be a true Kohana module so that it could be just dropped into Kohana's modules folder and
+work.  Even though other ORMs like [Doctrine](http://www.doctrine-project.org/projects/orm) are adaptable to Kohana, doing so
+requires a lot of work.  Another goal for the development of LEAP is to create an ORM for Kohana that can harness the power of
+composite keys, which many other ORMs (e.g. [Kohana's official ORM](https://github.com/kohana/orm), [Jelly](https://github.com/creatoro/jelly),
+and [Sprig](https://github.com/sittercity/sprig/)) cannot handle.
 
 ## Features
 
@@ -103,19 +99,16 @@ via email please send an email to spadefoot.oss@gmail.com.
 
 ## Future Development
 
-This project is constantly being improved and extended.  Here is a list of some of the features to come:
+This project is constantly being improved and extended. If you would like to contribute to LEAP, please fork this project and then send
+us your additions/modifications using a [pull request](http://help.github.com/send-pull-requests/).
 
-* Plugin for Cubrid SQL.
-* Plugins for NoSQL databases: e.g. [CouchDB](http://couchdb.apache.org/), [DynamoDB](http://aws.amazon.com/dynamodb/), [MongoDB](http://www.mongodb.org/), and XML RDB.
-* Master / Slave support.
-* More unit tests.
+## License
 
-If you would like to take on some of these features, please fork this project and then send a [pull request](http://help.github.com/send-pull-requests/)
-when your done.
+Except as otherwise noted, LEAP is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html).
 
-## License (Apache v2.0)
+### Apache v2.0
 
-Copyright 2011-2012 Spadefoot
+Copyright © 2011–2013 Spadefoot Team.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use these files except in compliance with the License. You may obtain
 a copy of the License at:
