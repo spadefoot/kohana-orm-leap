@@ -1,7 +1,7 @@
 # LEAP for Kohana PHP Framework
 
 LEAP is an database management library for the [Kohana PHP Framework](http://kohanaframework.org) and is designed to work with DB2,
-Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  LEAP acts a common interface between the different
+Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.  LEAP acts as a common interface between the different
 database dialects and connections.  It provides a powerful query builder and ORM.  LEAP's ORM is based on the active record design
 pattern, which utilizes PHP objects to model database tables.
 

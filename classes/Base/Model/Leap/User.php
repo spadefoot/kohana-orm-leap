@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-12-05
+ * @version 2013-01-22
  *
  * @abstract
  */
@@ -145,6 +145,18 @@ abstract class Base_Model_Leap_User extends DB_ORM_Model {
 	}
 
 	/**
+	 * This function completes the user's login.
+	 *
+	 * @access public
+	 */
+	public function complete_login() {
+		$this->logins++;
+		$this->last_login = time();
+		$this->last_ip = Request::$client_ip;
+		$this->save();
+	}
+
+	/**
 	 * This function returns the data source name.
 	 *
 	 * @access public
@@ -154,18 +166,6 @@ abstract class Base_Model_Leap_User extends DB_ORM_Model {
 	 */
 	public static function data_source() {
 		return 'default';	
-	}
-
-	/**
-	 * This function returns the database table's name.
-	 *
-	 * @access public
-	 * @override
-	 * @static
-	 * @return string                               the database table's name
-	 */
-	public static function table() {
-		return 'users';	
 	}
 
 	/**
@@ -181,15 +181,15 @@ abstract class Base_Model_Leap_User extends DB_ORM_Model {
 	}
 
 	/**
-	 * This function completes the user's login.
+	 * This function returns the database table's name.
 	 *
 	 * @access public
+	 * @override
+	 * @static
+	 * @return string                               the database table's name
 	 */
-	public function complete_login() {
-		$this->logins++;
-		$this->last_login = time();
-		$this->last_ip = Request::$client_ip;
-		$this->save();
+	public static function table() {
+		return 'users';	
 	}
 
 }

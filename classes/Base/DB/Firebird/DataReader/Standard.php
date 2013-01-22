@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-14
+ * @version 2013-01-22
  *
  * @abstract
  */
@@ -53,7 +53,7 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
+	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$this->resource = $connection->get_resource();
 		$command = @ibase_query($this->resource, $sql);
 		if ($command === FALSE) {

@@ -22,19 +22,11 @@
  *
  * @package Leap
  * @category Session
- * @version 2013-01-03
+ * @version 2013-01-22
  *
  * @abstract
  */
 abstract class Base_Session_Leap extends Session {
-
-	/**
-	 * This variable stores the name of the session model.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $_table = 'Session'; // Session Model
 
 	/**
 	 * This variable stores a list column aliases and their respective database
@@ -66,6 +58,14 @@ abstract class Base_Session_Leap extends Session {
 	protected $_session_id;
 
 	/**
+	 * This variable stores the name of the session model.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_table = 'Session'; // Session Model
+
+	/**
 	 * This variable stores the old session id.
 	 *
 	 * @access protected
@@ -78,6 +78,7 @@ abstract class Base_Session_Leap extends Session {
 	 * information and/or session id.
 	 *
 	 * @access public
+	 * @override
 	 * @param mixed $config                     the config information to be used
 	 * @param string $id                        the session id
 	 */
@@ -107,116 +108,10 @@ abstract class Base_Session_Leap extends Session {
 	}
 
 	/**
-	 * This function returns the current session id.
-	 *
-	 * @access public
-	 * @return string                           the current session id
-	 */
-	public function id() {
-		return $this->_session_id;
-	}
-
-	/**
-	 * This function returns the raw session data string.
-	 *
-	 * @access protected
-	 * @param string $id                        the session id
-	 * @return string                           the raw session data string
-	 */
-	protected function _read($id = NULL) {
-		if ($id OR $id = Cookie::get($this->_name)) {
-            
-			try {
-				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
-					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
-					->limit(1)
-					->query()
-					->fetch(0)
-					->contents;
-			}
-			catch (ErrorException $ex) {
-				$contents = FALSE;
-			}
-
-			if ($contents !== FALSE) {
-				// Set the current session id
-				$this->_session_id = $this->_update_id = $id;
-
-				// Return the contents
-				return $contents;
-			}
-		}
-
-		// Create a new session id
-		$this->_regenerate();
-
-		return NULL;
-	}
-
-	/**
-	 * This function generates a new session.
-	 *
-	 * @access protected
-	 * @return string                           the new session id
-	 */
-	protected function _regenerate() {
-		do {
-			// Create a new session id
-			$id = str_replace('.', '-', uniqid(NULL, TRUE));
-            $count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
-                ->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
-                ->query()
-                ->count();
-		}
-		while ($count > 0);
-
-		return $this->_session_id = $id;
-	}
-
-	/**
-	 * This function saves the current session to the database.
-	 *
-	 * @access protected
-	 * @return boolean                          whether the current session was
-	 *                                          successfully saved
-	 */
-	protected function _write() {
-		if ($this->_update_id === NULL) {
-			// Insert a new row
-			$query = DB_ORM::insert($this->_table)
-				->column($this->_columns['last_active'], $this->_data['last_active'])
-				->column($this->_columns['contents'], $this->__toString())
-				->column($this->_columns['session_id'], $this->_session_id); 
-		}
-		else {
-			// Update the row
-			$query = DB_ORM::update($this->_table)
-				->set($this->_columns['last_active'], $this->_data['last_active'])
-				->set($this->_columns['contents'], $this->__toString())
-				->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $this->_update_id);
-
-			if ($this->_update_id !== $this->_session_id) {
-				// Also update the session id
-				$query->set($this->_columns['session_id'], $this->_session_id);
-			}
-		}
-
-		// Execute the query
-		$query->execute();
-
-		// The update and the session id are now the same
-		$this->_update_id = $this->_session_id;
-
-		// Update the cookie with the new session id
-		Cookie::set($this->_name, $this->_session_id, $this->_lifetime);
-
-		return TRUE;
-	}
-
-	/**
 	 * This function destroys the current session.
 	 *
 	 * @access protected
+	 * @override
 	 * @return boolean                          whether the current session was
 	 *                                          successfully destroyed
 	 */
@@ -260,14 +155,126 @@ abstract class Base_Session_Leap extends Session {
 	}
 
 	/**
+	 * This function returns the current session id.
+	 *
+	 * @access public
+	 * @override
+	 * @return string                           the current session id
+	 */
+	public function id() {
+		return $this->_session_id;
+	}
+
+	/**
+	 * This function returns the raw session data string.
+	 *
+	 * @access protected
+	 * @override
+	 * @param string $id                        the session id
+	 * @return string                           the raw session data string
+	 */
+	protected function _read($id = NULL) {
+		if ($id OR ($id = Cookie::get($this->_name))) {
+
+			try {
+				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
+					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
+					->limit(1)
+					->query()
+					->fetch(0)
+					->contents;
+			}
+			catch (ErrorException $ex) {
+				$contents = FALSE;
+			}
+
+			if ($contents !== FALSE) {
+				// Set the current session id
+				$this->_session_id = $this->_update_id = $id;
+
+				// Return the contents
+				return $contents;
+			}
+		}
+
+		// Create a new session id
+		$this->_regenerate();
+
+		return NULL;
+	}
+
+	/**
+	 * This function generates a new session.
+	 *
+	 * @access protected
+	 * @override
+	 * @return string                           the new session id
+	 */
+	protected function _regenerate() {
+		do {
+			// Create a new session id
+			$id = str_replace('.', '-', uniqid(NULL, TRUE));
+			$count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
+				->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
+				->query()
+				->count();
+		}
+		while ($count > 0);
+
+		return $this->_session_id = $id;
+	}
+
+	/**
 	 * This function restarts the current session.
 	 *
 	 * @access protected
+	 * @override
 	 * @return boolean                          whether the current session was
 	 *                                          successfully restarted
 	 */
 	protected function _restart() {
 		$this->_regenerate();
+		return TRUE;
+	}
+
+	/**
+	 * This function saves the current session to the database.
+	 *
+	 * @access protected
+	 * @override
+	 * @return boolean                          whether the current session was
+	 *                                          successfully saved
+	 */
+	protected function _write() {
+		if ($this->_update_id === NULL) {
+			// Insert a new row
+			$query = DB_ORM::insert($this->_table)
+				->column($this->_columns['last_active'], $this->_data['last_active'])
+				->column($this->_columns['contents'], $this->__toString())
+				->column($this->_columns['session_id'], $this->_session_id); 
+		}
+		else {
+			// Update the row
+			$query = DB_ORM::update($this->_table)
+				->set($this->_columns['last_active'], $this->_data['last_active'])
+				->set($this->_columns['contents'], $this->__toString())
+				->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $this->_update_id);
+
+			if ($this->_update_id !== $this->_session_id) {
+				// Also update the session id
+				$query->set($this->_columns['session_id'], $this->_session_id);
+			}
+		}
+
+		// Execute the query
+		$query->execute();
+
+		// The update and the session id are now the same
+		$this->_update_id = $this->_session_id;
+
+		// Update the cookie with the new session id
+		Cookie::set($this->_name, $this->_session_id, $this->_lifetime);
+
 		return TRUE;
 	}
 

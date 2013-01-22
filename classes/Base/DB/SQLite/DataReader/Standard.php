@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2012-12-29
+ * @version 2013-01-22
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -39,7 +39,7 @@ abstract class Base_DB_SQLite_DataReader_Standard extends DB_SQL_DataReader_Stan
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
+	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();
 		$command = @sqlite_query($resource, $sql);
 		if ($command === FALSE) {

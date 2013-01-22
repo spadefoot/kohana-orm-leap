@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-10
+ * @version 2013-01-22
  *
  * @abstract
  */
@@ -33,7 +33,7 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 	 * @access protected
 	 * @var string
 	 */
-	protected $expr = NULL;
+	protected $expr;
 
 	/**
 	 * This variable stores the unescaped parameters to be used in the SQL expression.
@@ -41,7 +41,7 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 	 * @access protected
 	 * @var array
 	 */
-	protected $params = NULL;
+	protected $params;
 
 	/**
 	 * This constructor instantiates the class with the specified SQL expression
@@ -55,6 +55,17 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 	public function __construct($expr, Array $params = array()) {
 		$this->expr = (string) $expr;
 		$this->params = $params;
+	}
+
+	/**
+	 * This function returns the raw SQL expression.
+	 *
+	 * @access public
+	 * @override
+	 * @return string                               the raw SQL expression
+	 */
+	public function __toString() {
+		return $this->expr;
 	}
 
 	/**
@@ -100,8 +111,8 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 	 * This function returns the compiled SQL expression as a string.
 	 *
 	 * @access public
-	 * @param mixed $object                         an instance of the compiler or data
-	 *                                              source to be used
+	 * @param mixed $object                         an instance of the pre-compiler or
+	 *                                              data source to be used
 	 * @return string                               the compiled SQL expression
 	 */
 	public function value($object = NULL) {
@@ -114,17 +125,6 @@ abstract class Base_DB_SQL_Expression extends Core_Object {
 			$expr = strtr($expr, $params);
 		}
 		return $expr;
-	}
-
-	/**
-	 * This function returns the raw SQL expression.
-	 *
-	 * @access public
-	 * @override
-	 * @return string                               the raw SQL expression
-	 */
-	public function __toString() {
-		return $this->expr;
 	}
 
 }

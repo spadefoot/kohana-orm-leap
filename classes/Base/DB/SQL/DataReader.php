@@ -21,21 +21,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-13
+ * @version 2013-01-22
  *
  * @abstract
  */
 abstract class Base_DB_SQL_DataReader extends Core_Object {
-
-	/**
-	 * This variable stores an array of serialized class objects, which is
-	 * used when type casting a result set.
-	 *
-	 * @access protected
-	 * @static
-	 * @var array
-	 */
-	protected static $objects = array();
 
 	/**
 	 * This variable stores the command reference being utilized.
@@ -62,7 +52,7 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public abstract function __construct(DB_Connection_Driver $connection, $sql, $mode = 32);
+	public abstract function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL);
 
 	/**
 	 * This destructor ensures that the command reference has been freed.
@@ -123,6 +113,16 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * This variable stores an array of serialized class objects, which is
+	 * used when type casting a result set.
+	 *
+	 * @access protected
+	 * @static
+	 * @var array
+	 */
+	protected static $objects = array();
+
+	/**
 	 * This function returns an instance of the appropriate SQL data reader.
 	 *
 	 * @access public
@@ -133,7 +133,7 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	 * @return DB_SQL_DataReader                       an instance of the appropriate
 	 *                                                 SQL data reader
 	 */
-	public static function factory(DB_Connection_Driver $connection, $sql, $mode = 32) {
+	public static function factory(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$class = 'DB_' . $connection->data_source->dialect . '_DataReader_' . $connection->data_source->driver;
 		$reader = new $class($connection, $sql, $mode);
 		return $reader;

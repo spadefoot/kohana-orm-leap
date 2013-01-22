@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2012-12-05
+ * @version 2013-01-22
  *
  * @abstract
  */
@@ -64,15 +64,15 @@ abstract class Base_Model_Leap_Session extends DB_ORM_Model {
 	}
 
 	/**
-	 * This function returns the database table's name.
+	 * This function returns whether the primary key auto increments.
 	 *
 	 * @access public
 	 * @override
 	 * @static
-	 * @return string                               the database table's name
+	 * @return boolean                              whether the primary key auto increments
 	 */
-	public static function table() {
-		return 'sessions';
+	public static function is_auto_incremented() {
+		return FALSE;	
 	}
 
 	/**
@@ -88,15 +88,15 @@ abstract class Base_Model_Leap_Session extends DB_ORM_Model {
 	}
 
 	/**
-	 * This function returns whether the primary key auto increments.
+	 * This function returns the database table's name.
 	 *
 	 * @access public
 	 * @override
 	 * @static
-	 * @return boolean                              whether the primary key auto increments
+	 * @return string                               the database table's name
 	 */
-	public static function is_auto_incremented() {
-		return FALSE;	
+	public static function table() {
+		return 'sessions';
 	}
 
 }

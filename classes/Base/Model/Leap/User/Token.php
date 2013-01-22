@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2013-01-05
+ * @version 2013-01-22
  *
  * @abstract
  */
@@ -81,6 +81,20 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	}
 
 	/**
+	 * This function returns a new token.
+	 *
+	 * @access public
+	 * @return string                               a new token
+	 */
+	public function create_token() {
+		do {
+			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
+		}
+		while(DB_SQL::select($this->data_source())->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
+		return $token;
+	}
+
+	/**
 	 * This function returns the data source name.
 	 *
 	 * @access public
@@ -90,18 +104,6 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 */
 	public static function data_source() {
 		return 'default';
-	}
-
-	/**
-	 * This function returns the database table's name.
-	 *
-	 * @access public
-	 * @override
-	 * @static
-	 * @return string                               the database table's name
-	 */
-	public static function table() {
-		return 'user_tokens';
 	}
 
 	/**
@@ -131,17 +133,15 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	}
 
 	/**
-	 * This function returns a new token.
+	 * This function returns the database table's name.
 	 *
 	 * @access public
-	 * @return string                               a new token
+	 * @override
+	 * @static
+	 * @return string                               the database table's name
 	 */
-	public function create_token() {
-		do {
-			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
-		}
-		while(DB_SQL::select($this->data_source())->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
-		return $token;
+	public static function table() {
+		return 'user_tokens';
 	}
 
 }

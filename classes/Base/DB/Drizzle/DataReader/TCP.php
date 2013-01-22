@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-06
+ * @version 2013-01-22
  *
  * @abstract
  */
@@ -37,7 +37,7 @@ abstract class Base_DB_Drizzle_DataReader_TCP extends DB_SQL_DataReader_Standard
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public function __construct(DB_Connection_Driver $connection, $sql, $mode = 32) {
+	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();
 		$command = @drizzle_query($resource, $sql);
 		if (($command === FALSE) OR ! @drizzle_result_buffer($command)) {

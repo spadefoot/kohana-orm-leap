@@ -17,10 +17,12 @@
  */
 
 /**
- * This class builds a DB2 lock statement.
+ * This class builds an SQL lock statement.
  *
  * @package Leap
- * @category DB2
- * @version 2013-01-11
+ * @category SQL
+ * @version 2013-01-22
+ *
+ * @abstract
  */
-class DB_SQL_Lock_Builder extends Base_DB_SQL_Lock_Builder {}
+abstract class DB_SQL_Lock_Builder extends Base_DB_SQL_Lock_Builder {}
