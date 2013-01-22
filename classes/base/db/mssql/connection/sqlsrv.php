@@ -59,6 +59,13 @@ abstract class Base_DB_MsSQL_Connection_Sqlsrv extends DB_SQL_Connection_Sqlsrv 
 				$this->resource_id = ($this->data_source->is_persistent())
 						? sqlsrv_connect($connection_string, $connection_info)
 						: sqlsrv_connect($connection_string, $connection_info);
+
+				if (!$this->resource_id) {
+					$errors = sqlsrv_errors();
+					$error = Arr::get($errors, 0);
+					$message = Arr::get($error, 'message');
+					throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $message));
+				}
 			}
 			catch (ErrorException $ex) {
 				throw new Kohana_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
