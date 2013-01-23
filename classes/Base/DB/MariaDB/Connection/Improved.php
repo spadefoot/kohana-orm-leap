@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2013-01-13
+ * @version 2013-01-22
  *
  * @see http://www.php.net/manual/en/book.mysqli.php
  * @see http://programmers.stackexchange.com/questions/120178/whats-the-difference-between-mariadb-and-mysql
@@ -60,6 +60,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 		if ($command === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
+		$this->sql = 'START TRANSACTION;';
 	}
 
 	/**
@@ -98,6 +99,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
 		@mysqli_autocommit($this->resource, TRUE);
+		$this->sql = 'COMMIT;';
 	}
 
 	/**
@@ -238,6 +240,7 @@ abstract class Base_DB_MariaDB_Connection_Improved extends DB_SQL_Connection_Sta
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @mysqli_error($this->resource)));
 		}
 		@mysqli_autocommit($this->resource, TRUE);
+		$this->sql = 'ROLLBACK;';
 	}
 
 }

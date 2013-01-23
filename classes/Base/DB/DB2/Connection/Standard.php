@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-13
+ * @version 2013-01-22
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -79,6 +79,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 		if ($command === FALSE) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
+		$this->sql = 'BEGIN TRANSACTION;';
 	}
 
 	/**
@@ -159,6 +160,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
 		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
+		$this->sql = 'ROLLBACK;';
 	}
 
 	/**
@@ -180,6 +182,7 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
 		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
+		$this->sql = 'COMMIT;';
 	}
 
 	/**

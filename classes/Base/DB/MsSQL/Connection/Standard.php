@@ -21,9 +21,11 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-13
+ * @version 2013-01-22
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
+ * @see http://blogs.msdn.com/b/brian_swan/archive/2010/03/08/mssql-vs-sqlsrv-what-s-the-difference-part-1.aspx
+ * @see http://blogs.msdn.com/b/brian_swan/archive/2010/03/10/mssql-vs-sqlsrv-what-s-the-difference-part-2.aspx
  *
  * @abstract
  */

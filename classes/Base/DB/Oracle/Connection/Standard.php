@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-13
+ * @version 2013-01-22
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -105,11 +105,12 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
 			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
 		$this->execution_mode = (PHP_VERSION_ID > 50301)
 			? OCI_NO_AUTO_COMMIT // Use with PHP > 5.3.1
 			: OCI_DEFAULT;       // Use with PHP <= 5.3.1
+		$this->sql = 'BEGIN TRANSACTION;';
 	}
 
 	/**
@@ -252,6 +253,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 				: 'Unable to perform command.';
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
+		$this->sql = 'ROLLBACK;';
 	}
 
 	/**
@@ -277,6 +279,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 				: 'Unable to perform command.';
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
+		$this->sql = 'COMMIT;';
 	}
 
 	/**

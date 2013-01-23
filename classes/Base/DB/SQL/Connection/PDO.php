@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2013-01-13
+ * @version 2013-01-22
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -55,6 +55,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	public function begin_transaction() {
 		try {
 			$this->resource->beginTransaction();
+			$this->sql = 'BEGIN TRANSACTION;';
 		}
 		catch (Exception $ex) {
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
@@ -88,6 +89,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	public function commit() {
 		try {
 			$this->resource->commit();
+			$this->sql = 'COMMIT;';
 		}
 		catch (Exception $ex) {
 			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
@@ -199,6 +201,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	public function rollback() {
 		try {
 			$this->resource->rollBack();
+			$this->sql = 'ROLLBACK;';
 		}
 		catch (Exception $ex) {
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));

@@ -17,18 +17,18 @@
  */
 
 /**
- * This class is used to read data from a MS SQL database using the standard
- * (i.e. mssql) driver.
+ * This class is used to read data from a MS SQL database using the improved
+ * (i.e. sqlsrv) driver.
  *
  * @package Leap
  * @category MS SQL
  * @version 2013-01-22
  *
- * @see http://www.php.net/manual/en/ref.mssql.php
+ * @see http://php.net/manual/en/ref.sqlsrv.php
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_DataReader_Standard extends DB_SQL_DataReader_Standard {
+abstract class Base_DB_MsSQL_DataReader_Improved extends DB_SQL_DataReader_Improved {
 
 	/**
 	 * This function initializes the class.
@@ -38,12 +38,18 @@ abstract class Base_DB_MsSQL_DataReader_Standard extends DB_SQL_DataReader_Stand
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
+	 *
+	 * @see http://php.net/manual/en/function.sqlsrv-query.php
 	 */
 	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();
-		$command = @mssql_query($sql, $resource);
+		$command = @sqlsrv_query($resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mssql_get_last_message()));
+			$errors = @sqlsrv_errors();
+			$reason = (is_array($errors) AND isset($errors[0]['message']))
+				? $errors[0]['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->command = $command;
 		$this->record = FALSE;
@@ -54,10 +60,12 @@ abstract class Base_DB_MsSQL_DataReader_Standard extends DB_SQL_DataReader_Stand
 	 *
 	 * @access public
 	 * @override
+	 *
+	 * @see http://php.net/manual/en/function.sqlsrv-free-stmt.php
 	 */
 	public function free() {
 		if ($this->command !== NULL) {
-			@mssql_free_result($this->command);
+			@sqlsrv_free_stmt($this->command);
 			$this->command = NULL;
 			$this->record = FALSE;
 		}
@@ -69,9 +77,11 @@ abstract class Base_DB_MsSQL_DataReader_Standard extends DB_SQL_DataReader_Stand
 	 * @access public
 	 * @override
 	 * @return boolean                          whether another record was fetched
+	 *
+	 * @see http://php.net/manual/en/function.sqlsrv-fetch-array.php
 	 */
 	public function read() {
-		$this->record = @mssql_fetch_assoc($this->command);
+		$this->record = @sqlsrv_fetch_array($this->command, SQLSRV_FETCH_ASSOC)
 		return ($this->record !== FALSE);
 	}
 

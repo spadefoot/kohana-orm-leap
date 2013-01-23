@@ -17,11 +17,11 @@
  */
 
 /**
- * This class is used to read data from a MS SQL database using the standard
- * (i.e. mssql) driver.
+ * This class is used to read data from a MS SQL database using the improved
+ * (i.e. sqlsrv) driver.
  *
  * @package Leap
  * @category MS SQL
  * @version 2013-01-22
  */
-class DB_MsSQL_DataReader_Standard extends Base_DB_MsSQL_DataReader_Standard {}
+class DB_MsSQL_DataReader_Improved extends Base_DB_MsSQL_DataReader_Improved {}
