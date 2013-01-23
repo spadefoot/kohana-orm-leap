@@ -231,7 +231,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 	 */
 	public function close() {
 		if ($this->is_connected()) {
-			if ( ! @sqlsrv_close($this->resource_id)) {
+			if ( ! @sqlsrv_close($this->resource)) {
 				return FALSE;
 			}
 			$this->resource = NULL;
