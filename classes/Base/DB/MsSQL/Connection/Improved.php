@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-25
+ * @version 2013-01-26
  *
  * @see http://php.net/manual/en/ref.sqlsrv.php
  * @see http://blogs.msdn.com/b/brian_swan/archive/2010/03/08/mssql-vs-sqlsrv-what-s-the-difference-part-1.aspx
@@ -67,7 +67,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 			$this->resource = @sqlsrv_connect($connection_string, $configurations);
 
 			if ($this->resource === FALSE) {
-				$errors = @sqlsrv_errors();
+				$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
 				$reason = (is_array($errors) AND isset($errors[0]['message']))
 					? $errors[0]['message']
 					: 'Unable to connect using the specified configurations.';
@@ -93,7 +93,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 		}
 		$command = @sqlsrv_begin_transaction($this->resource);
 		if ($command === FALSE) {
-			$errors = @sqlsrv_errors();
+			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
@@ -120,7 +120,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 		}
 		$command = @sqlsrv_query($this->resource, $sql);
 		if ($command === FALSE) {
-			$errors = @sqlsrv_errors();
+			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
@@ -187,7 +187,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 		}
 		$command = @sqlsrv_rollback($this->resource);
 		if ($command === FALSE) {
-			$errors = @sqlsrv_errors();
+			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
@@ -213,7 +213,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 		}
 		$command = @sqlsrv_commit($this->resource);
 		if ($command === FALSE) {
-			$errors = @sqlsrv_errors();
+			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';

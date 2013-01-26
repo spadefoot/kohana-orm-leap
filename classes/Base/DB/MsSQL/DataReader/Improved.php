@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-22
+ * @version 2013-01-26
  *
  * @see http://php.net/manual/en/ref.sqlsrv.php
  *
@@ -45,7 +45,7 @@ abstract class Base_DB_MsSQL_DataReader_Improved extends DB_SQL_DataReader_Impro
 		$resource = $connection->get_resource();
 		$command = @sqlsrv_query($resource, $sql);
 		if ($command === FALSE) {
-			$errors = @sqlsrv_errors();
+			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';

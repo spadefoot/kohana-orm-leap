@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-11
+ * @version 2013-01-26
  *
  * @abstract
  */
@@ -46,14 +46,14 @@ abstract class Base_DB_DataSource extends Core_Object {
 	public function __construct($config) {
 		if (empty($config)) {
 			$id = 'database.default';
-			if (($config = Kohana::$config->load($id)) === NULL) {
+			if (($config = static::config($id)) === NULL) {
 				throw new Throwable_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
 		}
 		else if (is_string($config)) {
 			$id = 'database.' . $config;
-			if (($config = Kohana::$config->load($id)) === NULL) {
+			if (($config = static::config($id)) === NULL) {
 				throw new Throwable_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
@@ -199,6 +199,21 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 */
 	public function is_persistent() {
 		return $this->settings['persistent'];
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * This function returns configurations settings for the specified path.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $path                      the path to be used
+	 * @return array                            the configuration settings for the
+	 *                                          specified path
+	 */
+	public static function config($path) {
+		return Kohana::$config->load($path);
 	}
 
 }
