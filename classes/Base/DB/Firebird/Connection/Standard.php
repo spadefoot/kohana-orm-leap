@@ -31,7 +31,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-22
+ * @version 2013-01-25
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -149,10 +149,12 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			else {
 				$sql = $this->sql;
 				if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
-					$table = Arr::get($matches, 1);
-					$id = (int) $this->query("SELECT \"ID\" AS \"id\" FROM {$table} ORDER BY \"ID\" DESC ROWS 1;")->get('id', 0);
-					$this->sql = $sql;
-					return $id;
+					if (isset($matches[1])) {
+						$table = $matches[1];
+						$id = (int) $this->query("SELECT \"ID\" AS \"id\" FROM {$table} ORDER BY \"ID\" DESC ROWS 1;")->get('id', 0);
+						$this->sql = $sql;
+						return $id;
+					}
 				}
 				return 0;
 			}

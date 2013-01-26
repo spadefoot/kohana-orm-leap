@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-22
+ * @version 2013-01-25
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -217,10 +217,12 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			else {
 				$sql = $this->sql;
 				if (preg_match('/^INSERT\s+INTO\s+(.*?)\s+/i', $sql, $matches)) {
-					$table = Arr::get($matches, 1, '');
-					$id = (int) $this->query("SELECT MAX(ID) AS \"id\" FROM {$table};")->get('id', 0);
-					$this->sql = $sql;
-					return $id;
+					if (isset($matches[1])) {
+						$table = $matches[1];
+						$id = (int) $this->query("SELECT MAX(ID) AS \"id\" FROM {$table};")->get('id', 0);
+						$this->sql = $sql;
+						return $id;
+					}
 				}
 				return 0;
 			}

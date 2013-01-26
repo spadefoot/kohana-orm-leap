@@ -21,7 +21,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-04
+ * @version 2013-01-26
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -41,8 +41,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 * @throws Throwable_SQL_Exception          indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
-		$select_builder = 'DB_' . $this->dialect . '_Select_Builder';
-		if (is_object($statement) AND ($statement instanceof $select_builder)) {
+		if (is_object($statement) AND ($statement instanceof DB_Oracle_Select_Builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {

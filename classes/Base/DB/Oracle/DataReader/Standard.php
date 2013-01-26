@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-22
+ * @version 2013-01-26
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -49,7 +49,7 @@ abstract class Base_DB_Oracle_DataReader_Standard extends DB_SQL_DataReader_Stan
 				: 'Unable to perform command.';
 			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => $reason));
 		}
-		if ($mode === NULL) {
+		if ( ! is_integer($mode)) {
 			$mode = 32;
 		}
 		if ( ! oci_execute($command, $mode)) {
