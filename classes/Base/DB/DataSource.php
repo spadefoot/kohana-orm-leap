@@ -209,7 +209,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * @access public
 	 * @static
 	 * @param string $path                      the path to be used
-	 * @return array                            the configuration settings for the
+	 * @return mixed                            the configuration settings for the
 	 *                                          specified path
 	 */
 	public static function config($path) {
