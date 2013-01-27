@@ -22,11 +22,75 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-05
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_Drizzle_Schema extends DB_Schema {
+
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @override
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 *
+	 * @license http://kohanaframework.org/license
+	 */
+	protected function data_type($type) {
+		/*
+		case 'blob':
+			$type[0] = 'string';
+			$type[2] = '65535';
+		break;
+		case 'bool':
+			$type[0] = 'boolean';
+		break;
+			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
+			'datetime'                  => array('type' => 'string'),
+			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'double'                    => array('type' => 'float'),
+			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
+			'double unsigned'           => array('type' => 'float', 'min' => '0'),
+			'enum'                      => array('type' => 'string'),
+			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
+			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'float unsigned'            => array('type' => 'float', 'min' => '0'),
+			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
+			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
+			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
+			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
+			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
+			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
+			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
+			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
+			'national varchar'          => array('type' => 'string'),
+			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'nvarchar'                  => array('type' => 'string'),
+			'point'                     => array('type' => 'string', 'binary' => TRUE),
+			'real unsigned'             => array('type' => 'float', 'min' => '0'),
+			'set'                       => array('type' => 'string'),
+			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
+			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
+			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
+			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
+			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
+			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
+			'year'                      => array('type' => 'string'),
+		);
+
+		$type = str_replace(' zerofill', '', $type);
+
+		if (isset($types[$type])) {
+			return $types[$type];
+		}
+
+		return parent::data_type($type);
+		*/
+	}
 
 	/**
 	 * This function returns a result set that contains an array of all fields in
@@ -216,6 +280,40 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	}
 
 	/**
+	 * This function extracts a field's data type information.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $type                  the data type to be parsed
+	 * @return array                        an array with the field's type information
+	 *
+	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://kohanaframework.org/3.1/guide/api/Database#_parse_type
+	 */
+	protected static function parse_type($type) {
+		/*
+		$open = strpos($type, '(');
+
+		if ($open === FALSE) {
+			return array($type, 0, 0);
+		}
+
+		$close = strpos($type, ')', $open);
+
+		$args = preg_split('/,/', substr($type, $open + 1, $close - 1 - $open));
+
+		$info = array();
+		$info[0] = substr($type, 0, $open) . substr($type, $close + 1); // actual type
+		$info[1] = (isset($args[0])) ? $args[0] : 0; // maximum length
+		$info[2] = (isset($args[1])) ? $args[1] : 0; // decimal digits
+		$info[3] = array(); // attributes
+
+		return $info;
+		*/
+	}
+
+	/**
 	 * This function returns a result set of database tables.
 	 *
 	 * +---------------+---------------+------------------------------------------------------------+
@@ -338,102 +436,6 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		}
 
 		return $builder->query();
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @override
-	 * @param string $type                  the SQL data type
-	 * @return array                        an associated array which describes the properties
-	 *                                      for the specified data type
-	 */
-	protected function data_type($type) {
-		/*
-		case 'blob':
-			$type[0] = 'string';
-			$type[2] = '65535';
-		break;
-		case 'bool':
-			$type[0] = 'boolean';
-		break;
-			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
-			'datetime'                  => array('type' => 'string'),
-			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'double'                    => array('type' => 'float'),
-			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
-			'double unsigned'           => array('type' => 'float', 'min' => '0'),
-			'enum'                      => array('type' => 'string'),
-			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
-			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'float unsigned'            => array('type' => 'float', 'min' => '0'),
-			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
-			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
-			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
-			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
-			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
-			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
-			'national varchar'          => array('type' => 'string'),
-			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'nvarchar'                  => array('type' => 'string'),
-			'point'                     => array('type' => 'string', 'binary' => TRUE),
-			'real unsigned'             => array('type' => 'float', 'min' => '0'),
-			'set'                       => array('type' => 'string'),
-			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
-			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
-			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
-			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
-			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
-			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
-			'year'                      => array('type' => 'string'),
-		);
-
-		$type = str_replace(' zerofill', '', $type);
-
-		if (isset($types[$type])) {
-			return $types[$type];
-		}
-
-		return parent::data_type($type);
-		*/
-	}
-
-	/**
-	 * This function extracts a field's data type information.
-	 *
-	 * @access public
-	 * @static
-	 * @param string $type                  the data type to be parsed
-	 * @return array                        an array with the field's type information
-	 *
-	 * @see http://kohanaframework.org/3.1/guide/api/Database#_parse_type
-	 */
-	protected static function parse_type($type) {
-		/*
-		$open = strpos($type, '(');
-
-		if ($open === FALSE) {
-			return array($type, 0, 0);
-		}
-
-		$close = strpos($type, ')', $open);
-
-		$args = preg_split('/,/', substr($type, $open + 1, $close - 1 - $open));
-
-		$info = array();
-		$info[0] = substr($type, 0, $open) . substr($type, $close + 1); // actual type
-		$info[1] = (isset($args[0])) ? $args[0] : 0; // maximum length
-		$info[2] = (isset($args[1])) ? $args[1] : 0; // decimal digits
-		$info[3] = array(); // attributes
-
-		return $info;
-		*/
 	}
 
 }

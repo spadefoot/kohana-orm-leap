@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-13
+ * @version 2013-01-27
  *
  * @see http://www.php.net/manual/en/book.mysql.php
  *
@@ -31,28 +31,14 @@
 abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$host = $this->data_source->host;
-			$username = $this->data_source->username;
-			$password = $this->data_source->password;
-			$this->resource = ($this->data_source->is_persistent())
-				? @mysql_pconnect($host, $username, $password)
-				: @mysql_connect($host, $username, $password, TRUE);
-			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @mysql_error()));
-			}
-			if ( ! @mysql_select_db($this->data_source->database, $this->resource)) {
-				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
-			}
-			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@mysql_close($this->resource);
 		}
 	}
 
@@ -69,6 +55,38 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	 */
 	public function begin_transaction() {
 		$this->execute('START TRANSACTION;');
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @mysql_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
+	 * @see http://php.net/manual/en/function.mysql-query.php
+	 */
+	public function commit() {
+		$this->execute('COMMIT;');
 	}
 
 	/**
@@ -125,32 +143,29 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function rollbacks a transaction.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://php.net/manual/en/function.mysql-query.php
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 */
-	public function rollback() {
-		$this->execute('ROLLBACK;');
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://dev.mysql.com/doc/refman/5.0/en/commit.html
-	 * @see http://php.net/manual/en/function.mysql-query.php
-	 */
-	public function commit() {
-		$this->execute('COMMIT;');
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$host = $this->data_source->host;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$this->resource = ($this->data_source->is_persistent())
+				? @mysql_pconnect($host, $username, $password)
+				: @mysql_connect($host, $username, $password, TRUE);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @mysql_error()));
+			}
+			if ( ! @mysql_select_db($this->data_source->database, $this->resource)) {
+				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mysql_error($this->resource)));
+			}
+			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
+		}
 	}
 
 	/**
@@ -179,32 +194,17 @@ abstract class Base_DB_Drizzle_Connection_Standard extends DB_SQL_Connection_Sta
 	}
 
 	/**
-	 * This function closes an open connection.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @mysql_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
-	 * @access public
-	 * @override
+	 * @see http://php.net/manual/en/function.mysql-query.php
 	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@mysql_close($this->resource);
-		}
+	public function rollback() {
+		$this->execute('ROLLBACK;');
 	}
 
 }

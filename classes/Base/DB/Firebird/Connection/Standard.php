@@ -32,7 +32,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-25
+ * @version 2013-01-27
  *
  * @see http://us3.php.net/manual/en/book.ibase.php
  * @see http://us2.php.net/manual/en/ibase.installation.php
@@ -44,40 +44,14 @@
 abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
-	 *
-	 * @see http://www.destructor.de/firebird/charsets.htm
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$connection_string = $this->data_source->host;
-			if ( ! preg_match('/^localhost$/i', $connection_string)) {
-				$port = $this->data_source->port;
-				if ( ! empty($port)) {
-					$connection_string .= '/' . $port;
-				}
-			}
-			$connection_string .= ':' . $this->data_source->database;
-			$username = $this->data_source->username;
-			$password = $this->data_source->password;
-			$charset = $this->data_source->charset;
-			if ( ! empty($charset)) {
-				$charset = strtoupper($charset);
-			}
-			$role = ( ! empty($this->data_source->role))
-				? $this->data_source->role
-				: NULL;
-			$this->resource = ($this->data_source->is_persistent())
-				? @ibase_pconnect($connection_string, $username, $password, $charset, 0, 3, $role)
-				: @ibase_connect($connection_string, $username, $password, $charset, 0, 3, $role);
-			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @ibase_errmsg()));
-			}
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@ibase_close($this->resource);
 		}
 	}
 
@@ -98,6 +72,42 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 		$this->sql = 'BEGIN TRANSACTION;';
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @ibase_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 */
+	public function commit() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
+		}
+		$command = @ibase_commit($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @ibase_errmsg()));
+		}
+		$this->sql = 'COMMIT;';
 	}
 
 	/**
@@ -166,6 +176,44 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 	}
 
 	/**
+	 * This function opens a connection using the data source provided.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
+	 *
+	 * @see http://www.destructor.de/firebird/charsets.htm
+	 */
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$connection_string = $this->data_source->host;
+			if ( ! preg_match('/^localhost$/i', $connection_string)) {
+				$port = $this->data_source->port;
+				if ( ! empty($port)) {
+					$connection_string .= '/' . $port;
+				}
+			}
+			$connection_string .= ':' . $this->data_source->database;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$charset = $this->data_source->charset;
+			if ( ! empty($charset)) {
+				$charset = strtoupper($charset);
+			}
+			$role = ( ! empty($this->data_source->role))
+				? $this->data_source->role
+				: NULL;
+			$this->resource = ($this->data_source->is_persistent())
+				? @ibase_pconnect($connection_string, $username, $password, $charset, 0, 3, $role)
+				: @ibase_connect($connection_string, $username, $password, $charset, 0, 3, $role);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @ibase_errmsg()));
+			}
+		}
+	}
+
+	/**
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
@@ -182,54 +230,6 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 		$this->sql = 'ROLLBACK;';
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 */
-	public function commit() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @ibase_commit($this->resource);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @ibase_errmsg()));
-		}
-		$this->sql = 'COMMIT;';
-	}
-
-	/**
-	 * This function closes an open connection.
-	 *
-	 * @access public
-	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @ibase_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@ibase_close($this->resource);
-		}
 	}
 
 }

@@ -22,29 +22,27 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-06
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_Firebird_Precompiler extends DB_SQL_Precompiler {
 
 	/**
-	 * This constant represents an opening identifier quote character.
-	 *
-	 * @access public
-	 * @static
-	 * @const string
-	 */
-	const _OPENING_QUOTE_CHARACTER_ = '"';
-
-	/**
 	 * This constant represents a closing identifier quote character.
 	 *
 	 * @access public
-	 * @static
 	 * @const string
 	 */
 	const _CLOSING_QUOTE_CHARACTER_ = '"';
+
+	/**
+	 * This constant represents an opening identifier quote character.
+	 *
+	 * @access public
+	 * @const string
+	 */
+	const _OPENING_QUOTE_CHARACTER_ = '"';
 
 	/**
 	 * This function prepares the specified expression as an alias.

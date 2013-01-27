@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-22
+ * @version 2013-01-27
  *
  * @see http://php.net/manual/en/ref.ibm-db2.php
  *
@@ -31,34 +31,16 @@
 abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
 	 *
-	 * @see http://www.php.net/manual/en/function.db2-connect.php
-	 * @see http://www.php.net/manual/en/function.db2-conn-error.php
-	 * @see http://www.zinox.com/node/132
-	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0505furlong/
+	 * @see http://www.php.net/manual/en/function.db2-close.php
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$connection_string  = 'DRIVER={IBM DB2 ODBC DRIVER};';
-			$connection_string .= 'DATABASE=' . $this->data_source->database . ';';
-			$connection_string .= 'HOSTNAME=' . $this->data_source->host . ';';
-			$connection_string .= 'PORT=' . $this->data_source->port . ';';
-			$connection_string .= 'PROTOCOL=TCPIP;';
-			$connection_string .= 'UID=' . $this->data_source->username . ';';
-			$connection_string .= 'PWD=' . $this->data_source->password . ';';
-			$this->resource = ($this->data_source->is_persistent())
-				? @db2_pconnect($connection_string, '', '')
-				: @db2_connect($connection_string, '', '');
-			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @db2_conn_error()));
-			}
-			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@db2_close($this->resource);
 		}
 	}
 
@@ -81,6 +63,47 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
 		$this->sql = 'BEGIN TRANSACTION;';
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 *
+	 * @see http://www.php.net/manual/en/function.db2-close.php
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @db2_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://www.php.net/manual/en/function.db2-commit.php
+	 */
+	public function commit() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
+		}
+		$command = @db2_commit($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
+		}
+		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
+		$this->sql = 'COMMIT;';
 	}
 
 	/**
@@ -143,47 +166,35 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	}
 
 	/**
-	 * This function rollbacks a transaction.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
-	 * @see http://www.php.net/manual/en/function.db2-rollback.php
+	 * @see http://www.php.net/manual/en/function.db2-connect.php
+	 * @see http://www.php.net/manual/en/function.db2-conn-error.php
+	 * @see http://www.zinox.com/node/132
+	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0505furlong/
 	 */
-	public function rollback() {
+	public function open() {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+			$connection_string  = 'DRIVER={IBM DB2 ODBC DRIVER};';
+			$connection_string .= 'DATABASE=' . $this->data_source->database . ';';
+			$connection_string .= 'HOSTNAME=' . $this->data_source->host . ';';
+			$connection_string .= 'PORT=' . $this->data_source->port . ';';
+			$connection_string .= 'PROTOCOL=TCPIP;';
+			$connection_string .= 'UID=' . $this->data_source->username . ';';
+			$connection_string .= 'PWD=' . $this->data_source->password . ';';
+			$this->resource = ($this->data_source->is_persistent())
+				? @db2_pconnect($connection_string, '', '')
+				: @db2_connect($connection_string, '', '');
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @db2_conn_error()));
+			}
+			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
 		}
-		$command = @db2_rollback($this->resource);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
-		}
-		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
-		$this->sql = 'ROLLBACK;';
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-commit.php
-	 */
-	public function commit() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @db2_commit($this->resource);
-		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
-		}
-		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
-		$this->sql = 'COMMIT;';
 	}
 
 	/**
@@ -216,36 +227,25 @@ abstract class Base_DB_DB2_Connection_Standard extends DB_SQL_Connection_Standar
 	}
 
 	/**
-	 * This function closes an open connection.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                              whether an open connection was closed
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
-	 * @see http://www.php.net/manual/en/function.db2-close.php
+	 * @see http://www.php.net/manual/en/function.db2-rollback.php
 	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @db2_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
+	public function rollback() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 *
-	 * @see http://www.php.net/manual/en/function.db2-close.php
-	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@db2_close($this->resource);
+		$command = @db2_rollback($this->resource);
+		if ($command === FALSE) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => @db2_conn_error($this->resource)));
 		}
+		@db2_autocommit($this->resource, DB2_AUTOCOMMIT_ON);
+		$this->sql = 'ROLLBACK;';
 	}
 
 }

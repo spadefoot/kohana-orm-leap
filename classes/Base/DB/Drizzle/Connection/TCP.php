@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-13
+ * @version 2013-01-27
  *
  * @see http://devzone.zend.com/1504/getting-started-with-drizzle-and-php/
  * @see https://github.com/barce/partition_benchmarks/blob/master/db.php
@@ -42,28 +42,14 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	protected $id = FALSE;
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
-	 *
-	 * @see http://wiki.drizzle.org/MySQL_Differences
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$handle = drizzle_create();
-			$host = $this->data_source->host;
-			$port = $this->data_source->port;
-			$database = $this->data_source->database;
-			$username = $this->data_source->username;
-			$password = $this->data_source->password;
-			$this->resource = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
-			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @drizzle_error($handle)));
-			}
-			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@drizzle_con_close($this->resource);
 		}
 	}
 
@@ -82,30 +68,34 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	}
 
 	/**
-	 * This function processes an SQL statement that will return data.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql                           the SQL statement
-	 * @param string $type                          the return type to be used
-	 * @return DB_ResultSet                         the result set
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @return boolean                              whether an open connection was closed
 	 */
-	public function query($sql, $type = 'array') {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @drizzle_con_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
 		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->insert_id = FALSE;
-			$this->sql = $sql;
-			return $result_set;
-		}
-		$reader = DB_SQL_DataReader::factory($this, $sql);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
-		$this->insert_id = FALSE;
-		$this->sql = $sql;
-		return $result_set;
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://docs.drizzle.org/commit.html
+	 */
+	public function commit() {
+		$this->execute('COMMIT;');
 	}
 
 	/**
@@ -164,31 +154,56 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	}
 
 	/**
-	 * This function rollbacks a transaction.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
-	 * @see http://docs.drizzle.org/rollback.html
+	 * @see http://wiki.drizzle.org/MySQL_Differences
 	 */
-	public function rollback() {
-		$this->execute('ROLLBACK;');
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$handle = drizzle_create();
+			$host = $this->data_source->host;
+			$port = $this->data_source->port;
+			$database = $this->data_source->database;
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			$this->resource = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @drizzle_error($handle)));
+			}
+			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
+		}
 	}
 
 	/**
-	 * This function commits a transaction.
+	 * This function processes an SQL statement that will return data.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://docs.drizzle.org/commit.html
+	 * @param string $sql                           the SQL statement
+	 * @param string $type                          the return type to be used
+	 * @return DB_ResultSet                         the result set
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
 	 */
-	public function commit() {
-		$this->execute('COMMIT;');
+	public function query($sql, $type = 'array') {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+		}
+		$result_set = $this->cache($sql, $type);
+		if ($result_set !== NULL) {
+			$this->insert_id = FALSE;
+			$this->sql = $sql;
+			return $result_set;
+		}
+		$reader = DB_SQL_DataReader::factory($this, $sql);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
+		$this->insert_id = FALSE;
+		$this->sql = $sql;
+		return $result_set;
 	}
 
 	/**
@@ -217,32 +232,17 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	}
 
 	/**
-	 * This function closes an open connection.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @drizzle_con_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
-	 * @access public
-	 * @override
+	 * @see http://docs.drizzle.org/rollback.html
 	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@drizzle_con_close($this->resource);
-		}
+	public function rollback() {
+		$this->execute('ROLLBACK;');
 	}
 
 }
