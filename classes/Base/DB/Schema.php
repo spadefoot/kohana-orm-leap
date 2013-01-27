@@ -22,19 +22,11 @@
  *
  * @package Leap
  * @category Schema
- * @version 2013-01-03
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_Schema extends Core_Object {
-
-	/**
-	 * This variable stores a reference to the data source.
-	 *
-	 * @access protected
-	 * @var DB_DataSource
-	 */
-	protected $source = NULL;
 
 	/**
 	 * This variable stores a reference to the helper class that implements the expression
@@ -43,7 +35,15 @@ abstract class Base_DB_Schema extends Core_Object {
 	 * @access protected
 	 * @var DB_SQL_Precompiler
 	 */
-	protected $precompiler = NULL;
+	protected $precompiler;
+
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $source;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -55,6 +55,78 @@ abstract class Base_DB_Schema extends Core_Object {
 		$this->source = new DB_DataSource($config);
 		$precompiler = 'DB_' . $this->source->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler();
+	}
+
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 *
+	 * @license http://kohanaframework.org/license
+	 */
+	protected function data_type($type) {
+		static $types = array(
+			// SQL-92
+			'bit'                           => array('type' => 'string', 'exact' => TRUE),
+			'bit varying'                   => array('type' => 'string'),
+			'char'                          => array('type' => 'string', 'exact' => TRUE),
+			'char varying'                  => array('type' => 'string'),
+			'character'                     => array('type' => 'string', 'exact' => TRUE),
+			'character varying'             => array('type' => 'string'),
+			'date'                          => array('type' => 'string'),
+			'dec'                           => array('type' => 'float', 'exact' => TRUE),
+			'decimal'                       => array('type' => 'float', 'exact' => TRUE),
+			'double precision'              => array('type' => 'float'),
+			'float'                         => array('type' => 'float'),
+			'int'                           => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
+			'integer'                       => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
+			'interval'                      => array('type' => 'string'),
+			'national char'                 => array('type' => 'string', 'exact' => TRUE),
+			'national char varying'         => array('type' => 'string'),
+			'national character'            => array('type' => 'string', 'exact' => TRUE),
+			'national character varying'    => array('type' => 'string'),
+			'nchar'                         => array('type' => 'string', 'exact' => TRUE),
+			'nchar varying'                 => array('type' => 'string'),
+			'numeric'                       => array('type' => 'float', 'exact' => TRUE),
+			'real'                          => array('type' => 'float'),
+			'smallint'                      => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
+			'time'                          => array('type' => 'string'),
+			'time with time zone'           => array('type' => 'string'),
+			'timestamp'                     => array('type' => 'string'),
+			'timestamp with time zone'      => array('type' => 'string'),
+			'varchar'                       => array('type' => 'string'),
+
+			// SQL:1999
+			'binary large object'               => array('type' => 'string', 'binary' => TRUE),
+			'blob'                              => array('type' => 'string', 'binary' => TRUE),
+			'boolean'                           => array('type' => 'bool'),
+			'char large object'                 => array('type' => 'string'),
+			'character large object'            => array('type' => 'string'),
+			'clob'                              => array('type' => 'string'),
+			'national character large object'   => array('type' => 'string'),
+			'nchar large object'                => array('type' => 'string'),
+			'nclob'                             => array('type' => 'string'),
+			'time without time zone'            => array('type' => 'string'),
+			'timestamp without time zone'       => array('type' => 'string'),
+
+			// SQL:2003
+			'bigint'    => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
+
+			// SQL:2008
+			'binary'            => array('type' => 'string', 'binary' => TRUE, 'exact' => TRUE),
+			'binary varying'    => array('type' => 'string', 'binary' => TRUE),
+			'varbinary'         => array('type' => 'string', 'binary' => TRUE),
+		);
+
+		if (isset($types[$type])) {
+			return $types[$type];
+		}
+
+		return array();
 	}
 
 	/**
@@ -156,77 +228,5 @@ abstract class Base_DB_Schema extends Core_Object {
 	 * @return DB_ResultSet                 a result set of database views
 	 */
 	public abstract function views($like = '');
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
-	 *                                       for the specified data type
-	 */
-	protected function data_type($type) {
-		static $types = array(
-			// SQL-92
-			'bit'                           => array('type' => 'string', 'exact' => TRUE),
-			'bit varying'                   => array('type' => 'string'),
-			'char'                          => array('type' => 'string', 'exact' => TRUE),
-			'char varying'                  => array('type' => 'string'),
-			'character'                     => array('type' => 'string', 'exact' => TRUE),
-			'character varying'             => array('type' => 'string'),
-			'date'                          => array('type' => 'string'),
-			'dec'                           => array('type' => 'float', 'exact' => TRUE),
-			'decimal'                       => array('type' => 'float', 'exact' => TRUE),
-			'double precision'              => array('type' => 'float'),
-			'float'                         => array('type' => 'float'),
-			'int'                           => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'integer'                       => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'interval'                      => array('type' => 'string'),
-			'national char'                 => array('type' => 'string', 'exact' => TRUE),
-			'national char varying'         => array('type' => 'string'),
-			'national character'            => array('type' => 'string', 'exact' => TRUE),
-			'national character varying'    => array('type' => 'string'),
-			'nchar'                         => array('type' => 'string', 'exact' => TRUE),
-			'nchar varying'                 => array('type' => 'string'),
-			'numeric'                       => array('type' => 'float', 'exact' => TRUE),
-			'real'                          => array('type' => 'float'),
-			'smallint'                      => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
-			'time'                          => array('type' => 'string'),
-			'time with time zone'           => array('type' => 'string'),
-			'timestamp'                     => array('type' => 'string'),
-			'timestamp with time zone'      => array('type' => 'string'),
-			'varchar'                       => array('type' => 'string'),
-
-			// SQL:1999
-			'binary large object'               => array('type' => 'string', 'binary' => TRUE),
-			'blob'                              => array('type' => 'string', 'binary' => TRUE),
-			'boolean'                           => array('type' => 'bool'),
-			'char large object'                 => array('type' => 'string'),
-			'character large object'            => array('type' => 'string'),
-			'clob'                              => array('type' => 'string'),
-			'national character large object'   => array('type' => 'string'),
-			'nchar large object'                => array('type' => 'string'),
-			'nclob'                             => array('type' => 'string'),
-			'time without time zone'            => array('type' => 'string'),
-			'timestamp without time zone'       => array('type' => 'string'),
-
-			// SQL:2003
-			'bigint'    => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
-
-			// SQL:2008
-			'binary'            => array('type' => 'string', 'binary' => TRUE, 'exact' => TRUE),
-			'binary varying'    => array('type' => 'string', 'binary' => TRUE),
-			'varbinary'         => array('type' => 'string', 'binary' => TRUE),
-		);
-
-		if (isset($types[$type])) {
-			return $types[$type];
-		}
-
-		return array();
-	}
 
 }

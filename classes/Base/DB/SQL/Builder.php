@@ -22,27 +22,27 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-12-05
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Builder extends Core_Object implements DB_SQL_Statement {
 
 	/**
-	 * This constant represents an opening parenthesis.
-	 *
-	 * @access public
-	 * @var string
-	 */
-	const _OPENING_PARENTHESIS_ = '(';
-
-	/**
 	 * This constant represents a closing parenthesis.
 	 *
 	 * @access public
-	 * @var string
+	 * @const string
 	 */
 	const _CLOSING_PARENTHESIS_ = ')';
+
+	/**
+	 * This constant represents an opening parenthesis.
+	 *
+	 * @access public
+	 * @const string
+	 */
+	const _OPENING_PARENTHESIS_ = '(';
 
 	/**
 	 * This function returns the raw SQL statement.
@@ -55,10 +55,13 @@ abstract class Base_DB_SQL_Builder extends Core_Object implements DB_SQL_Stateme
 		return $this->statement(TRUE);
 	}
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * This function returns a new instance of the calling class.
 	 *
 	 * @access public
+	 * @static
 	 * @param DB_DataSource $source             the data source to be used
 	 * @return DB_SQL_Builder                   a new instance of the calling class
 	 */

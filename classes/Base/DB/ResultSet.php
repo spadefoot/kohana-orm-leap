@@ -22,19 +22,11 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-30
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
-
-	/**
-	 * This variable stores the records.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $records;
 
 	/**
 	 * This variable stores the current position in the records array.
@@ -43,6 +35,14 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * @var integer
 	 */
 	protected $position;
+
+	/**
+	 * This variable stores the records.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $records;
 
 	/**
 	 * This variable stores the length of the records array.

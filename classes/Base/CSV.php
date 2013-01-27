@@ -22,20 +22,11 @@
  *
  * @package Leap
  * @category CSV
- * @version 2013-01-11
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
-
-	/**
-	 * This variable stores the file name for the CSV, which will only be used
-	 * when saving to disk.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $file_name;
 
 	/**
 	 * This variable stores the data to be included in the CSV file.
@@ -62,6 +53,31 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	protected $delimiter;
 
 	/**
+	 * This variable stores the character that will use to enclose string data.
+	 *
+	 * @access protected
+	 * @var char
+	 */
+	protected $enclosure;
+
+	/**
+	 * This variable stores the EOL (i.e. end of line character).
+	 *
+	 * @access protected
+	 * @var char
+	 */
+	protected $eol;
+
+	/**
+	 * This variable stores the file name for the CSV, which will only be used
+	 * when saving to disk.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $file_name;
+
+	/**
 	 * This variable stores the headers to be included at the beginning of the CSV file.
 	 *
 	 * @access protected
@@ -77,22 +93,6 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 * @var string
 	 */
 	protected $mime;
-
-	/**
-	 * This variable stores the character that will use to enclose string data.
-	 *
-	 * @access protected
-	 * @var char
-	 */
-	protected $enclosure;
-
-	/**
-	 * This variable stores the EOL (i.e. end of line character).
-	 *
-	 * @access protected
-	 * @var char
-	 */
-	protected $eol;
 
 	/**
 	 * This variable stores the current position in the records array.
@@ -196,6 +196,18 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	}
 
 	/**
+	 * This function is an alias for CSV::render() and will renders the data as a string when
+	 * the object is treated like a string, e.g. with PHP's echo and print commands.
+	 *
+	 * @access public
+	 * @override
+	 * @return string                                   the string of imploded data
+	 */
+	public function __toString() {
+		return $this->render();
+	}
+
+	/**
 	 * This function adds a row to the data array.
 	 *
 	 * @access public
@@ -239,89 +251,6 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	}
 
 	/**
-	 * This function checks whether the data array is empty.
-	 *
-	 * @access public
-	 * @return boolean                                  whether the data array is empty
-	 */
-	public function is_empty() {
-		return empty($this->data);
-	}
-
-	/**
-	 * This function outputs the CVS file.
-	 *
-	 * @access public
-	 * @param boolean $as_file                          whether to output the data as a file
-	 *                                                  or just echo it
-	 *
-	 * @see http://www.rfc-editor.org/rfc/rfc4180.txt
-	 */
-	public function output($as_file = FALSE) {
-		$output = $this->render();
-		if ($as_file) {
-			if (empty($this->file_name)) {
-				$this->file_name  = date('YmdHis');
-				$this->file_name .= ($this->mime == 'text/tab-separated-values') ? '.txt' : '.csv';
-			}
-			$uri = preg_split('!(\?.*|/)!', $this->file_name, -1, PREG_SPLIT_NO_EMPTY);
-			$file_name = $uri[count($uri) - 1];
-			header("Content-Disposition: attachment; filename=\"{$file_name}\"");
-		}
-		header("Content-Type: {$this->mime}");
-		header('Cache-Control: no-store, no-cache');
-		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-		echo $output;
-		exit();
-	}
-
-	/**
-	 * This function renders the data as a string.
-	 *
-	 * @access public
-	 * @return string                                   the string of imploded data
-	 */
-	public function render() {
-		$buffer = '';
-
-		if ( ! empty($this->header)) {
-			$buffer .= $this->implode($this->header);
-			$buffer .= $this->eol;
-		}
-		else if ($this->default_headers AND ! empty($this->data)) {
-			$header = array_keys($this->current());
-			$buffer .= $this->implode($header);
-			$buffer .= $this->eol;
-		}
-
-		foreach ($this->data as $row) {
-			$buffer .= $this->implode($row);
-			$buffer .= $this->eol;
-		}
-
-		$buffer = trim($buffer);
-		return $buffer;
-	}
-
-	/**
-	 * This function saves the CSV file to disk.
-	 *
-	 * @access public
-	 * @param string $file_name                         the URI for where the CSV file will be stored
-	 * @return boolean                                  whether the CSV file was saved
-	 */
-	public function save($file_name = NULL) {
-		if ($file_name !== NULL) {
-			$this->file_name = $file_name;
-		}
-		$result = @file_put_contents($this->file_name, $this->render());
-		if ($result === FALSE) {
-			return FALSE;
-		}
-		return TRUE;
-	}
-
-	/**
 	 * This function returns the current record.
 	 *
 	 * @access public
@@ -330,6 +259,37 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 */
 	public function current() {
 		return $this->data[$this->position];
+	}
+
+	/**
+	 * This function implodes a row using the proper syntax.
+	 *
+	 * @access protected
+	 * @static
+	 * @param array $row                                the row to be imploded
+	 * @return string                                   the string of the imploded row
+	 */
+	protected function implode($row) {
+		$buffer = '';
+		$pattern = '/' . addslashes($this->enclosure) . '/';
+		$replace = addslashes($this->enclosure);
+		foreach ($row as $column) {
+			$buffer .= $this->delimiter . $this->enclosure . preg_replace($pattern, $replace, $column) . $this->enclosure;
+		}
+		if ( ! empty($buffer)) {
+			$buffer = substr($buffer, strlen($this->delimiter));
+		}
+		return $buffer;
+	}
+
+	/**
+	 * This function checks whether the data array is empty.
+	 *
+	 * @access public
+	 * @return boolean                                  whether the data array is empty
+	 */
+	public function is_empty() {
+		return empty($this->data);
 	}
 
 	/**
@@ -412,6 +372,33 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	}
 
 	/**
+	 * This function outputs the CVS file.
+	 *
+	 * @access public
+	 * @param boolean $as_file                          whether to output the data as a file
+	 *                                                  or just echo it
+	 *
+	 * @see http://www.rfc-editor.org/rfc/rfc4180.txt
+	 */
+	public function output($as_file = FALSE) {
+		$output = $this->render();
+		if ($as_file) {
+			if (empty($this->file_name)) {
+				$this->file_name  = date('YmdHis');
+				$this->file_name .= ($this->mime == 'text/tab-separated-values') ? '.txt' : '.csv';
+			}
+			$uri = preg_split('!(\?.*|/)!', $this->file_name, -1, PREG_SPLIT_NO_EMPTY);
+			$file_name = $uri[count($uri) - 1];
+			header("Content-Disposition: attachment; filename=\"{$file_name}\"");
+		}
+		header("Content-Type: {$this->mime}");
+		header('Cache-Control: no-store, no-cache');
+		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+		echo $output;
+		exit();
+	}
+
+	/**
 	 * This function returns the current iterator position.
 	 *
 	 * @access public
@@ -423,6 +410,34 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	}
 
 	/**
+	 * This function renders the data as a string.
+	 *
+	 * @access public
+	 * @return string                                   the string of imploded data
+	 */
+	public function render() {
+		$buffer = '';
+
+		if ( ! empty($this->header)) {
+			$buffer .= $this->implode($this->header);
+			$buffer .= $this->eol;
+		}
+		else if ($this->default_headers AND ! empty($this->data)) {
+			$header = array_keys($this->current());
+			$buffer .= $this->implode($header);
+			$buffer .= $this->eol;
+		}
+
+		foreach ($this->data as $row) {
+			$buffer .= $this->implode($row);
+			$buffer .= $this->eol;
+		}
+
+		$buffer = trim($buffer);
+		return $buffer;
+	}
+
+	/**
 	 * This function rewinds the iterator back to starting position.
 	 *
 	 * @access public
@@ -430,6 +445,24 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 	 */
 	public function rewind() {
 		$this->position = 0;
+	}
+
+	/**
+	 * This function saves the CSV file to disk.
+	 *
+	 * @access public
+	 * @param string $file_name                         the URI for where the CSV file will be stored
+	 * @return boolean                                  whether the CSV file was saved
+	 */
+	public function save($file_name = NULL) {
+		if ($file_name !== NULL) {
+			$this->file_name = $file_name;
+		}
+		$result = @file_put_contents($this->file_name, $this->render());
+		if ($result === FALSE) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	/**
@@ -459,17 +492,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 		return isset($this->data[$this->position]);
 	}
 
-	/**
-	 * This function is an alias for CSV::render() and will renders the data as a string when
-	 * the object is treated like a string, e.g. with PHP's echo and print commands.
-	 *
-	 * @access public
-	 * @override
-	 * @return string                                   the string of imploded data
-	 */
-	public function __toString() {
-		return $this->render();
-	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function will create an instance of the CSV class.
@@ -525,29 +548,6 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 			}
 		}
 		return $csv;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function implodes a row using the proper syntax.
-	 *
-	 * @access private
-	 * @static
-	 * @param array $row                                the row to be imploded
-	 * @return string                                   the string of the imploded row
-	 */
-	protected function implode($row) {
-		$buffer = '';
-		$pattern = '/' . addslashes($this->enclosure) . '/';
-		$replace = addslashes($this->enclosure);
-		foreach ($row as $column) {
-			$buffer .= $this->delimiter . $this->enclosure . preg_replace($pattern, $replace, $column) . $this->enclosure;
-		}
-		if ( ! empty($buffer)) {
-			$buffer = substr($buffer, strlen($this->delimiter));
-		}
-		return $buffer;
 	}
 
 }

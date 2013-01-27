@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2013-01-11
+ * @version 2013-01-27
  *
  * @abstract
  */
@@ -79,18 +79,6 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	}
 
 	/**
-	 * This function returns whether a property is set.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $name                          the name of the property
-	 * @return boolean                              whether the property is set
-	 */
-	public function __isset($field) {
-		return array_key_exists($field, $this->values);
-	}
-
-	/**
 	 * This function gets the value of the specified field.
 	 *
 	 * @access public
@@ -105,6 +93,18 @@ abstract class Base_BitField extends Core_Object implements Countable {
 			throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field));
 		}
 		return $this->values[$field];
+	}
+
+	/**
+	 * This function returns whether a property is set.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $name                          the name of the property
+	 * @return boolean                              whether the property is set
+	 */
+	public function __isset($field) {
+		return array_key_exists($field, $this->values);
 	}
 
 	/**
@@ -236,7 +236,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function converts a binary string into an integer value.

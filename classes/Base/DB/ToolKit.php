@@ -23,7 +23,7 @@
  *
  * @package Leap
  * @category ToolKit
- * @version 2013-01-11
+ * @version 2013-01-27
  *
  * @abstract
  */
@@ -34,9 +34,9 @@ abstract class Base_DB_ToolKit extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $like                              the like clause to be converted
-	 * @param char $escape                              the escape character
-	 * @return string                                   the resulting regular expression
+	 * @param string $like                          the like clause to be converted
+	 * @param char $escape                          the escape character
+	 * @return string                               the resulting regular expression
 	 *
 	 * @see http://stackoverflow.com/questions/3683746/escaping-mysql-wild-cards
 	 * @see http://stackoverflow.com/questions/47052/what-code-would-i-use-to-convert-a-sql-like-expression-to-a-regex-on-the-fly
@@ -84,8 +84,8 @@ abstract class Base_DB_ToolKit extends Core_Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param string $value                             the value to be processed
-	 * @return string                                   the slug
+	 * @param string $value                         the value to be processed
+	 * @return string                               the slug
 	 *
 	 * @see http://www.finalwebsites.com/forums/topic/convert-string-to-slug
 	 * @see http://snipplr.com/view/2809/convert-string-to-slug/
