@@ -136,25 +136,31 @@ abstract class Base_XML extends SimpleXMLElement {
 			return $file;
 		}
 
-		$uri = APPPATH . $file;
-		if (file_exists($uri)) {
-			return $uri;
-		}
-
-		$modules = Kohana::modules();
-		foreach($modules as $module) {
-			$uri = $module . $file;
+		if (defined('APPPATH')) {
+			$uri = APPPATH . $file;
 			if (file_exists($uri)) {
 				return $uri;
 			}
 		}
 
-		$uri = SYSPATH . $file;
-		if (file_exists($uri)) {
-			return $uri;
+		if (class_exists('Kohana')) {
+			$modules = Kohana::modules();
+			foreach($modules as $module) {
+				$uri = $module . $file;
+				if (file_exists($uri)) {
+					return $uri;
+				}
+			}
 		}
 
-		throw new Throwable_FileNotFound_Exception('Message: Unable to locate file. Reason: No file exists with the specified file name.', array(':file', $file));
+		if (defined('SYSPATH')) {
+			$uri = SYSPATH . $file;
+			if (file_exists($uri)) {
+				return $uri;
+			}
+		}
+
+		throw new Throwable_FileNotFound_Exception("Message: Unable to locate file. Reason: File ':file' does not exist.", array(':file', $file));
 	}
 
 }
