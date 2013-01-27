@@ -22,57 +22,11 @@
  *
  * @package Leap
  * @category XML
- * @version 2013-01-06
+ * @version 2013-01-26
  *
  * @abstract
  */
 abstract class Base_XML extends SimpleXMLElement {
-
-	/**
-	 * This function converts an associated array to either a SimpleXMLElement or an XML formatted
-	 * string depending on the second parameter.
-	 *
-	 * @access public
-	 * @static
-	 * @param array $array                          the associated array to be converted
-	 * @param boolean $as_string                    whether to return a string
-	 * @return mixed                                either a SimpleXMLElement or an XML
-	 *                                              formatted string
-	 */
-	public static function encode(Array $array, $as_string = FALSE) {
-		$content = static::convert_to_xml($array);
-		if ($as_string) {
-			return $content;
-		}
-		$XML = new XML($content);
-		return $XML;
-	}
-
-	/**
-	 * This function returns an instance of the class with the contents of the specified
-	 * XML file.
-	 *
-	 * @access public
-	 * @static
-	 * @param string $file                          the file name
-	 * @return XML                                  an instance of this class
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
-	 * @throws Throwable_FileNotFound_Exception     indicates that the file does not exist
-	 */
-	public static function load($file) {
-		if ( ! is_string($file)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
-		}
-
-		$source = static::find_file($file);
-
-		$content = file_get_contents($source);
-
-		$XML = new XML($content);
-		return $XML;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This function converts an associated array to an XML string.
@@ -122,6 +76,26 @@ abstract class Base_XML extends SimpleXMLElement {
 	}
 
 	/**
+	 * This function converts an associated array to either a SimpleXMLElement or an XML formatted
+	 * string depending on the second parameter.
+	 *
+	 * @access public
+	 * @static
+	 * @param array $array                          the associated array to be converted
+	 * @param boolean $as_string                    whether to return a string
+	 * @return mixed                                either a SimpleXMLElement or an XML
+	 *                                              formatted string
+	 */
+	public static function encode(Array $array, $as_string = FALSE) {
+		$content = static::convert_to_xml($array);
+		if ($as_string) {
+			return $content;
+		}
+		$XML = new XML($content);
+		return $XML;
+	}
+
+	/**
 	 * This function searches for the file that first matches the specified file
 	 * name and returns its path.
 	 *
@@ -161,6 +135,30 @@ abstract class Base_XML extends SimpleXMLElement {
 		}
 
 		throw new Throwable_FileNotFound_Exception("Message: Unable to locate file. Reason: File ':file' does not exist.", array(':file', $file));
+	}
+
+	/**
+	 * This function returns an instance of the class with the contents of the specified
+	 * XML file.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $file                          the file name
+	 * @return XML                                  an instance of this class
+	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable_FileNotFound_Exception     indicates that the file does not exist
+	 */
+	public static function load($file) {
+		if ( ! is_string($file)) {
+			throw new Throwable_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
+		}
+
+		$source = static::find_file($file);
+
+		$content = file_get_contents($source);
+
+		$XML = new XML($content);
+		return $XML;
 	}
 
 }
