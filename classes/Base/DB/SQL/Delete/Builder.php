@@ -22,35 +22,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-11
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
-
-	/**
-	 * This variable stores a reference to the pre-compiler.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Precompiler
-	 */
-	protected $precompiler = NULL;
-
-	/**
-	 * This variable stores the build data for the SQL statement.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $data = NULL;
-
-	/**
-	 * This variable stores the name of the SQL dialect being used.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $dialect = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -78,17 +54,59 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function either opens or closes a "where" group.
+	 * This function sets a "limit" constraint on the statement.
 	 *
 	 * @access public
-	 * @param string $parenthesis                       the parenthesis to be used
-	 * @param string $connector                         the connector to be used
+	 * @param integer $limit                            the "limit" constraint
 	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
-	public function where_block($parenthesis, $connector = 'AND') {
-		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
-		$connector = $this->precompiler->prepare_connector($connector);
-		$this->data['where'][] = array($connector, $parenthesis);
+	public function limit($limit) {
+		$this->data['limit'] = $this->precompiler->prepare_natural($limit);
+		return $this;
+	}
+
+	/**
+	 * This function sets an "offset" constraint on the statement.
+	 *
+	 * @access public
+	 * @param integer $offset                           the "offset" constraint
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 */
+	public function offset($offset) {
+		$this->data['offset'] = $this->precompiler->prepare_natural($offset);
+		return $this;
+	}
+
+	/**
+	 * This function sets how a column will be sorted.
+	 *
+	 * @access public
+	 * @param string $column                            the column to be sorted
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param string $nulls                             the weight to be given to null values
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 */
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
+		return $this;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 */
+	public function reset() {
+		$this->data = array(
+			'from' => NULL,
+			'limit' => 0,
+			'offset' => 0,
+			'order_by' => array(),
+			'where' => array(),
+		);
 		return $this;
 	}
 
@@ -141,59 +159,17 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function sets how a column will be sorted.
+	 * This function either opens or closes a "where" group.
 	 *
 	 * @access public
-	 * @param string $column                            the column to be sorted
-	 * @param string $ordering                          the ordering token that signals whether the
-	 *                                                  column will sorted either in ascending or
-	 *                                                  descending order
-	 * @param string $nulls                             the weight to be given to null values
+	 * @param string $parenthesis                       the parenthesis to be used
+	 * @param string $connector                         the connector to be used
 	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
 	 */
-	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
-		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
-		return $this;
-	}
-
-	/**
-	 * This function sets a "limit" constraint on the statement.
-	 *
-	 * @access public
-	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
-	 */
-	public function limit($limit) {
-		$this->data['limit'] = $this->precompiler->prepare_natural($limit);
-		return $this;
-	}
-
-	/**
-	 * This function sets an "offset" constraint on the statement.
-	 *
-	 * @access public
-	 * @param integer $offset                           the "offset" constraint
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
-	 */
-	public function offset($offset) {
-		$this->data['offset'] = $this->precompiler->prepare_natural($offset);
-		return $this;
-	}
-
-	/**
-	 * This function resets the current builder.
-	 *
-	 * @access public
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
-	 */
-	public function reset() {
-		$this->data = array(
-			'from' => NULL,
-			'limit' => 0,
-			'offset' => 0,
-			'order_by' => array(),
-			'where' => array(),
-		);
+	public function where_block($parenthesis, $connector = 'AND') {
+		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
+		$connector = $this->precompiler->prepare_connector($connector);
+		$this->data['where'][] = array($connector, $parenthesis);
 		return $this;
 	}
 

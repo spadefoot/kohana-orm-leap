@@ -45,6 +45,30 @@ abstract class Base_DB_SQL_Builder extends Core_Object implements DB_SQL_Stateme
 	const _OPENING_PARENTHESIS_ = '(';
 
 	/**
+	 * This variable stores the build data for the SQL statement.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $data;
+
+	/**
+	 * This variable stores the name of the SQL dialect being used.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $dialect;
+
+	/**
+	 * This variable stores a reference to the pre-compiler.
+	 *
+	 * @access protected
+	 * @var DB_SQL_Precompiler
+	 */
+	protected $precompiler;
+
+	/**
 	 * This function returns the raw SQL statement.
 	 *
 	 * @access public
@@ -62,12 +86,12 @@ abstract class Base_DB_SQL_Builder extends Core_Object implements DB_SQL_Stateme
 	 *
 	 * @access public
 	 * @static
-	 * @param DB_DataSource $source             the data source to be used
+	 * @param DB_DataSource $data_source        the data source to be used
 	 * @return DB_SQL_Builder                   a new instance of the calling class
 	 */
-	public static function factory(DB_DataSource $source) {
+	public static function factory(DB_DataSource $data_source) {
 		$class = get_called_class();
-		return new $class($source);
+		return new $class($data_source);
 	}
 
 }

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-09
+ * @version 2013-01-27
  *
  * @see http://www.sqlite.org/c3ref/complete.html
  * @see http://www.opensource.apple.com/source/SQLite/SQLite-74/public_source/src/complete.c
@@ -120,22 +120,6 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	const WHITESPACE_TOKEN = 'WHITESPACE';
 
 	/**
-	 * This variable stores the SQL statement being tokenized.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $statement = '';
-
-	/**
-	 * This variable stores the tuples discovered by the lexical analyzer.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $tuples = array();
-
-	/**
 	 * This variable stores the head position of lexical analyzer.
 	 *
 	 * @access protected
@@ -150,6 +134,22 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess,
 	 * @var integer
 	 */
 	protected $size = 0;
+
+	/**
+	 * This variable stores the SQL statement being tokenized.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $statement = '';
+
+	/**
+	 * This variable stores the tuples discovered by the lexical analyzer.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $tuples = array();
 
 	/**
 	 * This construct initializes the class.

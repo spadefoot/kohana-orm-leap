@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-05
+ * @version 2013-01-27
  *
  * @abstract
  */
@@ -42,7 +42,7 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * @access protected
 	 * @var DB_DataSource
 	 */
-	protected $source;
+	protected $data_source;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -51,9 +51,30 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * @param mixed $config                             the data source configurations
 	 */
 	public function __construct($config) {
-		$this->source = new DB_DataSource($config);
-		$builder = 'DB_' . $this->source->dialect . '_Delete_Builder';
-		$this->builder = new $builder($this->source);
+		$this->data_source = new DB_DataSource($config);
+		$builder = 'DB_' . $this->data_source->dialect . '_Delete_Builder';
+		$this->builder = new $builder($this->data_source);
+	}
+
+	/**
+	 * This function returns the raw SQL statement.
+	 *
+	 * @access public
+	 * @override
+	 * @return string                                   the raw SQL statement
+	 */
+	public function __toString() {
+		return $this->builder->statement(TRUE);
+	}
+
+	/**
+	 * This function executes the built SQL statement.
+	 *
+	 * @access public
+	 */
+	public function execute() {
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection->execute($this->statement(TRUE));
 	}
 
 	/**
@@ -65,50 +86,6 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 */
 	public function from($table) {
 		$this->builder->from($table);
-		return $this;
-	}
-
-	/**
-	 * This function either opens or closes a "where" group.
-	 *
-	 * @access public
-	 * @param string $parenthesis                       the parenthesis to be used
-	 * @param string $connector                         the connector to be used
-	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
-	 */
-	public function where_block($parenthesis, $connector = 'AND') {
-		$this->builder->where_block($parenthesis, $connector);
-		return $this;
-	}
-
-	/**
-	 * This function adds a "where" constraint.
-	 *
-	 * @access public
-	 * @param string $column                            the column to be constrained
-	 * @param string $operator                          the operator to be used
-	 * @param string $value                             the value the column is constrained with
-	 * @param string $connector                         the connector to be used
-	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
-	 */
-	public function where($column, $operator, $value, $connector = 'AND') {
-		$this->builder->where($column, $operator, $value, $connector);
-		return $this;
-	}
-
-	/**
-	 * This function sets how a column will be sorted.
-	 *
-	 * @access public
-	 * @param string $column                            the column to be sorted
-	 * @param string $ordering                          the ordering token that signals whether the
-	 *                                                  column will sorted either in ascending or
-	 *                                                  descending order
-	 * @param string $nulls                             the weight to be given to null values
-	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
-	 */
-	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
-		$this->builder->order_by($column, $ordering, $nulls);
 		return $this;
 	}
 
@@ -137,6 +114,33 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core_Object implements DB_SQL_St
 	}
 
 	/**
+	 * This function sets how a column will be sorted.
+	 *
+	 * @access public
+	 * @param string $column                            the column to be sorted
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param string $nulls                             the weight to be given to null values
+	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
+	 */
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->builder->order_by($column, $ordering, $nulls);
+		return $this;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
+	 */
+	public function reset() {
+		$this->builder->reset();
+		return $this;
+	}
+
+	/**
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
@@ -150,34 +154,30 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core_Object implements DB_SQL_St
 	}
 
 	/**
-	 * This function returns the raw SQL statement.
+	 * This function adds a "where" constraint.
 	 *
 	 * @access public
-	 * @override
-	 * @return string                                   the raw SQL statement
-	 */
-	public function __toString() {
-		return $this->builder->statement();
-	}
-
-	/**
-	 * This function executes the built SQL statement.
-	 *
-	 * @access public
-	 */
-	public function execute() {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$connection->execute($this->statement());
-	}
-
-	/**
-	 * This function resets the current builder.
-	 *
-	 * @access public
+	 * @param string $column                            the column to be constrained
+	 * @param string $operator                          the operator to be used
+	 * @param string $value                             the value the column is constrained with
+	 * @param string $connector                         the connector to be used
 	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
 	 */
-	public function reset() {
-		$this->builder->reset();
+	public function where($column, $operator, $value, $connector = 'AND') {
+		$this->builder->where($column, $operator, $value, $connector);
+		return $this;
+	}
+
+	/**
+	 * This function either opens or closes a "where" group.
+	 *
+	 * @access public
+	 * @param string $parenthesis                       the parenthesis to be used
+	 * @param string $connector                         the connector to be used
+	 * @return DB_SQL_Delete_Proxy                      a reference to the current instance
+	 */
+	public function where_block($parenthesis, $connector = 'AND') {
+		$this->builder->where_block($parenthesis, $connector);
 		return $this;
 	}
 

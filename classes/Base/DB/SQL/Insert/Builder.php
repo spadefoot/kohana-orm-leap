@@ -22,35 +22,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-11
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
-
-	/**
-	 * This variable stores a reference to the pre-compiler.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Precompiler
-	 */
-	protected $precompiler = NULL;
-
-	/**
-	 * This variable stores the build data for the SQL statement.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $data = NULL;
-
-	/**
-	 * This variable stores the name of the SQL dialect being used.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $dialect = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -63,19 +39,6 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler($source);
 		$this->reset();
-	}
-
-	/**
-	 * This function sets which table will be modified.
-	 *
-	 * @access public
-	 * @param string $table                             the database table to be modified
-	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
-	 */
-	public function into($table) {
-		$table = $this->precompiler->prepare_identifier($table);
-		$this->data['into'] = $table;
-		return $this;
 	}
 
 	/**
@@ -97,17 +60,15 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function sets a row of columns/values pairs.
+	 * This function sets which table will be modified.
 	 *
 	 * @access public
-	 * @param array $values                             the columns/values pairs to be set
-	 * @param integer $row                              the index of the row
+	 * @param string $table                             the database table to be modified
 	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
 	 */
-	public function row(Array $values, $row = 0) {
-		foreach ($values as $column => $value) {
-			$this->column($column, $value, $row);
-		}
+	public function into($table) {
+		$table = $this->precompiler->prepare_identifier($table);
+		$this->data['into'] = $table;
 		return $this;
 	}
 
@@ -123,6 +84,21 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 			'into' => NULL,
 			'rows' => array(),
 		);
+		return $this;
+	}
+
+	/**
+	 * This function sets a row of columns/values pairs.
+	 *
+	 * @access public
+	 * @param array $values                             the columns/values pairs to be set
+	 * @param integer $row                              the index of the row
+	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
+	 */
+	public function row(Array $values, $row = 0) {
+		foreach ($values as $column => $value) {
+			$this->column($column, $value, $row);
+		}
 		return $this;
 	}
 

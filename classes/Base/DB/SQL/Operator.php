@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-11-14
+ * @version 2013-01-27
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd21-select.html
  * @see http://nimal.info/blog/2007/intersection-and-set-difference-in-mysql-a-workaround-for-except/
@@ -35,55 +35,57 @@
  */
 abstract class Base_DB_SQL_Operator extends Core_Object {
 
-	// Comparison Operators
-
-	const _EQUAL_TO_ = '=';
-
-	const _NOT_EQUIVALENT_ = '<>';
-
-	const _NOT_EQUAL_TO_ = '!=';
+	#region Comparison Operators
 
 	const _BETWEEN_ = 'BETWEEN';
 
-	const _NOT_BETWEEN_ = 'NOT BETWEEN';
+	const _EQUAL_TO_ = '=';
 
-	const _LIKE_ = 'LIKE';
-
-	const _NOT_LIKE_ = 'NOT LIKE';
-
-	const _LESS_THAN_ = '<';
-
-	const _LESS_THAN_OR_EQUAL_TO_ = '<=';
+	const _GLOB_ = 'GLOB'; // supported by SQLite
 
 	const _GREATER_THAN_ = '>';
 
 	const _GREATER_THAN_OR_EQUAL_TO_ = '>=';
 
-	const _IN_ = 'IN';
-
-	const _NOT_IN_ = 'NOT IN';
-
 	const _IS_ = 'IS';
 
 	const _IS_NOT_ = 'IS NOT';
 
-	const _REGEX_ = 'REGEX'; // supported by MySQL, SQLite (variation)
+	const _IN_ = 'IN';
 
-	const _NOT_REGEX_ = 'NOT REGEX'; // supported by MySQL, SQLite (variation)
+	const _LESS_THAN_ = '<';
 
-	const _GLOB_ = 'GLOB'; // supported by SQLite
+	const _LESS_THAN_OR_EQUAL_TO_ = '<=';
 
-	const _NOT_GLOB_ = 'NOT GLOB'; // supported by SQLite
+	const _LIKE_ = 'LIKE';
 
 	const _MATCH_ = 'MATCH'; // supported by SQLite
 
+	const _NOT_BETWEEN_ = 'NOT BETWEEN';
+
+	const _NOT_EQUAL_TO_ = '!=';
+
+	const _NOT_EQUIVALENT_ = '<>';
+
+	const _NOT_GLOB_ = 'NOT GLOB'; // supported by SQLite
+
+	const _NOT_IN_ = 'NOT IN';
+
+	const _NOT_LIKE_ = 'NOT LIKE';
+
 	const _NOT_MATCH_ = 'NOT MATCH'; // supported by SQLite
 
-	const _SIMILAR_TO_ = 'SIMILAR TO'; // supported by PostgreSQL
+	const _NOT_REGEX_ = 'NOT REGEX'; // supported by MySQL, SQLite (variation)
 
 	const _NOT_SIMILAR_TO_ = 'NOT SIMILAR TO'; // supported by PostgreSQL
 
-	// Set Operators
+	const _REGEX_ = 'REGEX'; // supported by MySQL, SQLite (variation)
+
+	const _SIMILAR_TO_ = 'SIMILAR TO'; // supported by PostgreSQL
+
+	#endregion
+
+	#region Set Operators
 
 	const _EXCEPT_ = 'EXCEPT'; // supported by DB2, MS SQL, PostgreSQL, SQLite
 
@@ -104,5 +106,7 @@ abstract class Base_DB_SQL_Operator extends Core_Object {
 	const _UNION_ALL_ = 'UNION ALL'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
 	const _UNION_DISTINCT_ = 'UNION DISTINCT'; // support by Firebird, MySQL
+
+	#endregion
 
 }

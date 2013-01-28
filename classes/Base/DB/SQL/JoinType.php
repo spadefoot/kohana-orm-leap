@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2012-11-14
+ * @version 2013-01-27
  *
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafyjoin.htm
  * @see http://www.craigsmullins.com/outer-j.htm
@@ -39,11 +39,13 @@
  */
 abstract class Base_DB_SQL_JoinType extends Core_Object {
 
-    const _NONE_ = NULL; // supported by all
-
 	const _CROSS_ = 'CROSS'; // supported by DB2, Drizzle, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
 	const _EXCEPTION_ = 'EXCEPTION'; // supported by DB2
+
+	const _FULL_ = 'FULL'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
+
+	const _FULL_OUTER_ = 'FULL OUTER'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
 
 	const _INNER_ = 'INNER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
@@ -51,17 +53,13 @@ abstract class Base_DB_SQL_JoinType extends Core_Object {
 
 	const _LEFT_OUTER_ = 'LEFT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 
-	const _RIGHT_ = 'RIGHT'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
-
-	const _RIGHT_OUTER_ = 'RIGHT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
-
-	const _FULL_ = 'FULL'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
-
-	const _FULL_OUTER_ = 'FULL OUTER'; // supported by DB2, Firebird, MS SQL, Oracle, PostgreSQL
-
 	const _NATURAL_ = 'NATURAL'; // supported by Firebird, MySQL, Oracle, PostgreSQL, SQLite
 
 	const _NATURAL_CROSS_ = 'NATURAL CROSS'; // supported by SQLite
+
+	const _NATURAL_FULL_ = 'NATURAL FULL'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
+
+	const _NATURAL_FULL_OUTER_ = 'NATURAL FULL OUTER'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
 
 	const _NATURAL_INNER_ = 'NATURAL INNER'; // supported by Firebird, Oracle, PostgreSQL, SQLite
 
@@ -73,10 +71,12 @@ abstract class Base_DB_SQL_JoinType extends Core_Object {
 
 	const _NATURAL_RIGHT_OUTER_ = 'NATURAL RIGHT OUTER'; // supported by Firebird, MySQL, Oracle, PostgreSQL
 
-	const _NATURAL_FULL_ = 'NATURAL FULL'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
-
-	const _NATURAL_FULL_OUTER_ = 'NATURAL FULL OUTER'; // supported by Firebird, MS SQL, Oracle, PostgreSQL
+    const _NONE_ = NULL; // supported by all
 
 	const _STRAIGHT_ = 'STRAIGHT'; // supported by MySQL
+
+	const _RIGHT_ = 'RIGHT'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
+
+	const _RIGHT_OUTER_ = 'RIGHT OUTER'; // supported by DB2, Firebird, MS SQL, MySQL, Oracle, PostgreSQL
 
 }

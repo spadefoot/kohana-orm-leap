@@ -22,35 +22,11 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-11
+ * @version 2013-01-27
  *
  * @abstract
  */
 abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
-
-	/**
-	 * This variable stores a reference to the pre-compiler.
-	 *
-	 * @access protected
-	 * @var DB_SQL_Precompiler
-	 */
-	protected $precompiler = NULL;
-
-	/**
-	 * This variable stores the build data for the SQL statement.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $data = NULL;
-
-	/**
-	 * This variable stores the name of the SQL dialect being used.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $dialect = NULL;
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -67,19 +43,6 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 		foreach ($columns as $column) {
 			$this->column($column);
 		}
-	}
-
-	/**
-	 * This function sets whether to constrain the SQL statement to only distinct records.
-	 *
-	 * @access public
-	 * @param boolean $distinct                     whether to constrain the SQL statement to only
-	 *                                              distinct records
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 */
-	public function distinct($distinct = TRUE) {
-		$this->data['distinct'] = $this->precompiler->prepare_boolean($distinct);
-		return $this;
 	}
 
 	/**
@@ -114,6 +77,30 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
+	 * This function combines another SQL statement using the specified operator.
+	 *
+	 * @access public
+	 * @param string $operator                      the operator to be used to append
+	 *                                              the specified SQL statement
+	 * @param string $statement                     the SQL statement to be appended
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
+	 */
+	public function combine($operator, $statement) {
+		$builder = 'DB_' . $this->dialect . '_Select_Builder';
+		if (is_object($statement) AND ($statement instanceof $builder)) {
+			$statement = $statement->statement(FALSE);
+		}
+		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
+		}
+		$statement = trim($statement, "; \t\n\r\0\x0B");
+		$operator = $this->precompiler->prepare_operator($operator, 'SET');
+		$this->data['combine'][] = "{$operator} {$statement}";
+		return $this;
+	}
+
+	/**
 	 * This function will a column to be counted.
 	 *
 	 * @access public
@@ -126,6 +113,19 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			? $this->precompiler->prepare_wildcard($column)
 			: $this->precompiler->prepare_identifier($column);
 		return $this->column(DB_SQL::expr("COUNT({$column})"), $alias);
+	}
+
+	/**
+	 * This function sets whether to constrain the SQL statement to only distinct records.
+	 *
+	 * @access public
+	 * @param boolean $distinct                     whether to constrain the SQL statement to only
+	 *                                              distinct records
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 */
+	public function distinct($distinct = TRUE) {
+		$this->data['distinct'] = $this->precompiler->prepare_boolean($distinct);
+		return $this;
 	}
 
 	/**
@@ -147,144 +147,6 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function joins a table.
-	 *
-	 * @access public
-	 * @param string $type                          the type of join
-	 * @param string $table                         the table to be joined
-	 * @param string $alias                         the alias to be used for the specified table
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 */
-	public function join($type, $table, $alias = NULL) {
-		$table = 'JOIN ' . $this->precompiler->prepare_identifier($table);
-		if ($type !== NULL) {
-			$type = $this->precompiler->prepare_join($type);
-			$table = "{$type} {$table}";
-		}
-		if ($alias !== NULL) {
-			$alias = $this->precompiler->prepare_alias($alias);
-			$table = "{$table} {$alias}";
-		}
-		$this->data['join'][] = array($table, array(), array());
-		return $this;
-	}
-
-	/**
-	 * This function sets an "on" constraint for the last join specified.
-	 *
-	 * @access public
-	 * @param string $column0                       the column to be constrained on
-	 * @param string $operator                      the operator to be used
-	 * @param string $column1                       the constraint column
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
-	 */
-	public function on($column0, $operator, $column1) {
-		if ( ! empty($this->data['join'])) {
-			$index = count($this->data['join']) - 1;
-			$condition = $this->data['join'][$index][2];
-			if ( ! empty($condition)) {
-				throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
-			}
-			$column0 = $this->precompiler->prepare_identifier($column0);
-			$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
-			$column1 = $this->precompiler->prepare_identifier($column1);
-			$this->data['join'][$index][1][] = "{$column0} {$operator} {$column1}";
-		}
-		else {
-			throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Must declare a JOIN clause before declaring an "on" constraint.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
-		}
-		return $this;
-	}
-
-	/**
-	 * This function sets a "using" constraint for the last join specified.
-	 *
-	 * @access public
-	 * @param string $column                        the column to be constrained
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
-	 */
-	public function using($column) {
-		if ( ! empty($this->data['join'])) {
-			$index = count($this->data['join']) - 1;
-			$condition = $this->data['join'][$index][1];
-			if ( ! empty($condition)) {
-				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column' => $column));
-			}
-			$column = $this->precompiler->prepare_identifier($column);
-			$this->data['join'][$index][2][] = $column;
-		}
-		else {
-			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a JOIN clause before declaring a "using" constraint.', array(':column' => $column));
-		}
-		return $this;
-	}
-
-	/**
-	 * This function either opens or closes a "where" group.
-	 *
-	 * @access public
-	 * @param string $parenthesis                   the parenthesis to be used
-	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 */
-	public function where_block($parenthesis, $connector = 'AND') {
-		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
-		$connector = $this->precompiler->prepare_connector($connector);
-		$this->data['where'][] = array($connector, $parenthesis);
-		return $this;
-	}
-
-	/**
-	 * This function adds a "where" constraint.
-	 *
-	 * @access public
-	 * @param string $column                        the column to be constrained
-	 * @param string $operator                      the operator to be used
-	 * @param string $value                         the value the column is constrained with
-	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
-	 */
-	public function where($column, $operator, $value, $connector = 'AND') {
-		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
-			if ( ! is_array($value)) {
-				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
-			}
-			$column = $this->precompiler->prepare_identifier($column);
-			$value0 = $this->precompiler->prepare_value($value[0]);
-			$value1 = $this->precompiler->prepare_value($value[1]);
-			$connector = $this->precompiler->prepare_connector($connector);
-			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
-		}
-		else {
-			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
-				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
-			}
-			if ($value === NULL) {
-				switch ($operator) {
-					case DB_SQL_Operator::_EQUAL_TO_:
-						$operator = DB_SQL_Operator::_IS_;
-					break;
-					case DB_SQL_Operator::_NOT_EQUIVALENT_:
-						$operator = DB_SQL_Operator::_IS_NOT_;
-					break;
-				}
-			}
-			$column = $this->precompiler->prepare_identifier($column);
-			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
-				? '\\\\'
-				: NULL;
-			$value = $this->precompiler->prepare_value($value, $escape);
-			$connector = $this->precompiler->prepare_connector($connector);
-			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
-		}
-		return $this;
-	}
-
-	/**
 	 * This function adds a "group by" clause.
 	 *
 	 * @access public
@@ -297,25 +159,6 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$identifier = $this->precompiler->prepare_identifier($field);
 			$this->data['group_by'][] = $identifier;
 		}
-		return $this;
-	}
-
-	/**
-	 * This function either opens or closes a "having" group.
-	 *
-	 * @access public
-	 * @param string $parenthesis                   the parenthesis to be used
-	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
-	 */
-	public function having_block($parenthesis, $connector = 'AND') {
-		if (empty($this->data['group_by'])) {
-			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':parenthesis' => $parenthesis, ':connector' => $connector));
-		}
-		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
-		$connector = $this->precompiler->prepare_connector($connector);
-		$this->data['having'][] = array($connector, $parenthesis);
 		return $this;
 	}
 
@@ -371,18 +214,44 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
-	 * This function sets how a column will be sorted.
+	 * This function either opens or closes a "having" group.
 	 *
 	 * @access public
-	 * @param string $column                        the column to be sorted
-	 * @param string $ordering                      the ordering token that signals whether the
-	 *                                              column will sorted either in ascending or
-	 *                                              descending order
-	 * @param string $nulls                         the weight to be given to null values
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
+	 */
+	public function having_block($parenthesis, $connector = 'AND') {
+		if (empty($this->data['group_by'])) {
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':parenthesis' => $parenthesis, ':connector' => $connector));
+		}
+		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
+		$connector = $this->precompiler->prepare_connector($connector);
+		$this->data['having'][] = array($connector, $parenthesis);
+		return $this;
+	}
+
+	/**
+	 * This function joins a table.
+	 *
+	 * @access public
+	 * @param string $type                          the type of join
+	 * @param string $table                         the table to be joined
+	 * @param string $alias                         the alias to be used for the specified table
 	 * @return DB_SQL_Select_Builder                a reference to the current instance
 	 */
-	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
-		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
+	public function join($type, $table, $alias = NULL) {
+		$table = 'JOIN ' . $this->precompiler->prepare_identifier($table);
+		if ($type !== NULL) {
+			$type = $this->precompiler->prepare_join($type);
+			$table = "{$type} {$table}";
+		}
+		if ($alias !== NULL) {
+			$alias = $this->precompiler->prepare_alias($alias);
+			$table = "{$table} {$alias}";
+		}
+		$this->data['join'][] = array($table, array(), array());
 		return $this;
 	}
 
@@ -411,6 +280,50 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	}
 
 	/**
+	 * This function sets an "on" constraint for the last join specified.
+	 *
+	 * @access public
+	 * @param string $column0                       the column to be constrained on
+	 * @param string $operator                      the operator to be used
+	 * @param string $column1                       the constraint column
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
+	 */
+	public function on($column0, $operator, $column1) {
+		if ( ! empty($this->data['join'])) {
+			$index = count($this->data['join']) - 1;
+			$condition = $this->data['join'][$index][2];
+			if ( ! empty($condition)) {
+				throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
+			}
+			$column0 = $this->precompiler->prepare_identifier($column0);
+			$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
+			$column1 = $this->precompiler->prepare_identifier($column1);
+			$this->data['join'][$index][1][] = "{$column0} {$operator} {$column1}";
+		}
+		else {
+			throw new Throwable_SQL_Exception('Message: Invalid build instruction. Reason: Must declare a JOIN clause before declaring an "on" constraint.', array(':column0' => $column0, ':operator' => $operator, ':column1:' => $column1));
+		}
+		return $this;
+	}
+
+	/**
+	 * This function sets how a column will be sorted.
+	 *
+	 * @access public
+	 * @param string $column                        the column to be sorted
+	 * @param string $ordering                      the ordering token that signals whether the
+	 *                                              column will sorted either in ascending or
+	 *                                              descending order
+	 * @param string $nulls                         the weight to be given to null values
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 */
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
+		return $this;
+	}
+
+	/**
 	 * This function sets both the "offset" constraint and the "limit" constraint on
 	 * the statement.
 	 *
@@ -422,30 +335,6 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	public function page($offset, $limit) {
 		$this->offset($offset);
 		$this->limit($limit);
-		return $this;
-	}
-
-	/**
-	 * This function combines another SQL statement using the specified operator.
-	 *
-	 * @access public
-	 * @param string $operator                      the operator to be used to append
-	 *                                              the specified SQL statement
-	 * @param string $statement                     the SQL statement to be appended
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
-	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
-	 */
-	public function combine($operator, $statement) {
-		$builder = 'DB_' . $this->dialect . '_Select_Builder';
-		if (is_object($statement) AND ($statement instanceof $builder)) {
-			$statement = $statement->statement(FALSE);
-		}
-		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
-			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
-		}
-		$statement = trim($statement, "; \t\n\r\0\x0B");
-		$operator = $this->precompiler->prepare_operator($operator, 'SET');
-		$this->data['combine'][] = "{$operator} {$statement}";
 		return $this;
 	}
 
@@ -470,6 +359,93 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			'where' => array(),
 			'wildcard' => '*',
 		);
+		return $this;
+	}
+
+	/**
+	 * This function sets a "using" constraint for the last join specified.
+	 *
+	 * @access public
+	 * @param string $column                        the column to be constrained
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
+	 */
+	public function using($column) {
+		if ( ! empty($this->data['join'])) {
+			$index = count($this->data['join']) - 1;
+			$condition = $this->data['join'][$index][1];
+			if ( ! empty($condition)) {
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must not declare two different types of constraints on a JOIN statement.', array(':column' => $column));
+			}
+			$column = $this->precompiler->prepare_identifier($column);
+			$this->data['join'][$index][2][] = $column;
+		}
+		else {
+			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Must declare a JOIN clause before declaring a "using" constraint.', array(':column' => $column));
+		}
+		return $this;
+	}
+
+	/**
+	 * This function adds a "where" constraint.
+	 *
+	 * @access public
+	 * @param string $column                        the column to be constrained
+	 * @param string $operator                      the operator to be used
+	 * @param string $value                         the value the column is constrained with
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
+	 */
+	public function where($column, $operator, $value, $connector = 'AND') {
+		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
+		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+			if ( ! is_array($value)) {
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+			}
+			$column = $this->precompiler->prepare_identifier($column);
+			$value0 = $this->precompiler->prepare_value($value[0]);
+			$value1 = $this->precompiler->prepare_value($value[1]);
+			$connector = $this->precompiler->prepare_connector($connector);
+			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
+		}
+		else {
+			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
+				throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
+			}
+			if ($value === NULL) {
+				switch ($operator) {
+					case DB_SQL_Operator::_EQUAL_TO_:
+						$operator = DB_SQL_Operator::_IS_;
+					break;
+					case DB_SQL_Operator::_NOT_EQUIVALENT_:
+						$operator = DB_SQL_Operator::_IS_NOT_;
+					break;
+				}
+			}
+			$column = $this->precompiler->prepare_identifier($column);
+			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
+				? '\\\\'
+				: NULL;
+			$value = $this->precompiler->prepare_value($value, $escape);
+			$connector = $this->precompiler->prepare_connector($connector);
+			$this->data['where'][] = array($connector, "{$column} {$operator} {$value}");
+		}
+		return $this;
+	}
+
+	/**
+	 * This function either opens or closes a "where" group.
+	 *
+	 * @access public
+	 * @param string $parenthesis                   the parenthesis to be used
+	 * @param string $connector                     the connector to be used
+	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 */
+	public function where_block($parenthesis, $connector = 'AND') {
+		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);
+		$connector = $this->precompiler->prepare_connector($connector);
+		$this->data['where'][] = array($connector, $parenthesis);
 		return $this;
 	}
 
