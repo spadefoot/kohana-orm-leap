@@ -86,13 +86,13 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		$child_model = $this->metadata['child_model'];
 		$child_table = $child_model::table();
 		$child_key = $this->metadata['child_key'];
-		$child_source = $child_model::data_source();
+		$child_source = $child_model::data_source(DB_DataSource::SLAVE_INSTANCE);
 
 		if (isset($this->metadata['through_model']) AND isset($this->metadata['through_keys'])) {
 			$through_model = $this->metadata['through_model'];
 			$through_table = $through_model::table();
 			$through_keys = $this->metadata['through_keys'];
-			$through_source = $through_model::data_source();
+			$through_source = $through_model::data_source(DB_DataSource::SLAVE_INSTANCE);
 
 			if ($through_source != $child_source) {
 				$builder = DB_SQL::select($through_source)

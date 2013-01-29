@@ -22,11 +22,27 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-26
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_DataSource extends Core_Object {
+
+	/**
+	 * This constant represents a master instance of a database.
+	 *
+	 * @access public
+	 * @const integer
+	 */
+	const MASTER_INSTANCE = 0;
+
+	/**
+	 * This constant represents a slave instance of a database.
+	 *
+	 * @access public
+	 * @const integer
+	 */
+	const SLAVE_INSTANCE = 1;
 
 	/**
 	 * This variable stores the settings for the data source.

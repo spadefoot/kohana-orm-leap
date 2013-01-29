@@ -146,7 +146,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			throw new Throwable_Marshalling_Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
 		}
 
-		$data_source = static::data_source();
+		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
@@ -243,7 +243,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  node
 	 */
 	public function ancestors($ordering = 'ASC', $limit = 0, $root = TRUE) {
-		$data_source = static::data_source();
+		$data_source = static::data_source(DB_DataSource::SLAVE_INSTANCE);
 
 		$builder = DB_SQL::select($data_source)
 			->all('t1.*')
@@ -301,7 +301,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			throw new Throwable_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 
-		$data_source = static::data_source();
+		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
@@ -496,7 +496,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @see http://stackoverflow.com/questions/7661913/modified-preorder-tree-traversal-selecting-nodes-1-level-deep
 	 */
 	public function level() {
-		$record = DB_SQL::select(static::data_source())
+		$record = DB_SQL::select(static::data_source(DB_DataSource::SLAVE_INSTANCE))
 			->column(DB_SQL::expr('COUNT(parent_id) - 1'), 'level')
 			->from(static::table())
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -576,7 +576,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$columns = array_keys($this->fields);
 
 		if ( ! empty($columns)) {
-			$builder = DB_SQL::update(static::data_source())
+			$builder = DB_SQL::update(static::data_source(DB_DataSource::MASTER_INSTANCE))
 				->table(static::table())
 				->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
 
@@ -683,7 +683,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT                              the newly created root node
 	 **/
 	public static function add_root($scope, $name, Array $fields = NULL) {
-		$data_source = static::data_source();
+		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);

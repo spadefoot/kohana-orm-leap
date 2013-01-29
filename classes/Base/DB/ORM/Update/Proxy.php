@@ -86,7 +86,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core_Object implements DB_SQL_St
 	public function __construct($model) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->data_source = new DB_DataSource($model::data_source());
+		$this->data_source = new DB_DataSource($model::data_source(DB_DataSource::MASTER_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Update_Builder';
 		$this->builder = new $builder($this->data_source);
 		$extension = DB_ORM_Model::builder_name($name);

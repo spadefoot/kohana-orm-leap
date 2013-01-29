@@ -91,7 +91,7 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 		do {
 			$token = sha1(uniqid(Text::random('alnum', 32), TRUE));
 		}
-		while(DB_SQL::select($this->data_source())->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
+		while(DB_SQL::select($this->data_source(DB_DataSource::SLAVE_INSTANCE))->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
 		return $token;
 	}
 
@@ -101,11 +101,11 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * @access public
 	 * @override
 	 * @static
-	 * @param integer $context                      the data source context to be used (e.g.
+	 * @param integer $instance                     the data source instance to be used (e.g.
 	 *                                              0 = master, 1 = slave, 2 = slave, etc.)
 	 * @return string                               the data source name
 	 */
-	public static function data_source($context = 0) {
+	public static function data_source($instance = 0) {
 		return 'default';
 	}
 

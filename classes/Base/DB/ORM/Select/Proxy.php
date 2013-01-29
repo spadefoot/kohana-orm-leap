@@ -103,7 +103,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Core_Object implements DB_SQL_S
 	public function __construct($model, Array $columns = array()) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->data_source = new DB_DataSource($model::data_source());
+		$this->data_source = new DB_DataSource($model::data_source(DB_DataSource::SLAVE_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Select_Builder';
 		$this->table = $model::table();
 		$this->builder = new $builder($this->data_source, $columns);

@@ -1,7 +1,7 @@
 Change Log for LEAP ORM
 
 2013-01-28
-* Changed Base_DB_ORM_Model::data_source() to Base_DB_ORM_Model::data_source($context = 0).
+* Changed Base_DB_ORM_Model::data_source() to Base_DB_ORM_Model::data_source($instance = 0).
 * Changed all instance variables $source to $data_source.
 
 2013-01-01
