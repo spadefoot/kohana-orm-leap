@@ -86,7 +86,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	public function __construct($model) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->data_source = new DB_DataSource($model::data_source(DB_DataSource::SLAVE_INSTANCE));
+		$this->data_source = new DB_DataSource($model::data_source(DB_DataSource::MASTER_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Delete_Builder';
 		$this->builder = new $builder($this->data_source);
 		$extension = DB_ORM_Model::builder_name($name);
