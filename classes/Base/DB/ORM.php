@@ -107,6 +107,7 @@ abstract class Base_DB_ORM extends Core_Object {
 	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
 	 */
 	public static function precompiler($model) {
+		$model = DB_ORM_Model::model_name($model);
 		$data_source = $model::data_source(DB_DataSource::MASTER_INSTANCE);
 		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
 		$object = new $precompiler($data_source);
