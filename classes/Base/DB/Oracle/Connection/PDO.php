@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-11
+ * @version 2013-01-28
  *
  * @see http://www.php.net/manual/en/ref.pdo-oci.php
  *
@@ -104,6 +104,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * This function creates a data reader for query the specified SQL statement.
 	 *
 	 * @access public
+	 * @override
 	 * @param string $sql						    the SQL statement
 	 * @return DB_SQL_DataReader                    the SQL data reader
 	 * @throws Throwable_SQL_Exception              indicates that the query failed

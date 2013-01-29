@@ -22,11 +22,19 @@
  *
  * @package Leap
  * @category Schema
- * @version 2013-01-27
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_Schema extends Core_Object {
+
+	/**
+	 * This variable stores a reference to the data source.
+	 *
+	 * @access protected
+	 * @var DB_DataSource
+	 */
+	protected $data_source;
 
 	/**
 	 * This variable stores a reference to the helper class that implements the expression
@@ -38,22 +46,14 @@ abstract class Base_DB_Schema extends Core_Object {
 	protected $precompiler;
 
 	/**
-	 * This variable stores a reference to the data source.
-	 *
-	 * @access protected
-	 * @var DB_DataSource
-	 */
-	protected $source;
-
-	/**
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
 	 * @param mixed $config                  the data source configurations
 	 */
 	public function __construct($config) {
-		$this->source = new DB_DataSource($config);
-		$precompiler = 'DB_' . $this->source->dialect . '_Precompiler';
+		$this->data_source = new DB_DataSource($config);
+		$precompiler = 'DB_' . $this->data_source->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler();
 	}
 

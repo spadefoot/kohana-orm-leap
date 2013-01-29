@@ -23,7 +23,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2013-01-22
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -101,9 +101,11 @@ abstract class Base_Model_Leap_User_Token extends DB_ORM_Model {
 	 * @access public
 	 * @override
 	 * @static
+	 * @param integer $context                      the data source context to be used (e.g.
+	 *                                              0 = master, 1 = slave, 2 = slave, etc.)
 	 * @return string                               the data source name
 	 */
-	public static function data_source() {
+	public static function data_source($context = 0) {
 		return 'default';
 	}
 

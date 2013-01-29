@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-08-21
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -32,6 +32,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
+	 * @override
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the relation's metadata
 	 */
@@ -76,6 +77,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 	 * This function loads the corresponding model(s).
 	 *
 	 * @access protected
+	 * @override
 	 * @return DB_ResultSet                         the corresponding model(s)
 	 */
 	protected function load() {

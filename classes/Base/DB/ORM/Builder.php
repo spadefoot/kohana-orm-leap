@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-11-14
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -34,7 +34,7 @@ abstract class Base_DB_ORM_Builder extends Core_Object {
 	 * @access protected
 	 * @var DB_SQL_Builder
 	 */
-	protected $builder = NULL;
+	protected $builder;
 
 	/**
 	 * This constructor instantiates this class.

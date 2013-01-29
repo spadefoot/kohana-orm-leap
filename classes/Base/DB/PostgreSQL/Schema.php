@@ -22,11 +22,59 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
+
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @override
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 *
+	 * @license http://kohanaframework.org/license
+	 */
+	protected function data_type($type) {
+		/*
+		static $types = array(
+			// PostgreSQL >= 7.4
+			'box'       => array('type' => 'string'),
+			'bytea'     => array('type' => 'string', 'binary' => TRUE),
+			'cidr'      => array('type' => 'string'),
+			'circle'    => array('type' => 'string'),
+			'inet'      => array('type' => 'string'),
+			'int2'      => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
+			'int4'      => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
+			'int8'      => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
+			'line'      => array('type' => 'string'),
+			'lseg'      => array('type' => 'string'),
+			'macaddr'   => array('type' => 'string'),
+			'money'     => array('type' => 'float', 'exact' => TRUE, 'min' => '-92233720368547758.08', 'max' => '92233720368547758.07'),
+			'path'      => array('type' => 'string'),
+			'polygon'   => array('type' => 'string'),
+			'point'     => array('type' => 'string'),
+			'text'      => array('type' => 'string'),
+
+			// PostgreSQL >= 8.3
+			'tsquery'   => array('type' => 'string'),
+			'tsvector'  => array('type' => 'string'),
+			'uuid'      => array('type' => 'string'),
+			'xml'       => array('type' => 'string'),
+		);
+
+		if (isset($types[$type])) {
+			return $types[$type];
+		}
+
+		return parent::data_type($type);
+		*/
+	}
 
 	/**
 	 * This function returns a result set that contains an array of all fields in
@@ -100,7 +148,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * @see http://www.postgresql.org/docs/current/static/catalog-pg-index.html
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('t4.schname', 'schema')
 			->column('t0.relname', 'table')
 			->column('t2.relname', 'index')
@@ -154,7 +202,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('table_schema', 'schema')
 			->column('table_name', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
@@ -198,7 +246,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * @see http://www.postgresql.org/docs/8.1/static/infoschema-triggers.html
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('event_object_schema', 'schema')
 			->column('event_object_table', 'table')
 			->column('trigger_name', 'trigger')
@@ -245,7 +293,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('table_schema', 'schema')
 			->column('table_name', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
@@ -261,54 +309,6 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 		}
 
 		return $builder->query();
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @override
-	 * @param string $type                  the SQL data type
-	 * @return array                        an associated array which describes the properties
-	 *                                      for the specified data type
-	 */
-	protected function data_type($type) {
-		/*
-		static $types = array(
-			// PostgreSQL >= 7.4
-			'box'       => array('type' => 'string'),
-			'bytea'     => array('type' => 'string', 'binary' => TRUE),
-			'cidr'      => array('type' => 'string'),
-			'circle'    => array('type' => 'string'),
-			'inet'      => array('type' => 'string'),
-			'int2'      => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
-			'int4'      => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'int8'      => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
-			'line'      => array('type' => 'string'),
-			'lseg'      => array('type' => 'string'),
-			'macaddr'   => array('type' => 'string'),
-			'money'     => array('type' => 'float', 'exact' => TRUE, 'min' => '-92233720368547758.08', 'max' => '92233720368547758.07'),
-			'path'      => array('type' => 'string'),
-			'polygon'   => array('type' => 'string'),
-			'point'     => array('type' => 'string'),
-			'text'      => array('type' => 'string'),
-
-			// PostgreSQL >= 8.3
-			'tsquery'   => array('type' => 'string'),
-			'tsvector'  => array('type' => 'string'),
-			'uuid'      => array('type' => 'string'),
-			'xml'       => array('type' => 'string'),
-		);
-
-		if (isset($types[$type])) {
-			return $types[$type];
-		}
-
-		return parent::data_type($type);
-		*/
 	}
 
 }

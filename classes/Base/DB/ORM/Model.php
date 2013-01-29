@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-11
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -79,18 +79,6 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	}
 
 	/**
-	 * This function returns whether a property is set.
-	 *
-	 * @access public
-	 * @override
-	 * @param string $name                          the name of the property
-	 * @return boolean                              whether the property is set
-	 */
-	public function __isset($name) {
-		return (isset($this->fields[$name]) OR isset($this->aliases[$name]) OR isset($this->adaptors[$name]) OR isset($this->relations[$name]));
-	}
-
-	/**
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
@@ -116,6 +104,18 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 		else {
 			throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
 		}
+	}
+
+	/**
+	 * This function returns whether a property is set.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $name                          the name of the property
+	 * @return boolean                              whether the property is set
+	 */
+	public function __isset($name) {
+		return (isset($this->fields[$name]) OR isset($this->aliases[$name]) OR isset($this->adaptors[$name]) OR isset($this->relations[$name]));
 	}
 
 	/**
@@ -226,6 +226,39 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	}
 
 	/**
+	 * This function generates a hash code that will be used to indicate whether the
+	 * record is saved in the database.
+	 *
+	 * @access protected
+	 * @return string                               the generated hash code
+	 */
+	protected function hash_code() {
+		$primary_key = static::primary_key();
+		if ( ! empty($primary_key) AND is_array($primary_key)) {
+			if (static::is_auto_incremented()) {
+				$column = $primary_key[0];
+				if ( ! isset($this->fields[$column])) {
+					throw new Throwable_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
+				}
+				$value = $this->fields[$column]->value;
+				return ( ! empty($value)) ? sha1("{$column}={$value}") : NULL;
+			}
+			$buffer = '';
+			foreach ($primary_key as $column) {
+				if ( ! isset($this->fields[$column])) {
+					throw new Throwable_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
+				}
+				$value = $this->fields[$column]->value;
+				if ($value !== NULL) {
+					$buffer .= "{$column}={$value}";
+				}
+			}
+			return ($buffer != '') ? sha1($buffer) : NULL;
+		}
+		throw new Throwable_Database_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
+	}
+
+	/**
 	 * This function checks whether this model defines the specified name as
 	 * an adaptor.
 	 *
@@ -275,6 +308,19 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	}
 
 	/**
+	 * This function checks whether this model defines the specified name as
+	 * a relation.
+	 *
+	 * @access public
+	 * @param string $name                          the name of the relation
+	 * @return boolean                              whether this model defines the specified
+	 *                                              name as a relation
+	 */
+	public function is_relation($name) {
+		return isset($this->relations[$name]);
+	}
+
+	/**
 	 * This function checks whether the record exists in the database table.
 	 *
 	 * @access public
@@ -289,52 +335,6 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
 		return $builder->query()->is_loaded();
-	}
-
-	/**
-	 * This function checks whether this model defines the specified name as
-	 * a relation.
-	 *
-	 * @access public
-	 * @param string $name                          the name of the relation
-	 * @return boolean                              whether this model defines the specified
-	 *                                              name as a relation
-	 */
-	public function is_relation($name) {
-		return isset($this->relations[$name]);
-	}
-
-	/**
-	 * This function generates a hash code that will be used to indicate whether the
-	 * record is saved in the database.
-	 *
-	 * @access protected
-	 * @return string                               the generated hash code
-	 */
-	protected function hash_code() {
-		$primary_key = static::primary_key();
-		if ( ! empty($primary_key) AND is_array($primary_key)) {
-			if (static::is_auto_incremented()) {
-				$column = $primary_key[0];
-				if ( ! isset($this->fields[$column])) {
-					throw new Throwable_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
-				}
-				$value = $this->fields[$column]->value;
-				return ( ! empty($value)) ? sha1("{$column}={$value}") : NULL;
-			}
-			$buffer = '';
-			foreach ($primary_key as $column) {
-				if ( ! isset($this->fields[$column])) {
-					throw new Throwable_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
-				}
-				$value = $this->fields[$column]->value;
-				if ($value !== NULL) {
-					$buffer .= "{$column}={$value}";
-				}
-			}
-			return ($buffer != '') ? sha1($buffer) : NULL;
-		}
-		throw new Throwable_Database_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
 	}
 
 	/**
@@ -671,9 +671,11 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 *
 	 * @access public
 	 * @static
+	 * @param integer $context                      the data source context to be used (e.g.
+	 *                                              0 = master, 1 = slave, 2 = slave, etc.)
 	 * @return string                               the data source name
 	 */
-	public static function data_source() {
+	public static function data_source($context = 0) {
 		return 'default'; // the key used in config/database.php
 	}
 

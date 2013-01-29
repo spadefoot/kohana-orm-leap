@@ -1,7 +1,5 @@
 ----
--- This license is a legal agreement between you and the Kohana Team for the use of Kohana Framework
--- (the "Software"). By obtaining the Software you agree to comply with the terms and conditions of
--- this license.
+-- The BSD License
 --
 -- Copyright © 2011–2013 Spadefoot Team.
 -- Copyright © 2007–2012 Kohana Team.
@@ -13,7 +11,7 @@
 --      and the following disclaimer.
 --    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions
 --      and the following disclaimer in the documentation and/or other materials provided with the distribution.
---    * Neither the name of the Kohana nor the names of its contributors may be used to endorse or promote
+--    * Neither the name of Kohana nor the names of its contributors may be used to endorse or promote
 --      products derived from this software without specific prior written permission.
 --
 -- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED

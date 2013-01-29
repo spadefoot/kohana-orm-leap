@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-25
+ * @version 2013-01-28
  *
  * @see http://php.net/manual/en/book.oci8.php
  *
@@ -39,56 +39,16 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	protected $execution_mode;
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
 	 *
-	 * @see http://www.php.net/manual/en/function.oci-connect.php
-	 * @see http://download.oracle.com/docs/cd/E11882_01/network.112/e10836/naming.htm
-	 * @see http://docs.oracle.com/cd/B10501_01/server.920/a96529/ch2.htm#100150
+	 * @see http://www.php.net/manual/en/function.oci-close.php
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$host = $this->data_source->host;
-			$database = $this->data_source->database;
-			if ( ! empty($host) ) {
-				$connection_string = '//'. $host;
-				$port = $this->data_source->port; // default port is 1521
-				if ( ! empty($port)) {
-					$connection_string .= ':' . $port;
-				}
-				$connection_string .= '/' . $database;
-			}
-			else if (isset($database)) {
-				$connection_string = $database;
-			}
-			else {
-				throw new Throwable_Database_Exception('Message: Bad configuration. Reason: Data source needs to define either a //host[:port][/database] or a database name scheme.', array(':dsn' => $this->data_source->id));
-			}
-			$username = $this->data_source->username;
-			$password = $this->data_source->password;
-			if ( ! empty($this->data_source->charset)) {
-				$charset = strtoupper($this->data_source->charset);
-				$this->resource = ($this->data_source->is_persistent())
-					? @oci_pconnect($username, $password, $connection_string, $charset)
-					: @oci_connect($username, $password, $connection_string, $charset);
-			}
-			else {
-				$this->resource = ($this->data_source->is_persistent())
-					? @oci_pconnect($username, $password, $connection_string)
-					: @oci_connect($username, $password, $connection_string);
-			}
-			if ($this->resource === FALSE) {
-				$error = @oci_error();
-				$reason = (is_array($error) AND isset($error['message']))
-					? $error['message']
-					: 'Unable to connect to database.';
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
-			}
-			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@oci_close($this->resource);
 		}
 	}
 
@@ -115,45 +75,48 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function creates a data reader for query the specified SQL statement.
-	 *
-	 * @access public
-	 * @param string $sql						    the SQL statement
-	 * @return DB_SQL_DataReader                    the SQL data reader
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
-	 */
-	public function reader($sql) {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
-		}
-		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
-		$this->sql = $sql;
-		return $reader;
-	}
-
-	/**
-	 * This function processes an SQL statement that will return data.
+	 * This function closes an open connection.
 	 *
 	 * @access public
 	 * @override
-	 * @param string $sql                           the SQL statement
-	 * @param string $type						    the return type to be used
-	 * @return DB_ResultSet                         the result set
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @return boolean                              whether an open connection was closed
+	 *
+	 * @see http://www.php.net/manual/en/function.oci-close.php
 	 */
-	public function query($sql, $type = 'array') {
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @oci_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://www.php.net/manual/en/function.oci-commit.php
+	 */
+	public function commit() {
+		$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
 		}
-		$result_set = $this->cache($sql, $type);
-		if ($result_set !== NULL) {
-			$this->sql = $sql;
-			return $result_set;
+		$command = @oci_commit($this->resource);
+		if ($command === FALSE) {
+			$error = @oci_error($this->resource);
+			$reason = (is_array($error) AND isset($error['message']))
+				? $error['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
-		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
-		$this->sql = $sql;
-		return $result_set;
+		$this->sql = 'COMMIT;';
 	}
 
 	/**
@@ -234,6 +197,102 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
+	 * This function opens a connection using the data source provided.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
+	 *
+	 * @see http://www.php.net/manual/en/function.oci-connect.php
+	 * @see http://download.oracle.com/docs/cd/E11882_01/network.112/e10836/naming.htm
+	 * @see http://docs.oracle.com/cd/B10501_01/server.920/a96529/ch2.htm#100150
+	 */
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$host = $this->data_source->host;
+			$database = $this->data_source->database;
+			if ( ! empty($host) ) {
+				$connection_string = '//'. $host;
+				$port = $this->data_source->port; // default port is 1521
+				if ( ! empty($port)) {
+					$connection_string .= ':' . $port;
+				}
+				$connection_string .= '/' . $database;
+			}
+			else if (isset($database)) {
+				$connection_string = $database;
+			}
+			else {
+				throw new Throwable_Database_Exception('Message: Bad configuration. Reason: Data source needs to define either a //host[:port][/database] or a database name scheme.', array(':dsn' => $this->data_source->id));
+			}
+			$username = $this->data_source->username;
+			$password = $this->data_source->password;
+			if ( ! empty($this->data_source->charset)) {
+				$charset = strtoupper($this->data_source->charset);
+				$this->resource = ($this->data_source->is_persistent())
+					? @oci_pconnect($username, $password, $connection_string, $charset)
+					: @oci_connect($username, $password, $connection_string, $charset);
+			}
+			else {
+				$this->resource = ($this->data_source->is_persistent())
+					? @oci_pconnect($username, $password, $connection_string)
+					: @oci_connect($username, $password, $connection_string);
+			}
+			if ($this->resource === FALSE) {
+				$error = @oci_error();
+				$reason = (is_array($error) AND isset($error['message']))
+					? $error['message']
+					: 'Unable to connect to database.';
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
+			}
+			$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
+		}
+	}
+
+	/**
+	 * This function processes an SQL statement that will return data.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $sql                           the SQL statement
+	 * @param string $type						    the return type to be used
+	 * @return DB_ResultSet                         the result set
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 */
+	public function query($sql, $type = 'array') {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+		}
+		$result_set = $this->cache($sql, $type);
+		if ($result_set !== NULL) {
+			$this->sql = $sql;
+			return $result_set;
+		}
+		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
+		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
+		$this->sql = $sql;
+		return $result_set;
+	}
+
+	/**
+	 * This function creates a data reader for query the specified SQL statement.
+	 *
+	 * @access public
+	 * @param string $sql						    the SQL statement
+	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 */
+	public function reader($sql) {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+		}
+		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
+		$this->sql = $sql;
+		return $reader;
+	}
+
+	/**
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
@@ -257,65 +316,6 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = 'ROLLBACK;';
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://www.php.net/manual/en/function.oci-commit.php
-	 */
-	public function commit() {
-		$this->execution_mode = OCI_COMMIT_ON_SUCCESS;
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @oci_commit($this->resource);
-		if ($command === FALSE) {
-			$error = @oci_error($this->resource);
-			$reason = (is_array($error) AND isset($error['message']))
-				? $error['message']
-				: 'Unable to perform command.';
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
-		}
-		$this->sql = 'COMMIT;';
-	}
-
-	/**
-	 * This function closes an open connection.
-	 *
-	 * @access public
-	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 *
-	 * @see http://www.php.net/manual/en/function.oci-close.php
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @oci_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 *
-	 * @see http://www.php.net/manual/en/function.oci-close.php
-	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@oci_close($this->resource);
-		}
 	}
 
 }

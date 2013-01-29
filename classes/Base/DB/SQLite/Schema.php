@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -46,7 +46,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$sql = "PRAGMA table_info({$table});";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -137,9 +137,9 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://my.safaribooksonline.com/book/databases/sql/9781449394592/sqlite-pragmas/id3054537
 	 */
 	public function indexes($table, $like = '') {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
 		$table = trim(preg_replace('/[^a-z0-9$_ ]/i', '', $table));
@@ -195,10 +195,10 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://www.sqlite.org/faq.html#q7
 	 */
 	public function tables($like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column('name', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
@@ -242,10 +242,10 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://linuxgazette.net/109/chirico1.html
 	 */
 	public function triggers($table, $like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column('tbl_name', 'table')
 			->column('name', 'trigger')
@@ -327,10 +327,10 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://www.sqlite.org/faq.html#q7
 	 */
 	public function views($like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column('name', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
@@ -344,22 +344,6 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		}
 
 		return $builder->query();
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @override
-	 * @param string $type                  the SQL data type
-	 * @return array                        an associated array which describes the properties
-	 *                                      for the specified data type
-	 */
-	protected function data_type($type) {
-
 	}
 
 }

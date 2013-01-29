@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-27
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -112,7 +112,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -203,7 +203,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.tek-tips.com/viewthread.cfm?qid=128876&page=108
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('t1.TABSCHEMA', 'schema')
 			->column('t1.TABNAME', 'table')
 			->column('t1.INDNAME', 'index')
@@ -252,7 +252,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.selectorweb.com/db2.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('TABSCHEMA', 'schema')
 			->column('TABNAME', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
@@ -297,7 +297,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001066.htm
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('TABSCHEMA', 'schema')
 			->column('TABNAME', 'table')
 			->column('TRIGNAME', 'trigger')
@@ -343,7 +343,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0411melnyk/
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('VIEWSCHEMA', 'schema')
 			->column('VIEWNAME', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')

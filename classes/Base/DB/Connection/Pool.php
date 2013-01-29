@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2012-12-29
+ * @version 2013-01-28
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -132,9 +132,9 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 				if ($this->count() >= $this->settings['max_size']) {
 					throw new Throwable_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
 				}
-				$source_id = $connection->data_source->id;
-				$this->pool[$source_id][$connection_id] = $connection;
-				$this->lookup[$connection_id] = $source_id;
+				$data_source_id = $connection->data_source->id;
+				$this->pool[$data_source_id][$connection_id] = $connection;
+				$this->lookup[$connection_id] = $data_source_id;
 			}
 			return TRUE;
 		}
@@ -159,19 +159,19 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * will be returned when $new is set to "FALSE."
 	 *
 	 * @access public
-	 * @param DB_DataSource $source                 the data source configurations
+	 * @param DB_DataSource $data_source                 the data source configurations
 	 * @param boolean $new                          whether to create a new connection
 	 * @return DB_Connection_Driver                 the appropriate connection
 	 * @throws Throwable_Database_Exception         indicates that no new connections
 	 *                                              can be added
 	 */
-	public function get_connection($source = 'default', $new = FALSE) {
-		if ( ! (is_object($source) AND ($source instanceof DB_DataSource))) {
-			$source = new DB_DataSource($source);
+	public function get_connection($data_source = 'default', $new = FALSE) {
+		if ( ! (is_object($data_source) AND ($data_source instanceof DB_DataSource))) {
+			$data_source = new DB_DataSource($data_source);
 		}
-		if (isset($this->pool[$source->id]) AND ! empty($this->pool[$source->id])) {
+		if (isset($this->pool[$data_source->id]) AND ! empty($this->pool[$data_source->id])) {
 			if ($new) {
-				foreach ($this->pool[$source->id] as $connection) {
+				foreach ($this->pool[$data_source->id] as $connection) {
 					if ( ! $connection->is_connected()) {
 						$connection->open();
 						return $connection;
@@ -179,28 +179,28 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 				}
 			}
 			else {
-				$connection = end($this->pool[$source->id]);
+				$connection = end($this->pool[$data_source->id]);
 				do {
 					if ($connection->is_connected()) {
-						reset($this->pool[$source->id]);
+						reset($this->pool[$data_source->id]);
 						return $connection;
 					}
 				}
-				while ($connection = prev($this->pool[$source->id]));
-				$connection = end($this->pool[$source->id]);
-				reset($this->pool[$source->id]);
+				while ($connection = prev($this->pool[$data_source->id]));
+				$connection = end($this->pool[$data_source->id]);
+				reset($this->pool[$data_source->id]);
 				$connection->open();
 				return $connection;
 			}
 		}
 		if ($this->count() >= $this->settings['max_size']) {
-			throw new Throwable_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $source, ':new' => $new));
+			throw new Throwable_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $data_source, ':new' => $new));
 		}
-		$connection = DB_Connection_Driver::factory($source);
+		$connection = DB_Connection_Driver::factory($data_source);
 		$connection->open();
 		$connection_id = $connection->__hashCode();
-		$this->pool[$source->id][$connection_id] = $connection;
-		$this->lookup[$connection_id] = $source->id;
+		$this->pool[$data_source->id][$connection_id] = $connection;
+		$this->lookup[$connection_id] = $data_source->id;
 		return $connection;
 	}
 
@@ -215,8 +215,8 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 		if ($connection !== NULL) {
 			$connection_id = $connection->__hashCode();
 			if (isset($this->lookup[$connection_id])) {
-				$source_id = $this->lookup[$connection_id];
-				unset($this->pool[$source_id][$connection_id]);
+				$data_source_id = $this->lookup[$connection_id];
+				unset($this->pool[$data_source_id][$connection_id]);
 				unset($this->lookup[$connection_id]);
 			}
 		}

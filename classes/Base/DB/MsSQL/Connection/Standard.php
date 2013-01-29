@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-25
+ * @version 2013-01-28
  *
  * @see http://www.php.net/manual/en/ref.mssql.php
  * @see http://blogs.msdn.com/b/brian_swan/archive/2010/03/08/mssql-vs-sqlsrv-what-s-the-difference-part-1.aspx
@@ -33,39 +33,14 @@
 abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
-	 *
-	 * @see http://stackoverflow.com/questions/1322421/php-sql-server-how-to-set-charset-for-connection
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			try {
-				$connection_string = $this->data_source->host;
-				$port = $this->data_source->port;
-				if ( ! empty($port)) {
-					$connection_string .= ':' . $port;
-				}
-				$username = $this->data_source->username;
-				$password = $this->data_source->password;
-				$this->resource = ($this->data_source->is_persistent())
-					? mssql_pconnect($connection_string, $username, $password)
-					: mssql_connect($connection_string, $username, $password, TRUE);
-			}
-			catch (ErrorException $ex) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
-			}
-			$database = @mssql_select_db($this->data_source->database, $this->resource);
-			if ($database === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mssql_get_last_message()));
-			}
-			if ( ! empty($this->data_source->charset)) {
-				ini_set('mssql.charset', $this->data_source->charset);
-			}
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@mssql_close($this->resource);
 		}
 	}
 
@@ -81,6 +56,37 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function begin_transaction() {
 		$this->execute('BEGIN TRAN;');
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @mssql_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
+	 */
+	public function commit() {
+		$this->execute('COMMIT;');
 	}
 
 	/**
@@ -146,6 +152,43 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	}
 
 	/**
+	 * This function opens a connection using the data source provided.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
+	 *
+	 * @see http://stackoverflow.com/questions/1322421/php-sql-server-how-to-set-charset-for-connection
+	 */
+	public function open() {
+		if ( ! $this->is_connected()) {
+			try {
+				$connection_string = $this->data_source->host;
+				$port = $this->data_source->port;
+				if ( ! empty($port)) {
+					$connection_string .= ':' . $port;
+				}
+				$username = $this->data_source->username;
+				$password = $this->data_source->password;
+				$this->resource = ($this->data_source->is_persistent())
+					? mssql_pconnect($connection_string, $username, $password)
+					: mssql_connect($connection_string, $username, $password, TRUE);
+			}
+			catch (ErrorException $ex) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+			}
+			$database = @mssql_select_db($this->data_source->database, $this->resource);
+			if ($database === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mssql_get_last_message()));
+			}
+			if ( ! empty($this->data_source->charset)) {
+				ini_set('mssql.charset', $this->data_source->charset);
+			}
+		}
+	}
+
+	/**
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
@@ -155,49 +198,6 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 */
 	public function rollback() {
 		$this->execute('ROLLBACK;');
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
-	 */
-	public function commit() {
-		$this->execute('COMMIT;');
-	}
-
-	/**
-	 * This function closes an open connection.
-	 *
-	 * @access public
-	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @mssql_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@mssql_close($this->resource);
-		}
 	}
 
 }

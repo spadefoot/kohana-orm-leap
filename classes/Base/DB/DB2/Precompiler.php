@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-27
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -284,7 +284,7 @@ abstract class Base_DB_DB2_Precompiler extends DB_SQL_Precompiler {
 			return "''";
 		}
 		else {
-			return DB_Connection_Pool::instance()->get_connection($this->source)->quote($expr, $escape);
+			return DB_Connection_Pool::instance()->get_connection($this->data_source)->quote($expr, $escape);
 		}
 	}
 

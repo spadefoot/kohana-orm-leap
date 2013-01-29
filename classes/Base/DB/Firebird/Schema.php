@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -138,7 +138,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 		// TODO get collation
 		// TODO add like condition
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql)->as_array();
 
 		$fields = array();
@@ -300,10 +300,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function indexes($table, $like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), 'index')
@@ -352,10 +352,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function tables($like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
@@ -398,10 +398,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function triggers($table, $like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column('RDB$RELATION_NAME', 'table')
 			->column('RDB$TRIGGER_NAME', 'trigger')
@@ -446,10 +446,10 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
 	 */
 	public function views($like = '') {
-		$pathinfo = pathinfo($this->source->database);
+		$pathinfo = pathinfo($this->data_source->database);
 		$schema = $pathinfo['filename'];
 
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')

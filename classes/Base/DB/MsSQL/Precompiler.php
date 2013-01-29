@@ -22,20 +22,11 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-06
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_MsSQL_Precompiler extends DB_SQL_Precompiler {
-
-	/**
-	 * This constant represents an opening identifier quote character.
-	 *
-	 * @access public
-	 * @static
-	 * @const string
-	 */
-	const _OPENING_QUOTE_CHARACTER_ = '[';
 
 	/**
 	 * This constant represents a closing identifier quote character.
@@ -45,6 +36,15 @@ abstract class Base_DB_MsSQL_Precompiler extends DB_SQL_Precompiler {
 	 * @const string
 	 */
 	const _CLOSING_QUOTE_CHARACTER_ = ']';
+
+	/**
+	 * This constant represents an opening identifier quote character.
+	 *
+	 * @access public
+	 * @static
+	 * @const string
+	 */
+	const _OPENING_QUOTE_CHARACTER_ = '[';
 
 	/**
 	 * This function prepares the specified expression as an alias.
@@ -276,7 +276,7 @@ abstract class Base_DB_MsSQL_Precompiler extends DB_SQL_Precompiler {
 			return "''";
 		}
 		else {
-			return DB_Connection_Pool::instance()->get_connection($this->source)->quote($expr, $escape);
+			return DB_Connection_Pool::instance()->get_connection($this->data_source)->quote($expr, $escape);
 		}
 	}
 

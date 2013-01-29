@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -34,23 +34,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * @access protected
 	 * @var DB_SQL_Insert_Builder
 	 */
-	protected $builder = NULL;
-
-	/**
-	 * This variable stores an instance of the ORM builder extension class.
-	 *
-	 * @access protected
-	 * @var DB_ORM_Builder
-	 */
-	protected $extension = NULL;
-
-	/**
-	 * This variable stores the model's name.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $model = NULL;
+	protected $builder;
 
 	/**
 	 * This variable stores a reference to the data source.
@@ -58,7 +42,23 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * @access protected
 	 * @var DB_DataSource
 	 */
-	protected $source = NULL;
+	protected $data_source;
+
+	/**
+	 * This variable stores an instance of the ORM builder extension class.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Builder
+	 */
+	protected $extension;
+
+	/**
+	 * This variable stores the model's name.
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $model;
 
 	/**
 	 * This constructor instantiates this class using the specified model's name.
@@ -69,9 +69,9 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	public function __construct($model) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->source = new DB_DataSource($model::data_source());
-		$builder = 'DB_' . $this->source->dialect . '_Insert_Builder';
-		$this->builder = new $builder($this->source);
+		$this->data_source = new DB_DataSource($model::data_source());
+		$builder = 'DB_' . $this->data_source->dialect . '_Insert_Builder';
+		$this->builder = new $builder($this->data_source);
 		$extension = DB_ORM_Model::builder_name($name);
 		if (class_exists($extension)) {
 			$this->extension = new $extension($this->builder);
@@ -152,7 +152,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	public function execute() {
 		$model = $this->model;
 		$auto_increment = $model::is_auto_incremented();
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$connection->execute($this->statement());
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;

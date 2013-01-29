@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-26
+ * @version 2013-01-28
  *
  * @see http://php.net/manual/en/ref.sqlsrv.php
  * @see http://blogs.msdn.com/b/brian_swan/archive/2010/03/08/mssql-vs-sqlsrv-what-s-the-difference-part-1.aspx
@@ -33,47 +33,14 @@
 abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Improved {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
-	 *
-	 * @see http://php.net/manual/en/function.sqlsrv-connect.php
-	 * @see http://msdn.microsoft.com/en-us/library/cc644930.aspx
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$connection_string = $this->data_source->host;
-			$port = $this->data_source->port;
-			if ( ! empty($port)) {
-				$connection_string .= ':' . $port;
-			}
-
-			$configurations = array();
-
-			$configurations['Database'] = $this->data_source->database;
-			$configurations['UID'] = $this->data_source->username;
-			$configurations['PWD'] = $this->data_source->password;
-
-			if ( ! empty($this->data_source->charset)) {
-				$configurations['CharacterSet'] = $this->data_source->charset;
-			}
-
-			if ( ! $this->data_source->is_persistent()) {
-				$configurations['ConnectionPooling'] = FALSE;
-			}
-
-			$this->resource = @sqlsrv_connect($connection_string, $configurations);
-
-			if ($this->resource === FALSE) {
-				$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
-				$reason = (is_array($errors) AND isset($errors[0]['message']))
-					? $errors[0]['message']
-					: 'Unable to connect using the specified configurations.';
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
-			}
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@sqlsrv_close($this->resource);
 		}
 	}
 
@@ -101,6 +68,49 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 			throw new Throwable_SQL_Exception('Message: Failed to begin the transaction. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = 'BEGIN TRAN;';
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @sqlsrv_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
+	 * @see http://php.net/manual/en/function.sqlsrv-commit.php
+	 */
+	public function commit() {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+		}
+		$command = @sqlsrv_commit($this->resource);
+		if ($command === FALSE) {
+			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
+			$reason = (is_array($errors) AND isset($errors[0]['message']))
+				? $errors[0]['message']
+				: 'Unable to perform command.';
+			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
+		}
+		$this->sql = 'COMMIT;';
 	}
 
 	/**
@@ -173,6 +183,51 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 	}
 
 	/**
+	 * This function opens a connection using the data source provided.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
+	 *
+	 * @see http://php.net/manual/en/function.sqlsrv-connect.php
+	 * @see http://msdn.microsoft.com/en-us/library/cc644930.aspx
+	 */
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$connection_string = $this->data_source->host;
+			$port = $this->data_source->port;
+			if ( ! empty($port)) {
+				$connection_string .= ':' . $port;
+			}
+
+			$configurations = array();
+
+			$configurations['Database'] = $this->data_source->database;
+			$configurations['UID'] = $this->data_source->username;
+			$configurations['PWD'] = $this->data_source->password;
+
+			if ( ! empty($this->data_source->charset)) {
+				$configurations['CharacterSet'] = $this->data_source->charset;
+			}
+
+			if ( ! $this->data_source->is_persistent()) {
+				$configurations['ConnectionPooling'] = FALSE;
+			}
+
+			$this->resource = @sqlsrv_connect($connection_string, $configurations);
+
+			if ($this->resource === FALSE) {
+				$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
+				$reason = (is_array($errors) AND isset($errors[0]['message']))
+					? $errors[0]['message']
+					: 'Unable to connect using the specified configurations.';
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
+			}
+		}
+	}
+
+	/**
 	 * This function rollbacks a transaction.
 	 *
 	 * @access public
@@ -195,61 +250,6 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Impro
 			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = 'ROLLBACK;';
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
-	 * @see http://php.net/manual/en/function.sqlsrv-commit.php
-	 */
-	public function commit() {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
-		}
-		$command = @sqlsrv_commit($this->resource);
-		if ($command === FALSE) {
-			$errors = @sqlsrv_errors(SQLSRV_ERR_ALL);
-			$reason = (is_array($errors) AND isset($errors[0]['message']))
-				? $errors[0]['message']
-				: 'Unable to perform command.';
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
-		}
-		$this->sql = 'COMMIT;';
-	}
-
-	/**
-	 * This function closes an open connection.
-	 *
-	 * @access public
-	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @sqlsrv_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@sqlsrv_close($this->resource);
-		}
 	}
 
 }

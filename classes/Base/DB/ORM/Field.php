@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-09
+ * @version 2013-01-28
  *
  * @abstract
  *
@@ -33,20 +33,20 @@
 abstract class Base_DB_ORM_Field extends Core_Object {
 
 	/**
-	 * This variable stores a reference to the implementing model.
-	 *
-	 * @access protected
-	 * @var DB_ORM_Model
-	 */
-	protected $model;
-
-	/**
 	 * This variable stores the field's metadata.
 	 *
 	 * @access protected
 	 * @var array
 	 */
 	protected $metadata;
+
+	/**
+	 * This variable stores a reference to the implementing model.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Model
+	 */
+	protected $model;
 
 	/**
 	 * This variable stores the field's value.

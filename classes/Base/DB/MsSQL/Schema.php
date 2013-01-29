@@ -22,11 +22,39 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_MsSQL_Schema extends DB_Schema {
+
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @override
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 *
+	 * @license http://kohanaframework.org/license
+	 */
+	protected function data_type($type) {
+		/*
+		static $types = array(
+			'nvarchar'  => array('type' => 'string'),
+			'ntext'     => array('type' => 'string'),
+			'tinyint'   => array('type' => 'int', 'min' => '0', 'max' => '255'),
+		);
+
+		if (isset($types[$type])) {
+			return $types[$type];
+		}
+
+		return parent::data_type($type);
+		*/
+	}
 
 	/**
 	 * This function returns a result set that contains an array of all fields in
@@ -98,7 +126,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('t1.NAME', 'schema')
 			->column('t0.NAME', 'table')
 			->column('t2.NAME', 'index')
@@ -150,7 +178,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('[TABLE_SCHEMA]', 'schema')
 			->column('[TABLE_NAME]', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
@@ -196,7 +224,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://stackoverflow.com/questions/4305691/need-to-list-all-triggers-in-sql-server-database-with-table-name-and-tables-sch
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('[t4].[NAME]', 'schema')
 			->column('[t1].[NAME]', 'table')
 			->column('[t0].[NAME]', 'trigger')
@@ -248,7 +276,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('[TABLE_SCHEMA]', 'schema')
 			->column('[TABLE_NAME]', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
@@ -263,34 +291,6 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		}
 
 		return $builder->query();
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @override
-	 * @param string $type                  the SQL data type
-	 * @return array                        an associated array which describes the properties
-	 *                                      for the specified data type
-	 */
-	protected function data_type($type) {
-		/*
-		static $types = array(
-			'nvarchar'  => array('type' => 'string'),
-			'ntext'     => array('type' => 'string'),
-			'tinyint'   => array('type' => 'int', 'min' => '0', 'max' => '255'),
-		);
-
-		if (isset($types[$type])) {
-			return $types[$type];
-		}
-
-		return parent::data_type($type);
-		*/
 	}
 
 }

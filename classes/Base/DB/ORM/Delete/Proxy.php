@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -34,15 +34,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * @access protected
 	 * @var DB_SQL_Delete_Builder
 	 */
-	protected $builder = NULL;
-
-	/**
-	 * This variable stores an instance of the ORM builder extension class.
-	 *
-	 * @access protected
-	 * @var DB_ORM_Builder
-	 */
-	protected $extension = NULL;
+	protected $builder;
 
 	/**
 	 * This variable stores a reference to the data source.
@@ -50,27 +42,15 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	 * @access protected
 	 * @var DB_DataSource
 	 */
-	protected $source = NULL;
+	protected $data_source;
 
 	/**
-	 * This constructor instantiates this class using the specified model's name.
+	 * This variable stores an instance of the ORM builder extension class.
 	 *
-	 * @access public
-	 * @param string $model                             the model's name
+	 * @access protected
+	 * @var DB_ORM_Builder
 	 */
-	public function __construct($model) {
-		$name = $model;
-		$model = DB_ORM_Model::model_name($name);
-		$this->source = new DB_DataSource($model::data_source());
-		$builder = 'DB_' . $this->source->dialect . '_Delete_Builder';
-		$this->builder = new $builder($this->source);
-		$extension = DB_ORM_Model::builder_name($name);
-		if (class_exists($extension)) {
-			$this->extension = new $extension($this->builder);
-		}
-		$table = $model::table();
-		$this->builder->from($table);
-	}
+	protected $extension;
 
 	/**
 	 * This function attempts to call an otherwise inaccessible function on the model's
@@ -98,47 +78,44 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	}
 
 	/**
-	 * This function either opens or closes a "where" group.
+	 * This constructor instantiates this class using the specified model's name.
 	 *
 	 * @access public
-	 * @param string $parenthesis                       the parenthesis to be used
-	 * @param string $connector                         the connector to be used
-	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
+	 * @param string $model                             the model's name
 	 */
-	public function where_block($parenthesis, $connector = 'AND') {
-		$this->builder->where_block($parenthesis, $connector);
-		return $this;
+	public function __construct($model) {
+		$name = $model;
+		$model = DB_ORM_Model::model_name($name);
+		$this->data_source = new DB_DataSource($model::data_source(1));
+		$builder = 'DB_' . $this->data_source->dialect . '_Delete_Builder';
+		$this->builder = new $builder($this->data_source);
+		$extension = DB_ORM_Model::builder_name($name);
+		if (class_exists($extension)) {
+			$this->extension = new $extension($this->builder);
+		}
+		$table = $model::table();
+		$this->builder->from($table);
 	}
 
 	/**
-	 * This function adds a "where" constraint.
+	 * This function returns the raw SQL statement.
 	 *
 	 * @access public
-	 * @param string $column                            the column to be constrained
-	 * @param string $operator                          the operator to be used
-	 * @param string $value                             the value the column is constrained with
-	 * @param string $connector                         the connector to be used
-	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
+	 * @override
+	 * @return string                                   the raw SQL statement
 	 */
-	public function where($column, $operator, $value, $connector = 'AND') {
-		$this->builder->where($column, $operator, $value, $connector);
-		return $this;
+	public function __toString() {
+		return $this->builder->statement(TRUE);
 	}
 
 	/**
-	 * This function sets how a column will be sorted.
+	 * This function executes the built SQL statement.
 	 *
 	 * @access public
-	 * @param string $column                            the column to be sorted
-	 * @param string $ordering                          the ordering token that signals whether the
-	 *                                                  column will sorted either in ascending or
-	 *                                                  descending order
-	 * @param string $nulls                             the weight to be given to null values
-	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
 	 */
-	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
-		$this->builder->order_by($column, $ordering, $nulls);
-		return $this;
+	public function execute() {
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection->execute($this->statement());
 	}
 
 	/**
@@ -166,6 +143,33 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	}
 
 	/**
+	 * This function sets how a column will be sorted.
+	 *
+	 * @access public
+	 * @param string $column                            the column to be sorted
+	 * @param string $ordering                          the ordering token that signals whether the
+	 *                                                  column will sorted either in ascending or
+	 *                                                  descending order
+	 * @param string $nulls                             the weight to be given to null values
+	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
+	 */
+	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
+		$this->builder->order_by($column, $ordering, $nulls);
+		return $this;
+	}
+
+	/**
+	 * This function resets the current builder.
+	 *
+	 * @access public
+	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
+	 */
+	public function reset() {
+		$this->builder->reset();
+		return $this;
+	}
+
+	/**
 	 * This function returns the SQL statement.
 	 *
 	 * @access public
@@ -179,34 +183,30 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core_Object implements DB_SQL_St
 	}
 
 	/**
-	 * This function returns the raw SQL statement.
+	 * This function adds a "where" constraint.
 	 *
 	 * @access public
-	 * @override
-	 * @return string                                   the raw SQL statement
-	 */
-	public function __toString() {
-		return $this->builder->statement(TRUE);
-	}
-
-	/**
-	 * This function executes the built SQL statement.
-	 *
-	 * @access public
-	 */
-	public function execute() {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
-		$connection->execute($this->statement());
-	}
-
-	/**
-	 * This function resets the current builder.
-	 *
-	 * @access public
+	 * @param string $column                            the column to be constrained
+	 * @param string $operator                          the operator to be used
+	 * @param string $value                             the value the column is constrained with
+	 * @param string $connector                         the connector to be used
 	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
 	 */
-	public function reset() {
-		$this->builder->reset();
+	public function where($column, $operator, $value, $connector = 'AND') {
+		$this->builder->where($column, $operator, $value, $connector);
+		return $this;
+	}
+
+	/**
+	 * This function either opens or closes a "where" group.
+	 *
+	 * @access public
+	 * @param string $parenthesis                       the parenthesis to be used
+	 * @param string $connector                         the connector to be used
+	 * @return DB_ORM_Delete_Proxy                      a reference to the current instance
+	 */
+	public function where_block($parenthesis, $connector = 'AND') {
+		$this->builder->where_block($parenthesis, $connector);
 		return $this;
 	}
 

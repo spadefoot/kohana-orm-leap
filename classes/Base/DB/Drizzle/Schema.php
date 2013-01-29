@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Drizzle
- * @version 2013-01-27
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -114,7 +114,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql)->as_array();
 
 		$fields = array();
@@ -240,9 +240,9 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-index.html
 	 */
 	public function indexes($table, $like = '') {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 
-		$schema = $this->precompiler->prepare_identifier($this->source->database);
+		$schema = $this->precompiler->prepare_identifier($this->data_source->database);
 		$table = $this->precompiler->prepare_identifier($table);
 
 		$sql = "SHOW INDEXES FROM {$table} FROM {$schema}";
@@ -260,7 +260,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 		while ($reader->read()) {
 			$record = $reader->row('array');
 			$buffer = array(
-				'schema' => $this->source->database,
+				'schema' => $this->data_source->database,
 				'table' => $record['Table'],
 				'index' => $record['Key_name'],
 				'column' => $record['Column_name'],
@@ -332,12 +332,12 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('TABLE_SCHEMA', 'schema')
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
-			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
 			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'BASE_TABLE')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
@@ -377,7 +377,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-triggers.html
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('EVENT_OBJECT_SCHEMA', 'schema')
 			->column('EVENT_OBJECT_TABLE', 'table')
 			->column('TRIGGER_NAME', 'trigger')
@@ -388,7 +388,7 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 			->column('ACTION_ORDER', 'seq_index')
 			->column('CREATED', 'created')
 			->from('INFORMATION_SCHEMA.TRIGGERS')
-			//->where('EVENT_OBJECT_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			//->where('EVENT_OBJECT_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
 			->where(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB_SQL_Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'))
@@ -421,12 +421,12 @@ abstract class Base_DB_Drizzle_Schema extends DB_Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('TABLE_SCHEMA', 'schema')
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
-			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
 			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));

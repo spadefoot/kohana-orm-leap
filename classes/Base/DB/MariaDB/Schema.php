@@ -22,11 +22,75 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_MariaDB_Schema extends DB_Schema {
+
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @override
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 *
+	 * @license http://kohanaframework.org/license
+	 */
+	protected function data_type($type) {
+		/*
+		case 'blob':
+			$type[0] = 'string';
+			$type[2] = '65535';
+		break;
+		case 'bool':
+			$type[0] = 'boolean';
+		break;
+			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
+			'datetime'                  => array('type' => 'string'),
+			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'double'                    => array('type' => 'float'),
+			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
+			'double unsigned'           => array('type' => 'float', 'min' => '0'),
+			'enum'                      => array('type' => 'string'),
+			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
+			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'float unsigned'            => array('type' => 'float', 'min' => '0'),
+			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
+			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
+			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
+			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
+			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
+			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
+			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
+			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
+			'national varchar'          => array('type' => 'string'),
+			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'nvarchar'                  => array('type' => 'string'),
+			'point'                     => array('type' => 'string', 'binary' => TRUE),
+			'real unsigned'             => array('type' => 'float', 'min' => '0'),
+			'set'                       => array('type' => 'string'),
+			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
+			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
+			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
+			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
+			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
+			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
+			'year'                      => array('type' => 'string'),
+		);
+
+		$type = str_replace(' zerofill', '', $type);
+
+		if (isset($types[$type])) {
+			return $types[$type];
+		}
+
+		return parent::data_type($type);
+		*/
+	}
 
 	/**
 	 * This function returns a result set that contains an array of all fields in
@@ -50,7 +114,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql)->as_array();
 
 		$fields = array();
@@ -176,9 +240,9 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-index.html
 	 */
 	public function indexes($table, $like = '') {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 
-		$schema = $this->precompiler->prepare_identifier($this->source->database);
+		$schema = $this->precompiler->prepare_identifier($this->data_source->database);
 		$table = $this->precompiler->prepare_identifier($table);
 
 		$sql = "SHOW INDEXES FROM {$table} FROM {$schema}";
@@ -196,7 +260,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		while ($reader->read()) {
 			$record = $reader->row('array');
 			$buffer = array(
-				'schema' => $this->source->database,
+				'schema' => $this->data_source->database,
 				'table' => $record['Table'],
 				'index' => $record['Key_name'],
 				'column' => $record['Column_name'],
@@ -213,6 +277,40 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		$results = new DB_ResultSet($records);
 
 		return $results;
+	}
+
+	/**
+	 * This function extracts a field's data type information.
+	 *
+	 * @access public
+	 * @static
+	 * @param string $type                  the data type to be parsed
+	 * @return array                        an array with the field's type information
+	 *
+	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://kohanaframework.org/3.1/guide/api/Database#_parse_type
+	 */
+	protected static function parse_type($type) {
+		/*
+		$open = strpos($type, '(');
+
+		if ($open === FALSE) {
+			return array($type, 0, 0);
+		}
+
+		$close = strpos($type, ')', $open);
+
+		$args = preg_split('/,/', substr($type, $open + 1, $close - 1 - $open));
+
+		$info = array();
+		$info[0] = substr($type, 0, $open) . substr($type, $close + 1); // actual type
+		$info[1] = (isset($args[0])) ? $args[0] : 0; // maximum length
+		$info[2] = (isset($args[1])) ? $args[1] : 0; // decimal digits
+		$info[3] = array(); // attributes
+
+		return $info;
+		*/
 	}
 
 	/**
@@ -234,12 +332,12 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('TABLE_SCHEMA', 'schema')
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
-			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
 			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'BASE_TABLE')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
@@ -279,7 +377,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-triggers.html
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('EVENT_OBJECT_SCHEMA', 'schema')
 			->column('EVENT_OBJECT_TABLE', 'table')
 			->column('TRIGGER_NAME', 'trigger')
@@ -290,7 +388,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 			->column('ACTION_ORDER', 'seq_index')
 			->column('CREATED', 'created')
 			->from('INFORMATION_SCHEMA.TRIGGERS')
-			//->where('EVENT_OBJECT_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			//->where('EVENT_OBJECT_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
 			->where(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB_SQL_Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'))
@@ -323,12 +421,12 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('TABLE_SCHEMA', 'schema')
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
-			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->source->database)
+			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
 			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
@@ -338,102 +436,6 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		}
 
 		return $builder->query();
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @override
-	 * @param string $type                  the SQL data type
-	 * @return array                        an associated array which describes the properties
-	 *                                      for the specified data type
-	 */
-	protected function data_type($type) {
-		/*
-		case 'blob':
-			$type[0] = 'string';
-			$type[2] = '65535';
-		break;
-		case 'bool':
-			$type[0] = 'boolean';
-		break;
-			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
-			'datetime'                  => array('type' => 'string'),
-			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'double'                    => array('type' => 'float'),
-			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
-			'double unsigned'           => array('type' => 'float', 'min' => '0'),
-			'enum'                      => array('type' => 'string'),
-			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
-			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'float unsigned'            => array('type' => 'float', 'min' => '0'),
-			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
-			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
-			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
-			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
-			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
-			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
-			'national varchar'          => array('type' => 'string'),
-			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'nvarchar'                  => array('type' => 'string'),
-			'point'                     => array('type' => 'string', 'binary' => TRUE),
-			'real unsigned'             => array('type' => 'float', 'min' => '0'),
-			'set'                       => array('type' => 'string'),
-			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
-			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
-			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
-			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
-			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
-			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
-			'year'                      => array('type' => 'string'),
-		);
-
-		$type = str_replace(' zerofill', '', $type);
-
-		if (isset($types[$type])) {
-			return $types[$type];
-		}
-
-		return parent::data_type($type);
-		*/
-	}
-
-	/**
-	 * This function extracts a field's data type information.
-	 *
-	 * @access public
-	 * @static
-	 * @param string $type                  the data type to be parsed
-	 * @return array                        an array with the field's type information
-	 *
-	 * @see http://kohanaframework.org/3.1/guide/api/Database#_parse_type
-	 */
-	protected static function parse_type($type) {
-		/*
-		$open = strpos($type, '(');
-
-		if ($open === FALSE) {
-			return array($type, 0, 0);
-		}
-
-		$close = strpos($type, ')', $open);
-
-		$args = preg_split('/,/', substr($type, $open + 1, $close - 1 - $open));
-
-		$info = array();
-		$info[0] = substr($type, 0, $open) . substr($type, $close + 1); // actual type
-		$info[1] = (isset($args[0])) ? $args[0] : 0; // maximum length
-		$info[2] = (isset($args[1])) ? $args[1] : 0; // decimal digits
-		$info[3] = array(); // attributes
-
-		return $info;
-		*/
 	}
 
 }

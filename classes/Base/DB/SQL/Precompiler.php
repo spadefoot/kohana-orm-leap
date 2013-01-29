@@ -22,7 +22,7 @@
  * 
  * @package Leap
  * @category SQL
- * @version 2013-01-11
+ * @version 2013-01-28
  *
  * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference
  *
@@ -36,16 +36,16 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @access protected
 	 * @var mixed
 	 */
-	protected $source;
+	protected $data_source;
 
 	/**
 	 * This function initializes the class with the specified data source.
 	 *
 	 * @access public
-	 * @param mixed $source                         the data source to be used
+	 * @param mixed $data_source                    the data source to be used
 	 */
-	public function __construct($source) {
-		$this->source = $source;
+	public function __construct($data_source) {
+		$this->data_source = $data_source;
 	}
 
 	/**

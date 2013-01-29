@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * The MIT License (MIT)
+ * The MIT License
  *
  * Copyright © 2011–2013 Spadefoot Team.
  * Copyright © 2010-2012 Kiall Mac Innes, Mathew Davies, Mike Parkin, and Paul Banks.

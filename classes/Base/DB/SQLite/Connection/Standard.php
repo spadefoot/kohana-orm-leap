@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2013-01-13
+ * @version 2013-01-28
  *
  * @see http://www.php.net/manual/en/ref.sqlite.php
  *
@@ -31,27 +31,14 @@
 abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
-	 *
-	 * @see http://www.sqlite.org/pragma.html#pragma_encoding
-	 * @see http://stackoverflow.com/questions/263056/how-to-change-character-encoding-of-a-pdo-sqlite-connection-in-php
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$connection_string = $this->data_source->database;
-			$error = NULL;
-			$this->resource = ($this->data_source->is_persistent())
-				? @sqlite_popen($connection_string, 0666, $error)
-				: @sqlite_open($connection_string, 0666, $error);
-			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $error));
-			}
-			// "Once an encoding has been set for a database, it cannot be changed."
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@sqlite_close($this->resource);
 		}
 	}
 
@@ -68,6 +55,38 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 */
 	public function begin_transaction() {
 		$this->execute('BEGIN IMMEDIATE TRANSACTION;');
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @sqlite_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 *
+	 * @see http://www.sqlite.org/lang_transaction.html
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
+	 */
+	public function commit() {
+		$this->execute('COMMIT TRANSACTION;');
 	}
 
 	/**
@@ -124,33 +143,28 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function rollbacks a transaction.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
 	 *
-	 * @see http://www.sqlite.org/lang_transaction.html
-	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
+	 * @see http://www.sqlite.org/pragma.html#pragma_encoding
+	 * @see http://stackoverflow.com/questions/263056/how-to-change-character-encoding-of-a-pdo-sqlite-connection-in-php
 	 */
-	public function rollback() {
-		$this->execute('ROLLBACK TRANSACTION;');
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 *
-	 * @see http://www.sqlite.org/lang_transaction.html
-	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
-	 */
-	public function commit() {
-		$this->execute('COMMIT TRANSACTION;');
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$connection_string = $this->data_source->database;
+			$error = NULL;
+			$this->resource = ($this->data_source->is_persistent())
+				? @sqlite_popen($connection_string, 0666, $error)
+				: @sqlite_open($connection_string, 0666, $error);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $error));
+			}
+			// "Once an encoding has been set for a database, it cannot be changed."
+		}
 	}
 
 	/**
@@ -181,32 +195,18 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	}
 
 	/**
-	 * This function closes an open connection.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @sqlite_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 *
-	 * @access public
-	 * @override
+	 * @see http://www.sqlite.org/lang_transaction.html
+	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Transactions
 	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@sqlite_close($this->resource);
-		}
+	public function rollback() {
+		$this->execute('ROLLBACK TRANSACTION;');
 	}
 
 }

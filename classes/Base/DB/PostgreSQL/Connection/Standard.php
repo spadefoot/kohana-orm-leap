@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-22
+ * @version 2013-01-28
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -31,37 +31,16 @@
 abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_Standard {
 
 	/**
-	 * This function opens a connection using the data source provided.
+	 * This destructor ensures that the connection is closed.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
-	 *                                              opening the connection
-	 * 
-	 * @see http://www.php.net/manual/en/function.pg-connect.php
+	 *
+	 * @see http://www.php.net/manual/en/function.pg-close.php
 	 */
-	public function open() {
-		if ( ! $this->is_connected()) {
-			$connection_string  = 'host=' . $this->data_source->host;
-			$port = $this->data_source->port;
-			if ( ! empty($port)) {
-				$connection_string .= ' port=' . $port;
-			}
-			$connection_string .= ' dbname=' . $this->data_source->database;
-			$connection_string .= ' user=' . $this->data_source->username;
-			$connection_string .= ' password=' . $this->data_source->password;
-			//if ( ! empty($this->data_source->charset)) {
-			//    $connection_string .= " options='--client_encoding=" . strtoupper($this->data_source->charset) . "'";
-			//}
-			$this->resource = ($this->data_source->is_persistent())
-				? @pg_pconnect($connection_string)
-				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
-			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @pg_last_error()));
-			}
-			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
-				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
-			}
+	public function __destruct() {
+		if (is_resource($this->resource)) {
+			@pg_close($this->resource);
 		}
 	}
 
@@ -77,6 +56,37 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	 */
 	public function begin_transaction() {
 		$this->execute('START TRANSACTION;');
+	}
+
+	/**
+	 * This function closes an open connection.
+	 *
+	 * @access public
+	 * @override
+	 * @return boolean                              whether an open connection was closed
+	 *
+	 * @see http://www.php.net/manual/en/function.pg-close.php
+	 */
+	public function close() {
+		if ($this->is_connected()) {
+			if ( ! @pg_close($this->resource)) {
+				return FALSE;
+			}
+			$this->resource = NULL;
+		}
+		return TRUE;
+	}
+
+	/**
+	 * This function commits a transaction.
+	 *
+	 * @access public
+	 * @override
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
+	 */
+	public function commit() {
+		$this->execute('COMMIT;');
 	}
 
 	/**
@@ -159,27 +169,38 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	}
 
 	/**
-	 * This function rollbacks a transaction.
+	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
+	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 *                                              opening the connection
+	 * 
+	 * @see http://www.php.net/manual/en/function.pg-connect.php
 	 */
-	public function rollback() {
-		$this->execute('ROLLBACK;');
-	}
-
-	/**
-	 * This function commits a transaction.
-	 *
-	 * @access public
-	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
-	 *                                              statement failed
-	 */
-	public function commit() {
-		$this->execute('COMMIT;');
+	public function open() {
+		if ( ! $this->is_connected()) {
+			$connection_string  = 'host=' . $this->data_source->host;
+			$port = $this->data_source->port;
+			if ( ! empty($port)) {
+				$connection_string .= ' port=' . $port;
+			}
+			$connection_string .= ' dbname=' . $this->data_source->database;
+			$connection_string .= ' user=' . $this->data_source->username;
+			$connection_string .= ' password=' . $this->data_source->password;
+			//if ( ! empty($this->data_source->charset)) {
+			//    $connection_string .= " options='--client_encoding=" . strtoupper($this->data_source->charset) . "'";
+			//}
+			$this->resource = ($this->data_source->is_persistent())
+				? @pg_pconnect($connection_string)
+				: @pg_connect($connection_string, PGSQL_CONNECT_FORCE_NEW);
+			if ($this->resource === FALSE) {
+				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @pg_last_error()));
+			}
+			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
+				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
+			}
+		}
 	}
 
 	/**
@@ -210,36 +231,15 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 	}
 
 	/**
-	 * This function closes an open connection.
+	 * This function rollbacks a transaction.
 	 *
 	 * @access public
 	 * @override
-	 * @return boolean                              whether an open connection was closed
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-close.php
+	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 *                                              statement failed
 	 */
-	public function close() {
-		if ($this->is_connected()) {
-			if ( ! @pg_close($this->resource)) {
-				return FALSE;
-			}
-			$this->resource = NULL;
-		}
-		return TRUE;
-	}
-
-	/**
-	 * This destructor ensures that the connection is closed.
-	 *
-	 * @access public
-	 * @override
-	 *
-	 * @see http://www.php.net/manual/en/function.pg-close.php
-	 */
-	public function __destruct() {
-		if (is_resource($this->resource)) {
-			@pg_close($this->resource);
-		}
+	public function rollback() {
+		$this->execute('ROLLBACK;');
 	}
 
 }

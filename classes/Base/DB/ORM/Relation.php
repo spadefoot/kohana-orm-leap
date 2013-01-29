@@ -22,11 +22,19 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-09
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Relation extends Core_Object {
+
+	/**
+	 * This variable stores the relation's corresponding model(s).
+	 *
+	 * @access protected
+	 * @var mixed
+	 */
+	protected $cache;
 
 	/**
 	 * This variable stores a reference to the implementing model.
@@ -43,14 +51,6 @@ abstract class Base_DB_ORM_Relation extends Core_Object {
 	 * @var array
 	 */
 	protected $metadata;
-
-	/**
-	 * This variable stores the relation's corresponding model(s).
-	 *
-	 * @access protected
-	 * @var mixed
-	 */
-	protected $cache;
 
 	/**
 	 * This constructor initializes the class.

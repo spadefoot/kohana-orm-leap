@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-27
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -32,12 +32,12 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource $source                     the data source to be used
+	 * @param DB_DataSource $data_source                the data source to be used
 	 */
-	public function __construct(DB_DataSource $source) {
-		$this->dialect = $source->dialect;
+	public function __construct(DB_DataSource $data_source) {
+		$this->dialect = $data_source->dialect;
 		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
-		$this->precompiler = new $precompiler($source);
+		$this->precompiler = new $precompiler($data_source);
 		$this->reset();
 	}
 

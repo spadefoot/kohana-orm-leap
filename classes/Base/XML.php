@@ -23,7 +23,7 @@
  *
  * @package Leap
  * @category XML
- * @version 2013-01-26
+ * @version 2013-01-28
  *
  * @abstract
  */
@@ -88,11 +88,11 @@ abstract class Base_XML extends SimpleXMLElement {
 	 *                                              formatted string
 	 */
 	public static function encode(Array $array, $as_string = FALSE) {
-		$content = static::convert_to_xml($array);
+		$contents = static::convert_to_xml($array);
 		if ($as_string) {
-			return $content;
+			return $contents;
 		}
-		$XML = new XML($content);
+		$XML = new XML($contents);
 		return $XML;
 	}
 
@@ -154,11 +154,11 @@ abstract class Base_XML extends SimpleXMLElement {
 			throw new Throwable_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
 		}
 
-		$source = static::find_file($file);
+		$uri = static::find_file($file);
 
-		$content = file_get_contents($source);
+		$contents = file_get_contents($uri);
 
-		$XML = new XML($content);
+		$XML = new XML($contents);
 		return $XML;
 	}
 

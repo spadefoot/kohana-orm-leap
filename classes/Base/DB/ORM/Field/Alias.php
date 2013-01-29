@@ -22,19 +22,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2012-12-05
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_ORM_Field_Alias extends Core_Object {
-
-	/**
-	 * This variable stores a reference to the implementing model.
-	 *
-	 * @access protected
-	 * @var DB_ORM_Model
-	 */
-	protected $model;
 
 	/**
 	 * This variable stores the alias's metadata.
@@ -43,6 +35,14 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 	 * @var array
 	 */
 	protected $metadata;
+
+	/**
+	 * This variable stores a reference to the implementing model.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Model
+	 */
+	protected $model;
 
 	/**
 	 * This constructor initializes the class.

@@ -22,11 +22,71 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-05
+ * @version 2013-01-28
  *
  * @abstract
  */
 abstract class Base_DB_Oracle_Schema extends DB_Schema {
+
+	/**
+	 * This function returns an associated array which describes the properties
+	 * for the specified SQL data type.
+	 *
+	 * @access protected
+	 * @override
+	 * @param string $type                   the SQL data type
+	 * @return array                         an associated array which describes the properties
+	 *                                       for the specified data type
+	 *
+	 * @license http://kohanaframework.org/license
+	 */
+	protected function data_type($type) {
+		/*
+		static $types = array(
+			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
+			'bool'                      => array('type' => 'bool'),
+			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
+			'datetime'                  => array('type' => 'string'),
+			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'double'                    => array('type' => 'float'),
+			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
+			'double unsigned'           => array('type' => 'float', 'min' => '0'),
+			'enum'                      => array('type' => 'string'),
+			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
+			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'float unsigned'            => array('type' => 'float', 'min' => '0'),
+			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
+			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
+			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
+			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
+			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
+			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
+			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
+			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
+			'national varchar'          => array('type' => 'string'),
+			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'nvarchar'                  => array('type' => 'string'),
+			'point'                     => array('type' => 'string', 'binary' => TRUE),
+			'real unsigned'             => array('type' => 'float', 'min' => '0'),
+			'set'                       => array('type' => 'string'),
+			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
+			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
+			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
+			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
+			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
+			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
+			'year'                      => array('type' => 'string'),
+		);
+
+		$type = str_replace(' zerofill', '', $type);
+
+		if (isset($types[$type])) {
+			return $types[$type];
+		}
+
+		return parent::data_type($type);
+		*/
+	}
 
 	/**
 	 * This function returns a result set that contains an array of all fields in
@@ -60,7 +120,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->source);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -155,7 +215,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://www.techonthenet.com/oracle/questions/find_pkeys.php
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('t0.TABLE_OWNER', 'schema')
 			->column('t0.TABLE_NAME', 'table')
 			->column('t0.INDEX_NAME', 'index')
@@ -207,7 +267,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('OWNER', 'schema')
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
@@ -251,7 +311,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('OWNER', 'schema')
 			->column('TABLE_NAME', 'table')
 			->column('TRIGGER_NAME', 'trigger')
@@ -295,7 +355,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->source)
+		$builder = DB_SQL::select($this->data_source)
 			->column('OWNER', 'schema')
 			->column('VIEW_NAME', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
@@ -308,66 +368,6 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 		}
 
 		return $builder->query();
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
-	 *
-	 * @access protected
-	 * @override
-	 * @param string $type                  the SQL data type
-	 * @return array                        an associated array which describes the properties
-	 *                                      for the specified data type
-	 */
-	protected function data_type($type) {
-		/*
-		static $types = array(
-			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
-			'bool'                      => array('type' => 'bool'),
-			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
-			'datetime'                  => array('type' => 'string'),
-			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'double'                    => array('type' => 'float'),
-			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
-			'double unsigned'           => array('type' => 'float', 'min' => '0'),
-			'enum'                      => array('type' => 'string'),
-			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
-			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'float unsigned'            => array('type' => 'float', 'min' => '0'),
-			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
-			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
-			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
-			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
-			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
-			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
-			'national varchar'          => array('type' => 'string'),
-			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'nvarchar'                  => array('type' => 'string'),
-			'point'                     => array('type' => 'string', 'binary' => TRUE),
-			'real unsigned'             => array('type' => 'float', 'min' => '0'),
-			'set'                       => array('type' => 'string'),
-			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
-			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
-			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
-			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
-			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
-			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
-			'year'                      => array('type' => 'string'),
-		);
-
-		$type = str_replace(' zerofill', '', $type);
-
-		if (isset($types[$type])) {
-			return $types[$type];
-		}
-
-		return parent::data_type($type);
-		*/
 	}
 
 }
