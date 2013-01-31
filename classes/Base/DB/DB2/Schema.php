@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2013-01-28
+ * @version 2013-01-30
  *
  * @abstract
  */
@@ -39,6 +39,8 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.intro/src/tpc/db2z_datatypes.htm
 	 */
 	protected function data_type($type) {
 		/*
@@ -89,12 +91,26 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all fields in
-	 * the specified database table/view.
+	 * This function returns a result set of fields for the specified table.
+	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
+	 * | type          | string        | The data type of the column.                               |
+	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
+	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
+	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
+	 * | default       | mixed         | The default value of the column.                           |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table                 the table/view to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet                 an array of fields within the specified
 	 *                                      table

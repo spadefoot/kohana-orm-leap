@@ -22,33 +22,28 @@
  *
  * @package Leap
  * @category MariaDB
- * @version 2013-01-28
+ * @version 2013-01-30
  *
  * @abstract
  */
 abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 
 	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
+	 * This function returns an associated array of default properties for the specified
+	 * SQL data type.
 	 *
-	 * @access protected
+	 * @access public
 	 * @override
 	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
+	 * @return array                         an associated array of default properties
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
 	 */
-	protected function data_type($type) {
-		/*
-		case 'blob':
-			$type[0] = 'string';
-			$type[2] = '65535';
-		break;
-		case 'bool':
-			$type[0] = 'boolean';
-		break;
+	public function data_type($type) {
+		static $types = array(
+			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
+			'bool'                      => array('type' => 'bool'),
 			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
 			'datetime'                  => array('type' => 'string'),
 			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
@@ -89,129 +84,82 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		}
 
 		return parent::data_type($type);
-		*/
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all fields in
-	 * the specified database table/view.
+	 * This function returns a result set of fields for the specified table.
+	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
+	 * | type          | string        | The data type of the column.                               |
+	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
+	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
+	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
+	 * | default       | mixed         | The default value of the column.                           |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table                 the table/view to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet                 an array of fields within the specified
 	 *                                      table
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.5/en/show-columns.html
 	 */
 	public function fields($table, $like = '') {
-		/*
-		$sql = 'SHOW FULL COLUMNS FROM ' . $this->precompiler->prepare_identifier($table);
+		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+
+		$schema = $this->precompiler->prepare_identifier($this->data_source->database);
+		$table = $this->precompiler->prepare_identifier($table);
+
+		$sql = "SHOW FULL COLUMNS FROM {$table} FROM {$schema}";
 
 		if ( ! empty($like)) {
-			$like = $this->precompiler->prepare_value($like);
-			$sql .= ' LIKE ' . $like;
+			$sql .= ' WHERE `Field` LIKE ' . $this->precompiler->prepare_value($like);
 		}
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
-		$records = $connection->query($sql)->as_array();
+		$reader = $connection->reader($sql);
 
-		$fields = array();
-		$ordinal_position = 0;
+		$records = array();
+		$position = 0;
 
-		foreach ($records as $record) {
-			$field = $record['Field'];
-
-			$fields[$field]['table_name'] = $table;
-			$fields[$field]['field_name'] = $record['Field'];
-
-			$type = $this->parse_type($record['Type']);
-
-			$actual_type = $type[0];
-
-			switch ($actual_type) {
-				'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
-				'bool'                      => array('type' => 'bool'),
-				'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
-				'datetime'                  => array('type' => 'string'),
-				'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-				'double'                    => array('type' => 'float'),
-				'double precision unsigned' => array('type' => 'float', 'min' => '0'),
-				'double unsigned'           => array('type' => 'float', 'min' => '0'),
-				'enum'                      => array('type' => 'string'),
-				'fixed'                     => array('type' => 'float', 'exact' => TRUE),
-				'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-				'float unsigned'            => array('type' => 'float', 'min' => '0'),
-				'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-				'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-				'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
-				'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
-				'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
-				'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
-				'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
-				'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
-				'national varchar'          => array('type' => 'string'),
-				'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-				'nvarchar'                  => array('type' => 'string'),
-				'point'                     => array('type' => 'string', 'binary' => TRUE),
-				'real unsigned'             => array('type' => 'float', 'min' => '0'),
-				'set'                       => array('type' => 'string'),
-				'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
-				'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
-				'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
-				'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
-				'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
-				'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
-				'year'                      => array('type' => 'string'),
+		while ($reader->read()) {
+			$buffer = $reader->row('array');
+			$type = $this->parse_type($buffer['Type']);
+			$position++;
+			$default = $record['Default'];
+			if ($default == 'NULL') {
+				$default = NULL;
 			}
-
-			$fields[$field]['actual_type'] = $actual_type; // database's data type
-			$fields[$field]['type'] = $type[0]; // PHP's data type
-
-			$fields[$field]['maximum_length'] = $type[1];
-			$fields[$field]['decimal_digits'] = $type[2];
-
-			$fields[$field]['attributes'] = $type[3];
-
-			$fields[$field]['nullable'] = ($record['Null'] == 'YES');
-
-			$default_value = $record['Default'];
-			if ($default_value != 'NULL') {
-				switch ($type[0]) {
-					case 'boolean':
-						settype($default_value, 'boolean');
-					break;
-					case 'bit':
-					case 'integer':
-						settype($default_value, 'integer');
-					break;
-					case 'decimal':
-					case 'double':
-						settype($default_value, 'double');
-					break;
-					case 'binary':
-					case 'blob':
-					case 'date':
-					case 'datetime':
-					case 'string':
-					case 'text':
-					case 'time':
-						settype($default_value, 'string');
-					break;
-				}
-				$fields[$field]['default_value'] = $default_value;
-			}
-			else {
-				$fields[$field]['default_value'] = NULL;
-			}
-
-			$fields[$field]['ordinal_position'] = $ordinal_position; // TODO fix ordinal position
-			$ordinal_position++;
+			$record = array(
+				'schema' => $this->data_source->database,
+				'table' => $table,
+				'column' => $buffer['Field'],
+				'seq_index' => $position,
+				'type' => $type[0],
+				'max_length' => $type[1], // max_digits, precision
+				'max_decimals' => $type[2], // scale
+				'attributes' => $buffer['Extra'],
+				'nullable' => ($buffer['Null'] == 'YES'),
+				'default' => $default,
+			);
+			$records[] = $record;
 		}
 
-		return $fields;
-		*/
+		$reader->free();
+
+		$results = new DB_ResultSet($records);
+
+		return $results;
 	}
 
 	/**
@@ -248,7 +196,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		$sql = "SHOW INDEXES FROM {$table} FROM {$schema}";
 
 		if ( ! empty($like)) {
-			$sql .= " WHERE 'Key_name' LIKE " . $this->precompiler->prepare_value($like);
+			$sql .= ' WHERE `Key_name` LIKE ' . $this->precompiler->prepare_value($like);
 		}
 
 		$sql .= ';';
@@ -258,18 +206,18 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		$records = array();
 
 		while ($reader->read()) {
-			$record = $reader->row('array');
-			$buffer = array(
+			$buffer = $reader->row('array');
+			$record = array(
 				'schema' => $this->data_source->database,
-				'table' => $record['Table'],
-				'index' => $record['Key_name'],
-				'column' => $record['Column_name'],
-				'seq_index' => $record['Seq_in_index'],
-				'ordering' => ($record['Collation'] == 'A') ? 'ASC' : NULL,
-				'unique' => ($record['Non_unique'] == '0'),
-				'primary' => ($record['Key_name'] == 'PRIMARY'),
+				'table' => $buffer['Table'],
+				'index' => $buffer['Key_name'],
+				'column' => $buffer['Column_name'],
+				'seq_index' => $buffer['Seq_in_index'],
+				'ordering' => ($buffer['Collation'] == 'A') ? 'ASC' : NULL,
+				'unique' => ($buffer['Non_unique'] == '0'),
+				'primary' => ($buffer['Key_name'] == 'PRIMARY'),
 			);
-			$records[] = $buffer;
+			$records[] = $record;
 		}
 
 		$reader->free();
@@ -277,40 +225,6 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 		$results = new DB_ResultSet($records);
 
 		return $results;
-	}
-
-	/**
-	 * This function extracts a field's data type information.
-	 *
-	 * @access public
-	 * @static
-	 * @param string $type                  the data type to be parsed
-	 * @return array                        an array with the field's type information
-	 *
-	 * @license http://kohanaframework.org/license
-	 *
-	 * @see http://kohanaframework.org/3.1/guide/api/Database#_parse_type
-	 */
-	protected static function parse_type($type) {
-		/*
-		$open = strpos($type, '(');
-
-		if ($open === FALSE) {
-			return array($type, 0, 0);
-		}
-
-		$close = strpos($type, ')', $open);
-
-		$args = preg_split('/,/', substr($type, $open + 1, $close - 1 - $open));
-
-		$info = array();
-		$info[0] = substr($type, 0, $open) . substr($type, $close + 1); // actual type
-		$info[1] = (isset($args[0])) ? $args[0] : 0; // maximum length
-		$info[2] = (isset($args[1])) ? $args[1] : 0; // decimal digits
-		$info[3] = array(); // attributes
-
-		return $info;
-		*/
 	}
 
 	/**

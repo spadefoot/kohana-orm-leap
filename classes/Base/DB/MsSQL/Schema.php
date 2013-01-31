@@ -22,26 +22,26 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-28
+ * @version 2013-01-30
  *
  * @abstract
  */
 abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 
 	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
+	 * This function returns an associated array of default properties for the specified
+	 * SQL data type.
 	 *
-	 * @access protected
+	 * @access public
 	 * @override
 	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
+	 * @return array                         an associated array of default properties
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
+	 * @see https://github.com/xrado/kohana-mssql
 	 */
-	protected function data_type($type) {
-		/*
+	public function data_type($type) {
 		static $types = array(
 			'nvarchar'  => array('type' => 'string'),
 			'ntext'     => array('type' => 'string'),
@@ -53,18 +53,31 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 		}
 
 		return parent::data_type($type);
-		*/
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all fields in
-	 * the specified database table/view.
+	 * This function returns a result set of fields for the specified table.
+	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | column        | string        | The name of the column.                                    |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
+	 * | type          | string        | The data type of the column.                               |
+	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
+	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
+	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
+	 * | default       | mixed         | The default value of the column.                           |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @override
-	 * @param string $table                 the table/view to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return array                        an array of fields within the specified
+	 * @return DB_ResultSet                 an array of fields within the specified
 	 *                                      table
 	 */
 	public function fields($table, $like = '') {

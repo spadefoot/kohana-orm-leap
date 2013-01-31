@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2013-01-28
+ * @version 2013-01-30
  *
  * @abstract
  */
@@ -58,68 +58,68 @@ abstract class Base_DB_Schema extends Core_Object {
 	}
 
 	/**
-	 * This function returns an associated array which describes the properties
-	 * for the specified SQL data type.
+	 * This function returns an associated array of default properties for the specified
+	 * SQL data type.
 	 *
-	 * @access protected
+	 * @access public
 	 * @param string $type                   the SQL data type
-	 * @return array                         an associated array which describes the properties
+	 * @return array                         an associated array of default properties
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
 	 */
-	protected function data_type($type) {
+	public function data_type($type) {
 		static $types = array(
 			// SQL-92
-			'bit'                           => array('type' => 'string', 'exact' => TRUE),
-			'bit varying'                   => array('type' => 'string'),
-			'char'                          => array('type' => 'string', 'exact' => TRUE),
-			'char varying'                  => array('type' => 'string'),
-			'character'                     => array('type' => 'string', 'exact' => TRUE),
-			'character varying'             => array('type' => 'string'),
-			'date'                          => array('type' => 'string'),
-			'dec'                           => array('type' => 'float', 'exact' => TRUE),
-			'decimal'                       => array('type' => 'float', 'exact' => TRUE),
-			'double precision'              => array('type' => 'float'),
-			'float'                         => array('type' => 'float'),
-			'int'                           => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'integer'                       => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'interval'                      => array('type' => 'string'),
-			'national char'                 => array('type' => 'string', 'exact' => TRUE),
-			'national char varying'         => array('type' => 'string'),
-			'national character'            => array('type' => 'string', 'exact' => TRUE),
-			'national character varying'    => array('type' => 'string'),
-			'nchar'                         => array('type' => 'string', 'exact' => TRUE),
-			'nchar varying'                 => array('type' => 'string'),
-			'numeric'                       => array('type' => 'float', 'exact' => TRUE),
-			'real'                          => array('type' => 'float'),
-			'smallint'                      => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
-			'time'                          => array('type' => 'string'),
-			'time with time zone'           => array('type' => 'string'),
-			'timestamp'                     => array('type' => 'string'),
-			'timestamp with time zone'      => array('type' => 'string'),
-			'varchar'                       => array('type' => 'string'),
+			'BIT'                             => array('type' => 'string', 'exact' => TRUE),
+			'BIT VARYING'                     => array('type' => 'string'),
+			'CHAR'                            => array('type' => 'string', 'exact' => TRUE),
+			'CHAR VARYING'                    => array('type' => 'string'),
+			'CHARACTER'                       => array('type' => 'string', 'exact' => TRUE),
+			'CHARACTER VARYING'               => array('type' => 'string'),
+			'DATE'                            => array('type' => 'string'),
+			'DEC'                             => array('type' => 'float', 'exact' => TRUE),
+			'DECIMAL'                         => array('type' => 'float', 'exact' => TRUE),
+			'DOUBLE PRECISION'                => array('type' => 'float'),
+			'FLOAT'                           => array('type' => 'float'),
+			'INT'                             => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
+			'INTEGER'                         => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
+			'INTERVAL'                        => array('type' => 'string'),
+			'NATIONAL CHAR'                   => array('type' => 'string', 'exact' => TRUE),
+			'NATIONAL CHAR VARYING'           => array('type' => 'string'),
+			'NATIONAL CHARACTER'              => array('type' => 'string', 'exact' => TRUE),
+			'NATIONAL CHARACTER VARYING'      => array('type' => 'string'),
+			'NCHAR'                           => array('type' => 'string', 'exact' => TRUE),
+			'NCHAR VARYING'                   => array('type' => 'string'),
+			'NUMERIC'                         => array('type' => 'float', 'exact' => TRUE),
+			'REAL'                            => array('type' => 'float'),
+			'SMALLINT'                        => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
+			'TIME'                            => array('type' => 'string'),
+			'TIME WITH TIME ZONE'             => array('type' => 'string'),
+			'TIMESTAMP'                       => array('type' => 'string'),
+			'TIMESTAMP WITH TIME ZONE'        => array('type' => 'string'),
+			'VARCHAR'                         => array('type' => 'string'),
 
 			// SQL:1999
-			'binary large object'               => array('type' => 'string', 'binary' => TRUE),
-			'blob'                              => array('type' => 'string', 'binary' => TRUE),
-			'boolean'                           => array('type' => 'bool'),
-			'char large object'                 => array('type' => 'string'),
-			'character large object'            => array('type' => 'string'),
-			'clob'                              => array('type' => 'string'),
-			'national character large object'   => array('type' => 'string'),
-			'nchar large object'                => array('type' => 'string'),
-			'nclob'                             => array('type' => 'string'),
-			'time without time zone'            => array('type' => 'string'),
-			'timestamp without time zone'       => array('type' => 'string'),
+			'BINARY LARGE OBJECT'             => array('type' => 'string', 'binary' => TRUE),
+			'BLOB'                            => array('type' => 'string', 'binary' => TRUE),
+			'BOOLEAN'                         => array('type' => 'bool'),
+			'CHAR LARGE OBJECT'               => array('type' => 'string'),
+			'CHARACTER LARGE OBJECT'          => array('type' => 'string'),
+			'CLOB'                            => array('type' => 'string'),
+			'NATIONAL CHARACTER LARGE OBJECT' => array('type' => 'string'),
+			'NCHAR LARGE OBJECT'              => array('type' => 'string'),
+			'NCLOB'                           => array('type' => 'string'),
+			'TIME WITHOUT TIME ZONE'          => array('type' => 'string'),
+			'TIMESTAMP WITHOUT TIME ZONE'     => array('type' => 'string'),
 
 			// SQL:2003
-			'bigint'    => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
+			'BIGINT'                          => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
 
 			// SQL:2008
-			'binary'            => array('type' => 'string', 'binary' => TRUE, 'exact' => TRUE),
-			'binary varying'    => array('type' => 'string', 'binary' => TRUE),
-			'varbinary'         => array('type' => 'string', 'binary' => TRUE),
+			'BINARY'                          => array('type' => 'string', 'binary' => TRUE, 'exact' => TRUE),
+			'BINARY VARYING'                  => array('type' => 'string', 'binary' => TRUE),
+			'VARBINARY'                       => array('type' => 'string', 'binary' => TRUE),
 		);
 
 		if (isset($types[$type])) {
@@ -159,13 +159,47 @@ abstract class Base_DB_Schema extends Core_Object {
 	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
-	 * @override
+	 * @abstract
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
 	 * @return DB_ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 */
 	public abstract function indexes($table, $like = '');
+
+	/**
+	 * This function extracts a field's data type information.  For example:
+	 *
+	 *     'INTEGER' becomes array('INTEGER', 0, 0)
+	 *     'CHAR(6)' becomes array('CHAR', 6, 0)
+	 *     'DECIMAL(10, 5)' becomes array('DECIMAL', 10, 5)
+	 *
+	 * @access protected
+	 * @param string $type                  the data type to be parsed
+	 * @return array                        an array with the field's type
+	 *                                      information
+	 *
+	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://kohanaframework.org/3.2/guide/api/Database#_parse_type
+	 */
+	protected function parse_type($type) {
+		if (($open = strpos($type, '(')) === FALSE) {
+			return array(strtoupper($type), 0, 0);
+		}
+
+		$close = strpos($type, ')', $open);
+
+		$args = preg_split('/,/', substr($type, $open + 1, $close - 1 - $open));
+
+		$info = array();
+
+		$info[0] = strtoupper(substr($type, 0, $open) . substr($type, $close + 1)); // type
+		$info[1] = (isset($args[0])) ? (int) trim($args[0]) : 0; // max_length, max_digits, precision
+		$info[2] = (isset($args[1])) ? (int) trim($args[1]) : 0; // max_decimals, scale
+
+		return $info;
+	}
 
 	/**
 	 * This function returns a result set of database tables.
