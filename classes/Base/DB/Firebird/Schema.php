@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-30
+ * @version 2013-01-31
  *
  * @abstract
  */
@@ -39,11 +39,17 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://www.firebirdsql.org/manual/migration-mssql-data-types.html
+	 * @see http://web.firebirdsql.org/dotnetfirebird/firebird-and-dotnet-framework-data-types-mapping.html
 	 */
 	public function data_type($type) {
 		static $types = array(
-			'blob' => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),			
-			'double' => array('type' => 'float'),
+			'BLOB'                            => array('type' => 'Blob', 'max_length' => 2147483647),
+			'BLOB SUB_TYPE 1'                 => array('type' => 'Text', 'max_length' => 2147483647),
+			'BLOB SUB_TYPE TEXT'              => array('type' => 'Text', 'max_length' => 2147483647),
+			'INT64'                           => array('type' => 'Integer'),
+			'TIMESTAMP'                       => array('type' => 'Integer'),
 		);
 
 		if (isset($types[$type])) {

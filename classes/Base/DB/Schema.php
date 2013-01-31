@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2013-01-30
+ * @version 2013-01-31
  *
  * @abstract
  */
@@ -67,59 +67,67 @@ abstract class Base_DB_Schema extends Core_Object {
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://kohanaframework.org/3.2/guide/api/Database#datatype
+	 * @see http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
 	 */
 	public function data_type($type) {
 		static $types = array(
 			// SQL-92
-			'BIT'                             => array('type' => 'string', 'exact' => TRUE),
-			'BIT VARYING'                     => array('type' => 'string'),
-			'CHAR'                            => array('type' => 'string', 'exact' => TRUE),
-			'CHAR VARYING'                    => array('type' => 'string'),
-			'CHARACTER'                       => array('type' => 'string', 'exact' => TRUE),
-			'CHARACTER VARYING'               => array('type' => 'string'),
-			'DATE'                            => array('type' => 'string'),
-			'DEC'                             => array('type' => 'float', 'exact' => TRUE),
-			'DECIMAL'                         => array('type' => 'float', 'exact' => TRUE),
-			'DOUBLE PRECISION'                => array('type' => 'float'),
-			'FLOAT'                           => array('type' => 'float'),
-			'INT'                             => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'INTEGER'                         => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'INTERVAL'                        => array('type' => 'string'),
-			'NATIONAL CHAR'                   => array('type' => 'string', 'exact' => TRUE),
-			'NATIONAL CHAR VARYING'           => array('type' => 'string'),
-			'NATIONAL CHARACTER'              => array('type' => 'string', 'exact' => TRUE),
-			'NATIONAL CHARACTER VARYING'      => array('type' => 'string'),
-			'NCHAR'                           => array('type' => 'string', 'exact' => TRUE),
-			'NCHAR VARYING'                   => array('type' => 'string'),
-			'NUMERIC'                         => array('type' => 'float', 'exact' => TRUE),
-			'REAL'                            => array('type' => 'float'),
-			'SMALLINT'                        => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
-			'TIME'                            => array('type' => 'string'),
-			'TIME WITH TIME ZONE'             => array('type' => 'string'),
-			'TIMESTAMP'                       => array('type' => 'string'),
-			'TIMESTAMP WITH TIME ZONE'        => array('type' => 'string'),
-			'VARCHAR'                         => array('type' => 'string'),
+			'BIT'                             => array('type' => 'Binary', 'max_length' => 1, 'exact' => TRUE),
+			'BIT VARYING'                     => array('type' => 'Binary'),
+			'CHAR'                            => array('type' => 'String', 'exact' => TRUE),
+			'CHAR VARYING'                    => array('type' => 'String'),
+			'CHARACTER'                       => array('type' => 'String', 'exact' => TRUE),
+			'CHARACTER VARYING'               => array('type' => 'String'),
+			'DATE'                            => array('type' => 'Date'),
+			'DEC'                             => array('type' => 'Decimal', 'exact' => TRUE),
+			'DECIMAL'                         => array('type' => 'Decimal', 'exact' => TRUE),
+			'DOUBLE PRECISION'                => array('type' => 'Double'),
+			'FLOAT'                           => array('type' => 'Double'),
+			'INT'                             => array('type' => 'Integer', 'range' => array(-2147483648, 2147483647)),
+			'INTEGER'                         => array('type' => 'Integer', 'range' => array(-2147483648, 2147483647)),
+			'INTERVAL'                        => array('type' => 'String'),
+			'NATIONAL CHAR'                   => array('type' => 'String', 'exact' => TRUE),
+			'NATIONAL CHAR VARYING'           => array('type' => 'String'),
+			'NATIONAL CHARACTER'              => array('type' => 'String', 'exact' => TRUE),
+			'NATIONAL CHARACTER VARYING'      => array('type' => 'String'),
+			'NCHAR'                           => array('type' => 'String', 'exact' => TRUE),
+			'NCHAR VARYING'                   => array('type' => 'String'),
+			'NUMERIC'                         => array('type' => 'Decimal', 'exact' => TRUE),
+			'REAL'                            => array('type' => 'Double'),
+			'SMALLINT'                        => array('type' => 'Integer', 'range' => array(-32768, 32767)),
+			'TIME'                            => array('type' => 'Time'),
+			'TIME WITH TIME ZONE'             => array('type' => 'Time'),
+			'TIMESTAMP'                       => array('type' => 'DateTime'),
+			'TIMESTAMP WITH TIME ZONE'        => array('type' => 'DateTime'),
+			'VARCHAR'                         => array('type' => 'String'),
 
 			// SQL:1999
-			'BINARY LARGE OBJECT'             => array('type' => 'string', 'binary' => TRUE),
-			'BLOB'                            => array('type' => 'string', 'binary' => TRUE),
-			'BOOLEAN'                         => array('type' => 'bool'),
-			'CHAR LARGE OBJECT'               => array('type' => 'string'),
-			'CHARACTER LARGE OBJECT'          => array('type' => 'string'),
-			'CLOB'                            => array('type' => 'string'),
-			'NATIONAL CHARACTER LARGE OBJECT' => array('type' => 'string'),
-			'NCHAR LARGE OBJECT'              => array('type' => 'string'),
-			'NCLOB'                           => array('type' => 'string'),
-			'TIME WITHOUT TIME ZONE'          => array('type' => 'string'),
-			'TIMESTAMP WITHOUT TIME ZONE'     => array('type' => 'string'),
+			'BINARY LARGE OBJECT'             => array('type' => 'Blob'),
+			'BLOB'                            => array('type' => 'Blob'),
+			'BOOLEAN'                         => array('type' => 'Boolean'),
+			'CHAR LARGE OBJECT'               => array('type' => 'Text'),
+			'CHARACTER LARGE OBJECT'          => array('type' => 'Text'),
+			'CLOB'                            => array('type' => 'Text'),
+			'NATIONAL CHARACTER LARGE OBJECT' => array('type' => 'Text'),
+			'NCHAR LARGE OBJECT'              => array('type' => 'Text'),
+			'NCLOB'                           => array('type' => 'Text'),
+			'TIME WITHOUT TIME ZONE'          => array('type' => 'Time'),
+			'TIMESTAMP WITHOUT TIME ZONE'     => array('type' => 'DateTime'),
 
 			// SQL:2003
-			'BIGINT'                          => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
+			'BIGINT'                          => array('type' => 'Integer', 'range' => array('-9223372036854775808', '9223372036854775807')),
 
 			// SQL:2008
-			'BINARY'                          => array('type' => 'string', 'binary' => TRUE, 'exact' => TRUE),
-			'BINARY VARYING'                  => array('type' => 'string', 'binary' => TRUE),
-			'VARBINARY'                       => array('type' => 'string', 'binary' => TRUE),
+			'BINARY'                          => array('type' => 'Binary', 'exact' => TRUE),
+			'BINARY VARYING'                  => array('type' => 'Binary'),
+			'VARBINARY'                       => array('type' => 'Binary'),
+			
+			// SQL:OTHER
+			'DOUBLE'                          => array('type' => 'Double'),
+			'NVARCHAR'                        => array('type' => 'String'),
+			'VARBIT'                          => array('type' => 'Binary'),
 		);
 
 		if (isset($types[$type])) {

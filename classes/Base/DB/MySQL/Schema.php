@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2013-01-30
+ * @version 2013-01-31
  *
  * @abstract
  */
@@ -42,39 +42,39 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 */
 	public function data_type($type) {
 		static $types = array(
-			'BLOB'                            => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
-			'BOOL'                            => array('type' => 'bool'),
-			'BIGINT UNSIGNED'                 => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
-			'DATETIME'                        => array('type' => 'string'),
-			'DECIMAL UNSIGNED'                => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'DOUBLE'                          => array('type' => 'float'),
-			'DOUBLE PRECISION UNSIGNED'       => array('type' => 'float', 'min' => '0'),
-			'DOUBLE UNSIGNED'                 => array('type' => 'float', 'min' => '0'),
-			'ENUM'                            => array('type' => 'string'),
-			'FIXED'                           => array('type' => 'float', 'exact' => TRUE),
-			'FIXED UNSIGNED'                  => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'FLOAT UNSIGNED'                  => array('type' => 'float', 'min' => '0'),
-			'INT UNSIGNED'                    => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'INTEGER UNSIGNED'                => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'LONGBLOB'                        => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
-			'LONGTEXT'                        => array('type' => 'string', 'character_maximum_length' => '4294967295'),
-			'MEDIUMBLOB'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
-			'MEDIUMINT'                       => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
-			'MEDIUMINT UNSIGNED'              => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
-			'MEDIUMTEXT'                      => array('type' => 'string', 'character_maximum_length' => '16777215'),
-			'NATIONAL VARCHAR'                => array('type' => 'string'),
-			'NUMERIC UNSIGNED'                => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
-			'NVARCHAR'                        => array('type' => 'string'),
-			'POINT'                           => array('type' => 'string', 'binary' => TRUE),
-			'REAL UNSIGNED'                   => array('type' => 'float', 'min' => '0'),
-			'SET'                             => array('type' => 'string'),
-			'SMALLINT UNSIGNED'               => array('type' => 'int', 'min' => '0', 'max' => '65535'),
-			'TEXT'                            => array('type' => 'string', 'character_maximum_length' => '65535'),
-			'TINYBLOB'                        => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
-			'TINYINT'                         => array('type' => 'int', 'min' => '-128', 'max' => '127'),
-			'TINYINT UNSIGNED'                => array('type' => 'int', 'min' => '0', 'max' => '255'),
-			'TINYTEXT'                        => array('type' => 'string', 'character_maximum_length' => '255'),
-			'YEAR'                            => array('type' => 'string'),
+			'BLOB'                            => array('type' => 'Blob', 'max_length' => 65535),
+			'BOOL'                            => array('type' => 'Boolean'),
+			'BIGINT UNSIGNED'                 => array('type' => 'Integer', 'range' => array(0, '18446744073709551615')),
+			'DATETIME'                        => array('type' => 'DateTime'),
+			'DECIMAL UNSIGNED'                => array('type' => 'Decimal', 'range' => array(0, NULL), 'exact' => TRUE),
+			'DOUBLE'                          => array('type' => 'Double'),
+			'DOUBLE PRECISION UNSIGNED'       => array('type' => 'Double', 'range' => array(0, NULL)),
+			'DOUBLE UNSIGNED'                 => array('type' => 'Double', 'range' => array(0, NULL)),
+			'ENUM'                            => array('type' => 'String'),
+			'FIXED'                           => array('type' => 'Double', 'exact' => TRUE),
+			'FIXED UNSIGNED'                  => array('type' => 'Double', 'range' => array(0, NULL), 'exact' => TRUE),
+			'FLOAT UNSIGNED'                  => array('type' => 'Double', 'range' => array(0, NULL)),
+			'INT UNSIGNED'                    => array('type' => 'Integer', 'range' => array(0, '4294967295')),
+			'INTEGER UNSIGNED'                => array('type' => 'Integer', 'range' => array(0, '4294967295')),
+			'LONGBLOB'                        => array('type' => 'Blob', 'max_length' => '4294967295'),
+			'LONGTEXT'                        => array('type' => 'Text', 'max_length' => '4294967295'),
+			'MEDIUMBLOB'                      => array('type' => 'Blob', 'max_length' => 16777215),
+			'MEDIUMINT'                       => array('type' => 'Integer', 'range' => array(-8388608, 8388607)),
+			'MEDIUMINT UNSIGNED'              => array('type' => 'Integer', 'range' => array(0, 16777215)),
+			'MEDIUMTEXT'                      => array('type' => 'Text', 'max_length' => 16777215),
+			'NATIONAL VARCHAR'                => array('type' => 'String'),
+			'NUMERIC UNSIGNED'                => array('type' => 'Decimal', 'range' => array(0, NULL), 'exact' => TRUE),
+			'NVARCHAR'                        => array('type' => 'String'),
+			'POINT'                           => array('type' => 'Binary'),
+			'REAL UNSIGNED'                   => array('type' => 'Double', 'range' => array(0, NULL)),
+			'SET'                             => array('type' => 'String'),
+			'SMALLINT UNSIGNED'               => array('type' => 'Integer', 'range' => array(0, 65535)),
+			'TEXT'                            => array('type' => 'Text', 'max_length' => 65535),
+			'TINYBLOB'                        => array('type' => 'Blob', 'max_length' => 255),
+			'TINYINT'                         => array('type' => 'Integer', 'range' => array(-128, 127)),
+			'TINYINT UNSIGNED'                => array('type' => 'Integer', 'range' => array(0, 255)),
+			'TINYTEXT'                        => array('type' => 'String', 'max_length' => 255),
+			'YEAR'                            => array('type' => 'String'),
 		);
 
 		$type = trim(preg_replace('/ZEROFILL/i', '', $type));
@@ -136,7 +136,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			$buffer = $reader->row('array');
 			$type = $this->parse_type($buffer['Type']);
 			$position++;
-			$default = $record['Default'];
+			$default = $buffer['Default'];
 			if ($default == 'NULL') {
 				$default = NULL;
 			}

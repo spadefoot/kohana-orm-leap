@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-30
+ * @version 2013-01-31
  *
  * @abstract
  */
@@ -40,12 +40,23 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 *
 	 * @license http://kohanaframework.org/license
 	 * @see https://github.com/xrado/kohana-mssql
+	 * @see http://msdn.microsoft.com/en-us/library/windows/desktop/ms713607%28v=vs.85%29.aspx
+	 * @see http://www.firebirdsql.org/manual/migration-mssql-data-types.html
 	 */
 	public function data_type($type) {
 		static $types = array(
-			'nvarchar'  => array('type' => 'string'),
-			'ntext'     => array('type' => 'string'),
-			'tinyint'   => array('type' => 'int', 'min' => '0', 'max' => '255'),
+			'BIT'                             => array('type' => 'Binary', 'max_length' => 1, 'exact' => TRUE, 'nullable' => FALSE),
+			'DATETIME'                        => array('type' => 'Integer'),
+			'IMAGE'                           => array('type' => 'Blob', 'max_length' => 2147483647),
+			'MONEY'                           => array('type' => 'Decimal', 'precision' => 18, 'scale' => 4),
+			'NVARCHAR'                        => array('type' => 'String'),
+			'NTEXT'                           => array('type' => 'Text', 'max_length' => '1073741823'),
+			'SMALLDATETIME'                   => array('type' => 'Integer'),
+			'SMALLMONEY'                      => array('type' => 'Decimal', 'precision' => 10, 'scale' => 4),
+			'SQL_VARIANT'                     => array('type' => 'Blob'),
+			'TABLE'                           => array('type' => 'Table'),
+			'TINYINT'                         => array('type' => 'Integer', 'range' => array(0, 255)),
+			'UNIQUEIDENTIFIER'                => array('type' => 'String', 'max_length' => 38),
 		);
 
 		if (isset($types[$type])) {
