@@ -124,9 +124,13 @@ abstract class Base_DB_Schema extends Core_Object {
 			'BINARY VARYING'                  => array('type' => 'Binary'),
 			'VARBINARY'                       => array('type' => 'Binary'),
 			
-			// SQL:OTHER
+			// SQL:MORE
+			'DATETIME'                        => array('type' => 'DateTime'),
 			'DOUBLE'                          => array('type' => 'Double'),
+			'NATIONAL VARCHAR'                => array('type' => 'String'),
 			'NVARCHAR'                        => array('type' => 'String'),
+			'TEXT'                            => array('type' => 'Text'),
+			'TINYINT'                         => array('type' => 'Integer', 'range' => array(-128, 127)),
 			'VARBIT'                          => array('type' => 'Binary'),
 		);
 
