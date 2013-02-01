@@ -68,20 +68,20 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 			'UUID'                            => array('type' => 'String', 'max_length' => 32),
 			'XML'                             => array('type' => 'Text'),
 			
-			// PostgreSQL:MORE
-			'BIGSERIAL'                       => array('type' => 'Integer', 'range' => array(1, '9223372036854775807')),
-			'DOUBLE PRECISION'                => array('type' => 'Double', 'max_decimals' => 15),
-			'JSON'                            => array('type' => 'Text'),
-			'REAL'                            => array('type' => 'Double', 'max_decimals' => 6),
-			'SERIAL'                          => array('type' => 'Integer', 'range' => array(1, 2147483647)),
-			'SMALLSERIAL'                     => array('type' => 'Integer', 'range' => array(1, 32767)),
-			
 			// PostgreSQL:Information Schema
 			'CARDINAL_NUMBER'                 => array('type' => 'Integer', 'range' => array(0, 2147483647)),
 			'CHARACTER_DATA'                  => array('type' => 'Text'),
 			'SQL_IDENTIFIER'                  => array('type' => 'String'),
 			'TIME_STAMP'                      => array('type' => 'DateTime'),
 			'YES_OR_NO'                       => array('type' => 'Boolean'),
+			
+			// PostgreSQL:MISC
+			'BIGSERIAL'                       => array('type' => 'Integer', 'range' => array(1, '9223372036854775807')),
+			'DOUBLE PRECISION'                => array('type' => 'Double', 'max_decimals' => 15),
+			'JSON'                            => array('type' => 'Text'),
+			'REAL'                            => array('type' => 'Double', 'max_decimals' => 6),
+			'SERIAL'                          => array('type' => 'Integer', 'range' => array(1, 2147483647)),
+			'SMALLSERIAL'                     => array('type' => 'Integer', 'range' => array(1, 32767)),
 		);
 
 		$type = strtoupper($type);
