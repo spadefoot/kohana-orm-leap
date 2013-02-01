@@ -74,34 +74,34 @@ abstract class Base_DB_Schema extends Core_Object {
 	public function data_type($type) {
 		static $types = array(
 			// SQL-92
-			'BIT'                             => array('type' => 'Binary', 'max_length' => 1, 'exact' => TRUE),
-			'BIT VARYING'                     => array('type' => 'Binary'),
-			'CHAR'                            => array('type' => 'String', 'exact' => TRUE),
-			'CHAR VARYING'                    => array('type' => 'String'),
-			'CHARACTER'                       => array('type' => 'String', 'exact' => TRUE),
-			'CHARACTER VARYING'               => array('type' => 'String'),
+			'BIT'                             => array('type' => 'Binary', 'max_length' => 1),
+			'BIT VARYING'                     => array('type' => 'Binary', 'varying' => TRUE),
+			'CHAR'                            => array('type' => 'String'),
+			'CHAR VARYING'                    => array('type' => 'String', 'varying' => TRUE),
+			'CHARACTER'                       => array('type' => 'String'),
+			'CHARACTER VARYING'               => array('type' => 'String', 'varying' => TRUE),
 			'DATE'                            => array('type' => 'Date'),
-			'DEC'                             => array('type' => 'Decimal', 'exact' => TRUE),
-			'DECIMAL'                         => array('type' => 'Decimal', 'exact' => TRUE),
+			'DEC'                             => array('type' => 'Decimal'),
+			'DECIMAL'                         => array('type' => 'Decimal'),
 			'DOUBLE PRECISION'                => array('type' => 'Double'),
 			'FLOAT'                           => array('type' => 'Double'),
 			'INT'                             => array('type' => 'Integer', 'range' => array(-2147483648, 2147483647)),
 			'INTEGER'                         => array('type' => 'Integer', 'range' => array(-2147483648, 2147483647)),
 			'INTERVAL'                        => array('type' => 'String'),
-			'NATIONAL CHAR'                   => array('type' => 'String', 'exact' => TRUE),
-			'NATIONAL CHAR VARYING'           => array('type' => 'String'),
-			'NATIONAL CHARACTER'              => array('type' => 'String', 'exact' => TRUE),
-			'NATIONAL CHARACTER VARYING'      => array('type' => 'String'),
-			'NCHAR'                           => array('type' => 'String', 'exact' => TRUE),
-			'NCHAR VARYING'                   => array('type' => 'String'),
-			'NUMERIC'                         => array('type' => 'Decimal', 'exact' => TRUE),
+			'NATIONAL CHAR'                   => array('type' => 'String'),
+			'NATIONAL CHAR VARYING'           => array('type' => 'String', 'varying' => TRUE),
+			'NATIONAL CHARACTER'              => array('type' => 'String'),
+			'NATIONAL CHARACTER VARYING'      => array('type' => 'String', 'varying' => TRUE),
+			'NCHAR'                           => array('type' => 'String'),
+			'NCHAR VARYING'                   => array('type' => 'String', 'varying' => TRUE),
+			'NUMERIC'                         => array('type' => 'Decimal'),
 			'REAL'                            => array('type' => 'Double'),
 			'SMALLINT'                        => array('type' => 'Integer', 'range' => array(-32768, 32767)),
 			'TIME'                            => array('type' => 'Time'),
 			'TIME WITH TIME ZONE'             => array('type' => 'Time'),
 			'TIMESTAMP'                       => array('type' => 'DateTime'),
 			'TIMESTAMP WITH TIME ZONE'        => array('type' => 'DateTime'),
-			'VARCHAR'                         => array('type' => 'String'),
+			'VARCHAR'                         => array('type' => 'String', 'varying' => TRUE),
 
 			// SQL:1999
 			'BINARY LARGE OBJECT'             => array('type' => 'Blob'),
@@ -120,20 +120,22 @@ abstract class Base_DB_Schema extends Core_Object {
 			'BIGINT'                          => array('type' => 'Integer', 'range' => array('-9223372036854775808', '9223372036854775807')),
 
 			// SQL:2008
-			'BINARY'                          => array('type' => 'Binary', 'exact' => TRUE),
-			'BINARY VARYING'                  => array('type' => 'Binary'),
-			'VARBINARY'                       => array('type' => 'Binary'),
+			'BINARY'                          => array('type' => 'Binary'),
+			'BINARY VARYING'                  => array('type' => 'Binary', 'varying' => TRUE),
+			'VARBINARY'                       => array('type' => 'Binary', 'varying' => TRUE),
 			
 			// SQL:MORE
 			'DATETIME'                        => array('type' => 'DateTime'),
 			'DOUBLE'                          => array('type' => 'Double'),
-			'NATIONAL VARCHAR'                => array('type' => 'String'),
-			'NVARCHAR'                        => array('type' => 'String'),
+			'NATIONAL VARCHAR'                => array('type' => 'String', 'varying' => TRUE),
+			'NVARCHAR'                        => array('type' => 'String', 'varying' => TRUE),
 			'TEXT'                            => array('type' => 'Text'),
 			'TINYINT'                         => array('type' => 'Integer', 'range' => array(-128, 127)),
-			'VARBIT'                          => array('type' => 'Binary'),
+			'VARBIT'                          => array('type' => 'Binary', 'varying' => TRUE),
 		);
 
+		$type = strtoupper($type);
+		
 		if (isset($types[$type])) {
 			return $types[$type];
 		}
@@ -142,14 +144,28 @@ abstract class Base_DB_Schema extends Core_Object {
 	}
 
 	/**
-	 * This function returns a result set that contains an array of all fields in
-	 * the specified database table/view.
+	 * This function returns a result set of fields for the specified table.
+	 *
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | field         | data type     | description                                                |
+	 * +---------------+---------------+------------------------------------------------------------+
+	 * | schema        | string        | The name of the schema that contains the table.            |
+	 * | table         | string        | The name of the table.                                     |
+	 * | column        | string        | The name of the column.                                    |
+	 * | type          | string        | The data type of the column.                               |
+	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
+	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
+	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
+	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
+	 * | default       | mixed         | The default value of the column.                           |
+	 * +---------------+---------------+------------------------------------------------------------+
 	 *
 	 * @access public
 	 * @abstract
-	 * @param string $table                 the table/view to evaluated
+	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return array                        an array of fields within the specified
+	 * @return DB_ResultSet                 an array of fields within the specified
 	 *                                      table
 	 */
 	public abstract function fields($table, $like = '');

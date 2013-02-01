@@ -80,6 +80,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 			'year'                      => array('type' => 'string'),
 		);
 
+		$type = strtoupper($type);
 		$type = str_replace(' zerofill', '', $type);
 
 		if (isset($types[$type])) {
@@ -99,11 +100,11 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
 	 * | column        | string        | The name of the column.                                    |
-	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | type          | string        | The data type of the column.                               |
 	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
 	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
 	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
 	 * | default       | mixed         | The default value of the column.                           |
 	 * +---------------+---------------+------------------------------------------------------------+

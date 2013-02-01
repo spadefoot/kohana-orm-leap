@@ -45,19 +45,20 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 */
 	public function data_type($type) {
 		static $types = array(
-			'BIT'                             => array('type' => 'Binary', 'max_length' => 1, 'exact' => TRUE, 'nullable' => FALSE),
+			'BIT'                             => array('type' => 'Binary', 'max_length' => 1, 'nullable' => FALSE),
 			'DATETIME'                        => array('type' => 'Integer'),
 			'IMAGE'                           => array('type' => 'Blob', 'max_length' => 2147483647),
 			'MONEY'                           => array('type' => 'Decimal', 'precision' => 18, 'scale' => 4),
-			'NVARCHAR'                        => array('type' => 'String'),
 			'NTEXT'                           => array('type' => 'Text', 'max_length' => '1073741823'),
 			'SMALLDATETIME'                   => array('type' => 'Integer'),
 			'SMALLMONEY'                      => array('type' => 'Decimal', 'precision' => 10, 'scale' => 4),
-			'SQL_VARIANT'                     => array('type' => 'Blob'),
-			'TABLE'                           => array('type' => 'Table'),
+			'SQL_VARIANT'                     => array('type' => 'Blob', 'varying' => TRUE),
+			//'TABLE'                           => array('type' => 'Table'),
 			'TINYINT'                         => array('type' => 'Integer', 'range' => array(0, 255)),
 			'UNIQUEIDENTIFIER'                => array('type' => 'String', 'max_length' => 38),
 		);
+
+		$type = strtoupper($type);
 
 		if (isset($types[$type])) {
 			return $types[$type];
@@ -75,11 +76,11 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
 	 * | column        | string        | The name of the column.                                    |
-	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | type          | string        | The data type of the column.                               |
 	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
 	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
 	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
 	 * | default       | mixed         | The default value of the column.                           |
 	 * +---------------+---------------+------------------------------------------------------------+

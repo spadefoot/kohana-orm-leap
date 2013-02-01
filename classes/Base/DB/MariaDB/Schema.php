@@ -72,6 +72,7 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 			'YEAR'                            => array('type' => 'String'),
 		);
 
+		$type = strtoupper($type);
 		$type = trim(preg_replace('/ZEROFILL/i', '', $type));
 
 		if (isset($types[$type])) {
@@ -90,11 +91,11 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
 	 * | column        | string        | The name of the column.                                    |
-	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | type          | string        | The data type of the column.                               |
 	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
 	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
 	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
 	 * | default       | mixed         | The default value of the column.                           |
 	 * +---------------+---------------+------------------------------------------------------------+
@@ -139,11 +140,11 @@ abstract class Base_DB_MariaDB_Schema extends DB_Schema {
 				'schema' => $this->data_source->database,
 				'table' => $table,
 				'column' => $buffer['Field'],
-				'seq_index' => $position,
 				'type' => $type[0],
 				'max_length' => $type[1], // max_digits, precision
 				'max_decimals' => $type[2], // scale
 				'attributes' => $buffer['Extra'],
+				'seq_index' => $position,
 				'nullable' => ($buffer['Null'] == 'YES'),
 				'default' => $default,
 			);

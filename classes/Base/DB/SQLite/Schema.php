@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQLite
- * @version 2013-01-30
+ * @version 2013-01-31
  *
  * @abstract
  */
@@ -37,11 +37,11 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * | schema        | string        | The name of the schema that contains the table.            |
 	 * | table         | string        | The name of the table.                                     |
 	 * | column        | string        | The name of the column.                                    |
-	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | type          | string        | The data type of the column.                               |
 	 * | max_length    | integer       | The max length, max digits, or precision of the column.    |
 	 * | max_decimals  | integer       | The max decimals or scale of the column.                   |
 	 * | attributes    | string        | Any additional attributes associated with the column.      |
+	 * | seq_index     | integer       | The sequence index of the column.                          |
 	 * | nullable      | boolean       | Indicates whether the column can contain a NULL value.     |
 	 * | default       | mixed         | The default value of the column.                           |
 	 * +---------------+---------------+------------------------------------------------------------+
@@ -153,8 +153,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	public function indexes($table, $like = '') {
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
 
-		$pathinfo = pathinfo($this->data_source->database);
-		$schema = $pathinfo['filename'];
+		$path_info = pathinfo($this->data_source->database);
+		$schema = $path_info['filename'];
 
 		$table = trim(preg_replace('/[^a-z0-9$_ ]/i', '', $table));
 
@@ -209,8 +209,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://www.sqlite.org/faq.html#q7
 	 */
 	public function tables($like = '') {
-		$pathinfo = pathinfo($this->data_source->database);
-		$schema = $pathinfo['filename'];
+		$path_info = pathinfo($this->data_source->database);
+		$schema = $path_info['filename'];
 
 		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
@@ -256,8 +256,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://linuxgazette.net/109/chirico1.html
 	 */
 	public function triggers($table, $like = '') {
-		$pathinfo = pathinfo($this->data_source->database);
-		$schema = $pathinfo['filename'];
+		$path_info = pathinfo($this->data_source->database);
+		$schema = $path_info['filename'];
 
 		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
@@ -341,8 +341,8 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @see http://www.sqlite.org/faq.html#q7
 	 */
 	public function views($like = '') {
-		$pathinfo = pathinfo($this->data_source->database);
-		$schema = $pathinfo['filename'];
+		$path_info = pathinfo($this->data_source->database);
+		$schema = $path_info['filename'];
 
 		$builder = DB_SQL::select($this->data_source)
 			->column(DB_SQL::expr("'{$schema}'"), 'schema')
