@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MySQL
- * @version 2013-01-31
+ * @version 2013-02-01
  *
  * @abstract
  */
@@ -39,18 +39,21 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 	 *                                       for the specified data type
 	 *
 	 * @license http://kohanaframework.org/license
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/data-types.html
 	 */
 	public function data_type($type) {
 		static $types = array(
 			'BLOB'                            => array('type' => 'Blob', 'max_length' => 65535),
 			'BOOL'                            => array('type' => 'Boolean'),
 			'BIGINT UNSIGNED'                 => array('type' => 'Integer', 'range' => array(0, '18446744073709551615')),
-			'DECIMAL UNSIGNED'                => array('type' => 'Decimal', 'range' => array(0, NULL), 'exact' => TRUE),
+			'DEC UNSIGNED'                    => array('type' => 'Decimal', 'range' => array(0, NULL)),
+			'DECIMAL UNSIGNED'                => array('type' => 'Decimal', 'range' => array(0, NULL)),
 			'DOUBLE PRECISION UNSIGNED'       => array('type' => 'Double', 'range' => array(0, NULL)),
 			'DOUBLE UNSIGNED'                 => array('type' => 'Double', 'range' => array(0, NULL)),
 			'ENUM'                            => array('type' => 'String'),
-			'FIXED'                           => array('type' => 'Double', 'exact' => TRUE),
-			'FIXED UNSIGNED'                  => array('type' => 'Double', 'range' => array(0, NULL), 'exact' => TRUE),
+			'FIXED'                           => array('type' => 'Double'),
+			'FIXED UNSIGNED'                  => array('type' => 'Double', 'range' => array(0, NULL)),
 			'FLOAT UNSIGNED'                  => array('type' => 'Double', 'range' => array(0, NULL)),
 			'INT UNSIGNED'                    => array('type' => 'Integer', 'range' => array(0, '4294967295')),
 			'INTEGER UNSIGNED'                => array('type' => 'Integer', 'range' => array(0, '4294967295')),
@@ -60,9 +63,10 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 			'MEDIUMINT'                       => array('type' => 'Integer', 'range' => array(-8388608, 8388607)),
 			'MEDIUMINT UNSIGNED'              => array('type' => 'Integer', 'range' => array(0, 16777215)),
 			'MEDIUMTEXT'                      => array('type' => 'Text', 'max_length' => 16777215),
-			'NUMERIC UNSIGNED'                => array('type' => 'Decimal', 'range' => array(0, NULL), 'exact' => TRUE),
+			'NUMERIC UNSIGNED'                => array('type' => 'Decimal', 'range' => array(0, NULL)),
 			'POINT'                           => array('type' => 'Binary'),
 			'REAL UNSIGNED'                   => array('type' => 'Double', 'range' => array(0, NULL)),
+			'SERIAL'                          => array('type' => 'Integer', 'range' => array(0, '18446744073709551615')),
 			'SET'                             => array('type' => 'String'),
 			'SMALLINT UNSIGNED'               => array('type' => 'Integer', 'range' => array(0, 65535)),
 			'TEXT'                            => array('type' => 'Text', 'max_length' => 65535),
@@ -73,7 +77,7 @@ abstract class Base_DB_MySQL_Schema extends DB_Schema {
 		);
 
 		$type = strtoupper($type);
-		$type = trim(preg_replace('/ZEROFILL/i', '', $type));
+		$type = trim(preg_replace('/ ZEROFILL/i', '', $type));
 
 		if (isset($types[$type])) {
 			return $types[$type];

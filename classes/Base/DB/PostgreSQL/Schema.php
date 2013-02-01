@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-30
+ * @version 2013-02-01
  *
  * @abstract
  */
@@ -46,28 +46,42 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	public function data_type($type) {
 		static $types = array(
 			// PostgreSQL >= 7.4
-			'box'       => array('type' => 'string'),
-			'bytea'     => array('type' => 'string', 'binary' => TRUE),
-			'cidr'      => array('type' => 'string'),
-			'circle'    => array('type' => 'string'),
-			'inet'      => array('type' => 'string'),
-			'int2'      => array('type' => 'int', 'min' => '-32768', 'max' => '32767'),
-			'int4'      => array('type' => 'int', 'min' => '-2147483648', 'max' => '2147483647'),
-			'int8'      => array('type' => 'int', 'min' => '-9223372036854775808', 'max' => '9223372036854775807'),
-			'line'      => array('type' => 'string'),
-			'lseg'      => array('type' => 'string'),
-			'macaddr'   => array('type' => 'string'),
-			'money'     => array('type' => 'float', 'exact' => TRUE, 'min' => '-92233720368547758.08', 'max' => '92233720368547758.07'),
-			'path'      => array('type' => 'string'),
-			'polygon'   => array('type' => 'string'),
-			'point'     => array('type' => 'string'),
-			'text'      => array('type' => 'string'),
+			'BOX'                             => array('type' => 'String'), // 32 bytes
+			'BYTEA'                           => array('type' => 'Binary', 'varying' => TRUE),
+			'CIDR'                            => array('type' => 'String'), // 7 or 19 bytes
+			'CIRCLE'                          => array('type' => 'String'), // 24 bytes
+			'INET'                            => array('type' => 'String'), // 7 or 19 bytes
+			'INT2'                            => array('type' => 'Integer', 'range' => array(-32768, 32767)),
+			'INT4'                            => array('type' => 'Integer', 'range' => array(-2147483648, 2147483647)),
+			'INT8'                            => array('type' => 'Integer', 'range' => array('-9223372036854775808', '9223372036854775807')),
+			'LINE'                            => array('type' => 'String'), // 32 bytes
+			'LSEG'                            => array('type' => 'String'), // 32 bytes
+			'MACADDR'                         => array('type' => 'String'), // 6 bytes
+			'MONEY'                           => array('type' => 'Double', 'range' => array('-92233720368547758.08', '92233720368547758.07')),
+			'PATH'                            => array('type' => 'Text'), // 16+16n bytes
+			'POLYGON'                         => array('type' => 'Text'), // 40+16n bytes
+			'POINT'                           => array('type' => 'String'), // 16 bytes
 
 			// PostgreSQL >= 8.3
-			'tsquery'   => array('type' => 'string'),
-			'tsvector'  => array('type' => 'string'),
-			'uuid'      => array('type' => 'string'),
-			'xml'       => array('type' => 'string'),
+			'TSQUERY'                         => array('type' => 'String'),
+			'TSVECTOR'                        => array('type' => 'String'),
+			'UUID'                            => array('type' => 'String', 'max_length' => 32),
+			'XML'                             => array('type' => 'Text'),
+			
+			// PostgreSQL:MORE
+			'BIGSERIAL'                       => array('type' => 'Integer', 'range' => array(1, '9223372036854775807')),
+			'DOUBLE PRECISION'                => array('type' => 'Double', 'max_decimals' => 15),
+			'JSON'                            => array('type' => 'Text'),
+			'REAL'                            => array('type' => 'Double', 'max_decimals' => 6),
+			'SERIAL'                          => array('type' => 'Integer', 'range' => array(1, 2147483647)),
+			'SMALLSERIAL'                     => array('type' => 'Integer', 'range' => array(1, 32767)),
+			
+			// PostgreSQL:Information Schema
+			'CARDINAL_NUMBER'                 => array('type' => 'Integer', 'range' => array(0, 2147483647)),
+			'CHARACTER_DATA'                  => array('type' => 'Text'),
+			'SQL_IDENTIFIER'                  => array('type' => 'String'),
+			'TIME_STAMP'                      => array('type' => 'DateTime'),
+			'YES_OR_NO'                       => array('type' => 'Boolean'),
 		);
 
 		$type = strtoupper($type);
@@ -107,33 +121,26 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 */
 	public function fields($table, $like = '') {
-		/*
-		$this->_connection or $this->connect();
-
-		$sql = 'SELECT column_name, column_default, is_nullable, data_type, character_maximum_length, numeric_precision, numeric_scale, datetime_precision'
-			.' FROM information_schema.columns'
-			.' WHERE table_schema = '.$this->quote($this->schema()).' AND table_name = '.$this->quote($table);
-
-		if (is_string($like))
-		{
-			$sql .= ' AND column_name LIKE '.$this->quote($like);
+		$builder = DB_SQL::select($this->data_source)
+			->column('table_schema', 'schema')
+			->column('table_name', 'table')
+			->column('column_name', 'column')
+			->column('data_type', 'type')
+			->column(DB_SQL::expr('GREATEST(character_maximum_length, numeric_precision, datetime_precision)'), 'max_length')
+			->column(DB_SQL::expr('COALESCE(numeric_scale, 0)'), 'max_decimals')
+			->column(DB_SQL::expr("''"), 'attributes')
+			->column('max_length', 'seq_index')
+			->column(DB_SQL::expr("CASE WHEN is_nullable = 'YES' THEN 1 ELSE 0 END"), 'nullable')
+			->column('column_default', 'default')
+			->from('information_schema.columns')
+			->where('table_name', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->order_by('ordinal_position');
+		
+		if ( ! empty($like)) {
+			$builder->where('column_name', DB_SQL_Operator::_LIKE_, $like);
 		}
 
-		$sql .= ' ORDER BY ordinal_position';
-
-		$result = array();
-
-		foreach ($this->query(Database::SELECT, $sql, FALSE) as $column)
-		{
-			$column = array_merge($this->datatype($column['data_type']), $column);
-
-			$column['is_nullable'] = ($column['is_nullable'] === 'YES');
-
-			$result[$column['column_name']] = $column;
-		}
-
-		return $result;
-		*/
+		return $builder->query();
 	}
 
 	/**

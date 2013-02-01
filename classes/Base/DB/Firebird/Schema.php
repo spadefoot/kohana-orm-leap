@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2013-01-31
+ * @version 2013-02-01
  *
  * @abstract
  */
@@ -52,22 +52,22 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			'BLOB SUB_TYPE 0'                              => array('type' => 'Blob', 'max_length' => 2147483647), // 0 - BLOB, binary data (image, video, audio, whatever)
 			'BLOB SUB_TYPE 1'                              => array('type' => 'Text', 'max_length' => 2147483647), // 1 - CLOB, text
 			'BLOB SUB_TYPE 2'                              => array('type' => 'Text', 'max_length' => 2147483647), // 2 - BLR, definitions of procedures, triggers, etc.
-			'BLOB SUB_TYPE 3'                              => array('type' => 'Text', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE 4'                              => array('type' => 'Text', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE 5'                              => array('type' => 'Blob', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE 6'                              => array('type' => 'Text', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE 7'                              => array('type' => 'Text', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE 8'                              => array('type' => 'Text', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE 9'                              => array('type' => 'Text', 'max_length' => 2147483647),
-			'BLOB SUB_TYPE ACL'                            => array('type' => 'Text', 'max_length' => 2147483647), // 3
+			'BLOB SUB_TYPE 3'                              => array('type' => 'Text', 'max_length' => 2147483647), // 3 - ACL
+			'BLOB SUB_TYPE 4'                              => array('type' => 'Text', 'max_length' => 2147483647), // 4 - RANGES, reserved
+			'BLOB SUB_TYPE 5'                              => array('type' => 'Blob', 'max_length' => 2147483647), // 5 - SUMMARY, encoded-meta-data
+			'BLOB SUB_TYPE 6'                              => array('type' => 'Text', 'max_length' => 2147483647), // 6 - FORMAT, irregular-finished-multi-db-tx 
+			'BLOB SUB_TYPE 7'                              => array('type' => 'Text', 'max_length' => 2147483647), // 7 - TRANSACTION_DESCRIPTION
+			'BLOB SUB_TYPE 8'                              => array('type' => 'Text', 'max_length' => 2147483647), // 8 - EXTERNAL_FILE_DESCRIPTION
+			'BLOB SUB_TYPE 9'                              => array('type' => 'Text', 'max_length' => 2147483647), // 9
+			'BLOB SUB_TYPE ACL'                            => array('type' => 'Text', 'max_length' => 2147483647), // 3 - ACL
 			'BLOB SUB_TYPE BLR'                            => array('type' => 'Text', 'max_length' => 2147483647), // 2 - BLR, definitions of procedures, triggers, etc.
-			'BLOB SUB_TYPE EXTERNAL_FILE_DESCRIPTION'      => array('type' => 'Text', 'max_length' => 2147483647), // 8
-			'BLOB SUB_TYPE FORMAT'                         => array('type' => 'Text', 'max_length' => 2147483647), // 6 - IRREGULAR-FINISHED-MULTI-DB-TX
-			'BLOB SUB_TYPE RANGES'                         => array('type' => 'Text', 'max_length' => 2147483647), // 4 - RESERVED
-			'BLOB SUB_TYPE SUMMARY'                        => array('type' => 'Blob', 'max_length' => 2147483647), // 5 - ENCODED-META-DATA
+			'BLOB SUB_TYPE EXTERNAL_FILE_DESCRIPTION'      => array('type' => 'Text', 'max_length' => 2147483647), // 8 - EXTERNAL_FILE_DESCRIPTION
+			'BLOB SUB_TYPE FORMAT'                         => array('type' => 'Text', 'max_length' => 2147483647), // 6 - FORMAT, irregular-finished-multi-db-tx
+			'BLOB SUB_TYPE RANGES'                         => array('type' => 'Text', 'max_length' => 2147483647), // 4 - RANGES, reserved
+			'BLOB SUB_TYPE SUMMARY'                        => array('type' => 'Blob', 'max_length' => 2147483647), // 5 - SUMMARY, encoded-meta-data
 			'BLOB SUB_TYPE TEXT'                           => array('type' => 'Text', 'max_length' => 2147483647), // 1 - CLOB, text
 			'BLOB SUB_TYPE TEXT CHARACTER SET'             => array('type' => 'Text', 'max_length' => 2147483647), // 1 - NCLOB, text
-			'BLOB SUB_TYPE TRANSACTION_DESCRIPTION'        => array('type' => 'Text', 'max_length' => 2147483647), // 7
+			'BLOB SUB_TYPE TRANSACTION_DESCRIPTION'        => array('type' => 'Text', 'max_length' => 2147483647), // 7 - TRANSACTION_DESCRIPTION
 			'CSTRING'                                      => array('type' => 'String'),
 			'D_FLOAT'                                      => array('type' => 'Double'),
 			'INT64'                                        => array('type' => 'Integer', 'range' => array('-9223372036854775808', '9223372036854775807')),
@@ -163,14 +163,14 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 					WHEN 261 THEN
 						CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
 							WHEN 0 THEN \'BLOB SUB_TYPE 0\'
-							WHEN 1 THEN \'BLOB SUB_TYPE TEXT\'
-							WHEN 2 THEN \'BLOB SUB_TYPE BLR\'
-							WHEN 3 THEN \'BLOB SUB_TYPE ACL\'
-							WHEN 4 THEN \'BLOB SUB_TYPE RANGES\'
-							WHEN 5 THEN \'BLOB SUB_TYPE SUMMARY\'
-							WHEN 6 THEN \'BLOB SUB_TYPE FORMAT\'
-							WHEN 7 THEN \'BLOB SUB_TYPE TRANSACTION_DESCRIPTION\'
-							WHEN 8 THEN \'BLOB SUB_TYPE EXTERNAL_FILE_DESCRIPTION\'
+							WHEN 1 THEN \'BLOB SUB_TYPE 1\'
+							WHEN 2 THEN \'BLOB SUB_TYPE 2\'
+							WHEN 3 THEN \'BLOB SUB_TYPE 3\'
+							WHEN 4 THEN \'BLOB SUB_TYPE 4\'
+							WHEN 5 THEN \'BLOB SUB_TYPE 5\'
+							WHEN 6 THEN \'BLOB SUB_TYPE 6\'
+							WHEN 7 THEN \'BLOB SUB_TYPE 7\'
+							WHEN 8 THEN \'BLOB SUB_TYPE 8\'
 							WHEN 9 THEN \'BLOB SUB_TYPE 9\'
 							ELSE \'BLOB\'
 						END
