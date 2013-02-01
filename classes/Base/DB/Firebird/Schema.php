@@ -130,37 +130,37 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 			->column(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_FIELDS"."RDB$FIELD_NAME")'), 'column')
 			->column(DB_SQL::expr('CASE "RDB$FIELDS"."RDB$FIELD_TYPE"
-	                WHEN 7 THEN
-		                CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
-		                        WHEN 1 THEN \'NUMERIC(\' || "RDB$FIELDS"."RDB$FIELD_PRECISION" || \',\' || ("RDB$FIELDS"."RDB$FIELD_SCALE" * -1) || \')\'
-		                        WHEN 2 THEN \'DECIMAL\'
-		                        ELSE \'SMALLINT(5)\'
-		                END
-	                WHEN 8 THEN
-		                CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
-		                        WHEN 1 THEN \'NUMERIC(\' || "RDB$FIELDS"."RDB$FIELD_PRECISION" || \',\' || ("RDB$FIELDS"."RDB$FIELD_SCALE" * -1) || \')\'
-		                        WHEN 2 THEN \'DECIMAL\'
-		                        ELSE \'INTEGER(10)\'
-		                END
-	                WHEN 9 THEN \'QUAD\'
-	                WHEN 10 THEN \'FLOAT(15,15)\'
-	                WHEN 11 THEN \'D_FLOAT(15,15)\'
-	                WHEN 12 THEN \'DATE\'
-	                WHEN 13 THEN \'TIME\'
-	                WHEN 14 THEN \'CHAR(\' || (TRUNC("RDB$FIELDS"."RDB$FIELD_LENGTH" / "RDB$CHARACTER_SETS"."RDB$BYTES_PER_CHARACTER")) || \')\'
-	                WHEN 16 THEN
-		                CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
-		                        WHEN 1 THEN \'NUMERIC(\' || "RDB$FIELDS"."RDB$FIELD_PRECISION" || \',\' || ("RDB$FIELDS"."RDB$FIELD_SCALE" * -1) || \')\'
-		                        WHEN 2 THEN \'DECIMAL\'
-		                        ELSE \'BIGINT\'
-		                END
-	                WHEN 17 THEN \'BOOLEAN\'
-	                WHEN 27 THEN \'DOUBLE PRECISION(15,15)\'
-	                WHEN 35 THEN \'TIMESTAMP\'
-	                WHEN 37 THEN \'VARCHAR(\' || (TRUNC("RDB$FIELDS"."RDB$FIELD_LENGTH" / "RDB$CHARACTER_SETS"."RDB$BYTES_PER_CHARACTER")) || \')\'
-	                WHEN 40 THEN \'CSTRING(\' || (TRUNC("RDB$FIELDS"."RDB$FIELD_LENGTH" / "RDB$CHARACTER_SETS"."RDB$BYTES_PER_CHARACTER")) || \')\'
-	                WHEN 45 THEN \'BLOB_ID\'
-	                WHEN 261 THEN
+					WHEN 7 THEN
+						CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
+								WHEN 1 THEN \'NUMERIC(\' || "RDB$FIELDS"."RDB$FIELD_PRECISION" || \',\' || ("RDB$FIELDS"."RDB$FIELD_SCALE" * -1) || \')\'
+								WHEN 2 THEN \'DECIMAL\'
+								ELSE \'SMALLINT(5)\'
+						END
+					WHEN 8 THEN
+						CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
+								WHEN 1 THEN \'NUMERIC(\' || "RDB$FIELDS"."RDB$FIELD_PRECISION" || \',\' || ("RDB$FIELDS"."RDB$FIELD_SCALE" * -1) || \')\'
+								WHEN 2 THEN \'DECIMAL\'
+								ELSE \'INTEGER(10)\'
+						END
+					WHEN 9 THEN \'QUAD\'
+					WHEN 10 THEN \'FLOAT(15,15)\'
+					WHEN 11 THEN \'D_FLOAT(15,15)\'
+					WHEN 12 THEN \'DATE\'
+					WHEN 13 THEN \'TIME\'
+					WHEN 14 THEN \'CHAR(\' || (TRUNC("RDB$FIELDS"."RDB$FIELD_LENGTH" / "RDB$CHARACTER_SETS"."RDB$BYTES_PER_CHARACTER")) || \')\'
+					WHEN 16 THEN
+						CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
+								WHEN 1 THEN \'NUMERIC(\' || "RDB$FIELDS"."RDB$FIELD_PRECISION" || \',\' || ("RDB$FIELDS"."RDB$FIELD_SCALE" * -1) || \')\'
+								WHEN 2 THEN \'DECIMAL\'
+								ELSE \'BIGINT\'
+						END
+					WHEN 17 THEN \'BOOLEAN\'
+					WHEN 27 THEN \'DOUBLE PRECISION(15,15)\'
+					WHEN 35 THEN \'TIMESTAMP\'
+					WHEN 37 THEN \'VARCHAR(\' || (TRUNC("RDB$FIELDS"."RDB$FIELD_LENGTH" / "RDB$CHARACTER_SETS"."RDB$BYTES_PER_CHARACTER")) || \')\'
+					WHEN 40 THEN \'CSTRING(\' || (TRUNC("RDB$FIELDS"."RDB$FIELD_LENGTH" / "RDB$CHARACTER_SETS"."RDB$BYTES_PER_CHARACTER")) || \')\'
+					WHEN 45 THEN \'BLOB_ID\'
+					WHEN 261 THEN
 						CASE "RDB$FIELDS"."RDB$FIELD_SUB_TYPE"
 							WHEN 0 THEN \'BLOB SUB_TYPE 0\'
 							WHEN 1 THEN \'BLOB SUB_TYPE TEXT\'
@@ -175,7 +175,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 							ELSE \'BLOB\'
 						END
 					ELSE "RDB$FIELDS"."RDB$FIELD_TYPE"
-	        END'), 'type')
+			END'), 'type')
 			->column(DB_SQL::expr('COALESCE("RDB$RELATION_FIELDS"."RDB$FIELD_POSITION", 0) + 1'), 'seq_index')
 			->column(DB_SQL::expr('CASE COALESCE("RDB$RELATION_FIELDS"."RDB$NULL_FLAG", 0) WHEN 0 THEN 1 ELSE 0 END'), 'nullable')
 			->column(DB_SQL::expr('SUBSTRING(CAST("RDB$RELATION_FIELDS"."RDB$DEFAULT_SOURCE" AS VARCHAR(255)) FROM 9)'), 'default')
