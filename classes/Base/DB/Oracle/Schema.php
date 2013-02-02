@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-31
+ * @version 2013-02-02
  *
  * @abstract
  */
@@ -114,9 +114,19 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @return DB_ResultSet                 an array of fields within the specified
 	 *                                      table
 	 *
+	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_2094.htm
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
 	 */
 	public function fields($table, $like = '') {
+		/*
+		SELECT
+			TABLE_NAME,
+			COLUMN_NAME
+		FROM
+			ALL_TAB_COLUMNS
+		WHERE
+			COLUMN_NAME LIKE '%PATTERN%';
+		*/
 		/*
 		SELECT table_name, column_name
 		FROM cols
