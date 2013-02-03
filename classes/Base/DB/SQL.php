@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-09
+ * @version 2013-02-03
  *
  * @abstract
  */
@@ -80,7 +80,7 @@ abstract class Base_DB_SQL extends Core_Object {
 	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
 	 */
 	public static function precompiler($config = 'default') {
-		$data_source = new DB_DataSource($config);
+		$data_source = DB_DataSource::instance($config);
 		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
 		$object = new $precompiler($data_source);
 		return $object;

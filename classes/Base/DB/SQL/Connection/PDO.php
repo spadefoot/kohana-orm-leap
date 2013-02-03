@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category PDO
- * @version 2013-01-22
+ * @version 2013-02-03
  *
  * @see http://www.php.net/manual/en/book.pdo.php
  * @see http://www.electrictoolbox.com/php-pdo-dsn-connection-string/
@@ -172,21 +172,23 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * @return string                               the quoted string
 	 * @throws Throwable_SQL_Exception              indicates that no connection could
 	 *                                              be found
-	 *
-	 * @see http://www.php.net/manual/en/mbstring.supported-encodings.php
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
 			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
-		$string = $this->resource->quote($string);
-
-		if (is_string($escape) OR ! empty($escape)) {
-			$string .= " ESCAPE '{$escape}'";
+		$value = @$this->resource->quote($string);
+		
+		if ( ! is_string($value)) { // check needed since ODBC does not support quoting
+			return parent::quote($string, $escape);
 		}
 
-		return $string;
+		if (is_string($escape) OR ! empty($escape)) {
+			$value .= " ESCAPE '{$escape}'";
+		}
+
+		return $value;
 	}
 
 	/**

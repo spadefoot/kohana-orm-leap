@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-28
+ * @version 2013-02-03
  *
  * @see http://stackoverflow.com/questions/1353822/how-to-implement-database-connection-pool-in-php
  * @see http://www.webdevelopersjournal.com/columns/connection_pool.html
@@ -159,16 +159,14 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements Countable 
 	 * will be returned when $new is set to "FALSE."
 	 *
 	 * @access public
-	 * @param DB_DataSource $data_source                 the data source configurations
+	 * @param DB_DataSource $config                 the data source configurations
 	 * @param boolean $new                          whether to create a new connection
 	 * @return DB_Connection_Driver                 the appropriate connection
 	 * @throws Throwable_Database_Exception         indicates that no new connections
 	 *                                              can be added
 	 */
-	public function get_connection($data_source = 'default', $new = FALSE) {
-		if ( ! (is_object($data_source) AND ($data_source instanceof DB_DataSource))) {
-			$data_source = new DB_DataSource($data_source);
-		}
+	public function get_connection($config = 'default', $new = FALSE) {
+		$data_source = DB_DataSource::instance($config);
 		if (isset($this->pool[$data_source->id]) AND ! empty($this->pool[$data_source->id])) {
 			if ($new) {
 				foreach ($this->pool[$data_source->id] as $connection) {

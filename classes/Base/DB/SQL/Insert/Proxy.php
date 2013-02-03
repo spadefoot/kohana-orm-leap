@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-27
+ * @version 2013-02-03
  *
  * @abstract
  */
@@ -52,7 +52,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core_Object implements DB_SQL_St
 	 * @param mixed $config                             the data source configurations
 	 */
 	public function __construct($config) {
-		$this->data_source = new DB_DataSource($config);
+		$this->data_source = DB_DataSource::instance($config);
 		$builder = 'DB_' . $this->data_source->dialect . '_Insert_Builder';
 		$this->builder = new $builder($this->data_source);
 	}

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-28
+ * @version 2013-02-03
  *
  * @abstract
  */
@@ -143,6 +143,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 		$this->settings = array();
 
 		if ($id === NULL) {
+			// TODO Verify that config id does not already exist in the "database.php" config file.
 			$this->settings['id'] = (isset($settings['id']))
 				? (string) $settings['id']
 				: 'unique_id.' . uniqid();
@@ -212,7 +213,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * This function determines whether the connection is persistent.
 	 *
 	 * @access public
-	 * @return boolean                          whether the connection is persistent
+	 * @return boolean                              whether the connection is persistent
 	 */
 	public function is_persistent() {
 		return $this->settings['persistent'];
@@ -221,16 +222,61 @@ abstract class Base_DB_DataSource extends Core_Object {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * This variable stores an array of singleton instances of this class.
+	 *
+	 * @access protected
+	 * @static
+	 * @var array
+	 */
+	protected static $instances = array();
+
+	/**
 	 * This function returns configurations settings for the specified path.
 	 *
 	 * @access public
 	 * @static
-	 * @param string $path                      the path to be used
-	 * @return mixed                            the configuration settings for the
-	 *                                          specified path
+	 * @param string $path                          the path to be used
+	 * @return mixed                                the configuration settings for the
+	 *                                              specified path
 	 */
 	public static function config($path) {
 		return Kohana::$config->load($path);
+	}
+
+	/**
+	 * This function returns a singleton instance of this class.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $config                         the data source configurations
+	 * @return DB_DataSource                        a singleton instance of this class
+	 */
+	public static function instance($config = 'default') {
+		if (is_string($config)) {
+			if ( ! isset(static::$instances[$config]) {
+				static::$instances[$config] = new DB_DataSource($config);
+			}
+			return static::$instances[$config];
+		}
+		else if (is_object($config) AND ($config instanceof DB_DataSource)) {
+			$id = $config->id;
+			if ( ! isset(static::$instances[$id]) {
+				static::$instances[$id] = $config;
+			}
+			return $config;
+		}
+		else if (is_array($config) AND isset($config['id'])) {
+			$id = $config['id'];
+			if ( ! isset(static::$instances[$id]) {
+				static::$instances[$id] = new DB_DataSource($config);
+			}
+			return static::$instances[$id];
+		}
+		else {
+			$data_source = new DB_DataSource($config);
+			static::$instances[$data_source->id] = $data_source;
+			return $data_source;
+		}
 	}
 
 }

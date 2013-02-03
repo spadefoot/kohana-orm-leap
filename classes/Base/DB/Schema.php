@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Schema
- * @version 2013-01-31
+ * @version 2013-02-03
  *
  * @abstract
  */
@@ -52,7 +52,7 @@ abstract class Base_DB_Schema extends Core_Object {
 	 * @param mixed $config                  the data source configurations
 	 */
 	public function __construct($config) {
-		$this->data_source = new DB_DataSource($config);
+		$this->data_source = DB_DataSource::instance($config);
 		$precompiler = 'DB_' . $this->data_source->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler();
 	}

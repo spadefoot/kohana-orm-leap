@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-28
+ * @version 2013-02-03
  *
  * @abstract
  */
@@ -69,7 +69,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core_Object implements DB_SQL_St
 	public function __construct($model) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->data_source = new DB_DataSource($model::data_source(DB_DataSource::MASTER_INSTANCE));
+		$this->data_source = DB_DataSource::instance($model::data_source(DB_DataSource::MASTER_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Insert_Builder';
 		$this->builder = new $builder($this->data_source);
 		$extension = DB_ORM_Model::builder_name($name);

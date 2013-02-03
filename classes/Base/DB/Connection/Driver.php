@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Connection
- * @version 2013-01-13
+ * @version 2013-02-03
  *
  * @abstract
  */
@@ -265,15 +265,16 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @see http://codeigniter.com/forums/viewthread/179202/
 	 */
 	public function quote($string, $escape = NULL) {
-		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
-		}
-
-		$removables = array(
+		static $removables = array(
 			'/%0[0-8bcef]/',
 			'/%1[0-9a-f]/',
 			'/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S',
 		);
+
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+		}
+
 		do {
 			$string = preg_replace($removables, '', $string, -1, $count);
 		}
@@ -326,8 +327,8 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @param mixed $config                         the data source configurations
 	 * @return DB_Connection_Driver                 the database connection
 	 */
-	public static function factory($config = array()) {
-		$data_source = new DB_DataSource($config);
+	public static function factory($config = 'default') {
+		$data_source = DB_DataSource::instance($config);
 		$driver = 'DB_' . $data_source->dialect . '_Connection_' . $data_source->driver;
 		$connection = new $driver($data_source);
 		return $connection;
