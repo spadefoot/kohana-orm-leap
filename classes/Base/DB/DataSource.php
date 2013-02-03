@@ -253,21 +253,21 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 */
 	public static function instance($config = 'default') {
 		if (is_string($config)) {
-			if ( ! isset(static::$instances[$config]) {
+			if ( ! isset(static::$instances[$config])) {
 				static::$instances[$config] = new DB_DataSource($config);
 			}
 			return static::$instances[$config];
 		}
 		else if (is_object($config) AND ($config instanceof DB_DataSource)) {
 			$id = $config->id;
-			if ( ! isset(static::$instances[$id]) {
+			if ( ! isset(static::$instances[$id])) {
 				static::$instances[$id] = $config;
 			}
 			return $config;
 		}
 		else if (is_array($config) AND isset($config['id'])) {
 			$id = $config['id'];
-			if ( ! isset(static::$instances[$id]) {
+			if ( ! isset(static::$instances[$id])) {
 				static::$instances[$id] = new DB_DataSource($config);
 			}
 			return static::$instances[$id];
