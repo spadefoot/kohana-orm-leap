@@ -18,24 +18,10 @@
  */
 
 /**
- * This class acts as the base class for any object.
+ * This class manages garbage collection.
  *
  * @package Leap
- * @category Core
+ * @category System
  * @version 2013-02-05
- *
- * @abstract
  */
-abstract class Base_Core_Object {
-
-	/**
-	 * This function returns the hash code for the object.
-	 *
-	 * @access public
-	 * @return string                               the hash code for the object
-	 */
-	public function __hashCode() {
-		return spl_object_hash($this);
-	}
-
-}
+class GC extends Base_GC {}
