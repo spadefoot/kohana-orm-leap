@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-28
+ * @version 2013-02-05
  *
  * @abstract
  *
@@ -75,6 +75,17 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 		$this->metadata['savable'] = TRUE;
 		$this->metadata['type'] = $type;
 		$this->value = NULL;
+	}
+
+	/**
+	 * This destructor ensures that all references have been destroyed.
+	 *
+	 * @access public
+	 */
+    public function __destruct() {
+		unset($this->metadata);
+		unset($this->model);
+		unset($this->value);
 	}
 
 	/**

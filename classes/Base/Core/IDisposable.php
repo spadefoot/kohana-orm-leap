@@ -18,24 +18,28 @@
  */
 
 /**
- * This class acts as the base class for any object.
+ * This interface provides the contract for a class representing a disposable object.
  *
  * @package Leap
  * @category Core
  * @version 2013-02-05
  *
- * @abstract
+ * @see http://msdn.microsoft.com/en-us/library/system.idisposable.aspx
+ * @see http://www.codeproject.com/Articles/15360/Implementing-IDisposable-and-the-Dispose-Pattern-P
  */
-abstract class Base_Core_Object {
+interface Base_Core_IDisposable {
 
 	/**
-	 * This function returns the hash code for the object.
+	 * This function assists with freeing, releasing, and resetting unmanaged
+	 * resources.
 	 *
 	 * @access public
-	 * @return string                               the hash code for the object
+	 * @param boolean $disposing                    whether managed resources can be disposed
+	 *                                              in addition to unmanaged resources
+	 *
+	 * @see http://paul-m-jones.com/archives/262
+	 * @see http://www.alexatnet.com/articles/optimize-php-memory-usage-eliminate-circular-references
 	 */
-	public function __hashCode() {
-		return spl_object_hash($this);
-	}
+	public function dispose($disposing = TRUE);
 
 }

@@ -18,24 +18,37 @@
  */
 
 /**
- * This class acts as the base class for any object.
+ * This class manages garbage collection.
  *
  * @package Leap
- * @category Core
+ * @category System
  * @version 2013-02-05
+ *
+ * @see http://msdn.microsoft.com/en-us/library/system.gc.aspx
  *
  * @abstract
  */
-abstract class Base_Core_Object {
+abstract class Base_GC extends Core_Object {
 
 	/**
-	 * This function returns the hash code for the object.
+	 * This function forces garbage collector to start immediately.
 	 *
 	 * @access public
-	 * @return string                               the hash code for the object
+	 * @static
+	 *
+	 * @see http://www.php.net/manual/en/features.gc.php
+	 * @see http://www.php.net/manual/en/features.gc.refcounting-basics.php
+	 * @see http://www.php.net/manual/en/features.gc.collecting-cycles.php
+	 * @see http://www.php.net/manual/en/function.gc-collect-cycles.php
 	 */
-	public function __hashCode() {
-		return spl_object_hash($this);
+	public static function run() {
+		if (function_exists('gc_collect_cycles')) {
+			gc_enable();
+			if (gc_enabled()) {
+				gc_collect_cycles();
+			}
+			gc_disable();
+		}
 	}
 
 }
