@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-02-05
+ * @version 2013-02-06
  *
  * @abstract
  */
@@ -91,7 +91,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 	 *
 	 * @access public
 	 */
-    public function __destruct() {
+	public function __destruct() {
 		$this->dispose(FALSE);
 	}
 
@@ -538,7 +538,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 								// Reloading required because primary key has been changed or an SQL expression has been used
 								$reload = TRUE;
 							}
-							
+
 							// It's worth do execute the query.
 							$is_worth = TRUE;
 						}

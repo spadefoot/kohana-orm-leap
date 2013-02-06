@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-02-05
+ * @version 2013-02-06
  *
  * @abstract
  */
@@ -71,7 +71,7 @@ abstract class Base_DB_ORM_Relation extends Core_Object {
 	 *
 	 * @access public
 	 */
-    public function __destruct() {
+	public function __destruct() {
 		unset($this->cache);
 		unset($this->metadata);
 		unset($this->model);

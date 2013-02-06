@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category System
- * @version 2013-02-05
+ * @version 2013-02-06
  *
  * @see http://msdn.microsoft.com/en-us/library/system.gc.aspx
  *
@@ -46,8 +46,8 @@ abstract class Base_GC extends Core_Object {
 			gc_enable();
 			if (gc_enabled()) {
 				gc_collect_cycles();
+				gc_disable();
 			}
-			gc_disable();
 		}
 	}
 
