@@ -22,13 +22,41 @@
  *
  * @package Leap
  * @category System
- * @version 2013-02-06
+ * @version 2013-02-08
  *
  * @see http://msdn.microsoft.com/en-us/library/system.gc.aspx
  *
  * @abstract
  */
 abstract class Base_GC extends Core_Object {
+
+	/**
+	 * This function returns the reference count for the specified object.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $object                             the object to be evaluated
+	 * @return integer                                  the reference count for the specified
+	 *                                                  object
+	 *
+	 *
+	 * @see http://us3.php.net/manual/en/language.references.php
+	 * @see http://stackoverflow.com/questions/3764686/get-the-reference-count-of-an-object-in-php
+	 */
+	public static function refcount($object) {
+		ob_start();
+			debug_zval_dump($object);
+			$contents = ob_get_contents();
+		ob_end_clean();
+
+		$matches = array();
+
+		preg_match('/refcount\(([0-9]+)/', $contents, $matches);
+
+		$count = (int) $matches[1];
+
+		return $count - 3; // 3 references were added via this function
+	}
 
 	/**
 	 * This function forces garbage collector to start immediately.
