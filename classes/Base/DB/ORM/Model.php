@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-02-06
+ * @version 2013-02-10
  *
  * @abstract
  */
@@ -259,7 +259,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			unset($this->relations);
 
 			if ($disposing) {
-				GC::run();
+				GC::collect();
 			}
 
 			$this->disposed = TRUE;
