@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-28
+ * @version 2013-02-06
  *
  * @abstract
  */
@@ -37,20 +37,20 @@ abstract class Base_DB_ORM_Relation extends Core_Object {
 	protected $cache;
 
 	/**
-	 * This variable stores a reference to the implementing model.
-	 *
-	 * @access protected
-	 * @var DB_ORM_Model
-	 */
-	protected $model;
-
-	/**
 	 * This variable stores the relation's metadata.
 	 *
 	 * @access protected
 	 * @var array
 	 */
 	protected $metadata;
+
+	/**
+	 * This variable stores a reference to the implementing model.
+	 *
+	 * @access protected
+	 * @var DB_ORM_Model
+	 */
+	protected $model;
 
 	/**
 	 * This constructor initializes the class.
@@ -64,6 +64,17 @@ abstract class Base_DB_ORM_Relation extends Core_Object {
 		$this->metadata = array();
 		$this->metadata['type'] = $type;
 		$this->cache = NULL;
+	}
+
+	/**
+	 * This destructor ensures that all references have been destroyed.
+	 *
+	 * @access public
+	 */
+	public function __destruct() {
+		unset($this->cache);
+		unset($this->metadata);
+		unset($this->model);
 	}
 
 	/**

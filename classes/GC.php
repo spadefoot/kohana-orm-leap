@@ -1,9 +1,12 @@
-/*
+<?php defined('SYSPATH') OR die('No direct script access.');
+
+/**
  * Copyright © 2011–2013 Spadefoot Team.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Unless otherwise noted, LEAP is licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License
+ * at:
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -14,14 +17,11 @@
  * limitations under the License.
  */
 
-/*
- * Table structure for the "sessions" table
+/**
+ * This class manages garbage collection.
+ *
+ * @package Leap
+ * @category System
+ * @version 2013-02-05
  */
-
-CREATE TABLE IF NOT EXISTS `sessions` (
-	`id` VARCHAR(24) NOT NULL,
-	`last_active` INT NOT NULL,
-	`contents` TEXT NOT NULL,
-	PRIMARY KEY (`id`),
-	INDEX (`last_active`)
-) ENGINE=InnoDB;
+class GC extends Base_GC {}

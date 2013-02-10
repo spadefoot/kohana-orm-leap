@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-28
+ * @version 2013-02-06
  *
  * @abstract
  */
@@ -59,6 +59,16 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 		}
 		$this->model = $model;
 		$this->metadata['field'] = $field;
+	}
+
+	/**
+	 * This destructor ensures that all references have been destroyed.
+	 *
+	 * @access public
+	 */
+	public function __destruct() {
+		unset($this->metadata);
+		unset($this->model);
 	}
 
 	/**

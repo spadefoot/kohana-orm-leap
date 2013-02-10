@@ -1,32 +1,32 @@
-----
--- The BSD License
---
--- Copyright © 2011–2013 Spadefoot Team.
--- Copyright © 2007–2012 Kohana Team.
---
--- Redistribution and use in source and binary forms, with or without modification, are permitted
--- provided that the following conditions are met:
---
---    * Redistributions of source code must retain the above copyright notice, this list of conditions
---      and the following disclaimer.
---    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions
---      and the following disclaimer in the documentation and/or other materials provided with the distribution.
---    * Neither the name of Kohana nor the names of its contributors may be used to endorse or promote
---      products derived from this software without specific prior written permission.
---
--- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
--- WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
--- PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
--- ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
--- LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
--- INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
--- TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
--- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-----
+/*
+ * The BSD License
+ *
+ * Copyright © 2011–2013 Spadefoot Team.
+ * Copyright © 2007–2012 Kohana Team.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
+ *
+ *    * Redistributions of source code must retain the above copyright notice, this list of conditions
+ *      and the following disclaimer.
+ *    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+ *      and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *    * Neither the name of Kohana nor the names of its contributors may be used to endorse or promote
+ *      products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
-----
--- Table structure for the "roles" table
-----
+/*
+ * Table structure for the "roles" table
+ */
 
 CREATE TABLE IF NOT EXISTS `roles` (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -36,16 +36,16 @@ CREATE TABLE IF NOT EXISTS `roles` (
 	UNIQUE KEY `roles_name_ukey` (`name`)
 ) ENGINE=InnoDB;
 
-----
--- Roles for the "roles" table 
-----
+/*
+ * Roles for the "roles" table 
+ */
 
 -- INSERT INTO `roles` (`name`, `description`) VALUES ('login', 'Login privileges, granted after account confirmation.');
 -- INSERT INTO `roles` (`name`, `description`) VALUES ('admin', 'Administrative user, has access to everything.');
 
-----
--- Table structure for the "users" table
-----
+/*
+ * Table structure for the "users" table
+ */
 
 CREATE TABLE IF NOT EXISTS `users` (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -69,9 +69,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 	UNIQUE KEY `users_email_ukey` (`email`)
 ) ENGINE=InnoDB;
 
-----
--- Table structure for the "user_roles" table
-----
+/*
+ * Table structure for the "user_roles" table
+ */
 
 CREATE TABLE IF NOT EXISTS `user_roles` (
 	`user_id` INT NOT NULL,
@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS `user_roles` (
 	INDEX `role_id_fkey` (`role_id`)
 ) ENGINE=InnoDB;
 
-----
--- Table structure for the "user_tokens" table
-----
+/*
+ * Table structure for the "user_tokens" table
+ */
 
 CREATE TABLE IF NOT EXISTS `user_tokens` (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -97,17 +97,17 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 	INDEX `user_id_fkey` (`user_id`)
 ) ENGINE=InnoDB;
 
-----
--- Constraints for the "user_roles" table
-----
+/*
+ * Constraints for the "user_roles" table
+ */
 
 ALTER TABLE `user_roles`
 	ADD CONSTRAINT `user_roles_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
 	ADD CONSTRAINT `user_roles_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
-----
--- Constraints for the "user_tokens" table
-----
+/*
+ * Constraints for the "user_tokens" table
+ */
 
 ALTER TABLE `user_tokens`
 	ADD CONSTRAINT `user_tokens_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

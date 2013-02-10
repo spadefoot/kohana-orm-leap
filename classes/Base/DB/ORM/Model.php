@@ -22,11 +22,11 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-28
+ * @version 2013-02-10
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Model extends Core_Object {
+abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable {
 
 	/**
 	 * This variable stores the record's adaptors.
@@ -43,6 +43,14 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	 * @var array
 	 */
 	protected $aliases = array();
+
+	/**
+	 * This variable stores whether dispose has been called.
+	 *
+	 * @access protected
+	 * @var boolean
+	 */
+	protected $disposed = FALSE;
 
 	/**
 	 * This variable stores the record's fields.
@@ -76,6 +84,15 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 	public function __construct() {
 		$this->metadata['loaded'] = FALSE;
 		$this->metadata['saved'] = NULL;
+	}
+
+	/**
+	 * This destructor ensures that all references have been destroyed.
+	 *
+	 * @access public
+	 */
+	public function __destruct() {
+		$this->dispose(FALSE);
 	}
 
 	/**
@@ -222,6 +239,30 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 		}
 		else {
 			$this->metadata['saved'] = NULL;
+		}
+	}
+
+	/**
+	 * This function assists with freeing, releasing, and resetting unmanaged
+	 * resources.
+	 *
+	 * @access public
+	 * @override
+	 * @param boolean $disposing                    whether managed resources can be disposed
+	 *                                              in addition to unmanaged resources
+	 */
+	public function dispose($disposing = TRUE) {
+		if ( ! $this->disposed) {
+			unset($this->adaptors);
+			unset($this->aliases);
+			unset($this->fields);
+			unset($this->relations);
+
+			if ($disposing) {
+				GC::collect();
+			}
+
+			$this->disposed = TRUE;
 		}
 	}
 
@@ -497,7 +538,7 @@ abstract class Base_DB_ORM_Model extends Core_Object {
 								// Reloading required because primary key has been changed or an SQL expression has been used
 								$reload = TRUE;
 							}
-							
+
 							// It's worth do execute the query.
 							$is_worth = TRUE;
 						}

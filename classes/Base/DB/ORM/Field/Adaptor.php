@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-28
+ * @version 2013-02-06
  *
  * @abstract
  */
@@ -50,7 +50,7 @@ abstract class Base_DB_ORM_Field_Adaptor extends Core_Object {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param string $field                         the name of field in the database table
-	 * @throws Throwable_InvalidArgument_Exception     indicates that an invalid field name
+	 * @throws Throwable_InvalidArgument_Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, $field) {
@@ -62,12 +62,23 @@ abstract class Base_DB_ORM_Field_Adaptor extends Core_Object {
 	}
 
 	/**
+	 * This destructor ensures that all references have been destroyed.
+	 *
+	 * @access public
+	 */
+	public function __destruct() {
+		unset($this->metadata);
+		unset($this->model);
+	}
+
+	/**
 	 * This function returns the value associated with the specified property.
 	 *
 	 * @access public
+	 * @abstract
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public abstract function __get($key);
@@ -76,9 +87,10 @@ abstract class Base_DB_ORM_Field_Adaptor extends Core_Object {
 	 * This function sets the value for the specified key.
 	 *
 	 * @access public
+	 * @abstract
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public abstract function __set($key, $value);
