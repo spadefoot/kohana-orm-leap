@@ -60,7 +60,7 @@ abstract class Base_DB_MySQL_Select_Builder extends DB_SQL_Select_Builder {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
 			else if ( ! empty($join[2])) {
-				$sql .= ' USING ' . implode(', ', $join[2]);
+				$sql .= ' USING (' . implode(', ', $join[2]).')';
 			}
 		}
 
