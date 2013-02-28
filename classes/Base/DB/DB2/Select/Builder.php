@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category DB2
- * @version 2012-12-04
+ * @version 2013-02-27
  *
  * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
  * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
@@ -61,7 +61,7 @@ abstract class Base_DB_DB2_Select_Builder extends DB_SQL_Select_Builder {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
 			else if ( ! empty($join[2])) {
-				$sql .= ' USING ' . implode(', ', $join[2]);
+				$sql .= ' USING (' . implode(', ', $join[2]) . ')';
 			}
 		}
 

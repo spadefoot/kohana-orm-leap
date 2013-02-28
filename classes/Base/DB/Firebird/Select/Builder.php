@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Firebird
- * @version 2012-12-04
+ * @version 2013-02-27
  *
  * @see http://www.firebirdsql.org/refdocs/langrefupd20-select.html
  *
@@ -68,7 +68,7 @@ abstract class Base_DB_Firebird_Select_Builder extends DB_SQL_Select_Builder {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
 			else if ( ! empty($join[2])) {
-				$sql .= ' USING ' . implode(', ', $join[2]);
+				$sql .= ' USING (' . implode(', ', $join[2]) . ')';
 			}
 		}
 
