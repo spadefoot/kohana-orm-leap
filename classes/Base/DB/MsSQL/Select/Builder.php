@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-05
+ * @version 2013-02-27
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -66,7 +66,7 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
 			else if ( ! empty($join[2])) {
-				$sql .= ' USING ' . implode(', ', $join[2]);
+				$sql .= ' USING (' . implode(', ', $join[2]) . ')';
 			}
 		}
 

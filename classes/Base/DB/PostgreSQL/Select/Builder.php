@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-05
+ * @version 2013-02-27
  *
  * @see http://www.postgresql.org/docs/9.0/static/sql-select.html
  *
@@ -60,7 +60,7 @@ abstract class Base_DB_PostgreSQL_Select_Builder extends DB_SQL_Select_Builder {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
 			else if ( ! empty($join[2])) {
-				$sql .= ' USING ' . implode(', ', $join[2]);
+				$sql .= ' USING (' . implode(', ', $join[2]) . ')';
 			}
 		}
 

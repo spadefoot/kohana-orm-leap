@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Oracle
- * @version 2013-01-26
+ * @version 2013-02-27
  *
  * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
  *
@@ -87,7 +87,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 			}
 			else if ( ! empty($join[2])) {
-				$sql .= ' USING ' . implode(', ', $join[2]);
+				$sql .= ' USING (' . implode(', ', $join[2]) . ')';
 			}
 		}
 
