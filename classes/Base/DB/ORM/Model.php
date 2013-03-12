@@ -606,6 +606,22 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 		}
 
 		if ($reload) {
+			
+			$primary_key = static::primary_key();
+			//set the primary keys in a temp variable
+			$temp = new stdClass;
+			
+			foreach ($primary_key as $column) {
+				$temp->$column=$this->$column;
+			}
+			
+			//Force reset and then you can reload the model with relations
+			$this->reset();
+			
+			foreach ($primary_key as $column) {
+				$this->$column=$temp->$column;
+			}
+		
 			// Reload the record, if it's required
 			$this->load();
 		}
