@@ -22,13 +22,47 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2012-12-11
+ * @version 2013-03-12
  *
  * @see http://www.php.net/manual/en/ref.pdo-pgsql.connection.php
  *
  * @abstract
  */
 abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
+
+	/**
+	 * This function returns the last insert id.
+	 *
+	 * @access public
+	 * @override
+	 * @param string $table                         the table to be queried
+	 * @param string $column                        the column representing the table's id
+	 * @return integer                              the last insert id
+	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 *
+	 * @see http://www.php.net/manual/en/pdo.lastinsertid.php
+	 */
+	public function get_last_insert_id($table = NULL, $column = 'id') {
+		if ( ! $this->is_connected()) {
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+		}
+		try {
+			if (is_string($table)) {
+				$sql = $this->sql;
+				$precompiler = DB_SQL::precompiler($this->data_source);
+				$table = $precompiler->prepare_identifier($table);
+				$column = $precompiler->prepare_identifier($column);
+				$alias = $precompiler->prepare_alias('id');
+				$id = (int) $this->query("SELECT MAX({$column}) AS {$alias} FROM {$table};")->get('id', 0);
+				$this->sql = $sql;
+				return $id;
+			}
+			return (int) $this->query('SELECT LASTVAL() AS "id";')->get('id', 0);
+		}
+		catch (Exception $ex) {
+			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
+		}
+	}
 
 	/**
 	 * This function opens a connection using the data source provided.

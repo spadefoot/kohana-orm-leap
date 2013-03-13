@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-01-28
+ * @version 2013-03-12
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -140,9 +140,9 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			return $id;
 		}
 		else {
-			// Option #1: Using 'SELECT lastval();'
+			// Option #1: Using 'SELECT LASTVAL();'
 
-			$command = @pg_query($this->resource, 'SELECT lastval();');
+			$command = @pg_query($this->resource, 'SELECT LASTVAL();');
 
 			if ($command === FALSE) {
 				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
