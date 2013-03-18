@@ -21,8 +21,8 @@
  * This class acts as the base class for any object.
  *
  * @package Leap
- * @category Object
- * @version 2012-11-14
+ * @category Core
+ * @version 2013-03-12
  *
  * @abstract
  */
