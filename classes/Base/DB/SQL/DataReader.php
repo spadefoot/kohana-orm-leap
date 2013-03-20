@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-22
+ * @version 2013-03-19
  *
  * @abstract
  */
@@ -52,6 +52,7 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public abstract function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL);
 
@@ -85,6 +86,7 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	 * This function returns the last record fetched.
 	 *
 	 * @access public
+	 * @param string $type                      the data type to be used
 	 * @return array                            the last record fetched
 	 *
 	 * @see http://www.richardcastera.com/blog/php-convert-array-to-object-with-stdclass

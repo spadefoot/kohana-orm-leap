@@ -578,7 +578,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 						$builder->column($column, $this->fields[$column]->value);
 
 						if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
-							// Reloading required, if using SQL expresions
+							// Reloading required, if using SQL expressions
 							$reload = TRUE;
 						}
 					}
