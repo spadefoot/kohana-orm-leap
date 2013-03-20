@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2012-12-15
+ * @version 2013-03-19
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -75,7 +75,7 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 *
 	 * @access public
 	 * @param string $data                          the data
-	 * @param boolean $type                         the current type of data
+	 * @param integer $type                         the current type of data
 	 */
 	public function __construct($data, $type = 1) {
 		$this->hexcode = static::unpack($data, $type);
@@ -157,7 +157,7 @@ abstract class Base_Data extends Core_Object implements Countable {
 	 *
 	 * @access protected
 	 * @static
-	 * @param string $data                          the data to be converted
+	 * @param string $hexcode                       the data to be converted
 	 * @return string                               a string
 	 */
 	protected static function pack($hexcode) {

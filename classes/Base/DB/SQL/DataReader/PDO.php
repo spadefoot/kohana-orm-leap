@@ -23,7 +23,7 @@
  *
  * @package Leap
  * @category SQL
- * @version 2013-01-22
+ * @version 2013-03-19
  *
  * @abstract
  */
@@ -37,6 +37,7 @@ abstract class Base_DB_SQL_DataReader_PDO extends DB_SQL_DataReader {
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 */
 	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();

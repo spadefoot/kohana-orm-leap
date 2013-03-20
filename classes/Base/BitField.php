@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2013-01-27
+ * @version 2013-03-19
  *
  * @abstract
  */
@@ -69,7 +69,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param string $pattern                       the pattern to be used
+	 * @param array $pattern                        the pattern to be used
 	 * @param mixed $value                          the value of the field
 	 */
 	public function __construct(Array $pattern, $value = '0') {
@@ -100,7 +100,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 *
 	 * @access public
 	 * @override
-	 * @param string $name                          the name of the property
+	 * @param string $field                         the name of the property
 	 * @return boolean                              whether the property is set
 	 */
 	public function __isset($field) {
@@ -140,6 +140,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * This function returns the value as a binary string.
 	 *
 	 * @access public
+	 * @param string $format                        the string formatting to be used
 	 * @return string                               the value as a binary string
 	 */
 	public function as_binary($format = '%s') {
@@ -207,6 +208,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * pattern.
 	 *
 	 * @access public
+	 * @param array $pattern                        the pattern to be evaluated
 	 * @return boolean                              whether the pattern matches
 	 */
 	public function has_pattern(Array $pattern) {
@@ -256,6 +258,8 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 * @access protected
 	 * @static
 	 * @param mixed $value                          the value to be unpacked
+	 * @param integer $boundary                     the size/boundary of the bit-field,
+	 *                                              which will be either 32 or 64 bits
 	 * @return string                               a binary string
 	 */
 	protected static function unpack($value, $boundary) {

@@ -23,7 +23,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-26
+ * @version 2013-03-19
  *
  * @see http://php.net/manual/en/ref.sqlsrv.php
  *
@@ -39,6 +39,7 @@ abstract class Base_DB_MsSQL_DataReader_Improved extends DB_SQL_DataReader_Impro
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
+	 * @throws Throwable_SQL_Exception          indicates that the query failed
 	 *
 	 * @see http://php.net/manual/en/function.sqlsrv-query.php
 	 */
