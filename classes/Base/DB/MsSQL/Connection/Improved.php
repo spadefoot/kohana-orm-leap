@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-01-28
+ * @version 2013-05-01
  *
  * @see http://php.net/manual/en/ref.sqlsrv.php
  * @see http://blogs.msdn.com/b/brian_swan/archive/2010/03/08/mssql-vs-sqlsrv-what-s-the-difference-part-1.aspx
@@ -30,7 +30,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Improved {
+abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Standard {
 
 	/**
 	 * This destructor ensures that the connection is closed.
