@@ -23,13 +23,13 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-03-19
+ * @version 2013-05-01
  *
  * @see http://php.net/manual/en/ref.sqlsrv.php
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_DataReader_Improved extends DB_SQL_DataReader_Improved {
+abstract class Base_DB_MsSQL_DataReader_Improved extends DB_SQL_DataReader_Standard {
 
 	/**
 	 * This function initializes the class.
@@ -83,7 +83,7 @@ abstract class Base_DB_MsSQL_DataReader_Improved extends DB_SQL_DataReader_Impro
 	 * @see http://php.net/manual/en/function.sqlsrv-fetch-array.php
 	 */
 	public function read() {
-		$this->record = @sqlsrv_fetch_array($this->command, SQLSRV_FETCH_ASSOC)
+		$this->record = @sqlsrv_fetch_array($this->command, SQLSRV_FETCH_ASSOC);
 		return ($this->record !== FALSE);
 	}
 
