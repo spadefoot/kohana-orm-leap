@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-01-26
+ * @version 2013-05-06
  *
  * @abstract
  */
@@ -34,7 +34,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
-	 * @throws Throwable_Exception                  indicates that error occurred when loading
+	 * @throws Throwable_Runtime_Exception          indicates that error occurred when loading
 	 *                                              a configuration
 	 * @throws Throwable_InvalidArgument_Exception  indicates that an invalid field name
 	 *                                              was specified
@@ -47,7 +47,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][0]);
 
 		if (($unit = static::config($group)) === NULL) {
-			throw new Throwable_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+			throw new Throwable_Runtime_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
 		$this->metadata['units'][0] = $unit; // field's unit
@@ -55,7 +55,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 		$group = strtolower('uom.' . $metadata['measurement'] . '.' . $metadata['units'][1]);
 
 		if (($unit = static::config($group)) === NULL) {
-			throw new Throwable_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
+			throw new Throwable_Runtime_Exception('Message: Unable to load configuration. Reason: Configuration group :group is undefined.', array(':group' => $group));
 		}
 
 		$this->metadata['units'][1] = $unit; // adaptor's unit

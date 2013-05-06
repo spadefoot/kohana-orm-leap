@@ -22,8 +22,8 @@
  *
  * @package Leap
  * @category Throwable
- * @version 2012-12-05
+ * @version 2013-05-06
  *
  * @abstract
  */
-abstract class Base_Throwable_UnimplementedMethod_Exception extends Throwable_Exception {}
+abstract class Base_Throwable_UnimplementedMethod_Exception extends Throwable_Runtime_Exception {}

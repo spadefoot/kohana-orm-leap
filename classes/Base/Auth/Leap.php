@@ -23,7 +23,7 @@
  *
  * @package Leap
  * @category Model
- * @version 2013-01-27
+ * @version 2013-05-06
  *
  * @abstract
  */
@@ -72,7 +72,7 @@ abstract class Base_Auth_Leap extends Auth {
 	 *
 	 * @access public
 	 * @param mixed $config                     the config information to be used
-	 * @throws Throwable_Exception              indicates that error occurred when loading
+	 * @throws Throwable_Runtime_Exception      indicates that error occurred when loading
 	 *                                          a configuration
 	 */
 	public function __construct($config = NULL) {
@@ -112,7 +112,7 @@ abstract class Base_Auth_Leap extends Auth {
 		}
 
 		if (empty($config['login_with_email']) AND empty($config['login_with_username'])) {
-			throw new Throwable_Exception('Message: Unable to load configuration. Reason: A valid "login_with" setting must be set in you auth config file.');
+			throw new Throwable_Runtime_Exception('Message: Unable to load configuration. Reason: A valid "login_with" setting must be set in you auth config file.');
 		}
 	}
 

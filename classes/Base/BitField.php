@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2013-03-19
+ * @version 2013-05-06
  *
  * @abstract
  */
@@ -220,7 +220,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 	 *
 	 * @access public
 	 * @param mixed $value                          the value to be mapped
-	 * @throws Throwable_Exception                  indicates an invalid pattern
+	 * @throws Throwable_Runtime_Exception          indicates an invalid pattern
 	 */
 	public function map($value) {
 		$this->values = array();
@@ -234,7 +234,7 @@ abstract class Base_BitField extends Core_Object implements Countable {
 			$start += $bits;
 		}
 		if ($start > $this->boundary) {
-			throw new Throwable_Exception('Message: Invalid bit-field pattern. Reason: Pattern exceeds the bit boundary of :boundary.', array(':pattern' => $this->pattern, ':boundary' => $this->boundary));
+			throw new Throwable_Runtime_Exception('Message: Invalid bit-field pattern. Reason: Pattern exceeds the bit boundary of :boundary.', array(':pattern' => $this->pattern, ':boundary' => $this->boundary));
 		}
 	}
 

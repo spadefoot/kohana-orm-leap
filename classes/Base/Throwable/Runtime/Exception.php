@@ -18,10 +18,12 @@
  */
 
 /**
- * This class acts as the base class for all throwable exceptions.
+ * This class acts as the base class for all throwable runtime exceptions.
  *
  * @package Leap
  * @category Throwable
- * @version 2012-12-05
+ * @version 2013-05-06
+ *
+ * @abstract
  */
-class Throwable_Exception extends Base_Throwable_Exception {}
+abstract class Base_Throwable_Runtime_Exception extends Kohana_Exception {}

@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category ORM
- * @version 2013-02-06
+ * @version 2013-05-06
  *
  * @abstract
  *
@@ -160,6 +160,8 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @param string $name                          the name of the field
 	 * @param array $attributes                     the HTML form tag's attributes
 	 * @return string                               the HTML form control
+	 * @throws Throwable_Runtime_Exception          indicates that form control could not
+	 *                                              be created
 	 */
 	public function control($name, Array $attributes) {
 		if ( ! $this->metadata['savable'] AND ($this->metadata['control'] != 'label')) {
@@ -195,7 +197,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 			case 'text':
 				return Form::input($name, $this->value, $attributes);
 			default:
-				throw new Throwable_Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
+				throw new Throwable_Runtime_Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
 			break;
 		}
 	}
