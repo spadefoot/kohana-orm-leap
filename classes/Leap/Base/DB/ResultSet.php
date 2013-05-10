@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_DB_ResultSet extends Core_Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This variable stores the current position in the records array.
@@ -123,7 +123,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 								$csv->add_row($record->as_array());
 							}
 						}
-						else if ($this->records[0] instanceof Iterator) {
+						else if ($this->records[0] instanceof \Iterator) {
 							foreach ($this->records as $record) {
 								$row = array();
 								foreach ($record as $column) {

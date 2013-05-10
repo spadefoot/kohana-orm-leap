@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This variable stores the data to be included in the CSV file.
@@ -119,7 +119,7 @@ abstract class Base_CSV extends Core_Object implements ArrayAccess, Countable, I
 		$this->eol = (isset($config['eol']) AND is_string($config['eol'])) ? $config['eol'] : chr(10); // PHP_EOL
 		$this->position = 0;
 
-		if (isset($config['data']) AND (is_array($config['data']) OR ($config['data'] instanceof Iterator))) {
+		if (isset($config['data']) AND (is_array($config['data']) OR ($config['data'] instanceof \Iterator))) {
 			foreach ($config['data'] as $row) {
 				$this->add_row($row);
 			}

@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_Data extends Core_Object implements Countable {
+abstract class Base_Data extends Core_Object implements \Countable {
 
 	/**
 	 * This constant represents binary data.

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_BitField extends Core_Object implements Countable {
+abstract class Base_BitField extends Core_Object implements \Countable {
 
 	/**
 	 * This variable stores the maximum size/boundary of the bit-field.

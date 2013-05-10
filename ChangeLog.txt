@@ -157,7 +157,7 @@ Change Log for LEAP ORM
 * Renamed Base_DB_Connection_Driver::escape_string($string) to Base_DB_Connection_Driver::quote($string, $like = FALSE).
 * Commented out code in schema.php files so that API guide can be generated per nyunyu95's request (Issue #21).
 * Cleaned-up close function in connection classes.
-* Implemented ArrayAccess and SeekableIterator interfaces in Base_CSV.
+* Implemented \ArrayAccess and \SeekableIterator interfaces in Base_CSV.
 * Added Base_CSV::as_array().
 * Made the Double field's metadata 'max_digits' and 'max_decimals' optional.
 * Fixed some minor styling.

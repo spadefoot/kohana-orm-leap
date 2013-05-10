@@ -32,7 +32,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Pool extends Core_Object implements Countable {
+abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable {
 
 	/**
 	 * This variable stores the lookup table.

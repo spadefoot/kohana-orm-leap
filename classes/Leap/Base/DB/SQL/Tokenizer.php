@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Tokenizer extends Core_Object implements ArrayAccess, Countable, Iterator, SeekableIterator {
+abstract class Base_DB_SQL_Tokenizer extends Core_Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This constant represents an error token.
