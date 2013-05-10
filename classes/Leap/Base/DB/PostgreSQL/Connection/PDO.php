@@ -38,13 +38,13 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.lastinsertid.php
 	 */
 	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
 			if (is_string($table)) {
@@ -60,7 +60,7 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 			return (int) $this->query('SELECT LASTVAL() AS "id";')->get('id', 0);
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 
@@ -69,7 +69,7 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
+	 * @throws Throwable\Database\Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-pgsql.connection.php
@@ -84,15 +84,15 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 					$connection_string .= 'port=' . $port . ';'; // default is 5432
 				}
 				$connection_string .= 'dbname=' . $this->data_source->database;
-				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+				$attributes = array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
-					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
+					$attributes[\PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
-			catch (PDOException $ex) {
+			catch (\PDOException $ex) {
 				$this->resource = NULL;
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			if ( ! empty($this->data_source->charset)) {
 				$this->execute('SET NAMES ' . $this->quote(strtolower($this->data_source->charset)));

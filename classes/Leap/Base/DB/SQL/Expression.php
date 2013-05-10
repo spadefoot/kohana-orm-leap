@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Expression extends Core_Object {
+abstract class Base_DB_SQL_Expression extends Core\Object {
 
 	/**
 	 * This variable stores the raw SQL expression string.

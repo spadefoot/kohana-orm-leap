@@ -42,7 +42,7 @@ abstract class Base_DB_Drizzle_DataReader_TCP extends DB_SQL_DataReader_Standard
 		$resource = $connection->get_resource();
 		$command = @drizzle_query($resource, $sql);
 		if (($command === FALSE) OR ! @drizzle_result_buffer($command)) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($resource)));
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($resource)));
 		}
 		$this->command = $command;
 		$this->record = FALSE;

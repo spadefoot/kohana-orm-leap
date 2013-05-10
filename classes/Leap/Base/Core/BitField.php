@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_BitField extends Core_Object implements \Countable {
+abstract class Base\Core\BitField extends Core\Object implements \Countable {
 
 	/**
 	 * This variable stores the maximum size/boundary of the bit-field.
@@ -85,12 +85,12 @@ abstract class Base_BitField extends Core_Object implements \Countable {
 	 * @override
 	 * @param string $field                         the name of the field
 	 * @return integer                              the value of the field
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($field) {
 		if ( ! array_key_exists($field, $this->values)) {
-			throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field));
+			throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field));
 		}
 		return $this->values[$field];
 	}
@@ -114,12 +114,12 @@ abstract class Base_BitField extends Core_Object implements \Countable {
 	 * @override
 	 * @param string $field                         the name of the field
 	 * @param mixed $value                          the value of the field
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($field, $value) {
 		if ( ! array_key_exists($field, $this->values)) {
-			throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field, ':value' => $value));
+			throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :field is either inaccessible or undefined.', array(':field' => $field, ':value' => $value));
 		}
 		$this->values[$field] = bindec(static::unpack($value, $this->boundary));
 	}
@@ -220,7 +220,7 @@ abstract class Base_BitField extends Core_Object implements \Countable {
 	 *
 	 * @access public
 	 * @param mixed $value                          the value to be mapped
-	 * @throws Throwable_Runtime_Exception          indicates an invalid pattern
+	 * @throws Throwable\Runtime\Exception          indicates an invalid pattern
 	 */
 	public function map($value) {
 		$this->values = array();
@@ -234,7 +234,7 @@ abstract class Base_BitField extends Core_Object implements \Countable {
 			$start += $bits;
 		}
 		if ($start > $this->boundary) {
-			throw new Throwable_Runtime_Exception('Message: Invalid bit-field pattern. Reason: Pattern exceeds the bit boundary of :boundary.', array(':pattern' => $this->pattern, ':boundary' => $this->boundary));
+			throw new Throwable\Runtime\Exception('Message: Invalid bit-field pattern. Reason: Pattern exceeds the bit boundary of :boundary.', array(':pattern' => $this->pattern, ':boundary' => $this->boundary));
 		}
 	}
 
@@ -281,7 +281,7 @@ abstract class Base_BitField extends Core_Object implements \Countable {
 				return $binary;
 			}
 		}
-		else if (is_object($value) AND ($value instanceof BitField)) {
+		else if (is_object($value) AND ($value instanceof Core\BitField)) {
 			return $value->as_binary();
 		}
 		return str_pad('0', $boundary, '0', STR_PAD_LEFT);

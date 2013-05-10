@@ -30,7 +30,7 @@
  * @see http://msdn.microsoft.com/en-us/library/aa258271%28v=sql.80%29.aspx
  * @see http://kimbriggs.com/computers/computer-notes/mysql-notes/mysql-data-types-50.file
  */
-abstract class Base_DB_ORM_Field extends Core_Object {
+abstract class Base_DB_ORM_Field extends Core\Object {
 
 	/**
 	 * This variable stores the field's metadata.
@@ -95,7 +95,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -109,7 +109,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 				}
 			break;
 		}
-		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**
@@ -119,9 +119,9 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_Validation_Exception       indicates that the specified value does
+	 * @throws Throwable\Validation\Exception       indicates that the specified value does
 	 *                                              not validate
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -131,7 +131,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 					if ($value !== NULL) {
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {
-							throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+							throw new Throwable\Validation\Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 						}
 					}
 					else if ( ! $this->metadata['nullable']) {
@@ -139,7 +139,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 					}
 				}
 				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
-					throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					throw new Throwable\Validation\Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
 				$this->value = $value;
@@ -148,7 +148,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 				$this->metadata['modified'] = (bool) $value;
 			break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}
@@ -160,7 +160,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 	 * @param string $name                          the name of the field
 	 * @param array $attributes                     the HTML form tag's attributes
 	 * @return string                               the HTML form control
-	 * @throws Throwable_Runtime_Exception          indicates that form control could not
+	 * @throws Throwable\Runtime\Exception          indicates that form control could not
 	 *                                              be created
 	 */
 	public function control($name, Array $attributes) {
@@ -197,7 +197,7 @@ abstract class Base_DB_ORM_Field extends Core_Object {
 			case 'text':
 				return Form::input($name, $this->value, $attributes);
 			default:
-				throw new Throwable_Runtime_Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
+				throw new Throwable\Runtime\Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
 			break;
 		}
 	}

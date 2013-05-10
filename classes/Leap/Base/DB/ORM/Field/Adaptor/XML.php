@@ -35,7 +35,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
-	 * @throws Throwable_InvalidArgument_Exception  indicates that an invalid field name
+	 * @throws Throwable\InvalidArgument\Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -49,7 +49,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -57,7 +57,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
 				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
-					$value = new XML($value);
+					$value = new Core\Data\XML($value);
 				}
 				return $value;
 			break;
@@ -65,7 +65,7 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
 			break;
 		}
-		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**
@@ -75,22 +75,22 @@ abstract class Base_DB_ORM_Field_Adaptor_XML extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if (is_object($value) AND ($value instanceof SimpleXMLElement)) {
+				if (is_object($value) AND ($value instanceof \SimpleXMLElement)) {
 					$value = $value->asXML();
 				}
 				else if (is_array($value)) {
-					$value = XML::encode($value, TRUE);
+					$value = Core\Data\XML::encode($value, TRUE);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}

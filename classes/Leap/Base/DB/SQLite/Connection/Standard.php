@@ -47,7 +47,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://www.sqlite.org/lang_transaction.html
@@ -79,7 +79,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://www.sqlite.org/lang_transaction.html
@@ -95,17 +95,17 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @access public
 	 * @override
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$error = NULL;
 		$command = @sqlite_exec($this->resource, $sql, $error);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $error));
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $error));
 		}
 		$this->sql = $sql;
 	}
@@ -118,11 +118,11 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		if (is_string($table)) {
 			$sql = $this->sql;
@@ -136,7 +136,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 		else {
 			$id = @sqlite_last_insert_rowid($this->resource);
 			if ($id === FALSE) {
-				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->resource))));
+				throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':sql' => sqlite_error_string(sqlite_last_error($this->resource))));
 			}
 			return $id;
 		}
@@ -147,7 +147,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 * @throws Throwable\Database\Exception         indicates that there is problem with
 	 *                                              opening the connection
 	 *
 	 * @see http://www.sqlite.org/pragma.html#pragma_encoding
@@ -161,7 +161,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 				? @sqlite_popen($connection_string, 0666, $error)
 				: @sqlite_open($connection_string, 0666, $error);
 			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $error));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $error));
 			}
 			// "Once an encoding has been set for a database, it cannot be changed."
 		}
@@ -175,14 +175,14 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @param string $string                        the string to be escaped
 	 * @param char $escape                          the escape character
 	 * @return string                               the quoted string
-	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 * @throws Throwable\SQL\Exception              indicates that no connection could
 	 *                                              be found
 	 *
 	 * @see http://www.php.net/manual/en/function.sqlite-escape-string.php
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		$string = "'" . sqlite_escape_string($string) . "'";
@@ -199,7 +199,7 @@ abstract class Base_DB_SQLite_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://www.sqlite.org/lang_transaction.html

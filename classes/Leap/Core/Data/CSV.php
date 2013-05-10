@@ -24,4 +24,4 @@
  * @category CSV
  * @version 2012-05-31
  */
-class CSV extends Base_CSV {}
+class Core\Data\CSV extends Base\Core\Data\CSV {}

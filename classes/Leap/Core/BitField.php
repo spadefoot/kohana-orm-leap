@@ -24,4 +24,4 @@
  * @category Data Type
  * @version 2012-10-15
  */
-class BitField extends Base_BitField {}
+class Core\BitField extends Base\Core\BitField {}

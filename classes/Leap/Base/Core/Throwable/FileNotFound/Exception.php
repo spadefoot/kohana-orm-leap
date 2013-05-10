@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class Base_Throwable_FileNotFound_Exception extends Throwable_Runtime_Exception {}
+abstract class Base\Throwable\FileNotFound\Exception extends Throwable\Runtime\Exception {}

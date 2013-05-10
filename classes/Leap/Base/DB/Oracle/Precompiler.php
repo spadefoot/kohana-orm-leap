@@ -53,13 +53,13 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 * @override
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 *
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
 	public function prepare_alias($expr) {
 		if ( ! is_string($expr)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable\InvalidArgument\Exception('Message: Invalid alias token specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		return static::_OPENING_QUOTE_CHARACTER_ . trim(preg_replace('/[^a-z0-9$_ ]/i', '', $expr)) . static::_CLOSING_QUOTE_CHARACTER_;
 	}
@@ -71,7 +71,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 * @override
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 *
 	 * @see http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Data_structure_definition/Delimited_identifiers
 	 */
@@ -86,7 +86,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid identifier expression specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable\InvalidArgument\Exception('Message: Invalid identifier expression specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
 			$expr = rtrim($expr, "; \t\n\r\0\x0B");
@@ -107,7 +107,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 * @override
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 *
 	 * @see http://download.oracle.com/docs/cd/B14117_01/server.101/b10759/statements_10002.htm
 	 * @see http://etutorials.org/SQL/Mastering+Oracle+SQL/Chapter+3.+Joins/3.3+Types+of+Joins/
@@ -136,7 +136,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 				break;
 			}
 		}
-		throw new Throwable_InvalidArgument_Exception('Message: Invalid join type token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+		throw new Throwable\InvalidArgument\Exception('Message: Invalid join type token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
 	}
 
 	/**
@@ -147,7 +147,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 * @param string $expr                          the expression to be prepared
 	 * @param string $group                         the operator grouping
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 *
 	 * @see http://download.oracle.com/docs/cd/B19306_01/server.102/b14200/queries004.htm
 	 */
@@ -188,7 +188,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 				}
 			}
 		}
-		throw new Throwable_InvalidArgument_Exception('Message: Invalid operator token specified. Reason: Token must exist in the enumerated set.', array(':group' => $group, ':expr' => $expr));
+		throw new Throwable\InvalidArgument\Exception('Message: Invalid operator token specified. Reason: Token must exist in the enumerated set.', array(':group' => $group, ':expr' => $expr));
 	}
 
 	/**
@@ -265,10 +265,10 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 			else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
 				return $expr->value();
 			}
-			else if ($expr instanceof Data) {
+			else if ($expr instanceof Core\Data) {
 				return $expr->as_hexcode("x'%s'");
 			}
-			else if ($expr instanceof BitField) {
+			else if ($expr instanceof Core\BitField) {
 				return $expr->as_binary("b'%s'");
 			}
 			else {
@@ -299,11 +299,11 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 * @override
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public function prepare_wildcard($expr) {
 		if ( ! is_string($expr)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid wildcard token specified. Reason: Token must be a string.', array(':expr' => $expr));
+			throw new Throwable\InvalidArgument\Exception('Message: Invalid wildcard token specified. Reason: Token must be a string.', array(':expr' => $expr));
 		}
 		$parts = explode('.', $expr);
 		$count = count($parts);
@@ -326,7 +326,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 *
 	 * @access protected
 	 * @static
-	 * @var XML
+	 * @var Core\Data\XML
 	 */
 	protected static $xml = NULL;
 
@@ -342,7 +342,7 @@ abstract class Base_DB_Oracle_Precompiler extends DB_SQL_Precompiler {
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = XML::load('config/sql/oracle.xml');
+			static::$xml = Core\Data\XML::load('config/sql/oracle.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = static::$xml->xpath("/sql/dialect[@name='oracle' and @version='11.1']/keywords[keyword = '{$token}']");

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_Throwable_OutOfBounds_Exception extends OutOfBoundsException {
+abstract class Base\Throwable\OutOfBounds\Exception extends \OutOfBoundsException {
 
 	/**
 	* This function instantiates the exception with the specified message,
@@ -36,7 +36,7 @@ abstract class Base_Throwable_OutOfBounds_Exception extends OutOfBoundsException
 	* @param string $message                    the message
 	* @param array $variables                   the variables
 	* @param integer $code                      the code
-	* @return Throwable_OutOfBounds_Exception   the exception
+	* @return Throwable\OutOfBounds\Exception   the exception
 	*/
 	public function __construct($message, array $variables = NULL, $code = 0) {
 		// Set the message

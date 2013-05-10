@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable {
+abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable {
 
 	/**
 	 * This variable stores the record's adaptors.
@@ -102,7 +102,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 	 * @override
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
@@ -119,7 +119,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			return $this->relations[$name]->result;
 		}
 		else {
-			throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+			throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
 		}
 	}
 
@@ -142,7 +142,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 	 * @override
 	 * @param string $name                          the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($name, $value) {
@@ -157,7 +157,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			$this->adaptors[$name]->value = $value;
 		}
 		else {
-			throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name, ':value' => $value));
+			throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name, ':value' => $value));
 		}
 	}
 
@@ -218,16 +218,16 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 	 * @access public
 	 * @param boolean $reset                        whether to reset each column's value back
 	 *                                              to its original value
-	 * @throws Throwable_Marshalling_Exception      indicates that the record could not be
+	 * @throws Throwable\Marshalling\Exception      indicates that the record could not be
 	 *                                              deleted
 	 */
 	public function delete($reset = FALSE) {
 		if ( ! static::is_savable()) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
+			throw new Throwable\Marshalling\Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 		$primary_key = static::primary_key();
 		if (empty($primary_key) OR ! is_array($primary_key)) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
+			throw new Throwable\Marshalling\Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
 		$builder = DB_SQL::delete(static::data_source(DB_DataSource::MASTER_INSTANCE))->from(static::table());
 		foreach ($primary_key as $column) {
@@ -279,7 +279,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			if (static::is_auto_incremented()) {
 				$column = $primary_key[0];
 				if ( ! isset($this->fields[$column])) {
-					throw new Throwable_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
+					throw new Throwable\InvalidProperty\Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
 				$value = $this->fields[$column]->value;
 				return ( ! empty($value)) ? sha1("{$column}={$value}") : NULL;
@@ -287,7 +287,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			$buffer = '';
 			foreach ($primary_key as $column) {
 				if ( ! isset($this->fields[$column])) {
-					throw new Throwable_InvalidProperty_Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
+					throw new Throwable\InvalidProperty\Exception('Message: Unable to generate hash code for model. Reason: Primary key contains a non-existent field name.', array(':primary_key' => $primary_key));
 				}
 				$value = $this->fields[$column]->value;
 				if ($value !== NULL) {
@@ -296,7 +296,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			}
 			return ($buffer != '') ? sha1($buffer) : NULL;
 		}
-		throw new Throwable_Database_Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
+		throw new Throwable\Database\Exception('Message: Unable to generate hash code for model. Reason: No primary key has been declared.', array(':primary_key' => $primary_key));
 	}
 
 	/**
@@ -406,7 +406,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 		if (empty($columns)) {
 			$primary_key = static::primary_key();
 			if (empty($primary_key) OR ! is_array($primary_key)) {
-				throw new Throwable_Marshalling_Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
+				throw new Throwable\Marshalling\Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
 			$builder = DB_SQL::select(static::data_source(DB_DataSource::SLAVE_INSTANCE))->from(static::table())->limit(1);
 			foreach ($primary_key as $column) {
@@ -414,7 +414,7 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 			}
 			$record = $builder->query();
 			if ( ! $record->is_loaded()) {
-				throw new Throwable_Marshalling_Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
+				throw new Throwable\Marshalling\Exception('Message: Failed to load record from database. Reason: Unable to match primary key with a record.');
 			}
 			$columns = $record->fetch(0);
 			$this->metadata['loaded'] = TRUE;
@@ -441,15 +441,15 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 	 * @param enum $type                            the type of relation to be created (e.g.
 	 *                                              'belongs_to', 'has_many', 'has_one')
 	 * @param array $metadata                       the relation's metadata
-	 * @throws Throwable_InvalidArgument_Exception  indicates an invalid relation defined
+	 * @throws Throwable\InvalidArgument\Exception  indicates an invalid relation defined
 	 */
 	public function relate($name, $type, Array $metadata) {
 		if ( ! is_string($name) OR isset($this->adaptors[$name]) OR isset($this->aliases[$name]) OR isset($this->fields[$name])) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
+			throw new Throwable\InvalidArgument\Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
 		}
 		$types = array('belongs_to' => 'DB_ORM_Relation_BelongsTo', 'has_many' => 'DB_ORM_Relation_HasMany', 'has_one' => 'DB_ORM_Relation_HasOne');
 		if ( ! isset($types[$type])) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid value passed. Reason: Value must be of the correct enumerated type.', array(':name' => $name, ':type' => $type));
+			throw new Throwable\InvalidArgument\Exception('Message: Invalid value passed. Reason: Value must be of the correct enumerated type.', array(':name' => $name, ':type' => $type));
 		}
 		$type = $types[$type];
 		$this->relations[$name] = new $type($this, $metadata);
@@ -478,17 +478,17 @@ abstract class Base_DB_ORM_Model extends Core_Object implements Core_IDisposable
 	 * @param boolean $reload                       whether the model should be reloaded
 	 *                                              after the save is done
 	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
-	 * @throws Throwable_Marshalling_Exception      indicates that model could not be saved
+	 * @throws Throwable\Marshalling\Exception      indicates that model could not be saved
 	 */
 	public function save($reload = FALSE, $mode = NULL) {
 		if ( ! static::is_savable()) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
+			throw new Throwable\Marshalling\Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 
 		$primary_key = static::primary_key();
 
 		if (empty($primary_key) OR ! is_array($primary_key)) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
+			throw new Throwable\Marshalling\Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
 
 		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);

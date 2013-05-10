@@ -34,7 +34,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-	 * @throws Throwable_Validation_Exception       indicates that the specified value does
+	 * @throws Throwable\Validation\Exception       indicates that the specified value does
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -79,7 +79,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 				settype($default, $this->metadata['type']);
 			}
 			if ( ! $this->validate($default)) {
-				throw new Throwable_Validation_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+				throw new Throwable\Validation\Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
 			}
 		}
 

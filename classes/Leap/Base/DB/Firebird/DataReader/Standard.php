@@ -53,13 +53,13 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @throws Throwable\SQL\Exception          indicates that the query failed
 	 */
 	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$this->resource = $connection->get_resource();
 		$command = @ibase_query($this->resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @ibase_errmsg()));
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @ibase_errmsg()));
 		}
 		$this->command = $command;
 		$this->record = FALSE;

@@ -32,7 +32,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable {
+abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable {
 
 	/**
 	 * This variable stores the lookup table.
@@ -82,7 +82,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -90,7 +90,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 			case 'max_size':
 				return $this->settings[$key];
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 			break;
 		}
 	}
@@ -102,7 +102,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -111,7 +111,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 				$this->settings[$key] = abs( (int) $value);
 			break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 			break;
 		}
 	}
@@ -122,7 +122,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 	 * @access public
 	 * @param DB_Connection_Driver $connection      the connection to be added
 	 * @return boolean                              whether the connection was added
-	 * @throws Throwable_Database_Exception         indicates that no new connections
+	 * @throws Throwable\Database\Exception         indicates that no new connections
 	 *                                              can be added
 	 */
 	public function add_connection(DB_Connection_Driver $connection) {
@@ -130,7 +130,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 			$connection_id = $connection->__hashCode();
 			if ( ! isset($this->lookup[$connection_id])) {
 				if ($this->count() >= $this->settings['max_size']) {
-					throw new Throwable_Database_Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
+					throw new Throwable\Database\Exception('Message: Failed to add connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $connection->data_source->id));
 				}
 				$data_source_id = $connection->data_source->id;
 				$this->pool[$data_source_id][$connection_id] = $connection;
@@ -162,7 +162,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 	 * @param mixed $config                         the data source configurations
 	 * @param boolean $new                          whether to create a new connection
 	 * @return DB_Connection_Driver                 the appropriate connection
-	 * @throws Throwable_Database_Exception         indicates that no new connections
+	 * @throws Throwable\Database\Exception         indicates that no new connections
 	 *                                              can be added
 	 */
 	public function get_connection($config = 'default', $new = FALSE) {
@@ -192,7 +192,7 @@ abstract class Base_DB_Connection_Pool extends Core_Object implements \Countable
 			}
 		}
 		if ($this->count() >= $this->settings['max_size']) {
-			throw new Throwable_Database_Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $data_source, ':new' => $new));
+			throw new Throwable\Database\Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $data_source, ':new' => $new));
 		}
 		$connection = DB_Connection_Driver::factory($data_source);
 		$connection->open();

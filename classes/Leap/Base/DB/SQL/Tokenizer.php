@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Tokenizer extends Core_Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
+abstract class Base_DB_SQL_Tokenizer extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This constant represents an error token.
@@ -583,10 +583,10 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements \ArrayAccess
 	 * @override
 	 * @param integer $offset                           the offset to be set
 	 * @param mixed $value                              the value to be set
-	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
+	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
-		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Tokenizer cannot be modified.', array());
+		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid to call member function. Reason: Tokenizer cannot be modified.', array());
 	}
 
 	/**
@@ -595,10 +595,10 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements \ArrayAccess
 	 * @access public
 	 * @override
 	 * @param integer $offset                           the offset to be unset
-	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
+	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid to call member function. Reason: Tokenizer cannot be modified..', array());
+		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid to call member function. Reason: Tokenizer cannot be modified..', array());
 	}
 
 	/**
@@ -628,12 +628,12 @@ abstract class Base_DB_SQL_Tokenizer extends Core_Object implements \ArrayAccess
 	 * @access public
 	 * @override
 	 * @param integer $position                         the seeked position
-	 * @throws Throwable_OutOfBounds_Exception          indicates that the seeked position
+	 * @throws Throwable\OutOfBounds\Exception          indicates that the seeked position
 	 *                                                  is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->tuples[$position])) {
-			throw new Throwable_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
+			throw new Throwable\OutOfBounds\Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
 		}
 		$this->position = $position;
 	}

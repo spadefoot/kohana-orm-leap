@@ -49,7 +49,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms188929.aspx
@@ -80,7 +80,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
@@ -95,16 +95,16 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * @access public
 	 * @override
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command = @mssql_query($sql, $this->resource);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mssql_get_last_message()));
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @mssql_get_last_message()));
 		}
 		@mssql_free_result($command);
 		$this->sql = $sql;
@@ -118,11 +118,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
 			if (is_string($table)) {
@@ -147,7 +147,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 			}
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 
@@ -156,7 +156,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 * @throws Throwable\Database\Exception         indicates that there is problem with
 	 *                                              opening the connection
 	 *
 	 * @see http://stackoverflow.com/questions/1322421/php-sql-server-how-to-set-charset-for-connection
@@ -176,11 +176,11 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 					: mssql_connect($connection_string, $username, $password, TRUE);
 			}
 			catch (ErrorException $ex) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			$database = @mssql_select_db($this->data_source->database, $this->resource);
 			if ($database === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mssql_get_last_message()));
+				throw new Throwable\Database\Exception('Message: Failed to connect to database. Reason: :reason', array(':reason' => @mssql_get_last_message()));
 			}
 			if ( ! empty($this->data_source->charset)) {
 				ini_set('mssql.charset', $this->data_source->charset);
@@ -193,7 +193,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public function rollback() {

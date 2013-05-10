@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ResultSet extends Core_Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
+abstract class Base_DB_ResultSet extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This variable stores the current position in the records array.
@@ -104,10 +104,10 @@ abstract class Base_DB_ResultSet extends Core_Object implements \ArrayAccess, \C
 	 *
 	 * @access public
 	 * @param array $config                             the configuration array
-	 * @return CSV                                      an instance of the CSV class
+	 * @return Core\Data\CSV                                      an instance of the CSV class
 	 */
 	public function as_csv(Array $config = array()) {
-		$csv = new CSV($config);
+		$csv = new Core\Data\CSV($config);
 		if ($this->is_loaded()) {
 			switch ($this->type) {
 				case 'array':
@@ -293,10 +293,10 @@ abstract class Base_DB_ResultSet extends Core_Object implements \ArrayAccess, \C
 	 * @override
 	 * @param integer $offset                           the offset to be set
 	 * @param mixed $value                              the value to be set
-	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
+	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
 	 */
 	public function offsetSet($offset, $value) {
-		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset, ':value' => $value));
+		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset, ':value' => $value));
 	}
 
 	/**
@@ -305,10 +305,10 @@ abstract class Base_DB_ResultSet extends Core_Object implements \ArrayAccess, \C
 	 * @access public
 	 * @override
 	 * @param integer $offset                           the offset to be unset
-	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
+	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset));
+		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset));
 	}
 
 	/**
@@ -338,12 +338,12 @@ abstract class Base_DB_ResultSet extends Core_Object implements \ArrayAccess, \C
 	 * @access public
 	 * @override
 	 * @param integer $position                         the seeked position
-	 * @throws Throwable_OutOfBounds_Exception          indicates that the seeked position
+	 * @throws Throwable\OutOfBounds\Exception          indicates that the seeked position
 	 *                                                  is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->records[$position])) {
-			throw new Throwable_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
+			throw new Throwable\OutOfBounds\Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
 		}
 		$this->position = $position;
 	}

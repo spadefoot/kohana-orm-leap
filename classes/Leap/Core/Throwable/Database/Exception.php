@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_Database_Exception extends Base_Throwable_Database_Exception {}
+class Throwable\Database\Exception extends Base\Throwable\Database\Exception {}

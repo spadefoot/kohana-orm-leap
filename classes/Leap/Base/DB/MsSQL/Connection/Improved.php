@@ -49,7 +49,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms188929.aspx
@@ -57,7 +57,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 */
 	public function begin_transaction() {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to begin SQL transaction. Reason: Unable to find connection.');
 		}
 		$command = @sqlsrv_begin_transaction($this->resource);
 		if ($command === FALSE) {
@@ -65,7 +65,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
-			throw new Throwable_SQL_Exception('Message: Failed to begin the transaction. Reason: :reason', array(':reason' => $reason));
+			throw new Throwable\SQL\Exception('Message: Failed to begin the transaction. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = 'BEGIN TRAN;';
 	}
@@ -92,7 +92,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://msdn.microsoft.com/en-us/library/ms190295.aspx
@@ -100,7 +100,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 */
 	public function commit() {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$command = @sqlsrv_commit($this->resource);
 		if ($command === FALSE) {
@@ -108,7 +108,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
+			throw new Throwable\SQL\Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = 'COMMIT;';
 	}
@@ -119,7 +119,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * @access public
 	 * @override
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://php.net/manual/en/function.sqlsrv-query.php
@@ -127,7 +127,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command = @sqlsrv_query($this->resource, $sql);
 		if ($command === FALSE) {
@@ -135,7 +135,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $reason));
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $reason));
 		}
 		@sqlsrv_free_stmt($command);
 		$this->sql = $sql;
@@ -149,11 +149,11 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
 			if (is_string($table)) {
@@ -178,7 +178,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 			}
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 
@@ -187,7 +187,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 * @throws Throwable\Database\Exception         indicates that there is problem with
 	 *                                              opening the connection
 	 *
 	 * @see http://php.net/manual/en/function.sqlsrv-connect.php
@@ -222,7 +222,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 				$reason = (is_array($errors) AND isset($errors[0]['message']))
 					? $errors[0]['message']
 					: 'Unable to connect using the specified configurations.';
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $reason));
 			}
 		}
 	}
@@ -232,14 +232,14 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://php.net/manual/en/function.sqlsrv-rollback.php
 	 */
 	public function rollback() {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to rollback SQL transaction. Reason: Unable to find connection.');
 		}
 		$command = @sqlsrv_rollback($this->resource);
 		if ($command === FALSE) {
@@ -247,7 +247,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 			$reason = (is_array($errors) AND isset($errors[0]['message']))
 				? $errors[0]['message']
 				: 'Unable to perform command.';
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $reason));
+			throw new Throwable\SQL\Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $reason));
 		}
 		$this->sql = 'ROLLBACK;';
 	}

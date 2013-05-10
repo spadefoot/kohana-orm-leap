@@ -36,7 +36,7 @@ abstract class Base_DB_MariaDB_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
+	 * @throws Throwable\Database\Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-mysql.connection.php
@@ -54,15 +54,15 @@ abstract class Base_DB_MariaDB_Connection_PDO extends DB_SQL_Connection_PDO {
 				$connection_string .= 'dbname=' . $this->data_source->database;
 				$username = $this->data_source->username;
 				$password = $this->data_source->password;
-				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+				$attributes = array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
-					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
+					$attributes[\PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->resource = new PDO($connection_string, $username, $password, $attributes);
 			}
-			catch (PDOException $ex) {
+			catch (\PDOException $ex) {
 				$this->resource = NULL;
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			if ( ! empty($this->data_source->charset)) {
 				$this->execute('SET NAMES ' . $this->quote(strtolower($this->data_source->charset)));

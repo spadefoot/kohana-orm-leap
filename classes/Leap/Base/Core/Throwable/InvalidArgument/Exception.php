@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_Throwable_InvalidArgument_Exception extends InvalidArgumentException {
+abstract class Base\Throwable\InvalidArgument\Exception extends \InvalidArgumentException {
 
 	/**
 	 * This function instantiates the exception with the specified message,
@@ -36,7 +36,7 @@ abstract class Base_Throwable_InvalidArgument_Exception extends InvalidArgumentE
 	 * @param string $message                        the message
 	 * @param array $variables                       the variables
 	 * @param integer $code                          the code
-	 * @return Throwable_InvalidArgument_Exception   the exception
+	 * @return Throwable\InvalidArgument\Exception   the exception
 	 */
 	public function __construct($message, array $variables = NULL, $code = 0) {
 		// Set the message

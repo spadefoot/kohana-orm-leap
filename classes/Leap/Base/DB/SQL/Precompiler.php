@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Precompiler extends Core_Object {
+abstract class Base_DB_SQL_Precompiler extends Core\Object {
 
 	/**
 	 * This variable stores a reference to the data source.
@@ -55,7 +55,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @abstract
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public abstract function prepare_alias($expr);
 
@@ -76,7 +76,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @access public
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public function prepare_connector($expr) {
 		if (is_string($expr)) {
@@ -88,7 +88,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 				break;
 			}
 		}
-		throw new Throwable_InvalidArgument_Exception('Message: Invalid connector token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+		throw new Throwable\InvalidArgument\Exception('Message: Invalid connector token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
 	}
 
 	/**
@@ -98,7 +98,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @abstract
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public abstract function prepare_identifier($expr);
 
@@ -109,7 +109,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @abstract
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public abstract function prepare_join($expr);
 
@@ -132,7 +132,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @param string $expr                          the expression to be prepared
 	 * @param string $group                         the operator grouping
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public abstract function prepare_operator($expr, $group);
 
@@ -156,7 +156,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @access public
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public function prepare_parenthesis($expr) {
 		if (is_string($expr)) {
@@ -167,7 +167,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 				break;
 			}
 		}
-		throw new Throwable_InvalidArgument_Exception('Message: Invalid parenthesis token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
+		throw new Throwable\InvalidArgument\Exception('Message: Invalid parenthesis token specified. Reason: Token must exist in the enumerated set.', array(':expr' => $expr));
 	}
 
 	/**
@@ -188,7 +188,7 @@ abstract class Base_DB_SQL_Precompiler extends Core_Object {
 	 * @abstract
 	 * @param string $expr                          the expression to be prepared
 	 * @return string                               the prepared expression
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 	 */
 	public abstract function prepare_wildcard($expr);
 

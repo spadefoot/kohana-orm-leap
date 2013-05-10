@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class Base_Throwable_Database_Exception extends Throwable_Runtime_Exception {}
+abstract class Base\Throwable\Database\Exception extends Throwable\Runtime\Exception {}

@@ -39,14 +39,14 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 *                                          the specified SQL statement
 	 * @param string $statement                 the SQL statement to be appended
 	 * @return DB_SQL_Select_Builder            a reference to the current instance
-	 * @throws Throwable_SQL_Exception          indicates an invalid SQL build instruction
+	 * @throws Throwable\SQL\Exception          indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
 		if (is_object($statement) AND ($statement instanceof DB_Oracle_Select_Builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {
-			throw new Throwable_SQL_Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
+			throw new Throwable\SQL\Exception('Message: Invalid SQL build instruction. Reason: May only combine a SELECT statement.', array(':operator' => $operator, ':statement' => $statement));
 		}
 		$statement = trim($statement, "; \t\n\r\0\x0B");
 		$operator = $this->precompiler->prepare_operator($operator, 'SET');

@@ -48,7 +48,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.begintransaction.php
@@ -59,7 +59,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->sql = 'BEGIN TRANSACTION;';
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 	/**
@@ -82,7 +82,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.commit.php
@@ -93,7 +93,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->sql = 'COMMIT;';
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 
@@ -103,16 +103,16 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * @access public
 	 * @override
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command = @$this->resource->exec($sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $this->resource->errorInfo()));
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => $this->resource->errorInfo()));
 		}
 		$this->sql = $sql;
 	}
@@ -125,13 +125,13 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.lastinsertid.php
 	 */
 	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		try {
 			if (is_string($table)) {
@@ -147,7 +147,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			return $this->resource->lastInsertId();
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 
@@ -170,12 +170,12 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 * @param string $string                        the string to be escaped
 	 * @param char $escape                          the escape character
 	 * @return string                               the quoted string
-	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 * @throws Throwable\SQL\Exception              indicates that no connection could
 	 *                                              be found
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		$value = @$this->resource->quote($string);
@@ -196,7 +196,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://www.php.net/manual/en/pdo.rollback.php
@@ -207,7 +207,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->sql = 'ROLLBACK;';
 		}
 		catch (Exception $ex) {
-			throw new Throwable_SQL_Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
+			throw new Throwable\SQL\Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
 

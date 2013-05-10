@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Builder extends Core_Object implements DB_SQL_Statement {
+abstract class Base_DB_SQL_Builder extends Core\Object implements DB_SQL_Statement {
 
 	/**
 	 * This constant represents a closing parenthesis.

@@ -58,7 +58,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://docs.drizzle.org/start_transaction.html
@@ -89,7 +89,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://docs.drizzle.org/commit.html
@@ -104,16 +104,16 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 * @access public
 	 * @override
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public function execute($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: Unable to find connection.');
 		}
 		$command = @drizzle_query($this->resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($this->resource)));
+			throw new Throwable\SQL\Exception('Message: Failed to execute SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($this->resource)));
 		}
 		$this->insert_id = (preg_match("/^\\s*(insert|replace)\\s+/i", $sql))
 			? @drizzle_result_insert_id($command)
@@ -130,11 +130,11 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function get_last_insert_id($table = NULL, $column = 'id') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: Unable to find connection.');
 		}
 		if (is_string($table)) {
 			$sql = $this->sql;
@@ -147,7 +147,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 		}
 		else {
 			if ($this->insert_id === FALSE) {
-				throw new Throwable_SQL_Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
+				throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: No insert id could be derived.');
 			}
 			return $this->insert_id;
 		}
@@ -158,7 +158,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 * @throws Throwable\Database\Exception         indicates that there is problem with
 	 *                                              opening the connection
 	 *
 	 * @see http://wiki.drizzle.org/MySQL_Differences
@@ -173,7 +173,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 			$password = $this->data_source->password;
 			$this->resource = @drizzle_con_add_tcp($handle, $host, $port, $username, $password, $database, 0);
 			if ($this->resource === FALSE) {
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @drizzle_error($handle)));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @drizzle_error($handle)));
 			}
 			// "There is no CHARSET or CHARACTER SET commands, everything defaults to UTF-8."
 		}
@@ -187,11 +187,11 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 * @param string $sql                           the SQL statement
 	 * @param string $type                          the return type to be used
 	 * @return DB_ResultSet                         the result set
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
@@ -214,12 +214,12 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 * @param string $string                        the string to be escaped
 	 * @param char $escape                          the escape character
 	 * @return string                               the quoted string
-	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 * @throws Throwable\SQL\Exception              indicates that no connection could
 	 *                                              be found
 	 */
 	public function quote($string, $escape = NULL) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		$string = "'" . drizzle_escape_string($this->resource, $string) . "'";
@@ -236,7 +236,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 *
 	 * @see http://docs.drizzle.org/rollback.html

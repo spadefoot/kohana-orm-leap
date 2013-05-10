@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_Statement {
+abstract class Base_DB_SQL_Select_Proxy extends Core\Object implements DB_SQL_Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
@@ -232,7 +232,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core_Object implements DB_SQL_St
 	 * @param string $operator                      the operator to be used
 	 * @param string $column1                       the constraint column
 	 * @return DB_SQL_Select_Proxy                  a reference to the current instance
-	 * @throws Throwable_SQL_Exception              indicates an invalid SQL build instruction
+	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
 		$this->builder->on($column0, $operator, $column1);

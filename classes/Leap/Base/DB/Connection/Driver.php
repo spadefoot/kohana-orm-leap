@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Driver extends Core_Object {
+abstract class Base_DB_Connection_Driver extends Core\Object {
 
 	/**
 	 * This variable stores the connection configurations.
@@ -97,7 +97,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -109,7 +109,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 			case 'sql':
 				return $this->sql;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 		}
 	}
 
@@ -118,7 +118,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public abstract function begin_transaction();
@@ -165,7 +165,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public abstract function commit();
@@ -176,7 +176,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @access public
 	 * @abstract
 	 * @param string $sql                           the SQL statement
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public abstract function execute($sql);
@@ -189,7 +189,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @param string $table                         the table to be queried
 	 * @param string $column                        the column representing the table's id
 	 * @return integer                              the last insert id
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public abstract function get_last_insert_id($table = NULL, $column = 'id');
 
@@ -198,12 +198,12 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @return mixed                                the resource being used
-	 * @throws Throwable_Database_Exception         indicates that no connection has been
+	 * @throws Throwable\Database\Exception         indicates that no connection has been
 	 *                                              established
 	 */
 	public function get_resource() {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_Database_Exception('Message: Unable to fetch resource. Reason: No connection has been established.');
+			throw new Throwable\Database\Exception('Message: Unable to fetch resource. Reason: No connection has been established.');
 		}
 		return $this->resource;
 	}
@@ -221,7 +221,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * This function opens a connection using the data source provided.
 	 *
 	 * @access public
-	 * @throws Throwable_Database_Exception         indicates that there is problem with
+	 * @throws Throwable\Database\Exception         indicates that there is problem with
 	 *                                              opening the connection
 	 */
 	public abstract function open();
@@ -233,11 +233,11 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @param string $sql                           the SQL statement
 	 * @param string $type                          the return type to be used
 	 * @return DB_ResultSet                         the result set
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: Unable to find connection.');
 		}
 		$result_set = $this->cache($sql, $type);
 		if ($result_set !== NULL) {
@@ -257,7 +257,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @param string $string                        the string to be escaped
 	 * @param char $escape                          the escape character
 	 * @return string                               the quoted string
-	 * @throws Throwable_SQL_Exception              indicates that no connection could
+	 * @throws Throwable\SQL\Exception              indicates that no connection could
 	 *                                              be found
 	 *
 	 * @license http://codeigniter.com/user_guide/license.html
@@ -272,7 +272,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 		);
 
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to quote/escape string. Reason: Unable to find connection.');
 		}
 
 		do {
@@ -295,11 +295,11 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 * @access public
 	 * @param string $sql                           the SQL statement
 	 * @return DB_SQL_DataReader                    the SQL data reader
-	 * @throws Throwable_SQL_Exception              indicates that the query failed
+	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function reader($sql) {
 		if ( ! $this->is_connected()) {
-			throw new Throwable_SQL_Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
+			throw new Throwable\SQL\Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
 		}
 		$reader = DB_SQL_DataReader::factory($this, $sql);
 		$this->sql = $sql;
@@ -311,7 +311,7 @@ abstract class Base_DB_Connection_Driver extends Core_Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @throws Throwable_SQL_Exception              indicates that the executed
+	 * @throws Throwable\SQL\Exception              indicates that the executed
 	 *                                              statement failed
 	 */
 	public abstract function rollback();

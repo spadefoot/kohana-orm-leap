@@ -28,10 +28,10 @@ Change Log for LEAP ORM
 * Moved and renamed object class.
 
 2012-10-15
-* Adding new BitField class.
+* Adding new Core\BitField class.
 * Redid the Base_DB_ORM_Field_Bit class.
-* Changing Data::BYTE_DATA back to Data::BINARY_DATA.
-* Added the ability to format strings in Base_Data.
+* Changing Core\Data::BYTE_DATA back to Core\Data::BINARY_DATA.
+* Added the ability to format strings in Base\Core\Data.
 * Minor inline documentation changes.
 
 2012-08-24
@@ -47,7 +47,7 @@ Change Log for LEAP ORM
 * Replace && and || with AND and OR, respectfully.
 * Added adaptors and aliases to Base_DB_ORM_Model::as_array().
 * Added create and update methods to Base_DB_ORM_Model.
-* Replace spl_object_hash() with Core_Object::__hashCode().
+* Replace spl_object_hash() with Core\Object::__hashCode().
 * Base_DB_ORM_Field_Blob now uses the Data class.
 * Renamed DB_ORM_Field_Adaptor_Array to DB_ORM_Field_Adaptor_List.
 * Renamed some variables.
@@ -56,7 +56,7 @@ Change Log for LEAP ORM
 * Reworked validation in field classes (Issues #50, #59, #60).
 
 2012-06-14
-* Changing Data::BINARY_DATA to Data::BYTE_DATA.
+* Changing Core\Data::BINARY_DATA to Core\Data::BYTE_DATA.
 
 2012-06-06
 * Merging pull request #41 as per nyunyu95's request.
@@ -79,7 +79,7 @@ Change Log for LEAP ORM
 2012-05-15
 * Fixed bug in Base_DB_ORM_Field_Decimal::validate().
 * Cleaned-up and improved Base_DB_ORM_Model::hash_code() (Issue #25 & #26).
-* Minor improvements to Base_Data class.
+* Minor improvements to Base\Core\Data class.
 * Updated inline documentation.
 
 2012-05-11
@@ -157,8 +157,8 @@ Change Log for LEAP ORM
 * Renamed Base_DB_Connection_Driver::escape_string($string) to Base_DB_Connection_Driver::quote($string, $like = FALSE).
 * Commented out code in schema.php files so that API guide can be generated per nyunyu95's request (Issue #21).
 * Cleaned-up close function in connection classes.
-* Implemented \ArrayAccess and \SeekableIterator interfaces in Base_CSV.
-* Added Base_CSV::as_array().
+* Implemented \ArrayAccess and \SeekableIterator interfaces in Base\Core\Data\CSV.
+* Added Base\Core\Data\CSV::as_array().
 * Made the Double field's metadata 'max_digits' and 'max_decimals' optional.
 * Fixed some minor styling.
 * Updated some inline documentation.
@@ -195,7 +195,7 @@ Change Log for LEAP ORM
 * Changed how semicolons are removed in the expression classes.
 
 2012-01-12
-* Fixed some styling in Base_CSV.
+* Fixed some styling in Base\Core\Data\CSV.
 
 2012-01-11
 * Adding the ability to export a result set as a CSV.

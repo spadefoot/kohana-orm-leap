@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_FileNotFound_Exception extends Base_Throwable_FileNotFound_Exception {}
+class Throwable\FileNotFound\Exception extends Base\Throwable\FileNotFound\Exception {}

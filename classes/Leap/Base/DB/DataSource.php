@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_DataSource extends Core_Object {
+abstract class Base_DB_DataSource extends Core\Object {
 
 	/**
 	 * This constant represents a master instance of a database.
@@ -57,21 +57,21 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 *
 	 * @access public
 	 * @param mixed $config                         the data source configurations
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the database group is undefined
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the database group is undefined
 	 */
 	public function __construct($config) {
 		if (empty($config)) {
 			$id = 'database.default';
 			if (($config = static::config($id)) === NULL) {
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
 		}
 		else if (is_string($config)) {
 			$id = 'database.' . $config;
 			if (($config = static::config($id)) === NULL) {
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to load data source. Reason: Database group :id is undefined.', array(':id' => $id));
 			}
 			$this->init($config, $id);
 		}
@@ -82,7 +82,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 			$this->settings = $config->settings;
 		}
 		else {
-			throw new Throwable_InvalidArgument_Exception('Message: Unable to load data source. Reason: Data type :type is mismatched.', array(':type' => gettype($config)));
+			throw new Throwable\InvalidArgument\Exception('Message: Unable to load data source. Reason: Data type :type is mismatched.', array(':type' => gettype($config)));
 		}
 	}
 
@@ -93,7 +93,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 	 * @override
 	 * @param string $name                          the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($name) {
@@ -112,7 +112,7 @@ abstract class Base_DB_DataSource extends Core_Object {
 			case 'role':
 				return $this->settings[$name];
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $name));
 		}
 	}
 

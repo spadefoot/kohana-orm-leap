@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_Data extends Core_Object implements \Countable {
+abstract class Base\Core\Data extends Core\Object implements \Countable {
 
 	/**
 	 * This constant represents binary data.
@@ -179,22 +179,22 @@ abstract class Base_Data extends Core_Object implements \Countable {
 	protected static function unpack($data, $type) {
 		if (is_string($data)) {
 			switch ($type) {
-				case Data::BINARY_DATA:
+				case Core\Data::BINARY_DATA:
 					$binary = (preg_match("/^b'.*'$/i", $data))
 						? substr($data, 2, strlen($data) - 3)
 						: $data;
 					return base_convert($binary, 2, 16);
 				break;
-				case Data::STRING_DATA:
+				case Core\Data::STRING_DATA:
 					$hexcode = unpack('H*hex', $data);
 					return $hexcode['hex'];
 				break;
-				case Data::HEXADECIMAL_DATA:
+				case Core\Data::HEXADECIMAL_DATA:
 					return $data;
 				break;
 			}
 		}
-		else if (is_object($data) AND ($data instanceof Data)) {
+		else if (is_object($data) AND ($data instanceof Core\Data)) {
 			return $data->as_hexcode();
 		}
 		return '';

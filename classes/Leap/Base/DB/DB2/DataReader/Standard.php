@@ -39,7 +39,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @throws Throwable\SQL\Exception          indicates that the query failed
 	 *
 	 * @see http://www.php.net/manual/en/function.db2-prepare.php
 	 * @see http://www.php.net/manual/en/function.db2-execute.php
@@ -49,10 +49,10 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 		$resource = $connection->get_resource();
 		$command = @db2_prepare($resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @db2_conn_errormsg($resource)));
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @db2_conn_errormsg($resource)));
 		}
 		if ( ! @db2_execute($command)) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @db2_stmt_errormsg($command)));
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @db2_stmt_errormsg($command)));
 		}
 		$this->command = $command;
 		$this->record = FALSE;

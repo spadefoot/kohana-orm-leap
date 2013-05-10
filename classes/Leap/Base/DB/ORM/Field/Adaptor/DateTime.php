@@ -35,7 +35,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
-	 * @throws Throwable_InvalidArgument_Exception  indicates that an invalid field name
+	 * @throws Throwable\InvalidArgument\Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
@@ -53,7 +53,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -69,7 +69,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
 			break;
 		}
-		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**
@@ -79,7 +79,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -91,7 +91,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 				$this->model->{$this->metadata['field']} = $value;
 			break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}

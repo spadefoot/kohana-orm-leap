@@ -94,7 +94,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @override
 	 * @param string $name                              the name of the property
 	 * @return mixed                                    the value of the property
-	 * @throws Throwable_InvalidProperty_Exception      indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception      indicates that the specified property is
 	 *                                                  either inaccessible or undefined
 	 */
 	public function __get($name) {
@@ -134,7 +134,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param array $fields                             an associated array of additional field
 	 *                                                  name/value pairs
 	 * @return DB_ORM_MPTT                              the newly added child node
-	 * @throws Throwable_Marshalling_Exception          indicates that the node could not
+	 * @throws Throwable\Marshalling\Exception          indicates that the node could not
 	 *                                                  be added
 	 *
 	 * @see http://imrannazar.com/Modified-Preorder-Tree-Traversal
@@ -143,7 +143,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function add_child($name, Array $fields = NULL) {
 		if ( ! static::is_savable()) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
+			throw new Throwable\Marshalling\Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
 		}
 
 		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
@@ -290,7 +290,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @override
 	 * @param boolean $reset                            whether to reset each column's value back
 	 *                                                  to its original value
-	 * @throws Throwable_Marshalling_Exception          indicates that the record could not be
+	 * @throws Throwable\Marshalling\Exception          indicates that the record could not be
 	 *                                                  deleted
 	 *
 	 * @see http://imrannazar.com/Modified-Preorder-Tree-Traversal
@@ -298,7 +298,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function delete($reset = FALSE) {
 		if ( ! static::is_savable()) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
+			throw new Throwable\Marshalling\Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 
 		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
@@ -566,11 +566,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param boolean $reload                           whether the model should be reloaded
 	 *                                                  after the save is done
 	 * @param boolean $mode                             TRUE=save, FALSE=update, NULL=automatic
-	 * @throws Throwable_Marshalling_Exception          indicates that model could not be saved
+	 * @throws Throwable\Marshalling\Exception          indicates that model could not be saved
 	 */
 	public function save($reload = FALSE, $mode = NULL) {
 		if ( ! static::is_savable()) {
-			throw new Throwable_Marshalling_Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
+			throw new Throwable\Marshalling\Exception('Message: Failed to save record to database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 
 		$columns = array_keys($this->fields);

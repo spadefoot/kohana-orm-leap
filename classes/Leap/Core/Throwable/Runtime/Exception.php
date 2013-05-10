@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2013-05-06
  */
-class Throwable_Runtime_Exception extends Base_Throwable_Runtime_Exception {}
+class Throwable\Runtime\Exception extends Base\Throwable\Runtime\Exception {}

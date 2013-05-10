@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class Core_Object extends Base_Core_Object {}
+abstract class Core\Object extends Base\Core\Object {}

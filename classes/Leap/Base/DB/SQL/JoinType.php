@@ -37,7 +37,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_JoinType extends Core_Object {
+abstract class Base_DB_SQL_JoinType extends Core\Object {
 
 	const _CROSS_ = 'CROSS'; // supported by DB2, Drizzle, Firebird, MS SQL, MySQL, Oracle, PostgreSQL, SQLite
 

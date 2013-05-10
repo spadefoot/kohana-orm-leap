@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
+abstract class Base\Core\Data\CSV extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This variable stores the data to be included in the CSV file.
@@ -133,7 +133,7 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @override
 	 * @param string $key                               the name of the property
 	 * @return mixed                                    the value of the property
-	 * @throws Throwable_InvalidProperty_Exception      indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception      indicates that the specified property is
 	 *                                                  either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -153,7 +153,7 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 			case 'eol':
 				return $this->eol;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 			break;
 		}
 	}
@@ -165,7 +165,7 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @override
 	 * @param string $key                               the name of the property
 	 * @param mixed $value                              the value of the property
-	 * @throws Throwable_InvalidProperty_Exception      indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception      indicates that the specified property is
 	 *                                                  either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -190,13 +190,13 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 				$this->eol = (is_string($value)) ? $value : chr(10);
 			break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}
 
 	/**
-	 * This function is an alias for CSV::render() and will renders the data as a string when
+	 * This function is an alias for Core\Data\CSV::render() and will renders the data as a string when
 	 * the object is treated like a string, e.g. with PHP's echo and print commands.
 	 *
 	 * @access public
@@ -345,11 +345,11 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @override
 	 * @param integer $offset                           the offset to be set
 	 * @param mixed $value                              the value to be set
-	 * @throws Throwable_InvalidArgument_Exception      indicates a data type mismatch
+	 * @throws Throwable\InvalidArgument\Exception      indicates a data type mismatch
 	 */
 	public function offsetSet($offset, $value) {
 		if ( ! is_array($value)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
+			throw new Throwable\InvalidArgument\Exception('Message: Unable to set value. Reason: Value must be an array.', array(':type' => gettype($value)));
 		}
 		else if ($offset === NULL) {
 			$this->data[] = $value;
@@ -365,10 +365,10 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @access public
 	 * @override
 	 * @param integer $offset                           the offset to be unset
-	 * @throws Throwable_UnimplementedMethod_Exception  indicates the result cannot be modified
+	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
 	 */
 	public function offsetUnset($offset) {
-		throw new Throwable_UnimplementedMethod_Exception('Message: Invalid call to member function. Reason: CSV class cannot be modified.', array());
+		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: The CSV class cannot be modified.', array());
 	}
 
 	/**
@@ -471,12 +471,12 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @access public
 	 * @override
 	 * @param integer $position                         the seeked position
-	 * @throws Throwable_OutOfBounds_Exception          indicates that the seeked position
+	 * @throws Throwable\OutOfBounds\Exception          indicates that the seeked position
 	 *                                                  is out of bounds
 	 */
 	public function seek($position) {
 		if ( ! isset($this->data[$position])) {
-			throw new Throwable_OutOfBounds_Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->count()));
+			throw new Throwable\OutOfBounds\Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->count()));
 		}
 		$this->position = $position;
 	}
@@ -500,10 +500,10 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @access public
 	 * @static
 	 * @param array $config                             the configuration array
-	 * @return CSV                                      an instance of the CSV class
+	 * @return Core\Data\CSV                                      an instance of the CSV class
 	 */
 	public static function factory(Array $config = array()) {
-		return new CSV($config);
+		return new Core\Data\CSV($config);
 	}
 
 	/**
@@ -512,13 +512,13 @@ abstract class Base_CSV extends Core_Object implements \ArrayAccess, \Countable,
 	 * @access public
 	 * @static
 	 * @param array $config                             the configuration array
-	 * @return CSV                                      an instance of the CSV class containing
+	 * @return Core\Data\CSV                                      an instance of the CSV class containing
 	 *                                                  the contents of the file.
 	 *
 	 * @see http://www.php.net/manual/en/function.fgetcsv.php
 	 */
 	public static function load($config = array()) {
-		$csv = new CSV($config);
+		$csv = new Core\Data\CSV($config);
 		if (file_exists($csv->file_name)) {
 		   if (($fp = fopen($csv->file_name, 'r')) !== FALSE) {
 				$eol = ($csv->eol == "\r\n") ? array(13, 10) : array(ord($csv->eol)); // 13 => cr, 10 => lf

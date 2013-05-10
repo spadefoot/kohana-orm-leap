@@ -34,11 +34,11 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
-	 * @throws Throwable_Validation_Exception       indicates that the specified value does
+	 * @throws Throwable\Validation\Exception       indicates that the specified value does
 	 *                                              not validate
 	 */
 	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
-		parent::__construct($model, 'BitField');
+		parent::__construct($model, 'Core\\BitField');
 
 		if (isset($metadata['savable'])) {
 			$this->metadata['savable'] = (bool) $metadata['savable'];
@@ -68,11 +68,11 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 
 		if (isset($metadata['default'])) {
 			$default = ($metadata['default'] !== NULL)
-				? new BitField($this->metadata['pattern'], $metadata['default'])
+				? new Core\BitField($this->metadata['pattern'], $metadata['default'])
 				: NULL;
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = new BitField($this->metadata['pattern'], 0);
+			$default = new Core\BitField($this->metadata['pattern'], 0);
 		}
 		else {
 			$default = NULL;
@@ -80,7 +80,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 
 		if ( ! ($default instanceof DB_SQL_Expression)) {
 			if ( ! $this->validate($default)) {
-				throw new Throwable_Validation_Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
+				throw new Throwable\Validation\Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
 			}
 		}
 
@@ -95,9 +95,9 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_Validation_Exception             indicates that the specified value does
+	 * @throws Throwable\Validation\Exception             indicates that the specified value does
 	 *                                              not validate
-	 * @throws Throwable_InvalidProperty_Exception     indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception     indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -105,11 +105,11 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 			case 'value':
 				if ( ! ($value instanceof DB_SQL_Expression)) {
 					if ($value !== NULL) {
-						if ( ! ($value instanceof BitField)) {
-							$value = new BitField($this->metadata['pattern'], $value);
+						if ( ! ($value instanceof Core\BitField)) {
+							$value = new Core\BitField($this->metadata['pattern'], $value);
 						}
 						if ( ! $this->validate($value)) {
-							throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+							throw new Throwable\Validation\Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 						}
 					}
 					else if ( ! $this->metadata['nullable']) {
@@ -117,7 +117,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 					}
 				}
 				if (isset($this->metadata['callback']) AND ! $this->model->{$this->metadata['callback']}($value)) {
-					throw new Throwable_Validation_Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
+					throw new Throwable\Validation\Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));
 				}
 				$this->metadata['modified'] = TRUE;
 				$this->value = $value;
@@ -126,7 +126,7 @@ abstract class Base_DB_ORM_Field_Bit extends DB_ORM_Field {
 				$this->metadata['modified'] = (bool) $value;
 				break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 				break;
 		}
 	}

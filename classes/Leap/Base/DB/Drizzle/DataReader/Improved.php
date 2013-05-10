@@ -44,7 +44,7 @@ abstract class Base_DB_Drizzle_DataReader_Improved extends DB_SQL_DataReader_Sta
 		$resource = $connection->get_resource();
 		$command = @mysqli_query($resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mysqli_error($resource)));
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mysqli_error($resource)));
 		}
 		$this->command = $command;
 		$this->record = FALSE;

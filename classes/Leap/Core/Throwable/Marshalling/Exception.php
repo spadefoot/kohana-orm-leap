@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_Marshalling_Exception extends Base_Throwable_Marshalling_Exception {}
+class Throwable\Marshalling\Exception extends Base\Throwable\Marshalling\Exception {}

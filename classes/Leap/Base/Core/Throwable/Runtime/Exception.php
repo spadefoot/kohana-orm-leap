@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class Base_Throwable_Runtime_Exception extends Kohana_Exception {}
+abstract class Base\Throwable\Runtime\Exception extends \Kohana\Exception {}

@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_UnimplementedMethod_Exception extends Base_Throwable_UnimplementedMethod_Exception {}
+class Throwable\UnimplementedMethod\Exception extends Base\Throwable\UnimplementedMethod\Exception {}

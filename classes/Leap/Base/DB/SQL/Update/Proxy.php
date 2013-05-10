@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Update_Proxy extends Core_Object implements DB_SQL_Statement {
+abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.

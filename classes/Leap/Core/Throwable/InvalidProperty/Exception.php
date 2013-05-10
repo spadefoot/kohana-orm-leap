@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_InvalidProperty_Exception extends Base_Throwable_InvalidProperty_Exception {}
+class Throwable\InvalidProperty\Exception extends Base\Throwable\InvalidProperty\Exception {}

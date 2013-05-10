@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class Base_Throwable_Validation_Exception extends Throwable_Runtime_Exception {}
+abstract class Base\Throwable\Validation\Exception extends Throwable\Runtime\Exception {}

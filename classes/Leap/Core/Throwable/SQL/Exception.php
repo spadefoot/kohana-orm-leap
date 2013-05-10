@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_SQL_Exception extends Base_Throwable_SQL_Exception {}
+class Throwable\SQL\Exception extends Base\Throwable\SQL\Exception {}

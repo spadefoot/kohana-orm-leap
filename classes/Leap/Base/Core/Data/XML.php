@@ -18,7 +18,7 @@
  */
 
 /**
- * This class adds additional functionality to the underlying SimpleXMLElement
+ * This class adds additional functionality to the underlying \SimpleXMLElement
  * class.
  *
  * @package Leap
@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_XML extends SimpleXMLElement {
+abstract class Base\Core\Data\XML extends \SimpleXMLElement {
 
 	/**
 	 * This function converts an associated array to an XML string.
@@ -35,15 +35,15 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @access protected
 	 * @static
 	 * @param array $array                          the associated array to be converted
-	 * @param DOMElement $domElement                the XML DOM element
-	 * @param DOMDocument $document                 the XML DOM document
+	 * @param \DOMElement $domElement               the XML DOM element
+	 * @param \DOMDocument $document                the XML DOM document
 	 * @return string                               a string formatted with XML
 	 *
 	 * @see http://darklaunch.com/2009/05/23/php-xml-encode-using-domdocument-convert-array-to-xml-json-encode
 	 */
 	protected static function convert_to_xml($array, $domElement = NULL, $document = NULL) {
 		if ($document === NULL) {
-			$document = new DOMDocument();
+			$document = new \DOMDocument();
 			$document->formatOutput = TRUE;
 			static::convert_to_xml($array, $document, $document);
 			return $document->asXML();
@@ -77,14 +77,14 @@ abstract class Base_XML extends SimpleXMLElement {
 	}
 
 	/**
-	 * This function converts an associated array to either a SimpleXMLElement or an XML formatted
+	 * This function converts an associated array to either a \SimpleXMLElement or an XML formatted
 	 * string depending on the second parameter.
 	 *
 	 * @access public
 	 * @static
 	 * @param array $array                          the associated array to be converted
 	 * @param boolean $as_string                    whether to return a string
-	 * @return mixed                                either a SimpleXMLElement or an XML
+	 * @return mixed                                either a \SimpleXMLElement or an XML
 	 *                                              formatted string
 	 */
 	public static function encode(Array $array, $as_string = FALSE) {
@@ -92,7 +92,7 @@ abstract class Base_XML extends SimpleXMLElement {
 		if ($as_string) {
 			return $contents;
 		}
-		$XML = new XML($contents);
+		$XML = new Core\Data\XML($contents);
 		return $XML;
 	}
 
@@ -104,7 +104,7 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @static
 	 * @param string $file                          the file name
 	 * @return string                               the file path
-	 * @throws Throwable_FileNotFound_Exception     indicates that the file does not exist
+	 * @throws Throwable\FileNotFound\Exception     indicates that the file does not exist
 	 */
 	protected static function find_file($file) {
 		if (file_exists($file)) {
@@ -135,7 +135,7 @@ abstract class Base_XML extends SimpleXMLElement {
 			}
 		}
 
-		throw new Throwable_FileNotFound_Exception("Message: Unable to locate file. Reason: File ':file' does not exist.", array(':file', $file));
+		throw new Throwable\FileNotFound\Exception("Message: Unable to locate file. Reason: File ':file' does not exist.", array(':file', $file));
 	}
 
 	/**
@@ -145,20 +145,20 @@ abstract class Base_XML extends SimpleXMLElement {
 	 * @access public
 	 * @static
 	 * @param string $file                          the file name
-	 * @return XML                                  an instance of this class
-	 * @throws Throwable_InvalidArgument_Exception  indicates a data type mismatch
-	 * @throws Throwable_FileNotFound_Exception     indicates that the file does not exist
+	 * @return Core\Data\XML                        an instance of this class
+	 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
+	 * @throws Throwable\FileNotFound\Exception     indicates that the file does not exist
 	 */
 	public static function load($file) {
 		if ( ! is_string($file)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
+			throw new Throwable\InvalidArgument\Exception('Message: Wrong data type specified. Reason: Argument must be a string.', array(':type', gettype($file)));
 		}
 
 		$uri = static::find_file($file);
 
 		$contents = file_get_contents($uri);
 
-		$XML = new XML($contents);
+		$XML = new Core\Data\XML($contents);
 		return $XML;
 	}
 

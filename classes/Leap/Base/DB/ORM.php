@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM extends Core_Object {
+abstract class Base_DB_ORM extends Core\Object {
 
 	/**
 	 * This function returns an instance of the DB_ORM_Delete_Proxy.

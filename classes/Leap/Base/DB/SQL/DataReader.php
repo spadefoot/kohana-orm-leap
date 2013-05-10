@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_DataReader extends Core_Object {
+abstract class Base_DB_SQL_DataReader extends Core\Object {
 
 	/**
 	 * This variable stores the command reference being utilized.
@@ -52,7 +52,7 @@ abstract class Base_DB_SQL_DataReader extends Core_Object {
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @throws Throwable\SQL\Exception          indicates that the query failed
 	 */
 	public abstract function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL);
 

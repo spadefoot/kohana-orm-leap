@@ -35,7 +35,7 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
+	 * @throws Throwable\Database\Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-ibm.connection.php
@@ -51,15 +51,15 @@ abstract class Base_DB_DB2_Connection_PDO extends DB_SQL_Connection_PDO {
 				$connection_string .= 'HOSTNAME=' . $this->data_source->host . ';';
 				$connection_string .= 'PORT=' . $this->data_source->port . ';';
 				$connection_string .= 'PROTOCOL=TCPIP;';
-				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+				$attributes = array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
-					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
+					$attributes[\PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
-			catch (PDOException $ex) {
+			catch (\PDOException $ex) {
 				$this->resource = NULL;
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			// "To use UTF-8 when talking to a DB2 instance, use the following command from the DB2 home at the command prompt: db2set DB2CODEPAGE=1208"
 		}

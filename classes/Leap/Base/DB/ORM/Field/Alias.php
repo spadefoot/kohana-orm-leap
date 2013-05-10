@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Alias extends Core_Object {
+abstract class Base_DB_ORM_Field_Alias extends Core\Object {
 
 	/**
 	 * This variable stores the alias's metadata.
@@ -50,12 +50,12 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 	 * @access public
 	 * @param DB_ORM_Model $model                   a reference to the implementing model
 	 * @param string $field                         the name of field in the database table
-	 * @throws Throwable_InvalidArgument_Exception  indicates that an invalid field name
+	 * @throws Throwable\InvalidArgument\Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
 	public function __construct(DB_ORM_Model $model, $field) {
 		if ( ! is_string($field) OR $model->is_adaptor($field) OR $model->is_alias($field) OR ! $model->is_field($field) OR $model->is_relation($field)) {
-			throw new Throwable_InvalidArgument_Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
+			throw new Throwable\InvalidArgument\Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
 		}
 		$this->model = $model;
 		$this->metadata['field'] = $field;
@@ -78,7 +78,7 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @return mixed                                the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __get($key) {
@@ -90,7 +90,7 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 				if (isset($this->metadata[$key])) { return $this->metadata[$key]; }
 			break;
 		}
-		throw new Throwable_InvalidProperty_Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
+		throw new Throwable\InvalidProperty\Exception('Message: Unable to get the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key));
 	}
 
 	/**
@@ -100,7 +100,7 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 	 * @override
 	 * @param string $key                           the name of the property
 	 * @param mixed $value                          the value of the property
-	 * @throws Throwable_InvalidProperty_Exception  indicates that the specified property is
+	 * @throws Throwable\InvalidProperty\Exception  indicates that the specified property is
 	 *                                              either inaccessible or undefined
 	 */
 	public function __set($key, $value) {
@@ -109,7 +109,7 @@ abstract class Base_DB_ORM_Field_Alias extends Core_Object {
 				$this->model->{$this->metadata['field']} = $value;
 			break;
 			default:
-				throw new Throwable_InvalidProperty_Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
+				throw new Throwable\InvalidProperty\Exception('Message: Unable to set the specified property. Reason: Property :key is either inaccessible or undefined.', array(':key' => $key, ':value' => $value));
 			break;
 		}
 	}

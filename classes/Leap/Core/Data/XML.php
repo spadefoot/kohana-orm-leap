@@ -25,4 +25,4 @@
  * @category XML
  * @version 2012-05-31
  */
-class XML extends Base_XML {}
+class Core\Data\XML extends Base\Core\Data\XML {}

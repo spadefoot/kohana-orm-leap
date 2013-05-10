@@ -39,13 +39,13 @@ abstract class Base_DB_MariaDB_DataReader_Improved extends DB_SQL_DataReader_Sta
 	 * @param DB_Connection_Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
-	 * @throws Throwable_SQL_Exception          indicates that the query failed
+	 * @throws Throwable\SQL\Exception          indicates that the query failed
 	 */
 	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();
 		$command = @mysqli_query($resource, $sql);
 		if ($command === FALSE) {
-			throw new Throwable_SQL_Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mysqli_error($resource)));
+			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @mysqli_error($resource)));
 		}
 		$this->command = $command;
 		$this->record = FALSE;

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_Core_Object {
+abstract class Base\Core\Object {
 
 	/**
 	 * This function returns the hash code for the object.

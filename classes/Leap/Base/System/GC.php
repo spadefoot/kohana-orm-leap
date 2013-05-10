@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_GC extends Core_Object {
+abstract class Base_GC extends Core\Object {
 
 	/**
 	 * This function forces garbage collector to start immediately.

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL extends Core_Object {
+abstract class Base_DB_SQL extends Core\Object {
 
 	/**
 	 * This function returns an instance of the DB_SQL_Delete_Proxy.

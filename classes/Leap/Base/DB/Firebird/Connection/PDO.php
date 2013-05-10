@@ -35,7 +35,7 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 	 *
 	 * @access public
 	 * @override
-	 * @throws Throwable_Database_Exception     indicates that there is problem with
+	 * @throws Throwable\Database\Exception     indicates that there is problem with
 	 *                                          opening the connection
 	 *
 	 * @see http://www.php.net/manual/en/ref.pdo-firebird.php
@@ -59,15 +59,15 @@ abstract class Base_DB_Firebird_Connection_PDO extends DB_SQL_Connection_PDO {
 				if ( ! empty($this->data_source->role)) {
 					$connection_string .= ';role=' . $this->data_source->role;
 				}
-				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+				$attributes = array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
-					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
+					$attributes[\PDO::ATTR_PERSISTENT] = TRUE;
 				}
 				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
-			catch (PDOException $ex) {
+			catch (\PDOException $ex) {
 				$this->resource = NULL;
-				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
+				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 		}
 	}

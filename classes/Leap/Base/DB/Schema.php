@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Schema extends Core_Object {
+abstract class Base_DB_Schema extends Core\Object {
 
 	/**
 	 * This variable stores a reference to the data source.

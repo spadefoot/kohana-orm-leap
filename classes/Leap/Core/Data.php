@@ -24,4 +24,4 @@
  * @category Data Type
  * @version 2012-05-10
  */
-class Data extends Base_Data {}
+class Core\Data extends Base\Core\Data {}

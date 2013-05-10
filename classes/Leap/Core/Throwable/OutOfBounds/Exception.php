@@ -24,4 +24,4 @@
  * @category Throwable
  * @version 2012-12-05
  */
-class Throwable_OutOfBounds_Exception extends Base_Throwable_OutOfBounds_Exception {}
+class Throwable\OutOfBounds\Exception extends Base\Throwable\OutOfBounds\Exception {}

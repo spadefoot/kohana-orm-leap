@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ToolKit extends Core_Object {
+abstract class Base_DB_ToolKit extends Core\Object {
 
 	/**
 	 * This function converts a like clause to a regular expression.
