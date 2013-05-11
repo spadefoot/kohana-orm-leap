@@ -18,7 +18,7 @@
  */
 
 /**
- * This class tests DB_DataSource.
+ * This class tests DB\DataSource.
  *
  * @package Leap
  * @category DB
@@ -26,7 +26,7 @@
  *
  * @group spadefoot.leap
  */
-class DB_DataSourceTest extends Unittest_Testcase {
+class DB\DataSourceTest extends Unittest_Testcase {
 
 	/**
 	 * This function provides the test data for test_constructor().
@@ -57,12 +57,12 @@ class DB_DataSourceTest extends Unittest_Testcase {
 			array(NULL, $expected),
 			array('default', $expected),
 			array($expected, $expected),
-			array(new DB_DataSource('default'), $expected),
+			array(new DB\DataSource('default'), $expected),
 		);
 	}
 
 	/**
-	 * This function tests DB_DataSource::__construct().
+	 * This function tests DB\DataSource::__construct().
 	 *
 	 * @access public
 	 * @param mixed $test_data                          the test data
@@ -72,7 +72,7 @@ class DB_DataSourceTest extends Unittest_Testcase {
 	 */
 	public function test_constructor($test_data, $expected) {
 		// Initialization
-		$data_source = new DB_DataSource($test_data);
+		$data_source = new DB\DataSource($test_data);
 		// Assertions
 		$this->assertRegExp('/^(database|unique_id)\.[a-zA-Z0-9_]+$/', $data_source->id, 'Failed when testing "id" property.');
 		$this->assertSame($expected['type'], $data_source->type, 'Failed when testing "type" property.');

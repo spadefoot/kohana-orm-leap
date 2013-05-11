@@ -80,7 +80,7 @@ abstract class Base_DB_SQL extends Core\Object {
 	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
 	 */
 	public static function precompiler($config = 'default') {
-		$data_source = DB_DataSource::instance($config);
+		$data_source = DB\DataSource::instance($config);
 		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
 		$object = new $precompiler($data_source);
 		return $object;

@@ -26,13 +26,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_Schema extends Core\Object {
+abstract class Base\DB\Schema extends Core\Object {
 
 	/**
 	 * This variable stores a reference to the data source.
 	 *
 	 * @access protected
-	 * @var DB_DataSource
+	 * @var DB\DataSource
 	 */
 	protected $data_source;
 
@@ -52,7 +52,7 @@ abstract class Base_DB_Schema extends Core\Object {
 	 * @param mixed $config                  the data source configurations
 	 */
 	public function __construct($config) {
-		$this->data_source = DB_DataSource::instance($config);
+		$this->data_source = DB\DataSource::instance($config);
 		$precompiler = 'DB_' . $this->data_source->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler();
 	}
@@ -165,7 +165,7 @@ abstract class Base_DB_Schema extends Core\Object {
 	 * @abstract
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 an array of fields within the specified
+	 * @return DB\ResultSet                 an array of fields within the specified
 	 *                                      table
 	 */
 	public abstract function fields($table, $like = '');
@@ -190,7 +190,7 @@ abstract class Base_DB_Schema extends Core\Object {
 	 * @abstract
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of indexes for the specified
+	 * @return DB\ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 */
 	public abstract function indexes($table, $like = '');
@@ -243,7 +243,7 @@ abstract class Base_DB_Schema extends Core\Object {
 	 * @access public
 	 * @abstract
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database tables
+	 * @return DB\ResultSet                 a result set of database tables
 	 */
 	public abstract function tables($like = '');
 
@@ -268,7 +268,7 @@ abstract class Base_DB_Schema extends Core\Object {
 	 * @abstract
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of triggers for the specified
+	 * @return DB\ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 */
 	public abstract function triggers($table, $like = '');
@@ -287,7 +287,7 @@ abstract class Base_DB_Schema extends Core\Object {
 	 * @access public
 	 * @abstract
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database views
+	 * @return DB\ResultSet                 a result set of database views
 	 */
 	public abstract function views($like = '');
 

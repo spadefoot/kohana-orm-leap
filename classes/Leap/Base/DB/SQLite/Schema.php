@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQLite_Schema extends DB_Schema {
+abstract class Base_DB_SQLite_Schema extends DB\Schema {
 
 	/**
 	 * This function returns a result set of fields for the specified table.
@@ -50,7 +50,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 an array of fields within the specified
+	 * @return DB\ResultSet                 an array of fields within the specified
 	 *                                      table
 	 */
 	public function fields($table, $like = '') {
@@ -142,7 +142,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of indexes for the specified
+	 * @return DB\ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/157392/how-do-i-find-out-if-a-sqlite-index-is-unique-with-sql
@@ -165,7 +165,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		$records = array();
 
 		foreach ($indexes as $index) {
-			if (empty($like) OR preg_match(DB_ToolKit::regex($like), $index['name'])) {
+			if (empty($like) OR preg_match(DB\ToolKit::regex($like), $index['name'])) {
 				$reader = $connection->reader("PRAGMA INDEX_INFO('{$index['name']}');");
 				while ($reader->read()) {
 					$column = $reader->row('array');
@@ -185,7 +185,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 			}
 		}
 
-		$results = new DB_ResultSet($records);
+		$results = new DB\ResultSet($records);
 
 		return $results;
 	}
@@ -204,7 +204,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database tables
+	 * @return DB\ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.sqlite.org/faq.html#q7
 	 */
@@ -249,7 +249,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of triggers for the specified
+	 * @return DB\ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.sqlite.org/lang_createtrigger.html
@@ -317,7 +317,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 
 		$reader->free();
 
-		$results = new DB_ResultSet($records);
+		$results = new DB\ResultSet($records);
 
 		return $results;
 	}
@@ -336,7 +336,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database views
+	 * @return DB\ResultSet                 a result set of database views
 	 *
 	 * @see http://www.sqlite.org/faq.html#q7
 	 */

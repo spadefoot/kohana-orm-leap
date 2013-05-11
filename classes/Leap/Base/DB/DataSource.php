@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_DataSource extends Core\Object {
+abstract class Base\DB\DataSource extends Core\Object {
 
 	/**
 	 * This constant represents a master instance of a database.
@@ -78,7 +78,7 @@ abstract class Base_DB_DataSource extends Core\Object {
 		else if (is_array($config)) {
 			$this->init($config);
 		}
-		else if (is_object($config) AND ($config instanceof DB_DataSource)) {
+		else if (is_object($config) AND ($config instanceof DB\DataSource)) {
 			$this->settings = $config->settings;
 		}
 		else {
@@ -154,7 +154,7 @@ abstract class Base_DB_DataSource extends Core\Object {
 
 		$cache = array();
 		$cache['enabled'] = (isset($settings['caching'])) ? (bool) $settings['caching'] : FALSE;
-		$cache['lifetime'] = (class_exists('Kohana')) ? Kohana::$cache_life : 60;
+		$cache['lifetime'] = (class_exists('Kohana')) ? \Kohana::$cache_life : 60;
 		$cache['force'] = FALSE;
 		$this->settings['cache'] = (object) $cache;
 
@@ -240,7 +240,7 @@ abstract class Base_DB_DataSource extends Core\Object {
 	 *                                              specified path
 	 */
 	public static function config($path) {
-		return Kohana::$config->load($path);
+		return \Kohana::$config->load($path);
 	}
 
 	/**
@@ -249,16 +249,16 @@ abstract class Base_DB_DataSource extends Core\Object {
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
-	 * @return DB_DataSource                        a singleton instance of this class
+	 * @return DB\DataSource                        a singleton instance of this class
 	 */
 	public static function instance($config = 'default') {
 		if (is_string($config)) {
 			if ( ! isset(static::$instances[$config])) {
-				static::$instances[$config] = new DB_DataSource($config);
+				static::$instances[$config] = new DB\DataSource($config);
 			}
 			return static::$instances[$config];
 		}
-		else if (is_object($config) AND ($config instanceof DB_DataSource)) {
+		else if (is_object($config) AND ($config instanceof DB\DataSource)) {
 			$id = $config->id;
 			if ( ! isset(static::$instances[$id])) {
 				static::$instances[$id] = $config;
@@ -268,12 +268,12 @@ abstract class Base_DB_DataSource extends Core\Object {
 		else if (is_array($config) AND isset($config['id'])) {
 			$id = $config['id'];
 			if ( ! isset(static::$instances[$id])) {
-				static::$instances[$id] = new DB_DataSource($config);
+				static::$instances[$id] = new DB\DataSource($config);
 			}
 			return static::$instances[$id];
 		}
 		else {
-			$data_source = new DB_DataSource($config);
+			$data_source = new DB\DataSource($config);
 			static::$instances[$data_source->id] = $data_source;
 			return $data_source;
 		}

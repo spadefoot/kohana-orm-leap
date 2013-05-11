@@ -40,7 +40,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core\Object implements DB_SQL_St
 	 * This variable stores a reference to the data source.
 	 *
 	 * @access protected
-	 * @var DB_DataSource
+	 * @var DB\DataSource
 	 */
 	protected $data_source;
 
@@ -52,7 +52,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core\Object implements DB_SQL_St
 	 * @param array $columns                        the columns to be selected
 	 */
 	public function __construct($config, Array $columns = array()) {
-		$this->data_source = DB_DataSource::instance($config);
+		$this->data_source = DB\DataSource::instance($config);
 		$builder = 'DB_' . $this->data_source->dialect . '_Select_Builder';
 		$this->builder = new $builder($this->data_source, $columns);
 	}
@@ -274,7 +274,7 @@ abstract class Base_DB_SQL_Select_Proxy extends Core\Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @param string $type               	        the return type to be used
-	 * @return DB_ResultSet                         the result set
+	 * @return DB\ResultSet                         the result set
 	 */
 	public function query($type = 'array') {
 		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);

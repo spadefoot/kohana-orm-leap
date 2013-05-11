@@ -40,7 +40,7 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core\Object implements DB_SQL_St
 	 * This variable stores a reference to the data source.
 	 *
 	 * @access protected
-	 * @var DB_DataSource
+	 * @var DB\DataSource
 	 */
 	protected $data_source;
 
@@ -51,7 +51,7 @@ abstract class Base_DB_SQL_Delete_Proxy extends Core\Object implements DB_SQL_St
 	 * @param mixed $config                             the data source configurations
 	 */
 	public function __construct($config) {
-		$this->data_source = DB_DataSource::instance($config);
+		$this->data_source = DB\DataSource::instance($config);
 		$builder = 'DB_' . $this->data_source->dialect . '_Delete_Builder';
 		$this->builder = new $builder($this->data_source);
 	}

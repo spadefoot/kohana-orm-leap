@@ -91,7 +91,7 @@ abstract class Base\Model\User\Token extends DB_ORM_Model {
 		do {
 			$token = sha1(uniqid(\Text::random('alnum', 32), TRUE));
 		}
-		while(DB_SQL::select($this->data_source(DB_DataSource::SLAVE_INSTANCE))->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
+		while(DB_SQL::select($this->data_source(DB\DataSource::SLAVE_INSTANCE))->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
 		return $token;
 	}
 

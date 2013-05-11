@@ -186,7 +186,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 	 * @override
 	 * @param string $sql                           the SQL statement
 	 * @param string $type                          the return type to be used
-	 * @return DB_ResultSet                         the result set
+	 * @return DB\ResultSet                         the result set
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
@@ -200,7 +200,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 			return $result_set;
 		}
 		$reader = DB_SQL_DataReader::factory($this, $sql);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
+		$result_set = $this->cache($sql, $type, new DB\ResultSet($reader, $type));
 		$this->insert_id = FALSE;
 		$this->sql = $sql;
 		return $result_set;

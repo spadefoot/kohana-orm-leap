@@ -32,10 +32,10 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource $data_source            the data source to be used
+	 * @param DB\DataSource $data_source            the data source to be used
 	 * @param array $columns                        the columns to be selected
 	 */
-	public function __construct(DB_DataSource $data_source, Array $columns = array()) {
+	public function __construct(DB\DataSource $data_source, Array $columns = array()) {
 		$this->dialect = $data_source->dialect;
 		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
 		$this->precompiler = new $precompiler($data_source);

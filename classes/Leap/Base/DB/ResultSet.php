@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ResultSet extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
+abstract class Base\DB\ResultSet extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
 	/**
 	 * This variable stores the current position in the records array.

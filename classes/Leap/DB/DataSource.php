@@ -24,4 +24,4 @@
  * @category Connection
  * @version 2011-06-09
  */
-class DB_DataSource extends Base_DB_DataSource {}
+class DB\DataSource extends Base\DB\DataSource {}

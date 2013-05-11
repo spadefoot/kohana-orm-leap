@@ -257,7 +257,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 * @override
 	 * @param string $sql                           the SQL statement
 	 * @param string $type						    the return type to be used
-	 * @return DB_ResultSet                         the result set
+	 * @return DB\ResultSet                         the result set
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
@@ -270,7 +270,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			return $result_set;
 		}
 		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
+		$result_set = $this->cache($sql, $type, new DB\ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}

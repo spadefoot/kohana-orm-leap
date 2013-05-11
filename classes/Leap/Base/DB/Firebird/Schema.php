@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_Schema extends DB_Schema {
+abstract class Base_DB_Firebird_Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array of default properties for the specified
@@ -107,7 +107,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 an array of fields within the specified
+	 * @return DB\ResultSet                 an array of fields within the specified
 	 *                                      table
 	 *
 	 * @see http://stackoverflow.com/questions/12070162/how-can-i-get-the-table-description-fields-and-types-from-firebird-with-dbexpr
@@ -217,7 +217,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 
 		$reader->free();
 
-		$results = new DB_ResultSet($records);
+		$results = new DB\ResultSet($records);
 
 		return $results;
 	}
@@ -242,7 +242,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of indexes for the specified
+	 * @return DB\ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://www.felix-colibri.com/papers/db/interbase/using_interbase_system_tables/using_interbase_system_tables.html
@@ -295,7 +295,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database tables
+	 * @return DB\ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.firebirdfaq.org/faq174/
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
@@ -341,7 +341,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of triggers for the specified
+	 * @return DB\ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html
@@ -389,7 +389,7 @@ abstract class Base_DB_Firebird_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database views
+	 * @return DB\ResultSet                 a result set of database views
 	 *
 	 * @see http://www.firebirdfaq.org/faq174/
 	 * @see http://www.alberton.info/firebird_sql_meta_info.html

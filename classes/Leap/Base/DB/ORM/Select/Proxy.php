@@ -40,7 +40,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB_SQL_S
 	 * This variable stores a reference to the data source.
 	 *
 	 * @access protected
-	 * @var DB_DataSource
+	 * @var DB\DataSource
 	 */
 	protected $data_source;
 
@@ -103,7 +103,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB_SQL_S
 	public function __construct($model, Array $columns = array()) {
 		$name = $model;
 		$model = DB_ORM_Model::model_name($name);
-		$this->data_source = DB_DataSource::instance($model::data_source(DB_DataSource::SLAVE_INSTANCE));
+		$this->data_source = DB\DataSource::instance($model::data_source(DB\DataSource::SLAVE_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Select_Builder';
 		$this->table = $model::table();
 		$this->builder = new $builder($this->data_source, $columns);
@@ -309,7 +309,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB_SQL_S
 	 *
 	 * @access public
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_ResultSet                             the result set
+	 * @return DB\ResultSet                             the result set
 	 */
 	public function query($limit = NULL) {
 		if ($limit !== NULL) {

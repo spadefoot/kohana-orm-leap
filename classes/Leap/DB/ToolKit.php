@@ -25,4 +25,4 @@
  * @category ToolKit
  * @version 2012-12-05
  */
-class DB_ToolKit extends Base_DB_ToolKit {}
+class DB\ToolKit extends Base\DB\ToolKit {}

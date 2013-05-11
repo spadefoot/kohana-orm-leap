@@ -229,7 +229,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 		if (empty($primary_key) OR ! is_array($primary_key)) {
 			throw new Throwable\Marshalling\Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
-		$builder = DB_SQL::delete(static::data_source(DB_DataSource::MASTER_INSTANCE))->from(static::table());
+		$builder = DB_SQL::delete(static::data_source(DB\DataSource::MASTER_INSTANCE))->from(static::table());
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
@@ -369,7 +369,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 	 *                                              table
 	 */
 	public function is_saved() {
-		$builder = DB_SQL::select(static::data_source(DB_DataSource::MASTER_INSTANCE)) // done on master instead of slave
+		$builder = DB_SQL::select(static::data_source(DB\DataSource::MASTER_INSTANCE)) // done on master instead of slave
 			->from(static::table())
 			->limit(1);
 		foreach (static::primary_key() as $column) {
@@ -408,7 +408,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 			if (empty($primary_key) OR ! is_array($primary_key)) {
 				throw new Throwable\Marshalling\Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
-			$builder = DB_SQL::select(static::data_source(DB_DataSource::SLAVE_INSTANCE))->from(static::table())->limit(1);
+			$builder = DB_SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))->from(static::table())->limit(1);
 			foreach ($primary_key as $column) {
 				$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
@@ -491,7 +491,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 			throw new Throwable\Marshalling\Exception('Message: Failed to save record to database. Reason: No primary key has been declared.');
 		}
 
-		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
+		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 		$columns = array_keys($this->fields);
 		$hash_code = $this->hash_code();

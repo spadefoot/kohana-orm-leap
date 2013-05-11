@@ -146,7 +146,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			throw new Throwable\Marshalling\Exception('Message: Failed to insert record to database. Reason: Model is not insertable.', array(':class' => get_called_class()));
 		}
 
-		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
+		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
@@ -239,11 +239,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  descending order
 	 * @param integer $limit                            the number of ancestors to return
 	 * @param boolean $root                             whether to include the root node
-	 * @return DB_ResultSet                             a result set of ancestor nodes for the current
+	 * @return DB\ResultSet                             a result set of ancestor nodes for the current
 	 *                                                  node
 	 */
 	public function ancestors($ordering = 'ASC', $limit = 0, $root = TRUE) {
-		$data_source = static::data_source(DB_DataSource::SLAVE_INSTANCE);
+		$data_source = static::data_source(DB\DataSource::SLAVE_INSTANCE);
 
 		$builder = DB_SQL::select($data_source)
 			->all('t1.*')
@@ -277,7 +277,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  left column will sorted either in ascending or
 	 *                                                  descending order
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_ResultSet                             a result set of children nodes
+	 * @return DB\ResultSet                             a result set of children nodes
 	 */
 	public function children($ordering = 'ASC', $limit = 0) {
 		return $this->descendants($ordering, $limit, TRUE, FALSE);
@@ -301,7 +301,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			throw new Throwable\Marshalling\Exception('Message: Failed to delete record from database. Reason: Model is not savable.', array(':class' => get_called_class()));
 		}
 
-		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
+		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
@@ -356,7 +356,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param integer $limit                            the "limit" constraint
 	 * @param boolean $children_only                    whether to only fetch the direct children
 	 * @param boolean $leaves_only                      whether to only fetch leaves
-	 * @return DB_ResultSet                             a result set of descendant nodes
+	 * @return DB\ResultSet                             a result set of descendant nodes
 	 */
 	public function descendants($ordering = 'ASC', $limit = 0, $children_only = FALSE, $leaves_only = FALSE) {
 		$builder = DB_ORM::select(get_class($this))
@@ -480,7 +480,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  left column will sorted either in ascending or
 	 *                                                  descending order
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_ResultSet                             the leaves under the current node
+	 * @return DB\ResultSet                             the leaves under the current node
 	 */
 	public function leaves($ordering = 'ASC', $limit = 0) {
 		return $this->descendants($ordering, $limit, FALSE, TRUE);
@@ -496,7 +496,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @see http://stackoverflow.com/questions/7661913/modified-preorder-tree-traversal-selecting-nodes-1-level-deep
 	 */
 	public function level() {
-		$record = DB_SQL::select(static::data_source(DB_DataSource::SLAVE_INSTANCE))
+		$record = DB_SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))
 			->column(DB_SQL::expr('COUNT(parent_id) - 1'), 'level')
 			->from(static::table())
 			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -576,7 +576,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$columns = array_keys($this->fields);
 
 		if ( ! empty($columns)) {
-			$builder = DB_SQL::update(static::data_source(DB_DataSource::MASTER_INSTANCE))
+			$builder = DB_SQL::update(static::data_source(DB\DataSource::MASTER_INSTANCE))
 				->table(static::table())
 				->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
 
@@ -619,7 +619,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  left column will sorted either in ascending or
 	 *                                                  descending order
 	 * @param boolean $self                             whether to include the current node
-	 * @return DB_ResultSet                             an array of sibling nodes
+	 * @return DB\ResultSet                             an array of sibling nodes
 	 */
 	public function siblings($ordering = 'ASC', $self = FALSE) {
 		if ( ! $this->root()) {
@@ -635,7 +635,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			return $builder->query();
 		}
 
-		$results = new DB_ResultSet(array());
+		$results = new DB\ResultSet(array());
 
 		return $results;
 	}
@@ -683,7 +683,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB_ORM_MPTT                              the newly created root node
 	 **/
 	public static function add_root($scope, $name, Array $fields = NULL) {
-		$data_source = static::data_source(DB_DataSource::MASTER_INSTANCE);
+		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
 		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
@@ -738,7 +738,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 *                                                  left column will sorted either in ascending or
 	 *                                                  descending order
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_ResultSet                             a result set containing all nodes in the
+	 * @return DB\ResultSet                             a result set containing all nodes in the
 	 *                                                  specified tree's scope
 	 */
 	public static function full_tree($scope, $ordering = 'ASC', $limit = 0) {

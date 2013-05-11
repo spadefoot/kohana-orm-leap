@@ -123,7 +123,7 @@ abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
 	 *                                          specified path
 	 */
 	public static function config($path) {
-		return Kohana::$config->load($path);
+		return \Kohana::$config->load($path);
 	}
 
 	/**

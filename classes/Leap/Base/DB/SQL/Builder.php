@@ -86,10 +86,10 @@ abstract class Base_DB_SQL_Builder extends Core\Object implements DB_SQL_Stateme
 	 *
 	 * @access public
 	 * @static
-	 * @param DB_DataSource $data_source        the data source to be used
+	 * @param DB\DataSource $data_source        the data source to be used
 	 * @return DB_SQL_Builder                   a new instance of the calling class
 	 */
-	public static function factory(DB_DataSource $data_source) {
+	public static function factory(DB\DataSource $data_source) {
 		$class = get_called_class();
 		return new $class($data_source);
 	}

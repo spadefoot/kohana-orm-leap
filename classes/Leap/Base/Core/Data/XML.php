@@ -119,7 +119,7 @@ abstract class Base\Core\Data\XML extends \SimpleXMLElement {
 		}
 
 		if (class_exists('Kohana')) {
-			$modules = Kohana::modules();
+			$modules = \Kohana::modules();
 			foreach($modules as $module) {
 				$uri = $module . $file;
 				if (file_exists($uri)) {

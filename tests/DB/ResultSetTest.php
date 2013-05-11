@@ -18,7 +18,7 @@
  */
 
 /**
- * This class tests DB_ResultSet.
+ * This class tests DB\ResultSet.
  *
  * @package Leap
  * @category DB
@@ -26,7 +26,7 @@
  *
  * @group spadefoot.leap
  */
-class DB_ResultSetTest extends Unittest_Testcase {
+class DB\ResultSetTest extends Unittest_Testcase {
 
 	/**
 	 * This function provides the test data for test_constructor().
@@ -41,7 +41,7 @@ class DB_ResultSetTest extends Unittest_Testcase {
 	}
 
 	/**
-	 * This function tests DB_ResultSet::__construct().
+	 * This function tests DB\ResultSet::__construct().
 	 *
 	 * @access public
 	 * @param mixed $test_data                          the test data
@@ -51,7 +51,7 @@ class DB_ResultSetTest extends Unittest_Testcase {
 	public function test_constructor($test_data) {
 		// Initialization
 		$test_size = count($test_data);
-		$results = new DB_ResultSet($test_data, 'array');
+		$results = new DB\ResultSet($test_data, 'array');
 		// Assertions
 		$this->assertInternalType('array', $results->as_array(), 'Failed when testing as_array().');
 		$this->assertCount($test_size, $results, 'Failed when testing count().');

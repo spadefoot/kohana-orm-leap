@@ -25,4 +25,4 @@
  * @category Auth
  * @version 2012-03-27
  */
-class Auth_Leap extends Base_Auth_Leap {}
+class DB\Auth extends Base\DB\Auth {}

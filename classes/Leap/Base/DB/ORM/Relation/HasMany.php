@@ -78,7 +78,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 	 *
 	 * @access protected
 	 * @override
-	 * @return DB_ResultSet                         the corresponding model(s)
+	 * @return DB\ResultSet                         the corresponding model(s)
 	 */
 	protected function load() {
 		$parent_key = $this->metadata['parent_key'];
@@ -86,13 +86,13 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		$child_model = $this->metadata['child_model'];
 		$child_table = $child_model::table();
 		$child_key = $this->metadata['child_key'];
-		$child_source = $child_model::data_source(DB_DataSource::SLAVE_INSTANCE);
+		$child_source = $child_model::data_source(DB\DataSource::SLAVE_INSTANCE);
 
 		if (isset($this->metadata['through_model']) AND isset($this->metadata['through_keys'])) {
 			$through_model = $this->metadata['through_model'];
 			$through_table = $through_model::table();
 			$through_keys = $this->metadata['through_keys'];
-			$through_source = $through_model::data_source(DB_DataSource::SLAVE_INSTANCE);
+			$through_source = $through_model::data_source(DB\DataSource::SLAVE_INSTANCE);
 
 			if ($through_source != $child_source) {
 				$builder = DB_SQL::select($through_source)

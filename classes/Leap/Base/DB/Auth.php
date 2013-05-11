@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_Auth_Leap extends Auth {
+abstract class Base\DB\Auth extends \Auth {
 
 	/**
 	 * This variable stores a list column aliases and their respective database

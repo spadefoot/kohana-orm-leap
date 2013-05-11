@@ -18,7 +18,7 @@
  */
 
 /**
- * This class tests DB_ToolKit.
+ * This class tests DB\ToolKit.
  *
  * @package Leap
  * @category DB
@@ -26,7 +26,7 @@
  *
  * @group spadefoot.leap
  */
-class DB_ToolKitTest extends Unittest_Testcase {
+class DB\ToolKitTest extends Unittest_Testcase {
 
 	/**
 	 * This function provides the test data for test_regex().
@@ -70,7 +70,7 @@ class DB_ToolKitTest extends Unittest_Testcase {
 	}
 
 	/**
-	 * This function tests DB_ToolKit::regex().
+	 * This function tests DB\ToolKit::regex().
 	 *
 	 * @access public
 	 * @param mixed $test_data                          the test data
@@ -79,11 +79,11 @@ class DB_ToolKitTest extends Unittest_Testcase {
 	 * @dataProvider provider_regex
 	 */
 	public function test_regex($test_data, $expected) {
-		$this->assertSame($expected, DB_ToolKit::regex($test_data[0], $test_data[1]), 'Failed when testing regex().');
+		$this->assertSame($expected, DB\ToolKit::regex($test_data[0], $test_data[1]), 'Failed when testing regex().');
 	}
 
 	/**
-	 * This function tests DB_ToolKit::slug().
+	 * This function tests DB\ToolKit::slug().
 	 *
 	 * @access public
 	 * @param mixed $test_data                          the test data
@@ -92,7 +92,7 @@ class DB_ToolKitTest extends Unittest_Testcase {
 	 * @dataProvider provider_slug
 	 */
 	public function test_slug($test_data, $expected) {
-		$this->assertSame($expected, DB_ToolKit::slug($test_data), 'Failed when testing slug().');
+		$this->assertSame($expected, DB\ToolKit::slug($test_data), 'Failed when testing slug().');
 	}
 
 }

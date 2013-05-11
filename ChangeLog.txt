@@ -87,8 +87,8 @@ Change Log for LEAP ORM
 
 2012-05-10
 * Added a new class to handle binary data.
-* Renamed Base_DB_DataSource::setup($settings, $id = NULL) to Base_DB_DataSource::init($settings, $id = NULL).
-* Made "dialect" and "type" synonymous in Base_DB_DataSource so that "type" can be defined differently (e.g. PDO) in the connection config for Kohana's ORM.
+* Renamed Base\DB\DataSource::setup($settings, $id = NULL) to Base\DB\DataSource::init($settings, $id = NULL).
+* Made "dialect" and "type" synonymous in Base\DB\DataSource so that "type" can be defined differently (e.g. PDO) in the connection config for Kohana's ORM.
 * Fixed a bug with Leap's Auth login/logout when User Tokens were manually removed from database, merging CubedEye's pull request (Issue #35).
 
 2012-04-09
@@ -101,7 +101,7 @@ Change Log for LEAP ORM
 * Simplified error handling in database connection classes.
 * Added a connection check in quote methods and get_last_insert_id methods.
 * Added the ability to set a database's character set pre matesko's request (Issue #24).
-* Changed the default value of Base_DB_DataSource::$charset.
+* Changed the default value of Base\DB\DataSource::$charset.
 
 2012-04-07
 * Added new table schema files for PostgreSQL and SQLite.
@@ -184,7 +184,7 @@ Change Log for LEAP ORM
 
 2012-01-18
 * Added support to use just 'database' key without a host in the Oracle connection configuration settings per ekarlso's request (Issue #12).
-* The host property in the Base_DB_DataSource now defaults to an empty string rather than to localhost per ekarlso's request (Issue #12).
+* The host property in the Base\DB\DataSource now defaults to an empty string rather than to localhost per ekarlso's request (Issue #12).
 * Reworked the Base_DB_SQL_Expression class.
 * Added XML config files for MySQL and SQLite so that the Base_DB_SQL_Tokenizer can detect keywords.
 * Modified the way XML files are loaded so that XML can be stored in more places than just in an xml folder.
@@ -206,7 +206,7 @@ Change Log for LEAP ORM
 2012-01-06
 * Major rewrite of SQL tokenizer.
 * Fixed logic for Base_DB_Drizzle_Connection_Standard::get_last_insert_id().
-* Made change to logic in Base_DB_ResultSet::seek($position).
+* Made change to logic in Base\DB\ResultSet::seek($position).
 * Fixed Base_DB_SQL_Operator::UNION_ALL.
 * Minor edits to inline documentation.
 
@@ -228,7 +228,7 @@ Change Log for LEAP ORM
 2011-12-30
 * Change metadata 'type' to 'class' in Base_DB_ORM_Field_Adaptor_Object.
 * Remove deprecated metadata 'candidate_key' and 'foreign_key' in relation classes.
-* Added a new unit test for DB_ResultSet.
+* Added a new unit test for DB\ResultSet.
 * Made some minor edits to the inline documentation.
 
 2011-12-26
@@ -236,7 +236,7 @@ Change Log for LEAP ORM
 * Updated unit tests and added a new unit test.
 
 2011-12-22
-* Refactored Base_DB_DataSource and DB_DataSourceTest.
+* Refactored Base\DB\DataSource and DB\DataSourceTest.
 
 2011-12-18
 * Refactored order_by functions in builder/proxy classes.
@@ -256,7 +256,7 @@ Change Log for LEAP ORM
 * Added a missing instance variable: $model.
 * Alphabetized some instance variables in proxy classes.
 * Made it possible to pass a primary_key to DB_ORM::model without wrapping it in an array.
-* Fixed some variables in DB_DataSourceTest.
+* Fixed some variables in DB\DataSourceTest.
 * Changed query($limit = NULL) to query($type = 'array') in Base_DB_SQL_Select_Proxy.
 
 2011-12-13
@@ -264,8 +264,8 @@ Change Log for LEAP ORM
 * Modified the constructor to all builder classes.
 * Changed the 'profiling' setting to FALSE in config/database.php.
 * Added query caching to all connections.
-* Changed functions in Base_DB_DataSource to properties.
-* Changed fetch_all() to as_array() in Base_DB_ResultSet.
+* Changed functions in Base\DB\DataSource to properties.
+* Changed fetch_all() to as_array() in Base\DB\ResultSet.
 
 2011-12-12
 * Addressed the loading of field schema over and over again with class serialization in DB_Connection_Driver per Crystal's request (Issue #1).
@@ -273,10 +273,10 @@ Change Log for LEAP ORM
 * Changed $cached_types to $cached_objects in Base_DB_Connection_Driver.
 
 2011-12-11
-* Removed is_null() in Base_DB_DataSource::__construct().
-* Added unit test for DB_DataSource.
+* Removed is_null() in Base\DB\DataSource::__construct().
+* Added unit test for DB\DataSource.
 * Added unit test for DB_Toolkit.
-* Added logic to increment/decrement size in Base_DB_ResultSet::offsetSet() and Base_DB_ResultSet::offsetUnset().
+* Added logic to increment/decrement size in Base\DB\ResultSet::offsetSet() and Base\DB\ResultSet::offsetUnset().
 * Standardized some code in accordance with Kohana's Conventions and Coding Style.
 	- Replaced all { } with {}.
 	- Standardized type casts.
@@ -293,9 +293,9 @@ Change Log for LEAP ORM
 * Alphabetized some class functions.
 * Redefined Base_DB_Connection_Pool::get_connection() to allow for all config types.
 * Renamed $name to $id in Base_DB_Connection_Pool.
-* Renamed get_name() to get_id() in Base_DB_DataSource.
+* Renamed get_name() to get_id() in Base\DB\DataSource.
 * Removed config/leap.php and added driver declaration in config/database.php.
-* Added Base_DB_DataSource::get_driver().
+* Added Base\DB\DataSource::get_driver().
 * Removed translator files.
 * Updated inline documentation.
 
@@ -304,5 +304,5 @@ Change Log for LEAP ORM
 * Fixed "_GREATER_THAN_OR_EQUAL_TO_" constant.
 * Added an extra parameter to DB_ORM::model.
 * Improved algorithm in DB_ORM_Model::load.
-* Added DB_ResultSet::get.
+* Added DB\ResultSet::get.
 * Expanded the functionality of DB_SQL_Select_Builder::group_by.

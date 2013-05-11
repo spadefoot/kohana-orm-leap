@@ -93,7 +93,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @override
 	 * @param string $sql						    the SQL statement
 	 * @param string $type						    the return type to be used
-	 * @return DB_ResultSet                         the result set
+	 * @return DB\ResultSet                         the result set
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {

@@ -51,11 +51,10 @@ abstract class Base\Throwable\InvalidArgument\Exception extends \InvalidArgument
 	 *
 	 * @access public
 	 * @override
-	 * @uses Kohana::exception_text
 	 * @return string                                the string for this object
 	 */
 	public function __toString() {
-		return Kohana::exception_text($this);
+		return \Kohana::exception_text($this);
 	}
 
 }

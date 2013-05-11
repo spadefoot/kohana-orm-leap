@@ -40,7 +40,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * This variable stores the connection configurations.
 	 *
 	 * @access protected
-	 * @var DB_DataSource
+	 * @var DB\DataSource
 	 */
 	protected $data_source;
 
@@ -72,9 +72,9 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * This function initializes the class with the specified data source.
 	 *
 	 * @access public
-	 * @param DB_DataSource $data_source            the data source to be used
+	 * @param DB\DataSource $data_source            the data source to be used
 	 */
-	public function __construct(DB_DataSource $data_source) {
+	public function __construct(DB\DataSource $data_source) {
 		$this->cache_key = NULL;
 		$this->data_source = $data_source;
 		$this->lock = DB_SQL_Lock_Builder::factory($this);
@@ -129,20 +129,20 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * @access protected
 	 * @param string $sql                           the SQL statement being queried
 	 * @param string $type                          the return type that is being used
-	 * @param DB_ResultSet $results                 the result set
-	 * @return DB_ResultSet                         the result set for the specified
+	 * @param DB\ResultSet $results                 the result set
+	 * @return DB\ResultSet                         the result set for the specified
 	 */
 	protected function cache($sql, $type, $results = NULL) {
 		if ($this->data_source->cache->enabled) {
 			if ($results !== NULL) {
 				if ($this->data_source->cache->lifetime > 0) {
-					Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
+					\Kohana::cache($this->cache_key, $results, $this->data_source->cache->lifetime);
 				}
 				return $results;
 			}
 			else if ($this->data_source->cache->lifetime !== NULL) {
 				$this->cache_key = 'DB_Connection_Driver::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
-				$results = Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
+				$results = \Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
 				if (($results !== NULL) AND ! $this->data_source->cache->force) {
 					return $results;
 				}
@@ -232,7 +232,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * @access public
 	 * @param string $sql                           the SQL statement
 	 * @param string $type                          the return type to be used
-	 * @return DB_ResultSet                         the result set
+	 * @return DB\ResultSet                         the result set
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function query($sql, $type = 'array') {
@@ -245,7 +245,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 			return $result_set;
 		}
 		$reader = DB_SQL_DataReader::factory($this, $sql);
-		$result_set = $this->cache($sql, $type, new DB_ResultSet($reader, $type));
+		$result_set = $this->cache($sql, $type, new DB\ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;
 	}
@@ -328,7 +328,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * @return DB_Connection_Driver                 the database connection
 	 */
 	public static function factory($config = 'default') {
-		$data_source = DB_DataSource::instance($config);
+		$data_source = DB\DataSource::instance($config);
 		$driver = 'DB_' . $data_source->dialect . '_Connection_' . $data_source->driver;
 		$connection = new $driver($data_source);
 		return $connection;

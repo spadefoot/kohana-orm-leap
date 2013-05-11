@@ -117,7 +117,7 @@ abstract class Base_DB_SQL_Expression extends Core\Object {
 	 * @return string                               the compiled SQL expression
 	 */
 	public function value($object = NULL) {
-		if (is_string($object) OR is_array($object) OR ($object instanceof DB_DataSource)) {
+		if (is_string($object) OR is_array($object) OR ($object instanceof DB\DataSource)) {
 			$object = DB_SQL::precompiler($object);
 		}
 		$expr = $this->expr;

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Schema extends DB_Schema {
+abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array of default properties for the specified
@@ -89,7 +89,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 an array of fields within the specified
+	 * @return DB\ResultSet                 an array of fields within the specified
 	 *                                      table
 	 */
 	public function fields($table, $like = '') {
@@ -144,7 +144,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of indexes for the specified
+	 * @return DB\ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
@@ -198,7 +198,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database tables
+	 * @return DB\ResultSet                 a result set of database tables
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
@@ -241,7 +241,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of triggers for the specified
+	 * @return DB\ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
@@ -296,7 +296,7 @@ abstract class Base_DB_MsSQL_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database views
+	 * @return DB\ResultSet                 a result set of database views
 	 *
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */

@@ -166,7 +166,7 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 	 *                                              can be added
 	 */
 	public function get_connection($config = 'default', $new = FALSE) {
-		$data_source = DB_DataSource::instance($config);
+		$data_source = DB\DataSource::instance($config);
 		if (isset($this->pool[$data_source->id]) AND ! empty($this->pool[$data_source->id])) {
 			if ($new) {
 				foreach ($this->pool[$data_source->id] as $connection) {

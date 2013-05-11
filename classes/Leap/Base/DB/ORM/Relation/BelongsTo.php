@@ -69,7 +69,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 		$parent_model = $this->metadata['parent_model'];
 		$parent_table = $parent_model::table();
 		$parent_key = $this->metadata['parent_key'];
-		$parent_source = $parent_model::data_source(DB_DataSource::SLAVE_INSTANCE);
+		$parent_source = $parent_model::data_source(DB\DataSource::SLAVE_INSTANCE);
 
 		$child_key = $this->metadata['child_key'];
 

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Schema extends DB_Schema {
+abstract class Base_DB_Oracle_Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array which describes the properties
@@ -111,7 +111,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 an array of fields within the specified
+	 * @return DB\ResultSet                 an array of fields within the specified
 	 *                                      table
 	 *
 	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_2094.htm
@@ -226,7 +226,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of indexes for the specified
+	 * @return DB\ResultSet                 a result set of indexes for the specified
 	 *                                      table
 	 *
 	 * @see http://www.techonthenet.com/oracle/questions/find_pkeys.php
@@ -285,7 +285,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database tables
+	 * @return DB\ResultSet                 a result set of database tables
 	 *
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
 	 * @see http://stackoverflow.com/questions/205736/oracle-get-list-of-all-tables
@@ -328,7 +328,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @override
 	 * @param string $table                 the table to evaluated
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of triggers for the specified
+	 * @return DB\ResultSet                 a result set of triggers for the specified
 	 *                                      table
 	 *
 	 * @see http://docs.oracle.com/cd/B19306_01/server.102/b14237/statviews_2107.htm
@@ -374,7 +374,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * @access public
 	 * @override
 	 * @param string $like                  a like constraint on the query
-	 * @return DB_ResultSet                 a result set of database views
+	 * @return DB\ResultSet                 a result set of database views
 	 * 
 	 * @see http://infolab.stanford.edu/~ullman/fcdb/oracle/or-nonstandard.html
 	 * @see http://www.razorsql.com/articles/oracle_system_queries.html
