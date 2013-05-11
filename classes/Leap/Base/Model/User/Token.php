@@ -19,7 +19,7 @@
  */
 
 /**
- * This class represents a record in the "roles" table.
+ * This class represents a record in the "user_tokens" table.
  *
  * @package Leap
  * @category Model
@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_Model_Leap_Role extends DB_ORM_Model {
+abstract class Base\Model\User\Token extends DB_ORM_Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -43,23 +43,56 @@ abstract class Base_Model_Leap_Role extends DB_ORM_Model {
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'name' => new DB_ORM_Field_String($this, array(
-				'max_length' => 255,
+			'user_id' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+			'user_agent' => new DB_ORM_Field_String($this, array(
+				'max_length' => 40,
 				'nullable' => FALSE,
 			)),
-			'description' => new DB_ORM_Field_String($this, array(
-				'max_length' => 255,
+			'token' => new DB_ORM_Field_String($this, array(
+				'max_length' => 40,
 				'nullable' => FALSE,
+			)),
+			'type' => new DB_ORM_Field_String($this, array(
+				'max_length' => 100,
+				'nullable' => FALSE,
+			)),
+			'created' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
+			)),
+			'expires' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
+				'nullable' => FALSE,
+				'unsigned' => TRUE,
 			)),
 		);
 
 		$this->relations = array(
-			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
-				'child_key' => array('id'),
-				'child_model' => 'User_Role',
+			'user' => new DB_ORM_Relation_BelongsTo($this, array(
+				'child_key' => array('user_id'),
 				'parent_key' => array('id'),
-			)),	 
+				'parent_model' => 'User',
+			)),
 		);
+	}
+
+	/**
+	 * This function returns a new token.
+	 *
+	 * @access public
+	 * @return string                               a new token
+	 */
+	public function create_token() {
+		do {
+			$token = sha1(uniqid(\Text::random('alnum', 32), TRUE));
+		}
+		while(DB_SQL::select($this->data_source(DB_DataSource::SLAVE_INSTANCE))->from($this->table())->where('token', DB_SQL_Operator::_EQUAL_TO_, $token)->query()->is_loaded());
+		return $token;
 	}
 
 	/**
@@ -73,7 +106,7 @@ abstract class Base_Model_Leap_Role extends DB_ORM_Model {
 	 * @return string                               the data source name
 	 */
 	public static function data_source($instance = 0) {
-		return 'default';	
+		return 'default';
 	}
 
 	/**
@@ -89,6 +122,20 @@ abstract class Base_Model_Leap_Role extends DB_ORM_Model {
 	}
 
 	/**
+	 * This function saves the record matching using the primary key.
+	 *
+	 * @access public
+	 * @override
+	 * @param boolean $reload                       whether the model should be reloaded
+	 *                                              after the save is done
+	 * @param boolean $mode                         TRUE=save, FALSE=update, NULL=automatic
+	 */
+	public function save($reload = FALSE, $mode = NULL) {
+		$this->token = $this->create_token();
+		parent::save($reload, $mode);
+	}
+
+	/**
 	 * This function returns the database table's name.
 	 *
 	 * @access public
@@ -97,7 +144,7 @@ abstract class Base_Model_Leap_Role extends DB_ORM_Model {
 	 * @return string                               the database table's name
 	 */
 	public static function table() {
-		return 'roles';	
+		return 'user_tokens';
 	}
 
 }

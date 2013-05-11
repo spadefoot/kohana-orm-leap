@@ -25,4 +25,4 @@
  * @category Model
  * @version 2012-03-27
  */
-class Model_Leap_User_Role extends Base_Model_Leap_User_Role {}
+class Model\User\Role extends Base\Model\User\Role {}

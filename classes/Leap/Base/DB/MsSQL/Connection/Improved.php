@@ -177,7 +177,7 @@ abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Stand
 				return 0;
 			}
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}

@@ -221,7 +221,7 @@ abstract class Base_DB_ResultSet extends Core\Object implements \ArrayAccess, \C
 					return $value;
 				}
 			}
-			catch (Exception $ex) {}
+			catch (\Exception $ex) {}
 		}
 		else if (is_array($record) AND isset($record[$name])) {
 			return $record[$name];

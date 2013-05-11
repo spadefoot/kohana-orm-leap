@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_Session_Leap extends Session {
+abstract class Base\Web\HTTP\Session extends \Session {
 
 	/**
 	 * This variable stores a list column aliases and their respective database
@@ -64,7 +64,7 @@ abstract class Base_Session_Leap extends Session {
 	 * @access protected
 	 * @var string
 	 */
-	protected $_table = 'Session'; // Session Model
+	protected $_table = 'Model\\Session';
 
 	/**
 	 * This variable stores the old session id.
@@ -129,9 +129,9 @@ abstract class Base_Session_Leap extends Session {
 
 		try {
 			// Delete the cookie
-			Cookie::delete($this->_name);
+			\Cookie::delete($this->_name);
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			// An error occurred, the session has not been deleted
 			return FALSE;
 		}
@@ -147,7 +147,7 @@ abstract class Base_Session_Leap extends Session {
 	protected function _gc() {
 		$expires = ($this->_lifetime)
 			? $this->_lifetime	// Expire sessions when their lifetime is up
-			: Date::MONTH; 		// Expire sessions after one month
+			: \Date::MONTH; 		// Expire sessions after one month
 
 		// Delete all sessions that have expired
 		DB_ORM::delete($this->_table)
@@ -175,7 +175,7 @@ abstract class Base_Session_Leap extends Session {
 	 * @return string                           the raw session data string
 	 */
 	protected function _read($id = NULL) {
-		if ($id OR ($id = Cookie::get($this->_name))) {
+		if ($id OR ($id = \Cookie::get($this->_name))) {
 
 			try {
 				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
@@ -185,7 +185,7 @@ abstract class Base_Session_Leap extends Session {
 					->fetch(0)
 					->contents;
 			}
-			catch (ErrorException $ex) {
+			catch (\ErrorException $ex) {
 				$contents = FALSE;
 			}
 
@@ -274,7 +274,7 @@ abstract class Base_Session_Leap extends Session {
 		$this->_update_id = $this->_session_id;
 
 		// Update the cookie with the new session id
-		Cookie::set($this->_name, $this->_session_id, $this->_lifetime);
+		\Cookie::set($this->_name, $this->_session_id, $this->_lifetime);
 
 		return TRUE;
 	}

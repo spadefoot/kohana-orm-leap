@@ -19,10 +19,10 @@
  */
 
 /**
- * This class represents a record in the "roles" table.
+ * This class represents a record in the "user_tokens" table.
  *
  * @package Leap
  * @category Model
  * @version 2012-03-27
  */
-class Model_Leap_Role extends Base_Model_Leap_Role {}
+class Model\User\Token extends Base\Model\User\Token {}

@@ -24,4 +24,4 @@
  * @category System
  * @version 2013-02-05
  */
-class GC extends Base_GC {}
+class System\GC extends Base\System\GC {}

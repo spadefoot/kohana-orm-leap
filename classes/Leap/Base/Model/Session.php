@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_Model_Leap_Session extends DB_ORM_Model {
+abstract class Base\Model\Session extends DB_ORM_Model {
 
 	/**
 	 * This constructor instantiates this class.

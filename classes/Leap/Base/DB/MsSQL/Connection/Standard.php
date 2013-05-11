@@ -146,7 +146,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 				return 0;
 			}
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
@@ -175,7 +175,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB_SQL_Connection_Stand
 					? mssql_pconnect($connection_string, $username, $password)
 					: mssql_connect($connection_string, $username, $password, TRUE);
 			}
-			catch (ErrorException $ex) {
+			catch (\ErrorException $ex) {
 				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
 			$database = @mssql_select_db($this->data_source->database, $this->resource);

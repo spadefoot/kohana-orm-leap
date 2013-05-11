@@ -19,10 +19,10 @@
  */
 
 /**
- * This class represents a record in the "users" table.
+ * This class represents a record in the "roles" table.
  *
  * @package Leap
  * @category Model
  * @version 2012-03-27
  */
-class Model_Leap_User extends Base_Model_Leap_User {}
+class Model\Role extends Base\Model\Role {}

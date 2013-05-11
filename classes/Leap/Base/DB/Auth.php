@@ -123,7 +123,7 @@ abstract class Base_Auth_Leap extends Auth {
 	 * @return mixed                            either a user object or false
 	 */
 	public function auto_login() {
-		if ($token = Cookie::get('authautologin')) {
+		if ($token = \Cookie::get('authautologin')) {
 			$token = DB_ORM::select($this->models['token'])
 				->where($this->columns['token'], DB_SQL_Operator::_EQUAL_TO_, $token)
 				->limit(1)
@@ -136,7 +136,7 @@ abstract class Base_Auth_Leap extends Auth {
 					$token->save();
 
 					// Set the new token
-					Cookie::set('authautologin', $token->token, $token->expires - time());
+					\Cookie::set('authautologin', $token->token, $token->expires - time());
 
 					// Complete the login with the found data
 					$this->complete_login($token->user);
@@ -245,7 +245,7 @@ abstract class Base_Auth_Leap extends Auth {
 	 *
 	 * @access protected
 	 * @param string $user                      the user's name
-	 * @return Model_Leap_User                  the user's object
+	 * @return Model\User                       the user's object
 	 */
 	protected function get_user_by_login($user) {
 		$builder = DB_ORM::select($this->models['user']);
@@ -376,7 +376,7 @@ abstract class Base_Auth_Leap extends Auth {
 						$token->user_agent = sha1(Request::$user_agent);
 						$token->save();
 
-						Cookie::set('authautologin', $token->token, $this->_config['lifetime']);
+						\Cookie::set('authautologin', $token->token, $this->_config['lifetime']);
 					}
 
 					// Finish the login
@@ -404,9 +404,9 @@ abstract class Base_Auth_Leap extends Auth {
 		// Set by force_login()
 		$this->_session->delete('auth_forced');
 
-		if ($token = Cookie::get('authautologin')) {
+		if ($token = \Cookie::get('authautologin')) {
 			// Delete the autologin cookie to prevent re-login
-			Cookie::delete('authautologin');
+			\Cookie::delete('authautologin');
 
 			// Clear the autologin token from the database
 			$token = DB_ORM::select($this->models['token'])

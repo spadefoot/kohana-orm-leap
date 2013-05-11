@@ -59,7 +59,7 @@ abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 			}
 			return (int) $this->query('SELECT SCOPE_IDENTITY() AS [id];')->get('id', 0);
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}

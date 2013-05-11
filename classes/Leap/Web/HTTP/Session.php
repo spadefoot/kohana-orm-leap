@@ -25,4 +25,4 @@
  * @category Session
  * @version 2012-03-27
  */
-class Session_Leap extends Base_Session_Leap {}
+class Web\HTTP\Session extends Base\Web\HTTP\Session {}

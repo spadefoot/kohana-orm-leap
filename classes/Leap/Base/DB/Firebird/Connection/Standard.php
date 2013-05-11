@@ -170,7 +170,7 @@ abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_St
 				return 0;
 			}
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception(preg_replace('/Failed to query SQL statement./', 'Failed to fetch the last insert id.', $ex->getMessage()));
 		}
 	}

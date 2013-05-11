@@ -19,7 +19,7 @@
  */
 
 /**
- * This class represents a record in the "user_roles" table.
+ * This class represents a record in the "roles" table.
  *
  * @package Leap
  * @category Model
@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
+abstract class Base\Model\Role extends DB_ORM_Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -38,29 +38,27 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'user_id' => new DB_ORM_Field_Integer($this, array(
-				'max_length' => 10,
+			'id' => new DB_ORM_Field_Integer($this, array(
+				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'role_id' => new DB_ORM_Field_Integer($this, array(
-				'max_length' => 10,
+			'name' => new DB_ORM_Field_String($this, array(
+				'max_length' => 255,
 				'nullable' => FALSE,
-				'unsigned' => TRUE,
+			)),
+			'description' => new DB_ORM_Field_String($this, array(
+				'max_length' => 255,
+				'nullable' => FALSE,
 			)),
 		);
 
 		$this->relations = array(
-			'user' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('user_id'),
+			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
+				'child_key' => array('id'),
+				'child_model' => 'User_Role',
 				'parent_key' => array('id'),
-				'parent_model' => 'User',
-			)),
-			'role' => new DB_ORM_Relation_BelongsTo($this, array(
-				'child_key' => array('role_id'),
-				'parent_key' => array('id'),
-				'parent_model' => 'Role',			
-			)),
+			)),	 
 		);
 	}
 
@@ -75,19 +73,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * @return string                               the data source name
 	 */
 	public static function data_source($instance = 0) {
-		return 'default';
-	}
-
-	/**
-	 * This function returns whether the primary key auto increments.
-	 *
-	 * @access public
-	 * @override
-	 * @static
-	 * @return boolean                              whether the primary key auto increments
-	 */
-	public static function is_auto_incremented() {
-		return FALSE;	
+		return 'default';	
 	}
 
 	/**
@@ -99,7 +85,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * @return array                                the primary key
 	 */
 	public static function primary_key() {
-		return array('user_id', 'role_id');	
+		return array('id');	
 	}
 
 	/**
@@ -111,7 +97,7 @@ abstract class Base_Model_Leap_User_Role extends DB_ORM_Model {
 	 * @return string                               the database table's name
 	 */
 	public static function table() {
-		return 'user_roles';
+		return 'roles';	
 	}
 
 }

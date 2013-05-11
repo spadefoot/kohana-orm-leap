@@ -25,4 +25,4 @@
  * @category Model
  * @version 2012-03-27
  */
-class Model_Leap_Session extends Base_Model_Leap_Session {}
+class Model\Session extends Base\Model\Session {}

@@ -259,7 +259,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 			unset($this->relations);
 
 			if ($disposing) {
-				GC::collect();
+				System\GC::collect();
 			}
 
 			$this->disposed = TRUE;

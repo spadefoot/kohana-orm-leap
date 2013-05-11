@@ -58,7 +58,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->resource->beginTransaction();
 			$this->sql = 'BEGIN TRANSACTION;';
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to begin SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
@@ -92,7 +92,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->resource->commit();
 			$this->sql = 'COMMIT;';
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to commit SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
@@ -146,7 +146,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			}
 			return $this->resource->lastInsertId();
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to fetch the last insert id. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
@@ -206,7 +206,7 @@ abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
 			$this->resource->rollBack();
 			$this->sql = 'ROLLBACK;';
 		}
-		catch (Exception $ex) {
+		catch (\Exception $ex) {
 			throw new Throwable\SQL\Exception('Message: Failed to rollback SQL transaction. Reason: :reason', array(':reason' => $ex->getMessage()));
 		}
 	}
