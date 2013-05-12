@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct script access.');
+<?php
 
 /**
  * Copyright © 2011–2013 Spadefoot Team.
@@ -17,11 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class manages garbage collection.
- *
- * @package Leap
- * @category System
- * @version 2013-02-05
- */
-class System\GC extends Base\System\GC {}
+namespace Leap\System {
+
+	use \Leap\Base;
+
+	/**
+	 * This class manages garbage collection.
+	 *
+	 * @package Leap
+	 * @category GC
+	 * @version 2013-02-05
+	 */
+	class GC extends Base\System\GC {}
+
+}

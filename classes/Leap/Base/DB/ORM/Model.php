@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct script access.');
+<?php
 
 /**
  * Copyright © 2011–2013 Spadefoot Team.
@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable {
+abstract class Base\DB\ORM\Model extends Core\Object implements System\GC\IDisposable {
 
 	/**
 	 * This variable stores the record's adaptors.

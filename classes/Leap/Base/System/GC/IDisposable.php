@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct script access.');
+<?php
 
 /**
  * Copyright © 2011–2013 Spadefoot Team.
@@ -17,29 +17,33 @@
  * limitations under the License.
  */
 
-/**
- * This interface provides the contract for a class representing a disposable object.
- *
- * @package Leap
- * @category Core
- * @version 2013-02-05
- *
- * @see http://msdn.microsoft.com/en-us/library/system.idisposable.aspx
- * @see http://www.codeproject.com/Articles/15360/Implementing-IDisposable-and-the-Dispose-Pattern-P
- */
-interface Base_Core_IDisposable {
+namespace Leap\Base\System\GC {
 
 	/**
-	 * This function assists with freeing, releasing, and resetting unmanaged
-	 * resources.
+	 * This interface provides the contract for a class representing a disposable object.
 	 *
-	 * @access public
-	 * @param boolean $disposing                    whether managed resources can be disposed
-	 *                                              in addition to unmanaged resources
+	 * @package Leap
+	 * @category GC
+	 * @version 2013-02-05
 	 *
-	 * @see http://paul-m-jones.com/archives/262
-	 * @see http://www.alexatnet.com/articles/optimize-php-memory-usage-eliminate-circular-references
+	 * @see http://msdn.microsoft.com/en-us/library/system.idisposable.aspx
+	 * @see http://www.codeproject.com/Articles/15360/Implementing-IDisposable-and-the-Dispose-Pattern-P
 	 */
-	public function dispose($disposing = TRUE);
+	interface IDisposable {
+
+		/**
+		 * This function assists with freeing, releasing, and resetting unmanaged
+		 * resources.
+		 *
+		 * @access public
+		 * @param boolean $disposing                    whether managed resources can be disposed
+		 *                                              in addition to unmanaged resources
+		 *
+		 * @see http://paul-m-jones.com/archives/262
+		 * @see http://www.alexatnet.com/articles/optimize-php-memory-usage-eliminate-circular-references
+		 */
+		public function dispose($disposing = TRUE);
+
+	}
 
 }

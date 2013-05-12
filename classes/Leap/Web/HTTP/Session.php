@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct script access.');
+<?php
 
 /**
  * Copyright © 2011–2013 Spadefoot Team.
@@ -18,11 +18,17 @@
  * limitations under the License.
  */
 
-/**
- * This class represents a session.
- *
- * @package Leap
- * @category Session
- * @version 2012-03-27
- */
-class Web\HTTP\Session extends Base\Web\HTTP\Session {}
+namespace Leap\Web\HTTP {
+
+	use \Leap\Base;
+
+	/**
+	 * This class represents a session.
+	 *
+	 * @package Leap
+	 * @category Session
+	 * @version 2012-03-27
+	 */
+	class Session extends Base\Web\HTTP\Session {}
+
+}

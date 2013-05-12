@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct script access.');
+<?php
 
 /**
  * Copyright © 2011–2013 Spadefoot Team.
@@ -17,11 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This interface provides the contract for a class representing a disposable object.
- *
- * @package Leap
- * @category Core
- * @version 2013-02-05
- */
-interface Core_IDisposable extends Base_Core_IDisposable {}
+namespace System\GC {
+
+	use Base;
+
+	/**
+	 * This interface provides the contract for a class representing a disposable object.
+	 *
+	 * @package Leap
+	 * @category GC
+	 * @version 2013-02-05
+	 */
+	interface IDisposable extends Base\System\GC\IDisposable {}
+
+}
