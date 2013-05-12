@@ -26,21 +26,21 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
+abstract class Base\DB\ORM\Relation\BelongsTo extends DB\ORM\Relation {
 
 	/**
 	 * This constructor initializes the class.
 	 *
 	 * @access public
 	 * @override
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the relation's metadata
 	 */
-	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+	public function __construct(DB\ORM\Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'belongs_to');
 
 		// the parent model is the referenced table
-		$parent_model = DB_ORM_Model::model_name($metadata['parent_model']);
+		$parent_model = DB\ORM\Model::model_name($metadata['parent_model']);
 
 		// Get parent model's name into variable, otherways a late static binding code throws a
 		// syntax error when used like this: $this->metadata['parent_model']::primary_key()
@@ -63,7 +63,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 	 *
 	 * @access protected
 	 * @override
-	 * @return DB_ORM_Model							the corresponding model
+	 * @return DB\ORM\Model							the corresponding model
 	 */
 	protected function load() {
 		$parent_model = $this->metadata['parent_model'];

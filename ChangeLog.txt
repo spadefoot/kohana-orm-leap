@@ -1,7 +1,7 @@
 Change Log for LEAP ORM
 
 2013-01-28
-* Changed Base_DB_ORM_Model::data_source() to Base_DB_ORM_Model::data_source($instance = 0).
+* Changed Base\DB\ORM\Model::data_source() to Base\DB\ORM\Model::data_source($instance = 0).
 * Changed all instance variables $source to $data_source.
 
 2013-01-01
@@ -29,7 +29,7 @@ Change Log for LEAP ORM
 
 2012-10-15
 * Adding new Core\BitField class.
-* Redid the Base_DB_ORM_Field_Bit class.
+* Redid the Base\DB\ORM\Field\Bit class.
 * Changing Core\Data::BYTE_DATA back to Core\Data::BINARY_DATA.
 * Added the ability to format strings in Base\Core\Data.
 * Minor inline documentation changes.
@@ -45,11 +45,11 @@ Change Log for LEAP ORM
 * Replaced 'self' keywords, get_called_class(), and call_user_func() with PHP 5.3+ equivalents.
 * Added some new UOM conversions to config.
 * Replace && and || with AND and OR, respectfully.
-* Added adaptors and aliases to Base_DB_ORM_Model::as_array().
-* Added create and update methods to Base_DB_ORM_Model.
+* Added adaptors and aliases to Base\DB\ORM\Model::as_array().
+* Added create and update methods to Base\DB\ORM\Model.
 * Replace spl_object_hash() with Core\Object::__hashCode().
-* Base_DB_ORM_Field_Blob now uses the Data class.
-* Renamed DB_ORM_Field_Adaptor_Array to DB_ORM_Field_Adaptor_List.
+* Base\DB\ORM\Field\Blob now uses the Data class.
+* Renamed DB\ORM\Field\Adaptor\Array to DB\ORM\Field\Adaptor\List.
 * Renamed some variables.
 
 2012-08-14
@@ -77,8 +77,8 @@ Change Log for LEAP ORM
 * Changed how "type" property is handled in data source.
 
 2012-05-15
-* Fixed bug in Base_DB_ORM_Field_Decimal::validate().
-* Cleaned-up and improved Base_DB_ORM_Model::hash_code() (Issue #25 & #26).
+* Fixed bug in Base\DB\ORM\Field\Decimal::validate().
+* Cleaned-up and improved Base\DB\ORM\Model::hash_code() (Issue #25 & #26).
 * Minor improvements to Base\Core\Data class.
 * Updated inline documentation.
 
@@ -121,26 +121,26 @@ Change Log for LEAP ORM
 
 2012-03-31
 * Moved "auth_table.sql" to a new folder and renamed it to "auth-mysql.sql".
-* Fixed a bug with the method signature for Base_DB_ORM_Proxy::column().
+* Fixed a bug with the method signature for Base\DB\ORM\Proxy::column().
 * Commented class methods in all auth classes.
 
 2012-03-27
 * Merged pull request from CubedEye (Issues #10 & #27)
 
 2012-03-22
-* Added new Base_DB_ORM_Model::is_saved() method.
+* Added new Base\DB\ORM\Model::is_saved() method.
 
 2012-03-08
-* Fixed a bug in Base_DB_ORM_Model::hash_code() per matesko's request (Issue #25).
-* Fixed a bug in Base_DB_ORM_Model::load() per matesko's request (Issue #25).
+* Fixed a bug in Base\DB\ORM\Model::hash_code() per matesko's request (Issue #25).
+* Fixed a bug in Base\DB\ORM\Model::load() per matesko's request (Issue #25).
 
 2012-03-05
 * Models can now generate HTML form labels and controls using field data.
 
 2012-02-22
-* Added all function to Base\DB\SQL\Select\Builder, Base\DB\SQL\Select\Proxy, and Base_DB_ORM_Select_Proxy.
+* Added all function to Base\DB\SQL\Select\Builder, Base\DB\SQL\Select\Proxy, and Base\DB\ORM\Select\Proxy.
 * Added prepare_wildcard($expr) to expression classes.
-* DB_ORM now adds table prefix to wildcard to avoid problems when joining.
+* DB\ORM now adds table prefix to wildcard to avoid problems when joining.
 * Updated inline documentation.
 
 2012-02-10
@@ -148,7 +148,7 @@ Change Log for LEAP ORM
 * Updated some inline documentation.
 
 2012-02-09
-* Fixed the missing parentheses in Base_DB_ORM_Field_Double.
+* Fixed the missing parentheses in Base\DB\ORM\Field\Double.
 * Redid the quote function in connection classes.
 
 2012-02-07
@@ -226,7 +226,7 @@ Change Log for LEAP ORM
 * Updated inline documentation.
 
 2011-12-30
-* Change metadata 'type' to 'class' in Base_DB_ORM_Field_Adaptor_Object.
+* Change metadata 'type' to 'class' in Base\DB\ORM\Field\Adaptor\Object.
 * Remove deprecated metadata 'candidate_key' and 'foreign_key' in relation classes.
 * Added a new unit test for DB\ResultSet.
 * Made some minor edits to the inline documentation.
@@ -248,14 +248,14 @@ Change Log for LEAP ORM
 * Minor edits to __get and __set in adaptor classes.
 * Added 3 new adaptor classes: number, object, and uom.
 * Added a new UOM config for adaptor.
-* Removed an unneeded property in Base_DB_ORM_Field.
-* Moved Base_DB_ORM_Alias to Base_DB_ORM_Field_Alias and DB_ORM_Alias to DB_ORM_Field_Alias.
-* Modified how options are handled in Base_DB_ORM_Relation_HasMany.
+* Removed an unneeded property in Base\DB\ORM\Field.
+* Moved Base\DB\ORM\Alias to Base\DB\ORM\Field\Alias and DB\ORM\Alias to DB\ORM\Field\Alias.
+* Modified how options are handled in Base\DB\ORM\Relation\HasMany.
 
 2011-12-14
 * Added a missing instance variable: $model.
 * Alphabetized some instance variables in proxy classes.
-* Made it possible to pass a primary_key to DB_ORM::model without wrapping it in an array.
+* Made it possible to pass a primary_key to DB\ORM::model without wrapping it in an array.
 * Fixed some variables in DB\DataSourceTest.
 * Changed query($limit = NULL) to query($type = 'array') in Base\DB\SQL\Select\Proxy.
 
@@ -302,7 +302,7 @@ Change Log for LEAP ORM
 2011-12-08
 * Added a field adaptor for XML data.
 * Fixed "_GREATER_THAN_OR_EQUAL_TO_" constant.
-* Added an extra parameter to DB_ORM::model.
-* Improved algorithm in DB_ORM_Model::load.
+* Added an extra parameter to DB\ORM::model.
+* Improved algorithm in DB\ORM\Model::load.
 * Added DB\ResultSet::get.
 * Expanded the functionality of DB\SQL\Select\Builder::group_by.

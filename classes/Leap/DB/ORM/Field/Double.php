@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2012-10-15
  */
-class DB_ORM_Field_Double extends Base_DB_ORM_Field_Double {}
+class DB\ORM\Field\Double extends Base\DB\ORM\Field\Double {}

@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2011-12-08
  */
-class DB_ORM_Field_Adaptor_XML extends Base_DB_ORM_Field_Adaptor_XML {}
+class DB\ORM\Field\Adaptor\XML extends Base\DB\ORM\Field\Adaptor\XML {}

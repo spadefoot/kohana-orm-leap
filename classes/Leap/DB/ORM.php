@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2012-05-20
  */
-class DB_ORM extends Base_DB_ORM {}
+class DB\ORM extends Base\DB\ORM {}

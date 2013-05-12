@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base\Model\User\Role extends DB_ORM_Model {
+abstract class Base\Model\User\Role extends DB\ORM\Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -38,12 +38,12 @@ abstract class Base\Model\User\Role extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'user_id' => new DB_ORM_Field_Integer($this, array(
+			'user_id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 10,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'role_id' => new DB_ORM_Field_Integer($this, array(
+			'role_id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 10,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
@@ -51,12 +51,12 @@ abstract class Base\Model\User\Role extends DB_ORM_Model {
 		);
 
 		$this->relations = array(
-			'user' => new DB_ORM_Relation_BelongsTo($this, array(
+			'user' => new DB\ORM\Relation\BelongsTo($this, array(
 				'child_key' => array('user_id'),
 				'parent_key' => array('id'),
 				'parent_model' => 'User',
 			)),
-			'role' => new DB_ORM_Relation_BelongsTo($this, array(
+			'role' => new DB\ORM\Relation\BelongsTo($this, array(
 				'child_key' => array('role_id'),
 				'parent_key' => array('id'),
 				'parent_model' => 'Role',			

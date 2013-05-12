@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\Statement {
+abstract class Base\DB\ORM\Update\Proxy extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
@@ -48,7 +48,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 * This variable stores an instance of the ORM builder extension class.
 	 *
 	 * @access protected
-	 * @var DB_ORM_Builder
+	 * @var DB\ORM\Builder
 	 */
 	protected $extension;
 
@@ -68,7 +68,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 		if ($this->extension !== NULL) {
 			if (method_exists($this->extension, $function)) {
 				$result = call_user_func_array(array($this->extension, $function), $arguments);
-				if ($result instanceof DB_ORM_Builder) {
+				if ($result instanceof DB\ORM\Builder) {
 					return $this;
 				}
 				return $result;
@@ -85,11 +85,11 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 */
 	public function __construct($model) {
 		$name = $model;
-		$model = DB_ORM_Model::model_name($name);
+		$model = DB\ORM\Model::model_name($name);
 		$this->data_source = DB\DataSource::instance($model::data_source(DB\DataSource::MASTER_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Update_Builder';
 		$this->builder = new $builder($this->data_source);
-		$extension = DB_ORM_Model::builder_name($name);
+		$extension = DB\ORM\Model::builder_name($name);
 		if (class_exists($extension)) {
 			$this->extension = new $extension($this->builder);
 		}
@@ -123,7 +123,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 *
 	 * @access public
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -135,7 +135,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 *
 	 * @access public
 	 * @param integer $offset                           the "offset" constraint
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
@@ -151,7 +151,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 *                                                  column will sorted either in ascending or
 	 *                                                  descending order
 	 * @param string $nulls                             the weight to be given to null values
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $ordering, $nulls);
@@ -162,7 +162,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function reset() {
 		$this->builder->reset();
@@ -175,7 +175,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 * @access public
 	 * @param string $column                            the column to be set
 	 * @param string $value                             the value to be set
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function set($column, $value) {
 		$this->builder->set($column, $value);
@@ -203,7 +203,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 * @param string $operator                          the operator to be used
 	 * @param string $value                             the value the column is constrained with
 	 * @param string $connector                         the connector to be used
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -216,7 +216,7 @@ abstract class Base_DB_ORM_Update_Proxy extends Core\Object implements DB\SQL\St
 	 * @access public
 	 * @param string $parenthesis                       the parenthesis to be used
 	 * @param string $connector                         the connector to be used
-	 * @return DB_ORM_Update_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Update\Proxy                      a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);

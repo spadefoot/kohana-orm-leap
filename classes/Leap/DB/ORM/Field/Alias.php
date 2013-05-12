@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-12-17
  */
-class DB_ORM_Field_Alias extends Base_DB_ORM_Field_Alias {}
+class DB\ORM\Field\Alias extends Base\DB\ORM\Field\Alias {}

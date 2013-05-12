@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_DateTime extends Base_DB_ORM_Field_DateTime {}
+class DB\ORM\Field\DateTime extends Base\DB\ORM\Field\DateTime {}

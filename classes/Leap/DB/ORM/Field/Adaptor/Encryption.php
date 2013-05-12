@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2011-12-04
  */
-class DB_ORM_Field_Adaptor_Encryption extends Base_DB_ORM_Field_Adaptor_Encryption {}
+class DB\ORM\Field\Adaptor\Encryption extends Base\DB\ORM\Field\Adaptor\Encryption {}

@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2011-12-17
  */
-class DB_ORM_Field_Adaptor_Object extends Base_DB_ORM_Field_Adaptor_Object {}
+class DB\ORM\Field\Adaptor\Object extends Base\DB\ORM\Field\Adaptor\Object {}

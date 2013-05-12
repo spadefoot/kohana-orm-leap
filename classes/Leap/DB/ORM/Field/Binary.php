@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Binary extends Base_DB_ORM_Field_Binary {}
+class DB\ORM\Field\Binary extends Base\DB\ORM\Field\Binary {}

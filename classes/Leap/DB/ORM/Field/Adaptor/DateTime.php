@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2012-01-28
  */
-class DB_ORM_Field_Adaptor_DateTime extends Base_DB_ORM_Field_Adaptor_DateTime {}
+class DB\ORM\Field\Adaptor\DateTime extends Base\DB\ORM\Field\Adaptor\DateTime {}

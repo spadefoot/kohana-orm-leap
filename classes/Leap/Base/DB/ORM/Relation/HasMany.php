@@ -26,17 +26,17 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
+abstract class Base\DB\ORM\Relation\HasMany extends DB\ORM\Relation {
 
 	/**
 	 * This constructor initializes the class.
 	 *
 	 * @access public
 	 * @override
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the relation's metadata
 	 */
-	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+	public function __construct(DB\ORM\Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'has_many');
 
 		// the parent model is the referenced table
@@ -53,7 +53,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 
 		// the through model is the pivot table
 		if (isset($metadata['through_model'])) {
-			$this->metadata['through_model'] = DB_ORM_Model::model_name($metadata['through_model']);
+			$this->metadata['through_model'] = DB\ORM\Model::model_name($metadata['through_model']);
 		}
 
 		// the through keys is an array of two ordered lists of fields names: [0] matches with parent key and [1] matches with child key
@@ -62,7 +62,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 		}
 
 		// the child model is the referencing table
-		$this->metadata['child_model'] = DB_ORM_Model::model_name($metadata['child_model']);
+		$this->metadata['child_model'] = DB\ORM\Model::model_name($metadata['child_model']);
 
 		// the child key (i.e. foreign key) is an ordered list of field names in the child model
 		$this->metadata['child_key'] = (array) $metadata['child_key'];

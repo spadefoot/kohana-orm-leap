@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-12-17
  */
-class DB_ORM_Field_Adaptor_UOM extends Base_DB_ORM_Field_Adaptor_UOM {}
+class DB\ORM\Field\Adaptor\UOM extends Base\DB\ORM\Field\Adaptor\UOM {}

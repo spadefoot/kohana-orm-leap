@@ -123,7 +123,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 		}
 
 		// Delete the current session
-		DB_ORM::delete($this->_table)
+		DB\ORM::delete($this->_table)
 			->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $this->_update_id)
 			->execute();
 
@@ -150,7 +150,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 			: \Date::MONTH; 		// Expire sessions after one month
 
 		// Delete all sessions that have expired
-		DB_ORM::delete($this->_table)
+		DB\ORM::delete($this->_table)
 			->where($this->_columns['last_active'], DB\SQL\Operator::_LESS_THAN_, time() - $expires)
 			->execute();
 	}
@@ -178,7 +178,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 		if ($id OR ($id = \Cookie::get($this->_name))) {
 
 			try {
-				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
+				$contents = DB\ORM::select($this->_table, array($this->_columns['contents']))
 					->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $id)
 					->limit(1)
 					->query()
@@ -215,7 +215,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 		do {
 			// Create a new session id
 			$id = str_replace('.', '-', uniqid(NULL, TRUE));
-			$count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
+			$count = DB\ORM::select($this->_table, array($this->_columns['session_id']))
 				->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $id)
 				->query()
 				->count();
@@ -249,14 +249,14 @@ abstract class Base\Web\HTTP\Session extends \Session {
 	protected function _write() {
 		if ($this->_update_id === NULL) {
 			// Insert a new row
-			$query = DB_ORM::insert($this->_table)
+			$query = DB\ORM::insert($this->_table)
 				->column($this->_columns['last_active'], $this->_data['last_active'])
 				->column($this->_columns['contents'], $this->__toString())
 				->column($this->_columns['session_id'], $this->_session_id); 
 		}
 		else {
 			// Update the row
-			$query = DB_ORM::update($this->_table)
+			$query = DB\ORM::update($this->_table)
 				->set($this->_columns['last_active'], $this->_data['last_active'])
 				->set($this->_columns['contents'], $this->__toString())
 				->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $this->_update_id);

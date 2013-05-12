@@ -44,7 +44,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
+abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -55,31 +55,31 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'id' => new DB_ORM_Field_Integer($this, array(
+			'id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'scope' => new DB_ORM_Field_Integer($this, array(
+			'scope' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'name' => new DB_ORM_Field_String($this, array(
+			'name' => new DB\ORM\Field\String($this, array(
 				'max_length' => 70,
 				'nullable' => TRUE,
 			)),
-			'parent_id' => new DB_ORM_Field_Integer($this, array(
+			'parent_id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => TRUE,
 				'unsigned' => TRUE,
 			)),
-			'lft' => new DB_ORM_Field_Integer($this, array(
+			'lft' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'rgt' => new DB_ORM_Field_Integer($this, array(
+			'rgt' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
@@ -133,7 +133,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param string $name                              the name to given to the node
 	 * @param array $fields                             an associated array of additional field
 	 *                                                  name/value pairs
-	 * @return DB_ORM_MPTT                              the newly added child node
+	 * @return DB\ORM\MPTT                              the newly added child node
 	 * @throws Throwable\Marshalling\Exception          indicates that the node could not
 	 *                                                  be added
 	 *
@@ -153,7 +153,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$connection->lock->add($table)->acquire();
 
 		$update = DB_SQL::update($data_source)
-			->set('rgt', DB_ORM::expr('rgt + 2'))
+			->set('rgt', DB\ORM::expr('rgt + 2'))
 			->table($table)
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('rgt', DB\SQL\Operator::_GREATER_THAN_, $this->fields['rgt']->value)
@@ -162,7 +162,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$connection->execute($update);
 
 		$update = DB_SQL::update($data_source)
-			->set('lft', DB_ORM::expr('lft + 2'))
+			->set('lft', DB\ORM::expr('lft + 2'))
 			->table($table)
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['lft']->value)
@@ -319,8 +319,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 
 		$update = DB_SQL::update($data_source)
 			->set('t0.parent_id', $select)
-			->set('t0.lft', DB_ORM::expr('t0.lft - 2'))
-			->set('t0.rgt', DB_ORM::expr('t0.rgt - 2'))
+			->set('t0.lft', DB\ORM::expr('t0.lft - 2'))
+			->set('t0.rgt', DB\ORM::expr('t0.rgt - 2'))
 			->table($table, 't0')
 			->where('t0.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('t0.lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['rgt']->value)
@@ -359,7 +359,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @return DB\ResultSet                             a result set of descendant nodes
 	 */
 	public function descendants($ordering = 'ASC', $limit = 0, $children_only = FALSE, $leaves_only = FALSE) {
-		$builder = DB_ORM::select(get_class($this))
+		$builder = DB\ORM::select(get_class($this))
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['lft']->value)
 			->where('rgt', DB\SQL\Operator::_LESS_THAN_, $this->fields['rgt']->value)
@@ -392,11 +392,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * supplied node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $descendant                   the descendant node
+	 * @param DB\ORM\MPTT $descendant                   the descendant node
 	 * @return boolean                                  whether the current node is an ancestor
 	 *                                                  of the supplied node
 	 */
-	public function is_ancestor(DB_ORM_MPTT $descendant) {
+	public function is_ancestor(DB\ORM\MPTT $descendant) {
 		return (($descendant->scope == $this->fields['scope']->value) AND ($descendant->lft > $this->fields['lft']->value) AND ($descendant->rgt < $this->fields['rgt']->value));
 	}
 
@@ -405,11 +405,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $parent                       the parent node
+	 * @param DB\ORM\MPTT $parent                       the parent node
 	 * @return boolean                                  whether the current node is the parent
 	 *                                                  of the supplied node
 	 */
-	public function is_child(DB_ORM_MPTT $parent) {
+	public function is_child(DB\ORM\MPTT $parent) {
 		return (($parent->scope == $this->fields['scope']->value) AND ($parent->id == $this->fields['parent_id']->value));
 	}
 
@@ -418,11 +418,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * supplied node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $ancestor                     the ancestor node
+	 * @param DB\ORM\MPTT $ancestor                     the ancestor node
 	 * @return boolean                                  whether the current node is a descendant
 	 *                                                  of the supplied node
 	 */
-	public function is_descendant(DB_ORM_MPTT $ancestor) {
+	public function is_descendant(DB\ORM\MPTT $ancestor) {
 		return (($ancestor->scope == $this->fields['scope']->value) AND ($ancestor->lft < $this->fields['lft']->value) AND ($ancestor->rgt > $this->fields['rgt']->value));
 	}
 
@@ -441,11 +441,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $child                        the child node
+	 * @param DB\ORM\MPTT $child                        the child node
 	 * @return boolean                                  whether the supplied node is a child
 	 *                                                  of the current node
 	 */
-	public function is_parent(DB_ORM_MPTT $child) {
+	public function is_parent(DB\ORM\MPTT $child) {
 		return (($child->scope == $this->fields['scope']->value) AND ($child->parent_id === $this->fields['id']->value));
 	}
 
@@ -464,11 +464,11 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * node.
 	 *
 	 * @access public
-	 * @param DB_ORM_MPTT $sibling                      a sibling node
+	 * @param DB\ORM\MPTT $sibling                      a sibling node
 	 * @return boolean                                  whether the current node is a sibling
 	 *                                                  of the supplied node
 	 */
-	public function is_sibling(DB_ORM_MPTT $sibling) {
+	public function is_sibling(DB\ORM\MPTT $sibling) {
 		return (($sibling->scope == $this->fields['scope']->value) AND ($sibling->parent_id == $this->fields['parent_id']->value) AND ($sibling->id != $this->fields['id']->value));
 	}
 
@@ -512,7 +512,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function returns a model describing the parent node.
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT                              a model describing the parent node
+	 * @return DB\ORM\MPTT                              a model describing the parent node
 	 */
 	public function parent() {
 		if ( ! $this->is_root()) {
@@ -545,10 +545,10 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * This function returns a model describing the root node.
 	 *
 	 * @access public
-	 * @return DB_ORM_MPTT                              a model describing the root node
+	 * @return DB\ORM\MPTT                              a model describing the root node
 	 */
 	public function root() {
-		$record = DB_ORM::select(get_class($this))
+		$record = DB\ORM::select(get_class($this))
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('lft', DB\SQL\Operator::_EQUAL_TO_, 1)
 			->limit(1)
@@ -623,7 +623,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function siblings($ordering = 'ASC', $self = FALSE) {
 		if ( ! $this->root()) {
-			$builder = DB_ORM::select(get_class($this))
+			$builder = DB\ORM::select(get_class($this))
 				->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 				->where('parent_id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
 				->order_by('lft', $ordering);
@@ -680,7 +680,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 * @param string $name                              the name to given to the node
 	 * @param array $fields                             an associated array of additional field
 	 *                                                  name/value pairs
-	 * @return DB_ORM_MPTT                              the newly created root node
+	 * @return DB\ORM\MPTT                              the newly created root node
 	 **/
 	public static function add_root($scope, $name, Array $fields = NULL) {
 		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
@@ -744,7 +744,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public static function full_tree($scope, $ordering = 'ASC', $limit = 0) {
 		$model = get_called_class();
 
-		$results = DB_ORM::select($model)
+		$results = DB\ORM::select($model)
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $scope)
 			->order_by('lft', $ordering)
 			->limit($limit)

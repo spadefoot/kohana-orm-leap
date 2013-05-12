@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Relation_HasOne extends Base_DB_ORM_Relation_HasOne {}
+class DB\ORM\Relation\HasOne extends Base\DB\ORM\Relation\HasOne {}

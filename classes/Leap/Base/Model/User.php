@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base\Model\User extends DB_ORM_Model {
+abstract class Base\Model\User extends DB\ORM\Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -38,84 +38,84 @@ abstract class Base\Model\User extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'id' => new DB_ORM_Field_Integer($this, array(
+			'id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'email' => new DB_ORM_Field_String($this, array(
+			'email' => new DB\ORM\Field\String($this, array(
 				'max_length' => 254,
 				'nullable' => FALSE,
 			)),
-			'username' => new DB_ORM_Field_String($this, array(
+			'username' => new DB\ORM\Field\String($this, array(
 				'default' => '',
 				'max_length' => 32,
 				'nullable' => FALSE,
 			)),
-			'password' => new DB_ORM_Field_String($this, array(
+			'password' => new DB\ORM\Field\String($this, array(
 				'max_length' => 64,
 				'nullable' => FALSE,
 			)),
 			// Personal Details
-			'firstname' => new DB_ORM_Field_String($this, array(
+			'firstname' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 35,
 				'nullable' => TRUE,
 			)),
-			'lastname' => new DB_ORM_Field_String($this, array(
+			'lastname' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 50,
 				'nullable' => TRUE,
 			)),
 			// Account Status Details
-			'activated' => new DB_ORM_Field_Boolean($this, array(
+			'activated' => new DB\ORM\Field\Boolean($this, array(
 				'default' => TRUE,
 				'nullable' => FALSE,
 			)),
-			'banned' => new DB_ORM_Field_Boolean($this, array(
+			'banned' => new DB\ORM\Field\Boolean($this, array(
 				'default' => FALSE,
 				'nullable' => FALSE,
 			)),
-			'ban_reason' => new DB_ORM_Field_String($this, array(
+			'ban_reason' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 255,
 				'nullable' => TRUE,
 			)),
 			// Account Utility Details
-			'new_password_key' => new DB_ORM_Field_String($this, array(
+			'new_password_key' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 64,
 				'nullable' => TRUE,
 			)),
-			'new_password_requested' => new DB_ORM_Field_Integer($this, array(
+			'new_password_requested' => new DB\ORM\Field\Integer($this, array(
 				'default' => NULL,
 				'max_length' => 11,
 				'nullable' => TRUE,
 			)),
-			'new_email' => new DB_ORM_Field_String($this, array(
+			'new_email' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 254,
 				'nullable' => TRUE,
 			)),
-			'new_email_key' => new DB_ORM_Field_String($this, array(
+			'new_email_key' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 64,
 				'nullable' => TRUE,
 			)),
 			// Account Metrics Details
-			'logins' => new DB_ORM_Field_Integer($this, array(
+			'logins' => new DB\ORM\Field\Integer($this, array(
 				'default' => 0,
 				'max_length' => 10,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'last_login' => new DB_ORM_Field_Integer($this, array(
+			'last_login' => new DB\ORM\Field\Integer($this, array(
 				'default' => NULL,
 				'max_length' => 10,
 				'nullable' => TRUE,
 				'unsigned' => TRUE,
 			)),
-			'last_ip' => new DB_ORM_Field_String($this, array(
+			'last_ip' => new DB\ORM\Field\String($this, array(
 				'default' => NULL,
 				'max_length' => 39,
 				'nullable' => TRUE,
@@ -123,21 +123,21 @@ abstract class Base\Model\User extends DB_ORM_Model {
 		);
 
 		$this->adaptors = array(
-			'last_login_formatted' => new DB_ORM_Field_Adaptor_DateTime($this, array(
+			'last_login_formatted' => new DB\ORM\Field\Adaptor\DateTime($this, array(
 				'field' => 'last_login',
 			)),
-			'new_password_requested_formatted' => new DB_ORM_Field_Adaptor_DateTime($this, array(
+			'new_password_requested_formatted' => new DB\ORM\Field\Adaptor\DateTime($this, array(
 				'field' => 'new_password_requested',
 			)),
 		);
 
 		$this->relations = array(
-			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
+			'user_roles' => new DB\ORM\Relation\HasMany($this, array(
 				'child_key' => array('user_id'),
 				'child_model' => 'User_Role',
 				'parent_key' => array('id'),
 			)),
-			'user_token' => new DB_ORM_Relation_HasMany($this, array(
+			'user_token' => new DB\ORM\Relation\HasMany($this, array(
 				'child_key' => array('user_id'),
 				'child_model' => 'User_Token',
 				'parent_key' => array('id'),

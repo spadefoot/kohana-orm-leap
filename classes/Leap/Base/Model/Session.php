@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base\Model\Session extends DB_ORM_Model {
+abstract class Base\Model\Session extends DB\ORM\Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -38,15 +38,15 @@ abstract class Base\Model\Session extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'id' => new DB_ORM_Field_String($this, array(
+			'id' => new DB\ORM\Field\String($this, array(
 				'max_length' => 24,
 				'nullable' => FALSE,
 			)),
-			'last_active' => new DB_ORM_Field_Integer($this, array(
+			'last_active' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 			)),
-			'contents' => new DB_ORM_Field_Text($this, array(
+			'contents' => new DB\ORM\Field\Text($this, array(
 				'nullable' => FALSE,
 			)),
 		);

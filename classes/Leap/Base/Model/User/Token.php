@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base\Model\User\Token extends DB_ORM_Model {
+abstract class Base\Model\User\Token extends DB\ORM\Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -38,34 +38,34 @@ abstract class Base\Model\User\Token extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'id' => new DB_ORM_Field_Integer($this, array(
+			'id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'user_id' => new DB_ORM_Field_Integer($this, array(
+			'user_id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'user_agent' => new DB_ORM_Field_String($this, array(
+			'user_agent' => new DB\ORM\Field\String($this, array(
 				'max_length' => 40,
 				'nullable' => FALSE,
 			)),
-			'token' => new DB_ORM_Field_String($this, array(
+			'token' => new DB\ORM\Field\String($this, array(
 				'max_length' => 40,
 				'nullable' => FALSE,
 			)),
-			'type' => new DB_ORM_Field_String($this, array(
+			'type' => new DB\ORM\Field\String($this, array(
 				'max_length' => 100,
 				'nullable' => FALSE,
 			)),
-			'created' => new DB_ORM_Field_Integer($this, array(
+			'created' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'expires' => new DB_ORM_Field_Integer($this, array(
+			'expires' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
@@ -73,7 +73,7 @@ abstract class Base\Model\User\Token extends DB_ORM_Model {
 		);
 
 		$this->relations = array(
-			'user' => new DB_ORM_Relation_BelongsTo($this, array(
+			'user' => new DB\ORM\Relation\BelongsTo($this, array(
 				'child_key' => array('user_id'),
 				'parent_key' => array('id'),
 				'parent_model' => 'User',

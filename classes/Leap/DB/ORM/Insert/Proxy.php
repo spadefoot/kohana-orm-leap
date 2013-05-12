@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-10
  */
-class DB_ORM_Insert_Proxy extends Base_DB_ORM_Insert_Proxy {}
+class DB\ORM\Insert\Proxy extends Base\DB\ORM\Insert\Proxy {}

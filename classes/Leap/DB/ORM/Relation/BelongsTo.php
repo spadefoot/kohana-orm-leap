@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Relation_BelongsTo extends Base_DB_ORM_Relation_BelongsTo {}
+class DB\ORM\Relation\BelongsTo extends Base\DB\ORM\Relation\BelongsTo {}

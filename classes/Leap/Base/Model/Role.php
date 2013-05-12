@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base\Model\Role extends DB_ORM_Model {
+abstract class Base\Model\Role extends DB\ORM\Model {
 
 	/**
 	 * This constructor instantiates this class.
@@ -38,23 +38,23 @@ abstract class Base\Model\Role extends DB_ORM_Model {
 		parent::__construct();
 
 		$this->fields = array(
-			'id' => new DB_ORM_Field_Integer($this, array(
+			'id' => new DB\ORM\Field\Integer($this, array(
 				'max_length' => 11,
 				'nullable' => FALSE,
 				'unsigned' => TRUE,
 			)),
-			'name' => new DB_ORM_Field_String($this, array(
+			'name' => new DB\ORM\Field\String($this, array(
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
-			'description' => new DB_ORM_Field_String($this, array(
+			'description' => new DB\ORM\Field\String($this, array(
 				'max_length' => 255,
 				'nullable' => FALSE,
 			)),
 		);
 
 		$this->relations = array(
-			'user_roles' => new DB_ORM_Relation_HasMany($this, array(
+			'user_roles' => new DB\ORM\Relation\HasMany($this, array(
 				'child_key' => array('id'),
 				'child_model' => 'User_Role',
 				'parent_key' => array('id'),

@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Time extends Base_DB_ORM_Field_Time {}
+class DB\ORM\Field\Time extends Base\DB\ORM\Field\Time {}

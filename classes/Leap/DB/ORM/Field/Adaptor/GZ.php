@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2011-12-04
  */
-class DB_ORM_Field_Adaptor_GZ extends Base_DB_ORM_Field_Adaptor_GZ {}
+class DB\ORM\Field\Adaptor\GZ extends Base\DB\ORM\Field\Adaptor\GZ {}

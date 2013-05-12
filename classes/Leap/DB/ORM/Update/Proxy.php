@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-10
  */
-class DB_ORM_Update_Proxy extends Base_DB_ORM_Update_Proxy {}
+class DB\ORM\Update\Proxy extends Base\DB\ORM\Update\Proxy {}

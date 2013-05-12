@@ -32,4 +32,4 @@
  *
  * @abstract
  */
-abstract class DB_ORM_MPTT extends Base_DB_ORM_MPTT {}
+abstract class DB\ORM\MPTT extends Base\DB\ORM\MPTT {}

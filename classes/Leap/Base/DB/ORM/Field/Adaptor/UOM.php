@@ -26,20 +26,20 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor_UOM  extends DB_ORM_Field_Adaptor {
+abstract class Base\DB\ORM\Field\Adaptor\UOM  extends DB\ORM\Field\Adaptor {
 
 	/**
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the adaptor's metadata
 	 * @throws Throwable\Runtime\Exception          indicates that error occurred when loading
 	 *                                              a configuration
 	 * @throws Throwable\InvalidArgument\Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
-	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+	public function __construct(DB\ORM\Model $model, Array $metadata = array()) {
 		parent::__construct($model, $metadata['field']);
 
 		$this->metadata['units'] = array();

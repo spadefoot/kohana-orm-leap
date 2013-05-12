@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Relation extends Core\Object {
+abstract class Base\DB\ORM\Relation extends Core\Object {
 
 	/**
 	 * This variable stores the relation's corresponding model(s).
@@ -48,7 +48,7 @@ abstract class Base_DB_ORM_Relation extends Core\Object {
 	 * This variable stores a reference to the implementing model.
 	 *
 	 * @access protected
-	 * @var DB_ORM_Model
+	 * @var DB\ORM\Model
 	 */
 	protected $model;
 
@@ -56,10 +56,10 @@ abstract class Base_DB_ORM_Relation extends Core\Object {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param string $type                          the type of relationship
 	 */
-	public function __construct(DB_ORM_Model $model, $type) {
+	public function __construct(DB\ORM\Model $model, $type) {
 		$this->model = $model;
 		$this->metadata = array();
 		$this->metadata['type'] = $type;

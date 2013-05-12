@@ -30,7 +30,7 @@
  * @see http://msdn.microsoft.com/en-us/library/aa258271%28v=sql.80%29.aspx
  * @see http://kimbriggs.com/computers/computer-notes/mysql-notes/mysql-data-types-50.file
  */
-abstract class Base_DB_ORM_Field extends Core\Object {
+abstract class Base\DB\ORM\Field extends Core\Object {
 
 	/**
 	 * This variable stores the field's metadata.
@@ -44,7 +44,7 @@ abstract class Base_DB_ORM_Field extends Core\Object {
 	 * This variable stores a reference to the implementing model.
 	 *
 	 * @access protected
-	 * @var DB_ORM_Model
+	 * @var DB\ORM\Model
 	 */
 	protected $model;
 
@@ -60,12 +60,12 @@ abstract class Base_DB_ORM_Field extends Core\Object {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param string $type                          the equivalent PHP data type
 	 *
 	 * @see http://php.net/manual/en/function.gettype.php
 	 */
-	public function __construct(DB_ORM_Model $model, $type) {
+	public function __construct(DB\ORM\Model $model, $type) {
 		$this->model = $model;
 		$this->metadata = array();
 		$this->metadata['control'] = 'auto';

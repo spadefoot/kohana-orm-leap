@@ -124,12 +124,12 @@ abstract class Base\DB\Auth extends \Auth {
 	 */
 	public function auto_login() {
 		if ($token = \Cookie::get('authautologin')) {
-			$token = DB_ORM::select($this->models['token'])
+			$token = DB\ORM::select($this->models['token'])
 				->where($this->columns['token'], DB\SQL\Operator::_EQUAL_TO_, $token)
 				->limit(1)
 				->query()
 				->fetch(0);
-			$token_model = DB_ORM_Model::model_name($this->models['token']);
+			$token_model = DB\ORM\Model::model_name($this->models['token']);
 			if (($token instanceof $token_model) AND $token->is_loaded() AND $token->user->is_loaded()) {
 				if ($token->user_agent === sha1(Request::$user_agent)) {
 					// Save the token to create a new unique token
@@ -248,7 +248,7 @@ abstract class Base\DB\Auth extends \Auth {
 	 * @return Model\User                       the user's object
 	 */
 	protected function get_user_by_login($user) {
-		$builder = DB_ORM::select($this->models['user']);
+		$builder = DB\ORM::select($this->models['user']);
 		if ( ! empty($this->_config['login_with_email']) AND ! empty($this->_config['login_with_username'])) {
 			$builder->where($this->columns['user_username'], DB\SQL\Operator::_EQUAL_TO_, $user);
 			$builder->where($this->columns['user_email'], DB\SQL\Operator::_EQUAL_TO_, $user, DB\SQL\Connector::_OR_);
@@ -275,8 +275,8 @@ abstract class Base\DB\Auth extends \Auth {
 	public function logged_in($roles = NULL, $all_required = TRUE) {
 		$user = $this->get_user();
 
-		$user_model = DB_ORM_Model::model_name($this->models['user']);
-		$role_model = DB_ORM_Model::model_name($this->models['role']);
+		$user_model = DB\ORM\Model::model_name($this->models['user']);
+		$role_model = DB\ORM\Model::model_name($this->models['role']);
 
 		// If there is a user, proceed
 		if (($user instanceof $user_model) AND $user->is_loaded()) {
@@ -300,7 +300,7 @@ abstract class Base\DB\Auth extends \Auth {
 				foreach ($roles as $role) {
 					// If you haven't passed in a role object then get it from the DB, by the name passed in the array.
 					if ( ! is_object($role)) {
-						$role = DB_ORM::select($this->models['role'])
+						$role = DB\ORM::select($this->models['role'])
 							->where($this->columns['role_name'], DB\SQL\Operator::_EQUAL_TO_, $role)
 							->limit(1)
 							->query()
@@ -320,7 +320,7 @@ abstract class Base\DB\Auth extends \Auth {
 			}
 			else { // Single Role
 				if ( ! is_object($roles)) {
-					$role = DB_ORM::select($this->models['role'])
+					$role = DB\ORM::select($this->models['role'])
 						->where($this->columns['role_name'], DB\SQL\Operator::_EQUAL_TO_, $roles)
 						->limit(1)
 						->query()
@@ -370,7 +370,7 @@ abstract class Base\DB\Auth extends \Auth {
 				}
 				else {
 					if ($remember === TRUE) {
-						$token = DB_ORM::model($this->models['token']);
+						$token = DB\ORM::model($this->models['token']);
 						$token->user_id = $user->id;
 						$token->expires = time() + $this->_config['lifetime'];
 						$token->user_agent = sha1(Request::$user_agent);
@@ -409,14 +409,14 @@ abstract class Base\DB\Auth extends \Auth {
 			\Cookie::delete('authautologin');
 
 			// Clear the autologin token from the database
-			$token = DB_ORM::select($this->models['token'])
+			$token = DB\ORM::select($this->models['token'])
 				->where($this->columns['token'], DB\SQL\Operator::_EQUAL_TO_, $token)
 				->limit(1)
 				->query()
 				->fetch(0);
-			$token_model = DB_ORM_Model::model_name($this->models['token']);
+			$token_model = DB\ORM\Model::model_name($this->models['token']);
 			if ($logout_all) {
-				DB_ORM::delete($this->models['token'])
+				DB\ORM::delete($this->models['token'])
 					->where($this->columns['user_id'], DB\SQL\Operator::_EQUAL_TO_, $token->user)
 					->execute();
 			}

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Builder extends Core\Object {
+abstract class Base\DB\ORM\Builder extends Core\Object {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.

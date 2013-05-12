@@ -26,18 +26,18 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Blob extends DB_ORM_Field {
+abstract class Base\DB\ORM\Field\Blob extends DB\ORM\Field {
 
 	/**
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the field's metadata
 	 * @throws Throwable\Validation\Exception       indicates that the specified value does
 	 *                                              not validate
 	 */
-	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+	public function __construct(DB\ORM\Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'Data');
 
 		if (isset($metadata['savable'])) {

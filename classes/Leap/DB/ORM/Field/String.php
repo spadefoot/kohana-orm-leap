@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_String extends Base_DB_ORM_Field_String {}
+class DB\ORM\Field\String extends Base\DB\ORM\Field\String {}

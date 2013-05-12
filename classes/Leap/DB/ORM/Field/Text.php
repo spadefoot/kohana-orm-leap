@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Text extends Base_DB_ORM_Field_Text {}
+class DB\ORM\Field\Text extends Base\DB\ORM\Field\Text {}

@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-07
  */
-class DB_ORM_Field_Boolean extends Base_DB_ORM_Field_Boolean {}
+class DB\ORM\Field\Boolean extends Base\DB\ORM\Field\Boolean {}

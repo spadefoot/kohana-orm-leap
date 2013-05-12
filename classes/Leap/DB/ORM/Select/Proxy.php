@@ -24,4 +24,4 @@
  * @category ORM
  * @version 2011-06-10
  */
-class DB_ORM_Select_Proxy extends Base_DB_ORM_Select_Proxy {}
+class DB\ORM\Select\Proxy extends Base\DB\ORM\Select\Proxy {}

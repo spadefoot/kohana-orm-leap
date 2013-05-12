@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Field_Adaptor extends Core\Object {
+abstract class Base\DB\ORM\Field\Adaptor extends Core\Object {
 
 	/**
 	 * This variable stores the adaptor's metadata.
@@ -40,7 +40,7 @@ abstract class Base_DB_ORM_Field_Adaptor extends Core\Object {
 	 * This variable stores a reference to the implementing model.
 	 *
 	 * @access protected
-	 * @var DB_ORM_Model
+	 * @var DB\ORM\Model
 	 */
 	protected $model;
 
@@ -48,12 +48,12 @@ abstract class Base_DB_ORM_Field_Adaptor extends Core\Object {
 	 * This constructor initializes the class.
 	 *
 	 * @access public
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param string $field                         the name of field in the database table
 	 * @throws Throwable\InvalidArgument\Exception  indicates that an invalid field name
 	 *                                              was specified
 	 */
-	public function __construct(DB_ORM_Model $model, $field) {
+	public function __construct(DB\ORM\Model $model, $field) {
 		if ( ! is_string($field) OR $model->is_adaptor($field) OR $model->is_alias($field) OR ! $model->is_field($field) OR $model->is_relation($field)) {
 			throw new Throwable\InvalidArgument\Exception('Message: Invalid field name defined. Reason: Field name either is not a field or is already defined.', array(':field' => $field));
 		}

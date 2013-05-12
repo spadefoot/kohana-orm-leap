@@ -118,7 +118,7 @@ abstract class Base\DB\ResultSet extends Core\Object implements \ArrayAccess, \C
 				break;
 				default:
 					if (class_exists($this->type)) {
-						if (($this->records[0] instanceof DB_ORM_Model) OR method_exists($this->records[0], 'as_array')) {
+						if (($this->records[0] instanceof DB\ORM\Model) OR method_exists($this->records[0], 'as_array')) {
 							foreach ($this->records as $record) {
 								$csv->add_row($record->as_array());
 							}

@@ -26,18 +26,18 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM extends Core\Object {
+abstract class Base\DB\ORM extends Core\Object {
 
 	/**
-	 * This function returns an instance of the DB_ORM_Delete_Proxy.
+	 * This function returns an instance of the DB\ORM\Delete\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param string $model                         the model's name
-	 * @return DB_ORM_Delete_Proxy                  an instance of the class
+	 * @return DB\ORM\Delete\Proxy                  an instance of the class
 	 */
 	public static function delete($model) {
-		$proxy = new DB_ORM_Delete_Proxy($model);
+		$proxy = new DB\ORM\Delete\Proxy($model);
 		return $proxy;
 	}
 
@@ -58,15 +58,15 @@ abstract class Base_DB_ORM extends Core\Object {
 	}
 
 	/**
-	 * This function returns an instance of the DB_ORM_Insert_Proxy.
+	 * This function returns an instance of the DB\ORM\Insert\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param string $model                         the model's name
-	 * @return DB_ORM_Insert_Proxy                  an instance of the class
+	 * @return DB\ORM\Insert\Proxy                  an instance of the class
 	 */
 	public static function insert($model) {
-		$proxy = new DB_ORM_Insert_Proxy($model);
+		$proxy = new DB\ORM\Insert\Proxy($model);
 		return $proxy;
 	}
 
@@ -81,7 +81,7 @@ abstract class Base_DB_ORM extends Core\Object {
 	 * @return mixed                                an instance of the specified model
 	 */
 	public static function model($model, $primary_key = array()) {
-		$model = DB_ORM_Model::factory($model);
+		$model = DB\ORM\Model::factory($model);
 		if ( ! empty($primary_key)) {
 			if ( ! is_array($primary_key)) {
 				$primary_key = array($primary_key);
@@ -107,7 +107,7 @@ abstract class Base_DB_ORM extends Core\Object {
 	 * @return DB\SQL\Precompiler                   an instance of the pre-compiler
 	 */
 	public static function precompiler($model) {
-		$model = DB_ORM_Model::model_name($model);
+		$model = DB\ORM\Model::model_name($model);
 		$data_source = $model::data_source(DB\DataSource::MASTER_INSTANCE);
 		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
 		$object = new $precompiler($data_source);
@@ -115,29 +115,29 @@ abstract class Base_DB_ORM extends Core\Object {
 	}
 
 	/**
-	 * This function returns an instance of the DB_ORM_Select_Proxy.
+	 * This function returns an instance of the DB\ORM\Select\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param string $model                         the model's name
 	 * @param array $columns                        the columns to be selected
-	 * @return DB_ORM_Select_Proxy                  an instance of the class
+	 * @return DB\ORM\Select\Proxy                  an instance of the class
 	 */
 	public static function select($model, Array $columns = array()) {
-		$proxy = new DB_ORM_Select_Proxy($model, $columns);
+		$proxy = new DB\ORM\Select\Proxy($model, $columns);
 		return $proxy;
 	}
 
 	/**
-	 * This function returns an instance of the DB_ORM_Update_Proxy.
+	 * This function returns an instance of the DB\ORM\Update\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param string $model                         the model's name
-	 * @return DB_ORM_Update_Proxy                  an instance of the class
+	 * @return DB\ORM\Update\Proxy                  an instance of the class
 	 */
 	public static function update($model) {
-		$proxy = new DB_ORM_Update_Proxy($model);
+		$proxy = new DB\ORM\Update\Proxy($model);
 		return $proxy;
 	}
 

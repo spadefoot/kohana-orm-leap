@@ -25,4 +25,4 @@
  * @category ORM
  * @version 2012-10-15
  */
-class DB_ORM_Field_Decimal extends Base_DB_ORM_Field_Decimal {}
+class DB\ORM\Field\Decimal extends Base\DB\ORM\Field\Decimal {}

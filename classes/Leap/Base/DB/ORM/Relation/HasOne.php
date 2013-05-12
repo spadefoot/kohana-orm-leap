@@ -26,17 +26,17 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
+abstract class Base\DB\ORM\Relation\HasOne extends DB\ORM\Relation {
 
 	/**
 	 * This constructor initializes the class.
 	 *
 	 * @access public
 	 * @override
-	 * @param DB_ORM_Model $model                   a reference to the implementing model
+	 * @param DB\ORM\Model $model                   a reference to the implementing model
 	 * @param array $metadata                       the relation's metadata
 	 */
-	public function __construct(DB_ORM_Model $model, Array $metadata = array()) {
+	public function __construct(DB\ORM\Model $model, Array $metadata = array()) {
 		parent::__construct($model, 'has_one');
 
 		// the parent model is the referenced table
@@ -52,7 +52,7 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 			: $parent_model::primary_key();
 
 		// the child model is the referencing table
-		$this->metadata['child_model'] = DB_ORM_Model::model_name($metadata['child_model']);
+		$this->metadata['child_model'] = DB\ORM\Model::model_name($metadata['child_model']);
 
 		// the child key (i.e. foreign key) is an ordered list of field names in the child model
 		$this->metadata['child_key'] = (array) $metadata['child_key'];
@@ -63,7 +63,7 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 	 *
 	 * @access protected
 	 * @override
-	 * @return DB_ORM_Model							the corresponding model
+	 * @return DB\ORM\Model							the corresponding model
 	 */
 	protected function load() {
 		$parent_key = $this->metadata['parent_key'];

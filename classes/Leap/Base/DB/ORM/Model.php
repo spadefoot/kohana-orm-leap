@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable {
+abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable {
 
 	/**
 	 * This variable stores the record's adaptors.
@@ -447,7 +447,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 		if ( ! is_string($name) OR isset($this->adaptors[$name]) OR isset($this->aliases[$name]) OR isset($this->fields[$name])) {
 			throw new Throwable\InvalidArgument\Exception('Message: Invalid relation name defined. Reason: Name ":name" cannot be used for new relation.', array(':name' => $name));
 		}
-		$types = array('belongs_to' => 'DB_ORM_Relation_BelongsTo', 'has_many' => 'DB_ORM_Relation_HasMany', 'has_one' => 'DB_ORM_Relation_HasOne');
+		$types = array('belongs_to' => 'DB\ORM\Relation\BelongsTo', 'has_many' => 'DB\ORM\Relation\HasMany', 'has_one' => 'DB\ORM\Relation\HasOne');
 		if ( ! isset($types[$type])) {
 			throw new Throwable\InvalidArgument\Exception('Message: Invalid value passed. Reason: Value must be of the correct enumerated type.', array(':name' => $name, ':type' => $type));
 		}
@@ -635,7 +635,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 	 * @access public
 	 * @param array $values                         an array of column/value mappings
 	 * @param mixed $expected                       an array of keys to take from $values, or NULL
-	 * @return DB_ORM_Model                         a reference to the current instance
+	 * @return DB\ORM\Model                         a reference to the current instance
 	 */
 	public function set_values(Array $values, Array $expected = NULL) {
 		// Automatically create list expected keys
@@ -745,7 +745,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 	 * @return mixed                                an instance of the specified model
 	 */
 	public static function factory($model) {
-		$model = DB_ORM_Model::model_name($model);
+		$model = DB\ORM\Model::model_name($model);
 		return new $model();
 	}
 

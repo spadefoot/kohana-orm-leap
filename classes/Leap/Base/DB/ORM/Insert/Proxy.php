@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\Statement {
+abstract class Base\DB\ORM\Insert\Proxy extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
@@ -48,7 +48,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\St
 	 * This variable stores an instance of the ORM builder extension class.
 	 *
 	 * @access protected
-	 * @var DB_ORM_Builder
+	 * @var DB\ORM\Builder
 	 */
 	protected $extension;
 
@@ -68,11 +68,11 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\St
 	 */
 	public function __construct($model) {
 		$name = $model;
-		$model = DB_ORM_Model::model_name($name);
+		$model = DB\ORM\Model::model_name($name);
 		$this->data_source = DB\DataSource::instance($model::data_source(DB\DataSource::MASTER_INSTANCE));
 		$builder = 'DB_' . $this->data_source->dialect . '_Insert_Builder';
 		$this->builder = new $builder($this->data_source);
-		$extension = DB_ORM_Model::builder_name($name);
+		$extension = DB\ORM\Model::builder_name($name);
 		if (class_exists($extension)) {
 			$this->extension = new $extension($this->builder);
 		}
@@ -97,7 +97,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\St
 		if ($this->extension !== NULL) {
 			if (method_exists($this->extension, $function)) {
 				$result = call_user_func_array(array($this->extension, $function), $arguments);
-				if ($result instanceof DB_ORM_Builder) {
+				if ($result instanceof DB\ORM\Builder) {
 					return $this;
 				}
 				return $result;
@@ -112,7 +112,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\St
 	 * @access public
 	 * @param string $column                            the column to be set
 	 * @param string $value                             the value to be set
-	 * @return DB_ORM_Insert_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Insert\Proxy                      a reference to the current instance
 	 */
 	public function column($column, $value) {
 		$this->builder->column($column, $value, 0);
@@ -162,7 +162,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\St
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_ORM_Insert_Proxy                      a reference to the current instance
+	 * @return DB\ORM\Insert\Proxy                      a reference to the current instance
 	 */
 	public function reset() {
 		$this->builder->reset();

@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_ORM_Builder extends Base_DB_ORM_Builder {}
+abstract class DB\ORM\Builder extends Base\DB\ORM\Builder {}
