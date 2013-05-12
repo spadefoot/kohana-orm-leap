@@ -38,7 +38,7 @@ abstract class Base\Throwable\InvalidArgument\Exception extends \InvalidArgument
 	 * @param integer $code                          the code
 	 * @return Throwable\InvalidArgument\Exception   the exception
 	 */
-	public function __construct($message, array $variables = NULL, $code = 0) {
+	public function __construct($message, Array $variables = NULL, $code = 0) {
 		// Set the message
 		$message = __($message, $variables);
 

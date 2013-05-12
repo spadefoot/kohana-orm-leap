@@ -83,7 +83,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 	 * @param mixed $config                     the config information to be used
 	 * @param string $id                        the session id
 	 */
-	public function __construct(array $config = NULL, $id = NULL) {
+	public function __construct(Array $config = NULL, $id = NULL) {
 		// Set the table name
 		if (isset($config['table'])) {
 			$this->_table = (string) $config['table'];

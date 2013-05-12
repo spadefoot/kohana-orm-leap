@@ -154,7 +154,7 @@ abstract class Base\DB\DataSource extends Core\Object {
 
 		$cache = array();
 		$cache['enabled'] = (isset($settings['caching'])) ? (bool) $settings['caching'] : FALSE;
-		$cache['lifetime'] = (class_exists('Kohana')) ? \Kohana::$cache_life : 60;
+		$cache['lifetime'] = (class_exists('\\Kohana')) ? \Kohana::$cache_life : 60;
 		$cache['force'] = FALSE;
 		$this->settings['cache'] = (object) $cache;
 

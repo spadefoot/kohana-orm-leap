@@ -22,11 +22,22 @@
  *
  * @package Leap
  * @category Core
- * @version 2013-02-05
+ * @version 2013-05-12
  *
  * @abstract
  */
 abstract class Base\Core\Object {
+
+	/**
+	 * This function returns whether the specified object is equal to the called object.
+	 *
+	 * @access public
+	 * @return boolean                              whether the specified object is equal
+	 *                                              to the called object
+	 */
+	public function __equals($object) {
+		return (($object !== NULL) && ($object instanceOf Core\Object) && ($object->__hashCode() == $this->__haseCode()));
+	}
 
 	/**
 	 * This function returns the hash code for the object.
@@ -36,6 +47,16 @@ abstract class Base\Core\Object {
 	 */
 	public function __hashCode() {
 		return spl_object_hash($this);
+	}
+
+	/**
+	 * This function returns a string that represents the object.
+	 *
+	 * @access public
+	 * @return string                               a string that represents the object
+	 */
+	public function __toString() {
+		return (string) serialize($this);
 	}
 
 }
