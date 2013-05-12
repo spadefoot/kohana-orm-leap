@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connection_Standard extends DB_Connection_Driver {
+abstract class Base\DB\SQL\Connection\Standard extends DB\Connection\Driver {
 
 	/**
 	 * This function is for determining whether a connection is established.

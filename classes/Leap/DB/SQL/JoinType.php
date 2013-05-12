@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-12-06
  */
-class DB_SQL_JoinType extends Base_DB_SQL_JoinType {}
+class DB\SQL\JoinType extends Base\DB\SQL\JoinType {}

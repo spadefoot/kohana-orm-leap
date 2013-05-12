@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Precompiler extends Base_DB_SQL_Precompiler {}
+abstract class DB\SQL\Precompiler extends Base\DB\SQL\Precompiler {}

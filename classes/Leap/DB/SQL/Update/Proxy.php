@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-10
  */
-class DB_SQL_Update_Proxy extends Base_DB_SQL_Update_Proxy {}
+class DB\SQL\Update\Proxy extends Base\DB\SQL\Update\Proxy {}

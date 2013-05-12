@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-class DB_Connection_Pool extends Base_DB_Connection_Pool {}
+class DB\Connection\Pool extends Base\DB\Connection\Pool {}

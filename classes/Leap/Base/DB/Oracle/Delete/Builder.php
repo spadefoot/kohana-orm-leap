@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
+abstract class Base_DB_Oracle_Delete_Builder extends DB\SQL\Delete\Builder {
 
 	/**
 	 * This function returns the SQL statement.
@@ -51,11 +51,11 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 				$append = FALSE;
 				$sql .= ' WHERE ';
 				foreach ($this->data['where'] as $where) {
-					if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					if ($append AND ($where[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
 						$sql .= " {$where[0]} ";
 					}
 					$sql .= $where[1];
-					$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+					$append = ($where[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
 				}
 			}
 
@@ -84,11 +84,11 @@ abstract class Base_DB_Oracle_Delete_Builder extends DB_SQL_Delete_Builder {
 				$append = FALSE;
 				$sql .= ' WHERE ';
 				foreach ($this->data['where'] as $where) {
-					if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+					if ($append AND ($where[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
 						$sql .= " {$where[0]} ";
 					}
 					$sql .= $where[1];
-					$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+					$append = ($where[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
 				}
 			}
 		}

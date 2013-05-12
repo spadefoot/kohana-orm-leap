@@ -27,7 +27,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_Standard {
+abstract class Base_DB_Firebird_DataReader_Standard extends DB\SQL\DataReader\Standard {
 
 	/**
 	 * This variable is used to store the connection's resource.
@@ -50,12 +50,12 @@ abstract class Base_DB_Firebird_DataReader_Standard extends DB_SQL_DataReader_St
 	 *
 	 * @access public
 	 * @override
-	 * @param DB_Connection_Driver $connection  the connection to be used
+	 * @param DB\Connection\Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 * @throws Throwable\SQL\Exception          indicates that the query failed
 	 */
-	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
+	public function __construct(DB\Connection\Driver $connection, $sql, $mode = NULL) {
 		$this->resource = $connection->get_resource();
 		$command = @ibase_query($this->resource, $sql);
 		if ($command === FALSE) {

@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Connection_PDO extends DB_SQL_Connection_PDO {
+abstract class Base_DB_Drizzle_Connection_PDO extends DB\SQL\Connection\PDO {
 
 	/**
 	 * This function opens a connection using the data source provided.

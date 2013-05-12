@@ -26,14 +26,14 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Insert_Proxy extends Core\Object implements DB_SQL_Statement {
+abstract class Base\DB\SQL\Insert\Proxy extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL statement builder of the preferred SQL
 	 * language dialect.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Builder
+	 * @var DB\SQL\Builder
 	 */
 	protected $builder;
 
@@ -75,7 +75,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core\Object implements DB_SQL_St
 	 * @param string $column                 	        the column to be set
 	 * @param string $value                  	        the value to be set
 	 * @param integer $row						        the index of the row
-	 * @return DB_SQL_Insert_Proxy           	        a reference to the current instance
+	 * @return DB\SQL\Insert\Proxy           	        a reference to the current instance
 	 */
 	public function column($column, $value, $row = 0) {
 		$this->builder->column($column, $value, $row);
@@ -91,7 +91,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core\Object implements DB_SQL_St
 	 */
 	public function execute() {
 		$auto_increment = ((func_num_args() > 0) AND (func_get_arg(0) === TRUE));
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$connection->execute($this->statement(TRUE));
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;
@@ -102,7 +102,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core\Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @param string $table                             the database table to be modified
-	 * @return DB_SQL_Insert_Proxy           	        a reference to the current instance
+	 * @return DB\SQL\Insert\Proxy           	        a reference to the current instance
 	 */
 	public function into($table) {
 		$this->builder->into($table);
@@ -113,7 +113,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core\Object implements DB_SQL_St
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_SQL_Insert_Proxy                      a reference to the current instance
+	 * @return DB\SQL\Insert\Proxy                      a reference to the current instance
 	 */
 	public function reset() {
 		$this->builder->reset();
@@ -126,7 +126,7 @@ abstract class Base_DB_SQL_Insert_Proxy extends Core\Object implements DB_SQL_St
 	 * @access public
 	 * @param array $values						        the columns/values pairs to be set
 	 * @param integer $row						        the index of the row
-	 * @return DB_SQL_Insert_Proxy  			        a reference to the current instance
+	 * @return DB\SQL\Insert\Proxy  			        a reference to the current instance
 	 */
 	public function row(Array $values, $row = 0) {
 		$this->builder->row($values, $row);

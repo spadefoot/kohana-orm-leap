@@ -27,4 +27,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_DataReader_PDO extends Base_DB_SQL_DataReader_PDO {}
+abstract class DB\SQL\DataReader\PDO extends Base\DB\SQL\DataReader\PDO {}

@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Insert_Builder extends Base_DB_SQL_Insert_Builder {}
+abstract class DB\SQL\Insert\Builder extends Base\DB\SQL\Insert\Builder {}

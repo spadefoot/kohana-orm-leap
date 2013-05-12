@@ -79,7 +79,7 @@ abstract class Base_DB_ORM_Relation_BelongsTo extends DB_ORM_Relation {
 
 		$field_count = count($child_key);
 		for ($i = 0; $i < $field_count; $i++) {
-			$builder->where("{$parent_table}.{$parent_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$child_key[$i]});
+			$builder->where("{$parent_table}.{$parent_key[$i]}", DB\SQL\Operator::_EQUAL_TO_, $this->model->{$child_key[$i]});
 		}
 
 		$result = $builder->limit(1)->query($parent_model);

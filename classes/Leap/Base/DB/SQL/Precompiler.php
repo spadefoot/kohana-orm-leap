@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Precompiler extends Core\Object {
+abstract class Base\DB\SQL\Precompiler extends Core\Object {
 
 	/**
 	 * This variable stores a reference to the data source.
@@ -82,8 +82,8 @@ abstract class Base_DB_SQL_Precompiler extends Core\Object {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
-				case DB_SQL_Connector::_AND_:
-				case DB_SQL_Connector::_OR_:
+				case DB\SQL\Connector::_AND_:
+				case DB\SQL\Connector::_OR_:
 					return $expr;
 				break;
 			}
@@ -161,8 +161,8 @@ abstract class Base_DB_SQL_Precompiler extends Core\Object {
 	public function prepare_parenthesis($expr) {
 		if (is_string($expr)) {
 			switch ($expr) {
-				case DB_SQL_Builder::_OPENING_PARENTHESIS_:
-				case DB_SQL_Builder::_CLOSING_PARENTHESIS_:
+				case DB\SQL\Builder::_OPENING_PARENTHESIS_:
+				case DB\SQL\Builder::_CLOSING_PARENTHESIS_:
 					return $expr;
 				break;
 			}

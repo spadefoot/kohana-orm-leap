@@ -50,10 +50,10 @@ abstract class Base_DB_ORM extends Core\Object {
 	 * @param string $expr                          the raw SQL expression
 	 * @param array $params                         an associated array of parameter
 	 *                                              key/values pairs
-	 * @return DB_SQL_Expression                    the wrapped expression
+	 * @return DB\SQL\Expression                    the wrapped expression
 	 */
 	public static function expr($expr, Array $params = array()) {
-		$expression = new DB_SQL_Expression($expr, $params);
+		$expression = new DB\SQL\Expression($expr, $params);
 		return $expression;
 	}
 
@@ -104,7 +104,7 @@ abstract class Base_DB_ORM extends Core\Object {
 	 * @access public
 	 * @static
 	 * @param string $model                         the model's name
-	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
+	 * @return DB\SQL\Precompiler                   an instance of the pre-compiler
 	 */
 	public static function precompiler($model) {
 		$model = DB_ORM_Model::model_name($model);

@@ -231,7 +231,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 		}
 		$builder = DB_SQL::delete(static::data_source(DB\DataSource::MASTER_INSTANCE))->from(static::table());
 		foreach ($primary_key as $column) {
-			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+			$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
 		$builder->execute();
 		if ($reset) {
@@ -373,7 +373,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 			->from(static::table())
 			->limit(1);
 		foreach (static::primary_key() as $column) {
-			$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+			$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
 		return $builder->query()->is_loaded();
 	}
@@ -410,7 +410,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 			}
 			$builder = DB_SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))->from(static::table())->limit(1);
 			foreach ($primary_key as $column) {
-				$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+				$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
 			$record = $builder->query();
 			if ( ! $record->is_loaded()) {
@@ -514,7 +514,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 							->from($table);
 
 					foreach ($primary_key as $column) {
-						$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+						$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 					}
 
 					$do_insert = ! ($builder->limit(1)->query()->is_loaded());
@@ -534,7 +534,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 							// Add column values to the query builder
 							$builder->set($column, $this->fields[$column]->value);
 
-							if (in_array($column, $primary_key) OR ($this->fields[$column]->value instanceof DB_SQL_Expression)) {
+							if (in_array($column, $primary_key) OR ($this->fields[$column]->value instanceof DB\SQL\Expression)) {
 								// Reloading required because primary key has been changed or an SQL expression has been used
 								$reload = TRUE;
 							}
@@ -550,7 +550,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 					// Execute the query only if there is data to save
 					if ($is_worth) {
 						foreach ($primary_key as $column) {
-							$builder->where($column, DB_SQL_Operator::_EQUAL_TO_, $this->fields[$column]->value);
+							$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 						}
 
 						$builder->execute();
@@ -577,7 +577,7 @@ abstract class Base_DB_ORM_Model extends Core\Object implements Core_IDisposable
 						// Add column values to the query builder
 						$builder->column($column, $this->fields[$column]->value);
 
-						if ($this->fields[$column]->value instanceof DB_SQL_Expression) {
+						if ($this->fields[$column]->value instanceof DB\SQL\Expression) {
 							// Reloading required, if using SQL expressions
 							$reload = TRUE;
 						}

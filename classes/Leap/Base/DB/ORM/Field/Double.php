@@ -100,7 +100,7 @@ abstract class Base_DB_ORM_Field_Double extends DB_ORM_Field {
 				: NULL;
 		}
 
-		if ( ! ($default instanceof DB_SQL_Expression)) {
+		if ( ! ($default instanceof DB\SQL\Expression)) {
 			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
 			}

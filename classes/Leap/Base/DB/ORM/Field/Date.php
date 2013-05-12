@@ -85,7 +85,7 @@ abstract class Base_DB_ORM_Field_Date extends DB_ORM_Field {
 				: NULL;
 		}
 
-		if ( ! ($default instanceof DB_SQL_Expression)) {
+		if ( ! ($default instanceof DB\SQL\Expression)) {
 			if ($default !== NULL) {
 				if (is_integer($default)) {
 					$default = date('Y-m-d', $default);
@@ -119,7 +119,7 @@ abstract class Base_DB_ORM_Field_Date extends DB_ORM_Field {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! ($value instanceof DB_SQL_Expression)) {
+				if ( ! ($value instanceof DB\SQL\Expression)) {
 					if ($value !== NULL) {
 						if (is_integer($value)) {
 							$value = date('Y-m-d', $value);

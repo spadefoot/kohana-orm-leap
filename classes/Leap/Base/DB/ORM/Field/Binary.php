@@ -74,7 +74,7 @@ abstract class Base_DB_ORM_Field_Binary extends DB_ORM_Field {
 			$default = NULL;
 		}
 
-		if ( ! ($default instanceof DB_SQL_Expression)) {
+		if ( ! ($default instanceof DB\SQL\Expression)) {
 			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
 			}

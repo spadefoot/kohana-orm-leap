@@ -26,13 +26,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB_SQL_Statement {
+abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Insert_Builder
+	 * @var DB\SQL\Insert\Builder
 	 */
 	protected $builder;
 
@@ -152,7 +152,7 @@ abstract class Base_DB_ORM_Insert_Proxy extends Core\Object implements DB_SQL_St
 	public function execute() {
 		$model = $this->model;
 		$auto_increment = $model::is_auto_incremented();
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$connection->execute($this->statement());
 		$primary_key = ($auto_increment) ? $connection->get_last_insert_id() : 0;
 		return $primary_key;

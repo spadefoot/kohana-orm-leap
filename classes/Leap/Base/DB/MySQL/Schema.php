@@ -114,7 +114,7 @@ abstract class Base_DB_MySQL_Schema extends DB\Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.5/en/show-columns.html
 	 */
 	public function fields($table, $like = '') {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 
 		$schema = $this->precompiler->prepare_identifier($this->data_source->database);
 		$table = $this->precompiler->prepare_identifier($table);
@@ -188,7 +188,7 @@ abstract class Base_DB_MySQL_Schema extends DB\Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-index.html
 	 */
 	public function indexes($table, $like = '') {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 
 		$schema = $this->precompiler->prepare_identifier($this->data_source->database);
 		$table = $this->precompiler->prepare_identifier($table);
@@ -251,13 +251,13 @@ abstract class Base_DB_MySQL_Schema extends DB\Schema {
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
-			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
-			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'BASE_TABLE')
+			//->where('TABLE_SCHEMA', DB\SQL\Operator::_EQUAL_TO_, $this->data_source->database)
+			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB\SQL\Operator::_EQUAL_TO_, 'BASE_TABLE')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TABLE_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -302,15 +302,15 @@ abstract class Base_DB_MySQL_Schema extends DB\Schema {
 			->column('ACTION_ORDER', 'seq_index')
 			->column('CREATED', 'created')
 			->from('INFORMATION_SCHEMA.TRIGGERS')
-			//->where('EVENT_OBJECT_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
-			->where(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB_SQL_Operator::_EQUAL_TO_, $table)
+			//->where('EVENT_OBJECT_SCHEMA', DB\SQL\Operator::_EQUAL_TO_, $this->data_source->database)
+			->where(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB\SQL\Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'))
 			->order_by(DB_SQL::expr('UPPER(`TRIGGER_NAME`)'))
 			->order_by('ACTION_ORDER');
 
 		if ( ! empty($like)) {
-			$builder->where('TRIGGER_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TRIGGER_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -340,13 +340,13 @@ abstract class Base_DB_MySQL_Schema extends DB\Schema {
 			->column('TABLE_NAME', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
-			//->where('TABLE_SCHEMA', DB_SQL_Operator::_EQUAL_TO_, $this->data_source->database)
-			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
+			//->where('TABLE_SCHEMA', DB\SQL\Operator::_EQUAL_TO_, $this->data_source->database)
+			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB\SQL\Operator::_EQUAL_TO_, 'VIEW')
 			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
 			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TABLE_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

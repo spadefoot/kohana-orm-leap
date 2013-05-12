@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Builder extends Core\Object implements DB_SQL_Statement {
+abstract class Base\DB\SQL\Builder extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This constant represents a closing parenthesis.
@@ -64,7 +64,7 @@ abstract class Base_DB_SQL_Builder extends Core\Object implements DB_SQL_Stateme
 	 * This variable stores a reference to the pre-compiler.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Precompiler
+	 * @var DB\SQL\Precompiler
 	 */
 	protected $precompiler;
 
@@ -87,7 +87,7 @@ abstract class Base_DB_SQL_Builder extends Core\Object implements DB_SQL_Stateme
 	 * @access public
 	 * @static
 	 * @param DB\DataSource $data_source        the data source to be used
-	 * @return DB_SQL_Builder                   a new instance of the calling class
+	 * @return DB\SQL\Builder                   a new instance of the calling class
 	 */
 	public static function factory(DB\DataSource $data_source) {
 		$class = get_called_class();

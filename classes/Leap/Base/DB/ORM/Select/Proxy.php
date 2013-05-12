@@ -26,13 +26,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB_SQL_Statement {
+abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Select_Builder
+	 * @var DB\SQL\Select\Builder
 	 */
 	protected $builder;
 
@@ -297,7 +297,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB_SQL_S
 	 * @access public
 	 * @param integer $offset                           the "offset" constraint
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_SQL_Select_Builder                    a reference to the current instance
+	 * @return DB\SQL\Select\Builder                    a reference to the current instance
 	 */
 	public function page($offset, $limit) {
 		$this->builder->page($offset, $limit);
@@ -315,7 +315,7 @@ abstract class Base_DB_ORM_Select_Proxy  extends Core\Object implements DB_SQL_S
 		if ($limit !== NULL) {
 			$this->limit($limit);
 		}
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($this->statement(), $this->model);
 		return $records;
 	}

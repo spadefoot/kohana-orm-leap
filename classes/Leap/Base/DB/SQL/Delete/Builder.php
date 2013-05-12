@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
+abstract class Base\DB\SQL\Delete\Builder extends DB\SQL\Builder {
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -46,7 +46,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $table                             the database table to be modified
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 */
 	public function from($table) {
 		$this->data['from'] = $this->precompiler->prepare_identifier($table);
@@ -58,7 +58,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param integer $limit                            the "limit" constraint
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->data['limit'] = $this->precompiler->prepare_natural($limit);
@@ -70,7 +70,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param integer $offset                           the "offset" constraint
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->data['offset'] = $this->precompiler->prepare_natural($offset);
@@ -86,7 +86,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 *                                                  column will sorted either in ascending or
 	 *                                                  descending order
 	 * @param string $nulls                             the weight to be given to null values
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
@@ -97,7 +97,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 */
 	public function reset() {
 		$this->data = array(
@@ -118,12 +118,12 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @param string $operator                          the operator to be used
 	 * @param string $value                             the value the column is constrained with
 	 * @param string $connector                         the connector to be used
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 * @throws Throwable\SQL\Exception                  indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+		if (($operator == DB\SQL\Operator::_BETWEEN_) OR ($operator == DB\SQL\Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Throwable\SQL\Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
@@ -134,21 +134,21 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
+			if ((($operator == DB\SQL\Operator::_IN_) OR ($operator == DB\SQL\Operator::_NOT_IN_)) AND ! is_array($value)) {
 				throw new Throwable\SQL\Exception('Message: Invalid build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if ($value === NULL) {
 				switch ($operator) {
-					case DB_SQL_Operator::_EQUAL_TO_:
-						$operator = DB_SQL_Operator::_IS_;
+					case DB\SQL\Operator::_EQUAL_TO_:
+						$operator = DB\SQL\Operator::_IS_;
 					break;
-					case DB_SQL_Operator::_NOT_EQUIVALENT_:
-						$operator = DB_SQL_Operator::_IS_NOT_;
+					case DB\SQL\Operator::_NOT_EQUIVALENT_:
+						$operator = DB\SQL\Operator::_IS_NOT_;
 					break;
 				}
 			}
 			$column = $this->precompiler->prepare_identifier($column);
-			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
+			$escape = (in_array($operator, array(DB\SQL\Operator::_LIKE_, DB\SQL\Operator::_NOT_LIKE_)))
 				? '\\\\'
 				: NULL;
 			$value = $this->precompiler->prepare_value($value, $escape);
@@ -164,7 +164,7 @@ abstract class Base_DB_SQL_Delete_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $parenthesis                       the parenthesis to be used
 	 * @param string $connector                         the connector to be used
-	 * @return DB_SQL_Delete_Builder                    a reference to the current instance
+	 * @return DB\SQL\Delete\Builder                    a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);

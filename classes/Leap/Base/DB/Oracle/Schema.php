@@ -145,7 +145,7 @@ abstract class Base_DB_Oracle_Schema extends DB\Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -250,22 +250,22 @@ abstract class Base_DB_Oracle_Schema extends DB\Schema {
 			->column(DB_SQL::expr("CASE \"t2\".\"CONSTRAINT_TYPE\" WHEN 'P' THEN 1 WHEN 'U' THEN 1 ELSE 0 END"), 'unique')
 			->column(DB_SQL::expr("CASE \"t2\".\"CONSTRAINT_TYPE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
 			->from('SYS.ALL_IND_COLUMNS', 't0')
-			//->join(DB_SQL_JoinType::_LEFT_, 'SYS.ALL_INDEXES', 't1')
-			//->on('t1.OWNER', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
-			//->on('t1.INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_NAME')
-			->join(DB_SQL_JoinType::_LEFT_, 'SYS.ALL_CONSTRAINTS', 't2')
-			->on('t2.INDEX_OWNER', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
-			->on('t2.INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDEX_NAME')
-			->where('t0.TABLE_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			//->where('t1.STATUS', DB_SQL_Operator::_EQUAL_TO_, 'VALID')
-			->where('t2.STATUS', DB_SQL_Operator::_EQUAL_TO_, 'ENABLED')
+			//->join(DB\SQL\JoinType::_LEFT_, 'SYS.ALL_INDEXES', 't1')
+			//->on('t1.OWNER', DB\SQL\Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
+			//->on('t1.INDEX_NAME', DB\SQL\Operator::_EQUAL_TO_, 't0.INDEX_NAME')
+			->join(DB\SQL\JoinType::_LEFT_, 'SYS.ALL_CONSTRAINTS', 't2')
+			->on('t2.INDEX_OWNER', DB\SQL\Operator::_EQUAL_TO_, 't0.INDEX_OWNER')
+			->on('t2.INDEX_NAME', DB\SQL\Operator::_EQUAL_TO_, 't0.INDEX_NAME')
+			->where('t0.TABLE_NAME', DB\SQL\Operator::_EQUAL_TO_, $table)
+			//->where('t1.STATUS', DB\SQL\Operator::_EQUAL_TO_, 'VALID')
+			->where('t2.STATUS', DB\SQL\Operator::_EQUAL_TO_, 'ENABLED')
 			->order_by(DB_SQL::expr('UPPER("t0"."TABLE_OWNER")'))
 			->order_by(DB_SQL::expr('UPPER("t0"."TABLE_NAME")'))
 			->order_by(DB_SQL::expr('UPPER("t0"."INDEX_NAME")'))
 			->order_by('t0.COLUMN_POSITION');
 
 		if ( ! empty($like)) {
-			$builder->where('t0.INDEX_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('t0.INDEX_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -301,7 +301,7 @@ abstract class Base_DB_Oracle_Schema extends DB\Schema {
 			->order_by(DB_SQL::expr('UPPER("TABLE_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABLE_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TABLE_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -347,14 +347,14 @@ abstract class Base_DB_Oracle_Schema extends DB\Schema {
 			->column(DB_SQL::expr('0'), 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('SYS.ALL_TRIGGERS')
-			->where('TABLE_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where('STATUS', DB_SQL_Operator::_EQUAL_TO_, 'ENABLED')
+			->where('TABLE_NAME', DB\SQL\Operator::_EQUAL_TO_, $table)
+			->where('STATUS', DB\SQL\Operator::_EQUAL_TO_, 'ENABLED')
 			->order_by(DB_SQL::expr('UPPER("OWNER")'))
 			->order_by(DB_SQL::expr('UPPER("TABLE_NAME")'))
 			->order_by(DB_SQL::expr('UPPER("TRIGGER_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('TRIGGER_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TRIGGER_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -389,7 +389,7 @@ abstract class Base_DB_Oracle_Schema extends DB\Schema {
 			->order_by(DB_SQL::expr('UPPER("VIEW_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('VIEW_NAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('VIEW_NAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

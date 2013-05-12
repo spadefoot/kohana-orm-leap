@@ -129,7 +129,7 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 
 		$sql .= ';';
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -230,18 +230,18 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 			->column(DB_SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'D' THEN 0 ELSE 1 END"), 'unique')
 			->column(DB_SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
 			->from('SYSCAT.INDEXCOLUSE', 't0')
-			->join(DB_SQL_JoinType::_LEFT_, 'SYSCAT.INDEXES', 't1')
-			->on('t1.INDSCHEMA', DB_SQL_Operator::_EQUAL_TO_, 't0.INDSCHEMA')
-			->on('t1.INDNAME', DB_SQL_Operator::_EQUAL_TO_, 't0.INDNAME')
-			->where('t1.TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
-			->where('t1.TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->join(DB\SQL\JoinType::_LEFT_, 'SYSCAT.INDEXES', 't1')
+			->on('t1.INDSCHEMA', DB\SQL\Operator::_EQUAL_TO_, 't0.INDSCHEMA')
+			->on('t1.INDNAME', DB\SQL\Operator::_EQUAL_TO_, 't0.INDNAME')
+			->where('t1.TABSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
+			->where('t1.TABNAME', DB\SQL\Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER("t1"."TABSCHEMA")'))
 			->order_by(DB_SQL::expr('UPPER("t1"."TABNAME")'))
 			->order_by(DB_SQL::expr('UPPER("t1"."INDNAME")'))
 			->order_by('t0.COLSEQ');
 
 		if ( ! empty($like)) {
-			$builder->where('t1.INDNAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('t1.INDNAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -274,13 +274,13 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 			->column('TABNAME', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('SYSCAT.TABLES')
-			->where('TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
-			->where('TYPE', DB_SQL_Operator::_EQUAL_TO_, 'T')
+			->where('TABSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
+			->where('TYPE', DB\SQL\Operator::_EQUAL_TO_, 'T')
 			->order_by(DB_SQL::expr('UPPER("TABSCHEMA")'))
 			->order_by(DB_SQL::expr('UPPER("TABNAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('TABNAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TABNAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -325,15 +325,15 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 			->column(DB_SQL::expr('0'), 'seq_index')
 			->column('CREATE_TIME', 'created')
 			->from('SYSCAT.TRIGGERS')
-			->where('TABSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
-			->where('TABNAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where('VALID', DB_SQL_Operator::_NOT_EQUIVALENT_, 'Y')
+			->where('TABSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
+			->where('TABNAME', DB\SQL\Operator::_EQUAL_TO_, $table)
+			->where('VALID', DB\SQL\Operator::_NOT_EQUIVALENT_, 'Y')
 			->order_by(DB_SQL::expr('UPPER("TABSCHEMA")'))
 			->order_by(DB_SQL::expr('UPPER("TABNAME")'))
 			->order_by(DB_SQL::expr('UPPER("TRIGNAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('TRIGNAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('TRIGNAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -365,13 +365,13 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 			->column('VIEWNAME', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('SYSCAT.VIEWS')
-			->where('VIEWSCHEMA', DB_SQL_Operator::_NOT_LIKE_, 'SYS%')
-			->where('VALID', DB_SQL_Operator::_NOT_EQUIVALENT_, 'Y')
+			->where('VIEWSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
+			->where('VALID', DB\SQL\Operator::_NOT_EQUIVALENT_, 'Y')
 			->order_by(DB_SQL::expr('UPPER("VIEWSCHEMA")'))
 			->order_by(DB_SQL::expr('UPPER("VIEWNAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where('VIEWNAME', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('VIEWNAME', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

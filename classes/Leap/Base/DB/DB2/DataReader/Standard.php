@@ -29,14 +29,14 @@
  *
  * @abstract
  */
-abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standard {
+abstract class Base_DB_DB2_DataReader_Standard extends DB\SQL\DataReader\Standard {
 
 	/**
 	 * This function initializes the class.
 	 *
 	 * @access public
 	 * @override
-	 * @param DB_Connection_Driver $connection  the connection to be used
+	 * @param DB\Connection\Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 * @throws Throwable\SQL\Exception          indicates that the query failed
@@ -45,7 +45,7 @@ abstract class Base_DB_DB2_DataReader_Standard extends DB_SQL_DataReader_Standar
 	 * @see http://www.php.net/manual/en/function.db2-execute.php
 	 * @see http://www.php.net/manual/en/function.db2-stmt-error.php
 	 */
-	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
+	public function __construct(DB\Connection\Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();
 		$command = @db2_prepare($resource, $sql);
 		if ($command === FALSE) {

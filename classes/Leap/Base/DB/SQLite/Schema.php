@@ -60,7 +60,7 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 
 		$sql = "PRAGMA table_info({$table});";
 
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$records = $connection->query($sql);
 
 		$fields = array();
@@ -151,7 +151,7 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 	 * @see http://my.safaribooksonline.com/book/databases/sql/9781449394592/sqlite-pragmas/id3054537
 	 */
 	public function indexes($table, $like = '') {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 
 		$path_info = pathinfo($this->data_source->database);
 		$schema = $path_info['filename'];
@@ -217,12 +217,12 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 			->column('name', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
-			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'table')
-			->where('name', DB_SQL_Operator::_NOT_LIKE_, 'sqlite_%')
+			->where('type', DB\SQL\Operator::_EQUAL_TO_, 'table')
+			->where('name', DB\SQL\Operator::_NOT_LIKE_, 'sqlite_%')
 			->order_by(DB_SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
-			$builder->where('name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('name', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -270,13 +270,13 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 			->column(DB_SQL::expr('0'), 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
-			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'trigger')
-			->where('tbl_name', DB_SQL_Operator::_NOT_LIKE_, 'sqlite_%')
+			->where('type', DB\SQL\Operator::_EQUAL_TO_, 'trigger')
+			->where('tbl_name', DB\SQL\Operator::_NOT_LIKE_, 'sqlite_%')
 			->order_by(DB_SQL::expr('UPPER([tbl_name])'))
 			->order_by(DB_SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
-			$builder->where('[name]', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('[name]', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		$reader = $builder->reader();
@@ -349,12 +349,12 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 			->column('name', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
-			->where('type', DB_SQL_Operator::_EQUAL_TO_, 'view')
-			->where('name', DB_SQL_Operator::_NOT_LIKE_, 'sqlite_%')
+			->where('type', DB\SQL\Operator::_EQUAL_TO_, 'view')
+			->where('name', DB\SQL\Operator::_NOT_LIKE_, 'sqlite_%')
 			->order_by(DB_SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
-			$builder->where('name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('name', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

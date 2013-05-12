@@ -29,15 +29,15 @@
 abstract class Base_DB_SQL extends Core\Object {
 
 	/**
-	 * This function returns an instance of the DB_SQL_Delete_Proxy.
+	 * This function returns an instance of the DB\SQL\Delete\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
-	 * @return DB_SQL_Delete_Proxy                  an instance of the class
+	 * @return DB\SQL\Delete\Proxy                  an instance of the class
 	 */
 	public static function delete($config = 'default') {
-		$proxy = new DB_SQL_Delete_Proxy($config);
+		$proxy = new DB\SQL\Delete\Proxy($config);
 		return $proxy;
 	}
 
@@ -50,23 +50,23 @@ abstract class Base_DB_SQL extends Core\Object {
 	 * @param string $expr                          the raw SQL expression
 	 * @param array $params                         an associated array of parameter
 	 *                                              key/values pairs
-	 * @return DB_SQL_Expression                    the wrapped expression
+	 * @return DB\SQL\Expression                    the wrapped expression
 	 */
 	public static function expr($expr, Array $params = array()) {
-		$expression = new DB_SQL_Expression($expr, $params);
+		$expression = new DB\SQL\Expression($expr, $params);
 		return $expression;
 	}
 
 	/**
-	 * This function returns an instance of the DB_SQL_Insert_Proxy.
+	 * This function returns an instance of the DB\SQL\Insert\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
-	 * @return DB_SQL_Insert_Proxy                  an instance of the class
+	 * @return DB\SQL\Insert\Proxy                  an instance of the class
 	 */
 	public static function insert($config = 'default') {
-		$proxy = new DB_SQL_Insert_Proxy($config);
+		$proxy = new DB\SQL\Insert\Proxy($config);
 		return $proxy;
 	}
 
@@ -77,7 +77,7 @@ abstract class Base_DB_SQL extends Core\Object {
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
-	 * @return DB_SQL_Precompiler                   an instance of the pre-compiler
+	 * @return DB\SQL\Precompiler                   an instance of the pre-compiler
 	 */
 	public static function precompiler($config = 'default') {
 		$data_source = DB\DataSource::instance($config);
@@ -87,29 +87,29 @@ abstract class Base_DB_SQL extends Core\Object {
 	}
 
 	/**
-	 * This function returns an instance of the DB_SQL_Select_Proxy.
+	 * This function returns an instance of the DB\SQL\Select\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
 	 * @param array $columns                        the columns to be selected
-	 * @return DB_SQL_Select_Proxy                  an instance of the class
+	 * @return DB\SQL\Select\Proxy                  an instance of the class
 	 */
 	public static function select($config = 'default', Array $columns = array()) {
-		$proxy = new DB_SQL_Select_Proxy($config, $columns);
+		$proxy = new DB\SQL\Select\Proxy($config, $columns);
 		return $proxy;
 	}
 
 	/**
-	 * This function returns an instance of the DB_SQL_Update_Proxy.
+	 * This function returns an instance of the DB\SQL\Update\Proxy.
 	 *
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
-	 * @return DB_SQL_Update_Proxy                  an instance of the class
+	 * @return DB\SQL\Update\Proxy                  an instance of the class
 	 */
 	public static function update($config = 'default') {
-		$proxy = new DB_SQL_Update_Proxy($config);
+		$proxy = new DB\SQL\Update\Proxy($config);
 		return $proxy;
 	}
 

@@ -65,7 +65,7 @@ Change Log for LEAP ORM
 * Fixed an issue with the connection pool, where the connection was not being openned.
 
 2012-05-29
-* Changed "foreach" loop to a "do/while" loop in Base_DB_Connection_Pool.
+* Changed "foreach" loop to a "do/while" loop in Base\DB\Connection\Pool.
 * Merged pull requests #38 and #39 per nexeck's request.
 
 2012-05-25
@@ -138,13 +138,13 @@ Change Log for LEAP ORM
 * Models can now generate HTML form labels and controls using field data.
 
 2012-02-22
-* Added all function to Base_DB_SQL_Select Builder, Base_DB_SQL_Select_Proxy, and Base_DB_ORM_Select_Proxy.
+* Added all function to Base\DB\SQL\Select\Builder, Base\DB\SQL\Select\Proxy, and Base_DB_ORM_Select_Proxy.
 * Added prepare_wildcard($expr) to expression classes.
 * DB_ORM now adds table prefix to wildcard to avoid problems when joining.
 * Updated inline documentation.
 
 2012-02-10
-* Changed the method signature to Base_DB_SQL_Expression_Interface::prepare_operator() and updated implementing classes.
+* Changed the method signature to Base\DB\SQL\Expression_Interface::prepare_operator() and updated implementing classes.
 * Updated some inline documentation.
 
 2012-02-09
@@ -154,7 +154,7 @@ Change Log for LEAP ORM
 2012-02-07
 * Fixed a bug in how Oracle escapes strings per ekarlso's request (Issue #18).
 * Improved how strings are escaped.
-* Renamed Base_DB_Connection_Driver::escape_string($string) to Base_DB_Connection_Driver::quote($string, $like = FALSE).
+* Renamed Base\DB\Connection\Driver::escape_string($string) to Base\DB\Connection\Driver::quote($string, $like = FALSE).
 * Commented out code in schema.php files so that API guide can be generated per nyunyu95's request (Issue #21).
 * Cleaned-up close function in connection classes.
 * Implemented \ArrayAccess and \SeekableIterator interfaces in Base\Core\Data\CSV.
@@ -180,13 +180,13 @@ Change Log for LEAP ORM
 
 2012-01-19
 * Adding limit and offset support for Oracle select statements per ekarlso's request (Issue #13).
-* Now allows array configs to be used with Base_DB_SQL_Expression.
+* Now allows array configs to be used with Base\DB\SQL\Expression.
 
 2012-01-18
 * Added support to use just 'database' key without a host in the Oracle connection configuration settings per ekarlso's request (Issue #12).
 * The host property in the Base\DB\DataSource now defaults to an empty string rather than to localhost per ekarlso's request (Issue #12).
-* Reworked the Base_DB_SQL_Expression class.
-* Added XML config files for MySQL and SQLite so that the Base_DB_SQL_Tokenizer can detect keywords.
+* Reworked the Base\DB\SQL\Expression class.
+* Added XML config files for MySQL and SQLite so that the Base\DB\SQL\Tokenizer can detect keywords.
 * Modified the way XML files are loaded so that XML can be stored in more places than just in an xml folder.
 * Updated README.md.
 
@@ -207,11 +207,11 @@ Change Log for LEAP ORM
 * Major rewrite of SQL tokenizer.
 * Fixed logic for Base_DB_Drizzle_Connection_Standard::get_last_insert_id().
 * Made change to logic in Base\DB\ResultSet::seek($position).
-* Fixed Base_DB_SQL_Operator::UNION_ALL.
+* Fixed Base\DB\SQL\Operator::UNION_ALL.
 * Minor edits to inline documentation.
 
 2012-01-03
-* Removed unneeded Base_DB_SQL_Tokenizer_Interface.
+* Removed unneeded Base\DB\SQL\Tokenizer_Interface.
 * Minor edit in change log.
 
 2012-01-01
@@ -257,7 +257,7 @@ Change Log for LEAP ORM
 * Alphabetized some instance variables in proxy classes.
 * Made it possible to pass a primary_key to DB_ORM::model without wrapping it in an array.
 * Fixed some variables in DB\DataSourceTest.
-* Changed query($limit = NULL) to query($type = 'array') in Base_DB_SQL_Select_Proxy.
+* Changed query($limit = NULL) to query($type = 'array') in Base\DB\SQL\Select\Proxy.
 
 2011-12-13
 * Made improvements to how strings are escaped per Isaiah's request (Issue #7).
@@ -268,9 +268,9 @@ Change Log for LEAP ORM
 * Changed fetch_all() to as_array() in Base\DB\ResultSet.
 
 2011-12-12
-* Addressed the loading of field schema over and over again with class serialization in DB_Connection_Driver per Crystal's request (Issue #1).
+* Addressed the loading of field schema over and over again with class serialization in DB\Connection\Driver per Crystal's request (Issue #1).
 * Added MySQLi driver classes for MariaDB.
-* Changed $cached_types to $cached_objects in Base_DB_Connection_Driver.
+* Changed $cached_types to $cached_objects in Base\DB\Connection\Driver.
 
 2011-12-11
 * Removed is_null() in Base\DB\DataSource::__construct().
@@ -291,8 +291,8 @@ Change Log for LEAP ORM
 
 2011-12-09
 * Alphabetized some class functions.
-* Redefined Base_DB_Connection_Pool::get_connection() to allow for all config types.
-* Renamed $name to $id in Base_DB_Connection_Pool.
+* Redefined Base\DB\Connection\Pool::get_connection() to allow for all config types.
+* Renamed $name to $id in Base\DB\Connection\Pool.
 * Renamed get_name() to get_id() in Base\DB\DataSource.
 * Removed config/leap.php and added driver declaration in config/database.php.
 * Added Base\DB\DataSource::get_driver().
@@ -305,4 +305,4 @@ Change Log for LEAP ORM
 * Added an extra parameter to DB_ORM::model.
 * Improved algorithm in DB_ORM_Model::load.
 * Added DB\ResultSet::get.
-* Expanded the functionality of DB_SQL_Select_Builder::group_by.
+* Expanded the functionality of DB\SQL\Select\Builder::group_by.

@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Standard {
+abstract class Base_DB_Oracle_Connection_Standard extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This variable stores the execution mode, which is used to handle transactions.
@@ -269,7 +269,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
+		$reader = DB\SQL\DataReader::factory($this, $sql, $this->execution_mode);
 		$result_set = $this->cache($sql, $type, new DB\ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;
@@ -280,14 +280,14 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB_SQL_Connection_Stan
 	 *
 	 * @access public
 	 * @param string $sql						    the SQL statement
-	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @return DB\SQL\DataReader                    the SQL data reader
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function reader($sql) {
 		if ( ! $this->is_connected()) {
 			throw new Throwable\SQL\Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
 		}
-		$reader = DB_SQL_DataReader::factory($this, $sql, $this->execution_mode);
+		$reader = DB\SQL\DataReader::factory($this, $sql, $this->execution_mode);
 		$this->sql = $sql;
 		return $reader;
 	}

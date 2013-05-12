@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
+abstract class Base_DB_PostgreSQL_Precompiler extends DB\SQL\Precompiler {
 
 	/**
 	 * This constant represents an opening identifier quote character.
@@ -75,9 +75,9 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 	 */
 	public function prepare_identifier($expr) {
 		if ($expr instanceof DB_PostgreSQL_Select_Builder) {
-			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
+			return DB\SQL\Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 		}
-		else if ($expr instanceof DB_SQL_Expression) {
+		else if ($expr instanceof DB\SQL\Expression) {
 			return $expr->value($this);
 		}
 		else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
@@ -88,7 +88,7 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 		}
 		else if (preg_match('/^SELECT.*$/i', $expr)) {
 			$expr = rtrim($expr, "; \t\n\r\0\x0B");
-			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
+			return DB\SQL\Builder::_OPENING_PARENTHESIS_ . $expr . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 		}
 		$parts = explode('.', $expr);
 		foreach ($parts as &$part) {
@@ -113,22 +113,22 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 		if (is_string($expr)) {
 			$expr = strtoupper($expr);
 			switch ($expr) {
-				case DB_SQL_JoinType::_CROSS_:
-				case DB_SQL_JoinType::_INNER_:
-				case DB_SQL_JoinType::_LEFT_:
-				case DB_SQL_JoinType::_LEFT_OUTER_:
-				case DB_SQL_JoinType::_RIGHT_:
-				case DB_SQL_JoinType::_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_FULL_:
-				case DB_SQL_JoinType::_FULL_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_:
-				case DB_SQL_JoinType::_NATURAL_INNER_:
-				case DB_SQL_JoinType::_NATURAL_LEFT_:
-				case DB_SQL_JoinType::_NATURAL_LEFT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_RIGHT_:
-				case DB_SQL_JoinType::_NATURAL_RIGHT_OUTER_:
-				case DB_SQL_JoinType::_NATURAL_FULL_:
-				case DB_SQL_JoinType::_NATURAL_FULL_OUTER_:
+				case DB\SQL\JoinType::_CROSS_:
+				case DB\SQL\JoinType::_INNER_:
+				case DB\SQL\JoinType::_LEFT_:
+				case DB\SQL\JoinType::_LEFT_OUTER_:
+				case DB\SQL\JoinType::_RIGHT_:
+				case DB\SQL\JoinType::_RIGHT_OUTER_:
+				case DB\SQL\JoinType::_FULL_:
+				case DB\SQL\JoinType::_FULL_OUTER_:
+				case DB\SQL\JoinType::_NATURAL_:
+				case DB\SQL\JoinType::_NATURAL_INNER_:
+				case DB\SQL\JoinType::_NATURAL_LEFT_:
+				case DB\SQL\JoinType::_NATURAL_LEFT_OUTER_:
+				case DB\SQL\JoinType::_NATURAL_RIGHT_:
+				case DB\SQL\JoinType::_NATURAL_RIGHT_OUTER_:
+				case DB\SQL\JoinType::_NATURAL_FULL_:
+				case DB\SQL\JoinType::_NATURAL_FULL_OUTER_:
 					return $expr;
 				break;
 			}
@@ -161,31 +161,31 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 			$expr = strtoupper($expr);
 			if ($group == 'COMPARISON') {
 				switch ($expr) {
-					case DB_SQL_Operator::_NOT_EQUAL_TO_:
-					case DB_SQL_Operator::_NOT_EQUIVALENT_:
-						return DB_SQL_Operator::_NOT_EQUIVALENT_;
-					case DB_SQL_Operator::_EQUAL_TO_:
-					case DB_SQL_Operator::_BETWEEN_:
-					case DB_SQL_Operator::_NOT_BETWEEN_:
+					case DB\SQL\Operator::_NOT_EQUAL_TO_:
+					case DB\SQL\Operator::_NOT_EQUIVALENT_:
+						return DB\SQL\Operator::_NOT_EQUIVALENT_;
+					case DB\SQL\Operator::_EQUAL_TO_:
+					case DB\SQL\Operator::_BETWEEN_:
+					case DB\SQL\Operator::_NOT_BETWEEN_:
 					case '<<':   // is contained within
 					case '<<=':  // is contained within or equals
 					case '>>':   // contains
 					case '>>=':  // contains or equals
-					case DB_SQL_Operator::_LIKE_:
+					case DB\SQL\Operator::_LIKE_:
 					case '~~':   // like
-					case DB_SQL_Operator::_NOT_LIKE_:
+					case DB\SQL\Operator::_NOT_LIKE_:
 					case '!~~':  // not like
-					case DB_SQL_Operator::_LESS_THAN_:
-					case DB_SQL_Operator::_LESS_THAN_OR_EQUAL_TO_:
-					case DB_SQL_Operator::_GREATER_THAN_:
-					case DB_SQL_Operator::_GREATER_THAN_OR_EQUAL_TO_:
-					case DB_SQL_Operator::_IN_:
-					case DB_SQL_Operator::_NOT_IN_:
+					case DB\SQL\Operator::_LESS_THAN_:
+					case DB\SQL\Operator::_LESS_THAN_OR_EQUAL_TO_:
+					case DB\SQL\Operator::_GREATER_THAN_:
+					case DB\SQL\Operator::_GREATER_THAN_OR_EQUAL_TO_:
+					case DB\SQL\Operator::_IN_:
+					case DB\SQL\Operator::_NOT_IN_:
 					case '!!=':  // not in
-					case DB_SQL_Operator::_IS_:
-					case DB_SQL_Operator::_IS_NOT_:
-					case DB_SQL_Operator::_SIMILAR_TO_:
-					case DB_SQL_Operator::_NOT_SIMILAR_TO_:
+					case DB\SQL\Operator::_IS_:
+					case DB\SQL\Operator::_IS_NOT_:
+					case DB\SQL\Operator::_SIMILAR_TO_:
+					case DB\SQL\Operator::_NOT_SIMILAR_TO_:
 					case '~':   // Match (regex), case sensitive
 					case '~*':  // Match (regex), case insensitive
 					case '!~':  // Does not match (regex), case sensitive
@@ -207,12 +207,12 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 			}
 			else if ($group == 'SET') {
 				switch ($expr) {
-					case DB_SQL_Operator::_EXCEPT_:
-					case DB_SQL_Operator::_EXCEPT_ALL_:
-					case DB_SQL_Operator::_INTERSECT_:
-					case DB_SQL_Operator::_INTERSECT_ALL_:
-					case DB_SQL_Operator::_UNION_:
-					case DB_SQL_Operator::_UNION_ALL_:
+					case DB\SQL\Operator::_EXCEPT_:
+					case DB\SQL\Operator::_EXCEPT_ALL_:
+					case DB\SQL\Operator::_INTERSECT_:
+					case DB\SQL\Operator::_INTERSECT_ALL_:
+					case DB\SQL\Operator::_UNION_:
+					case DB\SQL\Operator::_UNION_ALL_:
 						return $expr;
 					break;
 				}
@@ -284,13 +284,13 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 			foreach ($expr as $value) {
 				$buffer[] = $this->prepare_value($value, $escape);
 			}
-			return DB_SQL_Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
+			return DB\SQL\Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
 			if ($expr instanceof DB_PostgreSQL_Select_Builder) {
-				return DB_SQL_Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB_SQL_Builder::_CLOSING_PARENTHESIS_;
+				return DB\SQL\Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 			}
-			else if ($expr instanceof DB_SQL_Expression) {
+			else if ($expr instanceof DB\SQL\Expression) {
 				return $expr->value($this);
 			}
 			else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
@@ -319,7 +319,7 @@ abstract class Base_DB_PostgreSQL_Precompiler extends DB_SQL_Precompiler {
 			return "''";
 		}
 		else {
-			return DB_Connection_Pool::instance()->get_connection($this->data_source)->quote($expr, $escape);
+			return DB\Connection\Pool::instance()->get_connection($this->data_source)->quote($expr, $escape);
 		}
 	}
 

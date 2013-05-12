@@ -95,7 +95,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 				: NULL;
 		}
 
-		if ( ! ($default instanceof DB_SQL_Expression)) {
+		if ( ! ($default instanceof DB\SQL\Expression)) {
 			if ($default !== NULL) {
 				settype($default, $this->metadata['type']);
 			}
@@ -123,7 +123,7 @@ abstract class Base_DB_ORM_Field_Decimal extends DB_ORM_Field {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! ($value instanceof DB_SQL_Expression)) {
+				if ( ! ($value instanceof DB\SQL\Expression)) {
 					if ($value !== NULL) {
 						$value = number_format( (float) $value, $this->metadata['scale'], '.', '');
 						settype($value, $this->metadata['type']);

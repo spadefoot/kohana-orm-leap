@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Delete_Builder extends Base_DB_SQL_Delete_Builder {}
+abstract class DB\SQL\Delete\Builder extends Base\DB\SQL\Delete\Builder {}

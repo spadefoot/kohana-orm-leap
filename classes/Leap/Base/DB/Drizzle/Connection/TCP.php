@@ -31,7 +31,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard {
+abstract class Base_DB_Drizzle_Connection_TCP extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This variable stores the last insert id.
@@ -199,7 +199,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB_SQL_Connection_Standard
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$reader = DB_SQL_DataReader::factory($this, $sql);
+		$reader = DB\SQL\DataReader::factory($this, $sql);
 		$result_set = $this->cache($sql, $type, new DB\ResultSet($reader, $type));
 		$this->insert_id = FALSE;
 		$this->sql = $sql;

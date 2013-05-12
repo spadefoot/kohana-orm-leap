@@ -33,7 +33,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Operator extends Core\Object {
+abstract class Base\DB\SQL\Operator extends Core\Object {
 
 	#region Comparison Operators
 

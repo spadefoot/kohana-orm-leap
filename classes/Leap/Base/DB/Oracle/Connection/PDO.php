@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
+abstract class Base_DB_Oracle_Connection_PDO extends DB\SQL\Connection\PDO {
 
 	/**
 	 * This function processes an SQL statement that will NOT return data.
@@ -106,7 +106,7 @@ abstract class Base_DB_Oracle_Connection_PDO extends DB_SQL_Connection_PDO {
 	 * @access public
 	 * @override
 	 * @param string $sql						    the SQL statement
-	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @return DB\SQL\DataReader                    the SQL data reader
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function reader($sql) {

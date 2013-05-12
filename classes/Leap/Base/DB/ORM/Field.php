@@ -127,7 +127,7 @@ abstract class Base_DB_ORM_Field extends Core\Object {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! ($value instanceof DB_SQL_Expression)) {
+				if ( ! ($value instanceof DB\SQL\Expression)) {
 					if ($value !== NULL) {
 						settype($value, $this->metadata['type']);
 						if ( ! $this->validate($value)) {

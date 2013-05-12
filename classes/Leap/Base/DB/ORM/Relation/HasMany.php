@@ -105,7 +105,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 
 				$field_count = count($through_keys[0]);
 				for ($i = 0; $i < $field_count; $i++) {
-					$builder->where("{$through_table}.{$through_keys[0][$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
+					$builder->where("{$through_table}.{$through_keys[0][$i]}", DB\SQL\Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
 				}
 
 				$records = $builder->query('array');
@@ -116,11 +116,11 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 
 				$field_count = count($child_key);
 				foreach ($records as $record) {
-					$builder->where_block(DB_SQL_Builder::_OPENING_PARENTHESIS_, DB_SQL_Connector::_OR_);
+					$builder->where_block(DB\SQL\Builder::_OPENING_PARENTHESIS_, DB\SQL\Connector::_OR_);
 					for ($i = 0; $i < $field_count; $i++) {
-						$builder->where("{$child_table}.{$child_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$record[$through_keys[1][$i]]});
+						$builder->where("{$child_table}.{$child_key[$i]}", DB\SQL\Operator::_EQUAL_TO_, $this->model->{$record[$through_keys[1][$i]]});
 					}
-					$builder->where_block(DB_SQL_Builder::_CLOSING_PARENTHESIS_);
+					$builder->where_block(DB\SQL\Builder::_CLOSING_PARENTHESIS_);
 				}
 
 				foreach ($this->metadata['options'] as $option) {
@@ -133,16 +133,16 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 				$builder = DB_SQL::select($child_source)
 					->all("{$child_table}.*")
 					->from($through_table)
-					->join(DB_SQL_JoinType::_INNER_, $child_table);
+					->join(DB\SQL\JoinType::_INNER_, $child_table);
 
 				$field_count = count($child_key);
 				for ($i = 0; $i < $field_count; $i++) {
-					$builder->on("{$child_table}.{$child_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, "{$through_table}.{$through_keys[1][$i]}");
+					$builder->on("{$child_table}.{$child_key[$i]}", DB\SQL\Operator::_EQUAL_TO_, "{$through_table}.{$through_keys[1][$i]}");
 				}
 
 				$field_count = count($through_keys[0]);
 				for ($i = 0; $i < $field_count; $i++) {
-					$builder->where("{$through_table}.{$through_keys[0][$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
+					$builder->where("{$through_table}.{$through_keys[0][$i]}", DB\SQL\Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
 				}
 
 				foreach ($this->metadata['options'] as $option) {
@@ -159,7 +159,7 @@ abstract class Base_DB_ORM_Relation_HasMany extends DB_ORM_Relation {
 
 			$field_count = count($child_key);
 			for ($i = 0; $i < $field_count; $i++) {
-				$builder->where("{$child_table}.{$child_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
+				$builder->where("{$child_table}.{$child_key[$i]}", DB\SQL\Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
 			}
 
 			foreach ($this->metadata['options'] as $option) {

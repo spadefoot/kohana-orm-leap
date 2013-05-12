@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-12-06
  */
-class DB_SQL_Tokenizer extends Base_DB_SQL_Tokenizer {}
+class DB\SQL\Tokenizer extends Base\DB\SQL\Tokenizer {}

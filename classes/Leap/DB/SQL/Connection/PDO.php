@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Connection_PDO extends Base_DB_SQL_Connection_PDO {}
+abstract class DB\SQL\Connection\PDO extends Base\DB\SQL\Connection\PDO {}

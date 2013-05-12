@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-10
  */
-class DB_SQL_Select_Proxy extends Base_DB_SQL_Select_Proxy {}
+class DB\SQL\Select\Proxy extends Base\DB\SQL\Select\Proxy {}

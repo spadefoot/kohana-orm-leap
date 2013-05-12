@@ -41,7 +41,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_Connection_Standard extends DB_SQL_Connection_Standard {
+abstract class Base_DB_Firebird_Connection_Standard extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This destructor ensures that the connection is closed.

@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_Connection_Driver extends Base_DB_Connection_Driver {}
+abstract class DB\Connection\Driver extends Base\DB\Connection\Driver {}

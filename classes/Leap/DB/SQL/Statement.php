@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-10
  */
-interface DB_SQL_Statement extends Base_DB_SQL_Statement {}
+interface DB\SQL\Statement extends Base\DB\SQL\Statement {}

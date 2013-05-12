@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connector extends Core\Object {
+abstract class Base\DB\SQL\Connector extends Core\Object {
 
 	const _AND_ = 'AND';
 

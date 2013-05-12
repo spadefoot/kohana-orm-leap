@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Builder extends Base_DB_SQL_Builder {}
+abstract class DB\SQL\Builder extends Base\DB\SQL\Builder {}

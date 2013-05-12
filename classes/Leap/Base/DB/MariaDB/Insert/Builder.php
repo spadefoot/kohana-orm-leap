@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Insert_Builder extends DB_SQL_Insert_Builder {
+abstract class Base_DB_MariaDB_Insert_Builder extends DB\SQL\Insert\Builder {
 
 	/**
 	 * This function returns the SQL statement.

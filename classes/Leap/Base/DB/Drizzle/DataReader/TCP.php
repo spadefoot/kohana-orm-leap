@@ -27,18 +27,18 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_DataReader_TCP extends DB_SQL_DataReader_Standard {
+abstract class Base_DB_Drizzle_DataReader_TCP extends DB\SQL\DataReader\Standard {
 
 	/**
 	 * This function initializes the class.
 	 *
 	 * @access public
 	 * @override
-	 * @param DB_Connection_Driver $connection  the connection to be used
+	 * @param DB\Connection\Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 */
-	public function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL) {
+	public function __construct(DB\Connection\Driver $connection, $sql, $mode = NULL) {
 		$resource = $connection->get_resource();
 		$command = @drizzle_query($resource, $sql);
 		if (($command === FALSE) OR ! @drizzle_result_buffer($command)) {

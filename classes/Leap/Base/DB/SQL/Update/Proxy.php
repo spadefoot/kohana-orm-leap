@@ -26,13 +26,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_Statement {
+abstract class Base\DB\SQL\Update\Proxy extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Update_Builder
+	 * @var DB\SQL\Update\Builder
 	 */
 	protected $builder;
 
@@ -73,7 +73,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 * @access public
 	 */
 	public function execute() {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$connection->execute($this->statement(TRUE));
 	}
 
@@ -82,7 +82,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @param integer $limit                        the "limit" constraint
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->builder->limit($limit);
@@ -94,7 +94,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 *
 	 * @access public
 	 * @param integer $offset                       the "offset" constraint
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->builder->offset($offset);
@@ -110,7 +110,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 *                                              column will sorted either in ascending or
 	 *                                              descending order
 	 * @param string $nulls                         the weight to be given to null values
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->builder->order_by($column, $ordering, $nulls);
@@ -121,7 +121,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function reset() {
 		$this->builder->reset();
@@ -134,7 +134,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 * @access public
 	 * @param string $column                        the column to be set
 	 * @param string $value                         the value to be set
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function set($column, $value) {
 		$this->builder->set($column, $value);
@@ -160,7 +160,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 * @access public
 	 * @param string $table                         the database table to be modified
 	 * @param string $alias                         the alias to be used for the specified table
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function table($table, $alias = NULL) {
 		$this->builder->table($table, $alias);
@@ -175,7 +175,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 * @param string $operator                      the operator to be used
 	 * @param string $value                         the value the column is constrained with
 	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$this->builder->where($column, $operator, $value, $connector);
@@ -188,7 +188,7 @@ abstract class Base_DB_SQL_Update_Proxy extends Core\Object implements DB_SQL_St
 	 * @access public
 	 * @param string $parenthesis                   the parenthesis to be used
 	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Update_Proxy                  a reference to the current instance
+	 * @return DB\SQL\Update\Proxy                  a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$this->builder->where_block($parenthesis, $connector);

@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Lock_Builder extends Base_DB_SQL_Lock_Builder {}
+abstract class DB\SQL\Lock\Builder extends Base\DB\SQL\Lock\Builder {}

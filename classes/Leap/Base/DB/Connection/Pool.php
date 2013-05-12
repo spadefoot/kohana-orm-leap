@@ -32,7 +32,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable {
+abstract class Base\DB\Connection\Pool extends Core\Object implements \Countable {
 
 	/**
 	 * This variable stores the lookup table.
@@ -120,12 +120,12 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 	 * This function adds an existing connection to the connection pool.
 	 *
 	 * @access public
-	 * @param DB_Connection_Driver $connection      the connection to be added
+	 * @param DB\Connection\Driver $connection      the connection to be added
 	 * @return boolean                              whether the connection was added
 	 * @throws Throwable\Database\Exception         indicates that no new connections
 	 *                                              can be added
 	 */
-	public function add_connection(DB_Connection_Driver $connection) {
+	public function add_connection(DB\Connection\Driver $connection) {
 		if ($connection !== NULL) {
 			$connection_id = $connection->__hashCode();
 			if ( ! isset($this->lookup[$connection_id])) {
@@ -161,7 +161,7 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 	 * @access public
 	 * @param mixed $config                         the data source configurations
 	 * @param boolean $new                          whether to create a new connection
-	 * @return DB_Connection_Driver                 the appropriate connection
+	 * @return DB\Connection\Driver                 the appropriate connection
 	 * @throws Throwable\Database\Exception         indicates that no new connections
 	 *                                              can be added
 	 */
@@ -194,7 +194,7 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 		if ($this->count() >= $this->settings['max_size']) {
 			throw new Throwable\Database\Exception('Message: Failed to create new connection. Reason: Exceeded maximum number of connections that may be held in the pool.', array(':source' => $data_source, ':new' => $new));
 		}
-		$connection = DB_Connection_Driver::factory($data_source);
+		$connection = DB\Connection\Driver::factory($data_source);
 		$connection->open();
 		$connection_id = $connection->__hashCode();
 		$this->pool[$data_source->id][$connection_id] = $connection;
@@ -207,9 +207,9 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 	 * connection will then be allowed to close via its destructor when completely unset.
 	 *
 	 * @access public
-	 * @param DB_Connection_Driver $connection      the connection to be released
+	 * @param DB\Connection\Driver $connection      the connection to be released
 	 */
-	public function release(DB_Connection_Driver $connection) {
+	public function release(DB\Connection\Driver $connection) {
 		if ($connection !== NULL) {
 			$connection_id = $connection->__hashCode();
 			if (isset($this->lookup[$connection_id])) {
@@ -227,7 +227,7 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 	 *
 	 * @access protected
 	 * @static
-	 * @var DB_Connection_Pool
+	 * @var DB\Connection\Pool
 	 */
 	protected static $instance = NULL;
 
@@ -249,12 +249,12 @@ abstract class Base_DB_Connection_Pool extends Core\Object implements \Countable
 	 *
 	 * @access public
 	 * @static
-	 * @return DB_Connection_Pool               	a singleton instance of this class
+	 * @return DB\Connection\Pool               	a singleton instance of this class
 	 */
 	public static function instance() {
 		if (static::$instance === NULL) {
-			register_shutdown_function(array('DB_Connection_Pool', 'autorelease'));
-			static::$instance = new DB_Connection_Pool();
+			register_shutdown_function(array('DB\Connection\Pool', 'autorelease'));
+			static::$instance = new DB\Connection\Pool();
 		}
 		return static::$instance;
 	}

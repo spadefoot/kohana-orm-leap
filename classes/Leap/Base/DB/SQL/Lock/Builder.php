@@ -26,13 +26,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
+abstract class Base\DB\SQL\Lock\Builder extends Core\Object {
 
 	/**
 	 * This variable stores a reference to the database connection.
 	 *
 	 * @access protected
-	 * @var DB_Connection_Driver
+	 * @var DB\Connection\Driver
 	 */
 	protected $connection;
 
@@ -48,7 +48,7 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 * This variable stores a reference to the pre-compiler.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Precompiler
+	 * @var DB\SQL\Precompiler
 	 */
 	protected $precompiler;
 
@@ -56,9 +56,9 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 * This constructor instantiates this class using the specified data source.
 	 *
 	 * @access public
-	 * @param DB_Connection_Driver $connection         the connection to be used
+	 * @param DB\Connection\Driver $connection         the connection to be used
 	 */
-	public function __construct(DB_Connection_Driver $connection) {
+	public function __construct(DB\Connection\Driver $connection) {
 		$this->connection = $connection;
 		$this->precompiler = DB_SQL::precompiler($connection->data_source);
 		$this->reset();
@@ -69,7 +69,7 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                     a reference to the current instance
 	 */
 	public abstract function acquire();
 
@@ -80,7 +80,7 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 * @abstract
 	 * @param string $table                            the table to be locked
 	 * @param array $hints                             the hints to be applied
-	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                     a reference to the current instance
 	 */
 	public abstract function add($table, Array $hints = NULL);
 
@@ -91,7 +91,7 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 * @abstract
 	 * @param string $method                           the method to be used to release
 	 *                                                 the lock(s)
-	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                     a reference to the current instance
 	 */
 	public abstract function release($method = '');
 
@@ -99,7 +99,7 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_SQL_Lock_Builder                      a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                      a reference to the current instance
 	 */
 	public function reset() {
 		$this->data = array();
@@ -113,11 +113,11 @@ abstract class Base_DB_SQL_Lock_Builder extends Core\Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param DB_Connection_Driver $connection         the connection to be used
-	 * @return DB_SQL_Lock_Builder                     an instance of the appropriate
+	 * @param DB\Connection\Driver $connection         the connection to be used
+	 * @return DB\SQL\Lock\Builder                     an instance of the appropriate
 	 *                                                 SQL lock builder
 	 */
-	public static function factory(DB_Connection_Driver $connection) {
+	public static function factory(DB\Connection\Driver $connection) {
 		$class = 'DB_' . $connection->data_source->dialect . '_Lock_Builder';
 		$builder = new $class($connection);
 		return $builder;

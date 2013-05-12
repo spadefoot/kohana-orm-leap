@@ -181,16 +181,16 @@ abstract class Base_DB_Firebird_Schema extends DB\Schema {
 			->column(DB_SQL::expr('SUBSTRING(CAST("RDB$RELATION_FIELDS"."RDB$DEFAULT_SOURCE" AS VARCHAR(255)) FROM 9)'), 'default')
 			->from('RDB$RELATION_FIELDS')
 			->join(NULL, 'RDB$FIELDS')
-			->on('RDB$FIELDS.RDB$FIELD_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$RELATION_FIELDS.RDB$FIELD_SOURCE')
-			->join(DB_SQL_JoinType::_LEFT_, 'RDB$CHARACTER_SETS')
-			->on('RDB$CHARACTER_SETS.RDB$CHARACTER_SET_ID', DB_SQL_Operator::_EQUAL_TO_, 'RDB$FIELDS.RDB$CHARACTER_SET_ID')
-			->where('RDB$RELATION_FIELDS.RDB$FIELD_SOURCE', DB_SQL_Operator::_LIKE_, 'RDB$%')
-			->where(DB_SQL::expr('TRIM("RDB$RELATION_FIELDS"."RDB$RELATION_NAME")'), DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where(DB_SQL::expr('COALESCE("RDB$INDICES"."RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
+			->on('RDB$FIELDS.RDB$FIELD_NAME', DB\SQL\Operator::_EQUAL_TO_, 'RDB$RELATION_FIELDS.RDB$FIELD_SOURCE')
+			->join(DB\SQL\JoinType::_LEFT_, 'RDB$CHARACTER_SETS')
+			->on('RDB$CHARACTER_SETS.RDB$CHARACTER_SET_ID', DB\SQL\Operator::_EQUAL_TO_, 'RDB$FIELDS.RDB$CHARACTER_SET_ID')
+			->where('RDB$RELATION_FIELDS.RDB$FIELD_SOURCE', DB\SQL\Operator::_LIKE_, 'RDB$%')
+			->where(DB_SQL::expr('TRIM("RDB$RELATION_FIELDS"."RDB$RELATION_NAME")'), DB\SQL\Operator::_EQUAL_TO_, $table)
+			->where(DB_SQL::expr('COALESCE("RDB$INDICES"."RDB$SYSTEM_FLAG", 0)'), DB\SQL\Operator::_EQUAL_TO_, 0)
 			->order_by('RDB$RELATION_FIELDS.RDB$FIELD_POSITION');
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_FIELDS"."RDB$FIELD_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_FIELDS"."RDB$FIELD_NAME")'), DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		$reader = $builder->reader();
@@ -262,20 +262,20 @@ abstract class Base_DB_Firebird_Schema extends DB\Schema {
 			->column(DB_SQL::expr('RDB$INDICES.RDB$UNIQUE_FLAG'), 'unique')
 			->column(DB_SQL::expr('IIF("RDB$RELATION_CONSTRAINTS"."RDB$CONSTRAINT_TYPE" = \'PRIMARY KEY\', 1, 0)'), 'primary')
 			->from('RDB$INDEX_SEGMENTS')
-			->join(DB_SQL_JoinType::_LEFT_, 'RDB$INDICES')
-			->on('RDB$INDICES.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDEX_SEGMENTS.RDB$INDEX_NAME')
-			->join(DB_SQL_JoinType::_LEFT_, 'RDB$RELATION_CONSTRAINTS')
-			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', DB_SQL_Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
-			->where(DB_SQL::expr('COALESCE("RDB$INDICES"."RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
-			->where('RDB$INDICES.RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where('RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE', DB_SQL_Operator::_IS_, NULL)
-			->where('RDB$INDICES.RDB$INDEX_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 1)
+			->join(DB\SQL\JoinType::_LEFT_, 'RDB$INDICES')
+			->on('RDB$INDICES.RDB$INDEX_NAME', DB\SQL\Operator::_EQUAL_TO_, 'RDB$INDEX_SEGMENTS.RDB$INDEX_NAME')
+			->join(DB\SQL\JoinType::_LEFT_, 'RDB$RELATION_CONSTRAINTS')
+			->on('RDB$RELATION_CONSTRAINTS.RDB$INDEX_NAME', DB\SQL\Operator::_EQUAL_TO_, 'RDB$INDICES.RDB$INDEX_NAME')
+			->where(DB_SQL::expr('COALESCE("RDB$INDICES"."RDB$SYSTEM_FLAG", 0)'), DB\SQL\Operator::_EQUAL_TO_, 0)
+			->where('RDB$INDICES.RDB$RELATION_NAME', DB\SQL\Operator::_EQUAL_TO_, $table)
+			->where('RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_TYPE', DB\SQL\Operator::_IS_, NULL)
+			->where('RDB$INDICES.RDB$INDEX_INACTIVE', DB\SQL\Operator::_NOT_EQUAL_TO_, 1)
 			->order_by(DB_SQL::expr('UPPER("RDB$INDICES"."RDB$RELATION_NAME")'))
 			->order_by(DB_SQL::expr('UPPER("RDB$INDICES"."RDB$INDEX_NAME")'))
 			->order_by(DB_SQL::expr('CAST(("RDB$INDEX_SEGMENTS"."RDB$FIELD_POSITION" + 1) AS integer)'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$INDICES"."RDB$INDEX_NAME")'), DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -309,12 +309,12 @@ abstract class Base_DB_Firebird_Schema extends DB\Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('RDB$RELATIONS')
-			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
-			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_, NULL)
+			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB\SQL\Operator::_EQUAL_TO_, 0)
+			->where('RDB$VIEW_BLR', DB\SQL\Operator::_IS_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -361,15 +361,15 @@ abstract class Base_DB_Firebird_Schema extends DB\Schema {
 			->column('RDB$TRIGGER_SEQUENCE', 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('RDB$TRIGGERS')
-			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
-			->where('RDB$RELATION_NAME', DB_SQL_Operator::_EQUAL_TO_, $table)
-			->where('RDB$TRIGGER_INACTIVE', DB_SQL_Operator::_NOT_EQUAL_TO_, 1)
+			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB\SQL\Operator::_EQUAL_TO_, 0)
+			->where('RDB$RELATION_NAME', DB\SQL\Operator::_EQUAL_TO_, $table)
+			->where('RDB$TRIGGER_INACTIVE', DB\SQL\Operator::_NOT_EQUAL_TO_, 1)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'))
 			->order_by(DB_SQL::expr('UPPER("RDB$TRIGGER_NAME")'))
 			->order_by('RDB$TRIGGER_SEQUENCE');
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$TRIGGER_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$TRIGGER_NAME")'), DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -403,12 +403,12 @@ abstract class Base_DB_Firebird_Schema extends DB\Schema {
 			->column(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('RDB$RELATIONS')
-			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB_SQL_Operator::_EQUAL_TO_, 0)
-			->where('RDB$VIEW_BLR', DB_SQL_Operator::_IS_NOT_, NULL)
+			->where(DB_SQL::expr('COALESCE("RDB$SYSTEM_FLAG", 0)'), DB\SQL\Operator::_EQUAL_TO_, 0)
+			->where('RDB$VIEW_BLR', DB\SQL\Operator::_IS_NOT_, NULL)
 			->order_by(DB_SQL::expr('UPPER("RDB$RELATION_NAME")'));
 
 		if ( ! empty($like)) {
-			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB_SQL_Operator::_LIKE_, $like);
+			$builder->where(DB_SQL::expr('TRIM("RDB$RELATION_NAME")'), DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

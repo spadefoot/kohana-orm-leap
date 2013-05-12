@@ -27,4 +27,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_DataReader_Standard extends Base_DB_SQL_DataReader_Standard {}
+abstract class DB\SQL\DataReader\Standard extends Base\DB\SQL\DataReader\Standard {}

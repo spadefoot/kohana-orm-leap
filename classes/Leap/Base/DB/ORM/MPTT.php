@@ -149,14 +149,14 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($data_source);
 		$connection->lock->add($table)->acquire();
 
 		$update = DB_SQL::update($data_source)
 			->set('rgt', DB_ORM::expr('rgt + 2'))
 			->table($table)
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('rgt', DB_SQL_Operator::_GREATER_THAN_, $this->fields['rgt']->value)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('rgt', DB\SQL\Operator::_GREATER_THAN_, $this->fields['rgt']->value)
 			->statement();
 
 		$connection->execute($update);
@@ -164,8 +164,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$update = DB_SQL::update($data_source)
 			->set('lft', DB_ORM::expr('lft + 2'))
 			->table($table)
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['lft']->value)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['lft']->value)
 			->statement();
 
 		$connection->execute($update);
@@ -195,17 +195,17 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$select = DB_SQL::select($data_source)
 			->column('t1.parent_id')
 			->from($table, 't1')
-			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('t1.lft', DB_SQL_Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
-			->where('t1.rgt', DB_SQL_Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
+			->where('t1.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
+			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
 			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
 			->limit(1);
 
 		$update = DB_SQL::update($data_source)
 			->set('t0.parent_id', $select)
 			->table($table, 't0')
-			->where('t0.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('t0.lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['lft']->value)
+			->where('t0.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t0.lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['lft']->value)
 			->statement();
 
 		$connection->execute($update);
@@ -248,15 +248,15 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$builder = DB_SQL::select($data_source)
 			->all('t1.*')
 			->from(static::table(), 't1')
-			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('t1.id', DB_SQL_Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
-			->where('t1.lft', DB_SQL_Operator::_LESS_THAN_, $this->fields['lft']->value)
-			->where('t1.rgt', DB_SQL_Operator::_GREATER_THAN_, $this->fields['rgt']->value)
+			->where('t1.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t1.id', DB\SQL\Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
+			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, $this->fields['lft']->value)
+			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, $this->fields['rgt']->value)
 			->order_by('t1.lft', 'DESC')
 			->limit($limit);
 
 		if ( ! $root) {
-			$builder->where('t1.lft', DB_SQL_Operator::_NOT_EQUAL_TO_, 1);
+			$builder->where('t1.lft', DB\SQL\Operator::_NOT_EQUAL_TO_, 1);
 		}
 
 		if ($ordering == 'ASC') {
@@ -304,16 +304,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($data_source);
 		$connection->lock->add($table)->acquire();
 
 		$select = DB_SQL::select($data_source)
 			->column('t1.parent_id')
 			->from($table, 't1')
-			->where('t1.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('t1.id', DB_SQL_Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
-			->where('t1.lft', DB_SQL_Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
-			->where('t1.rgt', DB_SQL_Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
+			->where('t1.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t1.id', DB\SQL\Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
+			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
+			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
 			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
 			->limit(1);
 
@@ -322,16 +322,16 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 			->set('t0.lft', DB_ORM::expr('t0.lft - 2'))
 			->set('t0.rgt', DB_ORM::expr('t0.rgt - 2'))
 			->table($table, 't0')
-			->where('t0.scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('t0.lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['rgt']->value)
+			->where('t0.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('t0.lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['rgt']->value)
 			->statement();
 
 		$connection->execute($update);
 
 		$delete = DB_SQL::delete($data_source)
 			->from($table)
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['id']->value)
 			->statement();
 
 		$connection->execute($delete);
@@ -360,18 +360,18 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function descendants($ordering = 'ASC', $limit = 0, $children_only = FALSE, $leaves_only = FALSE) {
 		$builder = DB_ORM::select(get_class($this))
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('lft', DB_SQL_Operator::_GREATER_THAN_, $this->fields['lft']->value)
-			->where('rgt', DB_SQL_Operator::_LESS_THAN_, $this->fields['rgt']->value)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('lft', DB\SQL\Operator::_GREATER_THAN_, $this->fields['lft']->value)
+			->where('rgt', DB\SQL\Operator::_LESS_THAN_, $this->fields['rgt']->value)
 			->order_by('lft', $ordering)
 			->limit($limit);
 
 		if ($children_only) {
-			$builder->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
+			$builder->where('parent_id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['id']->value);
 		}
 
 		if ($leaves_only) {
-			$builder->where('rgt', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('lft + 1'));
+			$builder->where('rgt', DB\SQL\Operator::_EQUAL_TO_, DB_SQL::expr('lft + 1'));
 		}
 
 		return $builder->query();
@@ -499,8 +499,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$record = DB_SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))
 			->column(DB_SQL::expr('COUNT(parent_id) - 1'), 'level')
 			->from(static::table())
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('parent_id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
 			->group_by('parent_id')
 			->query()
 			->fetch();
@@ -549,8 +549,8 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	 */
 	public function root() {
 		$record = DB_ORM::select(get_class($this))
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('lft', DB_SQL_Operator::_EQUAL_TO_, 1)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+			->where('lft', DB\SQL\Operator::_EQUAL_TO_, 1)
 			->limit(1)
 			->query()
 			->fetch();
@@ -578,7 +578,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		if ( ! empty($columns)) {
 			$builder = DB_SQL::update(static::data_source(DB\DataSource::MASTER_INSTANCE))
 				->table(static::table())
-				->where('id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['id']->value);
+				->where('id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['id']->value);
 
 			$ignore_keys = array('id', 'scope', 'parent_id', 'lft', 'rgt');
 
@@ -624,12 +624,12 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 	public function siblings($ordering = 'ASC', $self = FALSE) {
 		if ( ! $this->root()) {
 			$builder = DB_ORM::select(get_class($this))
-				->where('scope', DB_SQL_Operator::_EQUAL_TO_, $this->fields['scope']->value)
-				->where('parent_id', DB_SQL_Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
+				->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
+				->where('parent_id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
 				->order_by('lft', $ordering);
 
 			if ( ! $self) {
-				$builder->where('id', DB_SQL_Operator::_NOT_EQUIVALENT_, $this->fields['id']->value);
+				$builder->where('id', DB\SQL\Operator::_NOT_EQUIVALENT_, $this->fields['id']->value);
 			}
 
 			return $builder->query();
@@ -686,7 +686,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$data_source = static::data_source(DB\DataSource::MASTER_INSTANCE);
 		$table = static::table();
 
-		$connection = DB_Connection_Pool::instance()->get_connection($data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($data_source);
 		$connection->lock->add($table)->acquire();
 
 		$builder = DB_SQL::insert($data_source)
@@ -745,7 +745,7 @@ abstract class Base_DB_ORM_MPTT extends DB_ORM_Model {
 		$model = get_called_class();
 
 		$results = DB_ORM::select($model)
-			->where('scope', DB_SQL_Operator::_EQUAL_TO_, $scope)
+			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $scope)
 			->order_by('lft', $ordering)
 			->limit($limit)
 			->query();

@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
+abstract class Base_DB_MsSQL_Connection_PDO extends DB\SQL\Connection\PDO {
 
 	/**
 	 * This function returns the last insert id.

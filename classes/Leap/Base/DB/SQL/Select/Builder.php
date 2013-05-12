@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
+abstract class Base\DB\SQL\Select\Builder extends DB\SQL\Builder {
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -50,7 +50,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $wildcard                      the wildcard to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function all($wildcard = '*') {
 		$this->data['wildcard'] = $this->precompiler->prepare_wildcard($wildcard);
@@ -64,7 +64,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $column                        the column to be selected
 	 * @param string $alias                         the alias to be used for the specified column
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function column($column, $alias = NULL) {
 		$column = $this->precompiler->prepare_identifier($column);
@@ -83,7 +83,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $operator                      the operator to be used to append
 	 *                                              the specified SQL statement
 	 * @param string $statement                     the SQL statement to be appended
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
@@ -106,7 +106,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $column                        the column to be counted
 	 * @param string $alias                         the alias to be used for the specified column
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function count($column = '*', $alias = 'count') {
 		$column = ( ! empty($column) AND (substr_compare($column, '*', -1, 1) === 0))
@@ -121,7 +121,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param boolean $distinct                     whether to constrain the SQL statement to only
 	 *                                              distinct records
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function distinct($distinct = TRUE) {
 		$this->data['distinct'] = $this->precompiler->prepare_boolean($distinct);
@@ -134,7 +134,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $table                         the table to be accessed
 	 * @param string $alias                         the alias to be used for the specified table
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function from($table, $alias = NULL) {
 		$table = $this->precompiler->prepare_identifier($table);
@@ -151,7 +151,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $column                        the column(s) to be grouped
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function group_by($column) {
 		$fields = (is_array($column)) ? $column : array($column);
@@ -170,7 +170,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $operator                      the operator to be used
 	 * @param string $value                         the value the column is constrained with
 	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function having($column, $operator, $value, $connector = 'AND') {
@@ -178,7 +178,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			throw new Throwable\SQL\Exception('Message: Invalid SQL build instruction. Reason: Must declare a GROUP BY clause before declaring a "having" constraint.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 		}
 		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+		if (($operator == DB\SQL\Operator::_BETWEEN_) OR ($operator == DB\SQL\Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Throwable\SQL\Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
@@ -189,21 +189,21 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$this->data['having'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if (($operator == DB_SQL_Operator::_IN_ OR $operator == DB_SQL_Operator::_NOT_IN_) AND ! is_array($value)) {
+			if (($operator == DB\SQL\Operator::_IN_ OR $operator == DB\SQL\Operator::_NOT_IN_) AND ! is_array($value)) {
 				throw new Throwable\SQL\Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if ($value === NULL) {
 				switch ($operator) {
-					case DB_SQL_Operator::_EQUAL_TO_:
-						$operator = DB_SQL_Operator::_IS_;
+					case DB\SQL\Operator::_EQUAL_TO_:
+						$operator = DB\SQL\Operator::_IS_;
 					break;
-					case DB_SQL_Operator::_NOT_EQUIVALENT_:
-						$operator = DB_SQL_Operator::_IS_NOT_;
+					case DB\SQL\Operator::_NOT_EQUIVALENT_:
+						$operator = DB\SQL\Operator::_IS_NOT_;
 					break;
 				}
 			}
 			$column = $this->precompiler->prepare_identifier($column);
-			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
+			$escape = (in_array($operator, array(DB\SQL\Operator::_LIKE_, DB\SQL\Operator::_NOT_LIKE_)))
 				? '\\\\'
 				: NULL;
 			$value = $this->precompiler->prepare_value($value, $escape);
@@ -219,7 +219,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $parenthesis                   the parenthesis to be used
 	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function having_block($parenthesis, $connector = 'AND') {
@@ -239,7 +239,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $type                          the type of join
 	 * @param string $table                         the table to be joined
 	 * @param string $alias                         the alias to be used for the specified table
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function join($type, $table, $alias = NULL) {
 		$table = 'JOIN ' . $this->precompiler->prepare_identifier($table);
@@ -260,7 +260,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param integer $limit                        the "limit" constraint
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function limit($limit) {
 		$this->data['limit'] = $this->precompiler->prepare_natural($limit);
@@ -272,7 +272,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param integer $offset                       the "offset" constraint
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function offset($offset) {
 		$this->data['offset'] = $this->precompiler->prepare_natural($offset);
@@ -286,7 +286,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $column0                       the column to be constrained on
 	 * @param string $operator                      the operator to be used
 	 * @param string $column1                       the constraint column
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function on($column0, $operator, $column1) {
@@ -316,7 +316,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *                                              column will sorted either in ascending or
 	 *                                              descending order
 	 * @param string $nulls                         the weight to be given to null values
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function order_by($column, $ordering = 'ASC', $nulls = 'DEFAULT') {
 		$this->data['order_by'][] = $this->precompiler->prepare_ordering($column, $ordering, $nulls);
@@ -330,7 +330,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param integer $offset                       the "offset" constraint
 	 * @param integer $limit                        the "limit" constraint
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function page($offset, $limit) {
 		$this->offset($offset);
@@ -342,7 +342,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function reset() {
 		$this->data = array(
@@ -367,7 +367,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $column                        the column to be constrained
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function using($column) {
@@ -394,12 +394,12 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @param string $operator                      the operator to be used
 	 * @param string $value                         the value the column is constrained with
 	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function where($column, $operator, $value, $connector = 'AND') {
 		$operator = $this->precompiler->prepare_operator($operator, 'COMPARISON');
-		if (($operator == DB_SQL_Operator::_BETWEEN_) OR ($operator == DB_SQL_Operator::_NOT_BETWEEN_)) {
+		if (($operator == DB\SQL\Operator::_BETWEEN_) OR ($operator == DB\SQL\Operator::_NOT_BETWEEN_)) {
 			if ( ! is_array($value)) {
 				throw new Throwable\SQL\Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
@@ -410,21 +410,21 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 			$this->data['where'][] = array($connector, "{$column} {$operator} {$value0} AND {$value1}");
 		}
 		else {
-			if ((($operator == DB_SQL_Operator::_IN_) OR ($operator == DB_SQL_Operator::_NOT_IN_)) AND ! is_array($value)) {
+			if ((($operator == DB\SQL\Operator::_IN_) OR ($operator == DB\SQL\Operator::_NOT_IN_)) AND ! is_array($value)) {
 				throw new Throwable\SQL\Exception('Message: Invalid SQL build instruction. Reason: Operator requires the value to be declared as an array.', array(':column' => $column, ':operator' => $operator, ':value' => $value, ':connector' => $connector));
 			}
 			if ($value === NULL) {
 				switch ($operator) {
-					case DB_SQL_Operator::_EQUAL_TO_:
-						$operator = DB_SQL_Operator::_IS_;
+					case DB\SQL\Operator::_EQUAL_TO_:
+						$operator = DB\SQL\Operator::_IS_;
 					break;
-					case DB_SQL_Operator::_NOT_EQUIVALENT_:
-						$operator = DB_SQL_Operator::_IS_NOT_;
+					case DB\SQL\Operator::_NOT_EQUIVALENT_:
+						$operator = DB\SQL\Operator::_IS_NOT_;
 					break;
 				}
 			}
 			$column = $this->precompiler->prepare_identifier($column);
-			$escape = (in_array($operator, array(DB_SQL_Operator::_LIKE_, DB_SQL_Operator::_NOT_LIKE_)))
+			$escape = (in_array($operator, array(DB\SQL\Operator::_LIKE_, DB\SQL\Operator::_NOT_LIKE_)))
 				? '\\\\'
 				: NULL;
 			$value = $this->precompiler->prepare_value($value, $escape);
@@ -440,7 +440,7 @@ abstract class Base_DB_SQL_Select_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param string $parenthesis                   the parenthesis to be used
 	 * @param string $connector                     the connector to be used
-	 * @return DB_SQL_Select_Builder                a reference to the current instance
+	 * @return DB\SQL\Select\Builder                a reference to the current instance
 	 */
 	public function where_block($parenthesis, $connector = 'AND') {
 		$parenthesis = $this->precompiler->prepare_parenthesis($parenthesis);

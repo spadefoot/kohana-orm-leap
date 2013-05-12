@@ -32,7 +32,7 @@ abstract class Base_DB_ORM_Builder extends Core\Object {
 	 * This variable stores an instance of the SQL builder class.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Builder
+	 * @var DB\SQL\Builder
 	 */
 	protected $builder;
 
@@ -40,9 +40,9 @@ abstract class Base_DB_ORM_Builder extends Core\Object {
 	 * This constructor instantiates this class.
 	 *
 	 * @access public
-	 * @param DB_SQL_Builder $builder             the SQL builder class to be extended
+	 * @param DB\SQL\Builder $builder             the SQL builder class to be extended
 	 */
-	public function __construct(DB_SQL_Builder $builder) {
+	public function __construct(DB\SQL\Builder $builder) {
 		$this->builder = $builder;
 	}
 

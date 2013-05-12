@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-07
  */
-class DB_SQL_Connector extends Base_DB_SQL_Connector {}
+class DB\SQL\Connector extends Base\DB\SQL\Connector {}

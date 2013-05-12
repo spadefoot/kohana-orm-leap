@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Select_Builder extends Base_DB_SQL_Select_Builder {}
+abstract class DB\SQL\Select\Builder extends Base\DB\SQL\Select\Builder {}

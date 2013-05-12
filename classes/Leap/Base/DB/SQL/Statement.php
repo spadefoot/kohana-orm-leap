@@ -24,7 +24,7 @@
  * @category SQL
  * @version 2012-05-22
  */
-interface Base_DB_SQL_Statement {
+interface Base\DB\SQL\Statement {
 
 	/**
 	 * This function returns the SQL statement.

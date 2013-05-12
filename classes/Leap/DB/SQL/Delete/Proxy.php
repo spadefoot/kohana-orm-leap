@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-10
  */
-class DB_SQL_Delete_Proxy extends Base_DB_SQL_Delete_Proxy {}
+class DB\SQL\Delete\Proxy extends Base\DB\SQL\Delete\Proxy {}

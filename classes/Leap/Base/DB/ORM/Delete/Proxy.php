@@ -26,13 +26,13 @@
  *
  * @abstract
  */
-abstract class Base_DB_ORM_Delete_Proxy extends Core\Object implements DB_SQL_Statement {
+abstract class Base_DB_ORM_Delete_Proxy extends Core\Object implements DB\SQL\Statement {
 
 	/**
 	 * This variable stores an instance of the SQL builder class.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Delete_Builder
+	 * @var DB\SQL\Delete\Builder
 	 */
 	protected $builder;
 
@@ -114,7 +114,7 @@ abstract class Base_DB_ORM_Delete_Proxy extends Core\Object implements DB_SQL_St
 	 * @access public
 	 */
 	public function execute() {
-		$connection = DB_Connection_Pool::instance()->get_connection($this->data_source);
+		$connection = DB\Connection\Pool::instance()->get_connection($this->data_source);
 		$connection->execute($this->statement());
 	}
 

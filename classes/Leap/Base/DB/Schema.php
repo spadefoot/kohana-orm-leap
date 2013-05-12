@@ -41,7 +41,7 @@ abstract class Base\DB\Schema extends Core\Object {
 	 * interface.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Precompiler
+	 * @var DB\SQL\Precompiler
 	 */
 	protected $precompiler;
 

@@ -72,7 +72,7 @@ abstract class Base_DB_ORM_Field_Blob extends DB_ORM_Field {
 			$default = NULL;
 		}
 
-		if ( ! ($default instanceof DB_SQL_Expression)) {
+		if ( ! ($default instanceof DB\SQL\Expression)) {
 			if ( ! $this->validate($default)) {
 				throw new Throwable\Validation\Exception('Message: Unable to set default value for field. Reason: Value :value failed to pass validation constraints.', array(':value' => $default));
 			}
@@ -97,7 +97,7 @@ abstract class Base_DB_ORM_Field_Blob extends DB_ORM_Field {
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
-				if ( ! ($value instanceof DB_SQL_Expression)) {
+				if ( ! ($value instanceof DB\SQL\Expression)) {
 					if ($value !== NULL) {
 						if (is_string($value)) {
 							$value = new Core\Data($value, Core\Data::HEXADECIMAL_DATA);

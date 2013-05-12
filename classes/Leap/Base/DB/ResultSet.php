@@ -76,7 +76,7 @@ abstract class Base\DB\ResultSet extends Core\Object implements \ArrayAccess, \C
 		else {
 			$this->records = array();
 			$this->size = 0;
-			if (is_object($buffer) AND ($buffer instanceof DB_SQL_DataReader)) {
+			if (is_object($buffer) AND ($buffer instanceof DB\SQL\DataReader)) {
 				while ($buffer->read()) {
 					$this->records[] = $buffer->row($type);
 					$this->size++;

@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Expression extends Core\Object {
+abstract class Base\DB\SQL\Expression extends Core\Object {
 
 	/**
 	 * This variable stores the raw SQL expression string.
@@ -75,7 +75,7 @@ abstract class Base_DB_SQL_Expression extends Core\Object {
 	 * @access public
 	 * @param string $key                           the parameter key
 	 * @param mixed &$value                         the parameter value
-	 * @return DB_SQL_Expression                    a reference to the current instance
+	 * @return DB\SQL\Expression                    a reference to the current instance
 	 */
 	public function bind($key, &$value) {
 		$this->params[$key] = &$value;
@@ -88,7 +88,7 @@ abstract class Base_DB_SQL_Expression extends Core\Object {
 	 * @access public
 	 * @param string $key                           the parameter key
 	 * @param mixed $value                          the parameter value
-	 * @return DB_SQL_Expression                    a reference to the current instance
+	 * @return DB\SQL\Expression                    a reference to the current instance
 	 */
 	public function param($key, $value) {
 		$this->params[$key] = $value;
@@ -101,7 +101,7 @@ abstract class Base_DB_SQL_Expression extends Core\Object {
 	 * @access public
 	 * @param array $params                         an associated array of parameter
 	 *                                              key/values pairs
-	 * @return DB_SQL_Expression                    a reference to the current instance
+	 * @return DB\SQL\Expression                    a reference to the current instance
 	 */
 	public function parameters(Array $params) {
 		$this->params = $params + $this->params;
@@ -121,7 +121,7 @@ abstract class Base_DB_SQL_Expression extends Core\Object {
 			$object = DB_SQL::precompiler($object);
 		}
 		$expr = $this->expr;
-		if (($object instanceof DB_SQL_Precompiler) AND ! empty($this->params)) {
+		if (($object instanceof DB\SQL\Precompiler) AND ! empty($this->params)) {
 			$params = array_map(array($object, 'prepare_value'), $this->params);
 			$expr = strtr($expr, $params);
 		}

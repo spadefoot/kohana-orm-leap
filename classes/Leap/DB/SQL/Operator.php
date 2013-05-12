@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-07
  */
-class DB_SQL_Operator extends Base_DB_SQL_Operator {}
+class DB\SQL\Operator extends Base\DB\SQL\Operator {}

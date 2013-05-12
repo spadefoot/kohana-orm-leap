@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2011-06-08
  */
-class DB_SQL_Insert_Proxy extends Base_DB_SQL_Insert_Proxy {}
+class DB\SQL\Insert\Proxy extends Base\DB\SQL\Insert\Proxy {}

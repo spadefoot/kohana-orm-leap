@@ -64,7 +64,7 @@ abstract class Base_DB_ORM_Field_Adaptor_JSON extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
+				if (($value !== NULL) AND ! ($value instanceof DB\SQL\Expression)) {
 					$start = strlen($this->metadata['prefix']);
 					$length = strlen($value) - ($start + strlen($this->metadata['suffix']));
 					if ($length >= 0) {

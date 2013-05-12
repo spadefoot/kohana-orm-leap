@@ -60,7 +60,7 @@ abstract class Base_DB_ORM_Field_Adaptor_DateTime extends DB_ORM_Field_Adaptor {
 		switch ($key) {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
-				if (($value !== NULL) AND ! ($value instanceof DB_SQL_Expression)) {
+				if (($value !== NULL) AND ! ($value instanceof DB\SQL\Expression)) {
 					$value = date($this->metadata['format'], (int) $value);
 				}
 				return $value;

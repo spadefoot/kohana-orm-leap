@@ -124,7 +124,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 
 		// Delete the current session
 		DB_ORM::delete($this->_table)
-			->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $this->_update_id)
+			->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $this->_update_id)
 			->execute();
 
 		try {
@@ -151,7 +151,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 
 		// Delete all sessions that have expired
 		DB_ORM::delete($this->_table)
-			->where($this->_columns['last_active'], DB_SQL_Operator::_LESS_THAN_, time() - $expires)
+			->where($this->_columns['last_active'], DB\SQL\Operator::_LESS_THAN_, time() - $expires)
 			->execute();
 	}
 
@@ -179,7 +179,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 
 			try {
 				$contents = DB_ORM::select($this->_table, array($this->_columns['contents']))
-					->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
+					->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $id)
 					->limit(1)
 					->query()
 					->fetch(0)
@@ -216,7 +216,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 			// Create a new session id
 			$id = str_replace('.', '-', uniqid(NULL, TRUE));
 			$count = DB_ORM::select($this->_table, array($this->_columns['session_id']))
-				->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $id)
+				->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $id)
 				->query()
 				->count();
 		}
@@ -259,7 +259,7 @@ abstract class Base\Web\HTTP\Session extends \Session {
 			$query = DB_ORM::update($this->_table)
 				->set($this->_columns['last_active'], $this->_data['last_active'])
 				->set($this->_columns['contents'], $this->__toString())
-				->where($this->_columns['session_id'], DB_SQL_Operator::_EQUAL_TO_, $this->_update_id);
+				->where($this->_columns['session_id'], DB\SQL\Operator::_EQUAL_TO_, $this->_update_id);
 
 			if ($this->_update_id !== $this->_session_id) {
 				// Also update the session id

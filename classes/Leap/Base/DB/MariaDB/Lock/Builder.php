@@ -28,14 +28,14 @@
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Lock_Builder extends DB_SQL_Lock_Builder {
+abstract class Base_DB_MariaDB_Lock_Builder extends DB\SQL\Lock\Builder {
 
 	/**
 	 * This function acquires the required locks.
 	 *
 	 * @access public
 	 * @override
-	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                     a reference to the current instance
 	 */
 	public function acquire() {
 		$this->connection->execute('LOCK TABLES ' . implode(',', $this->data) . ';');
@@ -49,7 +49,7 @@ abstract class Base_DB_MariaDB_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @override
 	 * @param string $table                            the table to be locked
 	 * @param array $hints                             the hints to be applied
-	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                     a reference to the current instance
 	 */
 	public function add($table, Array $hints = NULL) {
 		$modes = array();
@@ -74,7 +74,7 @@ abstract class Base_DB_MariaDB_Lock_Builder extends DB_SQL_Lock_Builder {
 	 * @override
 	 * @param string $method                           the method to be used to release
 	 *                                                 the lock(s)
-	 * @return DB_SQL_Lock_Builder                     a reference to the current instance
+	 * @return DB\SQL\Lock\Builder                     a reference to the current instance
 	 */
 	public function release($method = '') {
 		$this->connection->execute('UNLOCK TABLES;');

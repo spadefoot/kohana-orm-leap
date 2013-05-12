@@ -26,4 +26,4 @@
  *
  * @abstract
  */
-abstract class DB_SQL_Connection_Standard extends Base_DB_SQL_Connection_Standard {}
+abstract class DB\SQL\Connection\Standard extends Base\DB\SQL\Connection\Standard {}

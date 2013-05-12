@@ -30,7 +30,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Connection_Improved extends DB_SQL_Connection_Standard {
+abstract class Base_DB_MsSQL_Connection_Improved extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This destructor ensures that the connection is closed.

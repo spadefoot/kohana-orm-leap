@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
+abstract class Base\DB\SQL\Insert\Builder extends DB\SQL\Builder {
 
 	/**
 	 * This constructor instantiates this class using the specified data source.
@@ -48,7 +48,7 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * @param string $column                            the column to be set
 	 * @param string $value                             the value to be set
 	 * @param integer $row                              the index of the row
-	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
+	 * @return DB\SQL\Insert\Builder                    a reference to the current instance
 	 */
 	public function column($column, $value, $row = 0) {
 		$column = $this->precompiler->prepare_identifier($column);
@@ -64,7 +64,7 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 *
 	 * @access public
 	 * @param string $table                             the database table to be modified
-	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
+	 * @return DB\SQL\Insert\Builder                    a reference to the current instance
 	 */
 	public function into($table) {
 		$table = $this->precompiler->prepare_identifier($table);
@@ -76,7 +76,7 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * This function resets the current builder.
 	 *
 	 * @access public
-	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
+	 * @return DB\SQL\Insert\Builder                    a reference to the current instance
 	 */
 	public function reset() {
 		$this->data = array(
@@ -93,7 +93,7 @@ abstract class Base_DB_SQL_Insert_Builder extends DB_SQL_Builder {
 	 * @access public
 	 * @param array $values                             the columns/values pairs to be set
 	 * @param integer $row                              the index of the row
-	 * @return DB_SQL_Insert_Builder                    a reference to the current instance
+	 * @return DB\SQL\Insert\Builder                    a reference to the current instance
 	 */
 	public function row(Array $values, $row = 0) {
 		foreach ($values as $column => $value) {

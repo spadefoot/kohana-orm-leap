@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_DataReader extends Core\Object {
+abstract class Base\DB\SQL\DataReader extends Core\Object {
 
 	/**
 	 * This variable stores the command reference being utilized.
@@ -49,12 +49,12 @@ abstract class Base_DB_SQL_DataReader extends Core\Object {
 	 *
 	 * @access public
 	 * @abstract
-	 * @param DB_Connection_Driver $connection  the connection to be used
+	 * @param DB\Connection\Driver $connection  the connection to be used
 	 * @param string $sql                       the SQL statement to be queried
 	 * @param integer $mode                     the execution mode to be used
 	 * @throws Throwable\SQL\Exception          indicates that the query failed
 	 */
-	public abstract function __construct(DB_Connection_Driver $connection, $sql, $mode = NULL);
+	public abstract function __construct(DB\Connection\Driver $connection, $sql, $mode = NULL);
 
 	/**
 	 * This destructor ensures that the command reference has been freed.
@@ -130,13 +130,13 @@ abstract class Base_DB_SQL_DataReader extends Core\Object {
 	 *
 	 * @access public
 	 * @static
-	 * @param DB_Connection_Driver $connection         the connection to be used
+	 * @param DB\Connection\Driver $connection         the connection to be used
 	 * @param string $sql                              the SQL statement to be queried
 	 * @param integer $mode                            the execution mode to be used
-	 * @return DB_SQL_DataReader                       an instance of the appropriate
+	 * @return DB\SQL\DataReader                       an instance of the appropriate
 	 *                                                 SQL data reader
 	 */
-	public static function factory(DB_Connection_Driver $connection, $sql, $mode = NULL) {
+	public static function factory(DB\Connection\Driver $connection, $sql, $mode = NULL) {
 		$class = 'DB_' . $connection->data_source->dialect . '_DataReader_' . $connection->data_source->driver;
 		$reader = new $class($connection, $sql, $mode);
 		return $reader;

@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
+abstract class Base_DB_Oracle_Select_Builder extends DB\SQL\Select\Builder {
 
 	/**
 	 * This function combines another SQL statement using the specified operator.
@@ -38,7 +38,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 	 * @param string $operator                  the operator to be used to append
 	 *                                          the specified SQL statement
 	 * @param string $statement                 the SQL statement to be appended
-	 * @return DB_SQL_Select_Builder            a reference to the current instance
+	 * @return DB\SQL\Select\Builder            a reference to the current instance
 	 * @throws Throwable\SQL\Exception          indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
@@ -95,11 +95,11 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			$append = FALSE;
 			$sql .= ' WHERE ';
 			foreach ($this->data['where'] as $where) {
-				if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($where[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$where[0]} ";
 				}
 				$sql .= $where[1];
-				$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($where[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 
@@ -111,11 +111,11 @@ abstract class Base_DB_Oracle_Select_Builder extends DB_SQL_Select_Builder {
 			$append = FALSE;
 			$sql .= ' HAVING ';
 			foreach ($this->data['having'] as $having) {
-				if ($append AND ($having[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
+				if ($append AND ($having[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
 					$sql .= " {$having[0]} ";
 				}
 				$sql .= $having[1];
-				$append = ($having[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
+				$append = ($having[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
 			}
 		}
 

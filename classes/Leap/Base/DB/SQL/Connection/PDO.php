@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL_Connection_PDO extends DB_Connection_Driver {
+abstract class Base\DB\SQL\Connection\PDO extends DB\Connection\Driver {
 
 	/**
 	 * This destructor will ensure that the connection is closed.

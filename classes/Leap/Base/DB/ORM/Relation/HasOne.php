@@ -79,7 +79,7 @@ abstract class Base_DB_ORM_Relation_HasOne extends DB_ORM_Relation {
 
 		$field_count = count($child_key);
 		for ($i = 0; $i < $field_count; $i++) {
-			$builder->where("{$child_table}.{$child_key[$i]}", DB_SQL_Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
+			$builder->where("{$child_table}.{$child_key[$i]}", DB\SQL\Operator::_EQUAL_TO_, $this->model->{$parent_key[$i]});
 		}
 
 		$result = $builder->limit(1)->query($child_model);

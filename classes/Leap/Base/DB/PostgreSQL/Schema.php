@@ -133,11 +133,11 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->column(DB_SQL::expr("CASE WHEN is_nullable = 'YES' THEN 1 ELSE 0 END"), 'nullable')
 			->column('column_default', 'default')
 			->from('information_schema.columns')
-			->where('table_name', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where('table_name', DB\SQL\Operator::_EQUAL_TO_, $table)
 			->order_by('ordinal_position');
 		
 		if ( ! empty($like)) {
-			$builder->where('column_name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('column_name', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -182,24 +182,24 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->column(DB_SQL::expr("CASE \"t1\".\"indisunique\" WHEN 't' THEN 1 ELSE 0 END"), 'unique')
 			->column(DB_SQL::expr("CASE \"t1\".\"indisprimary\" WHEN 't' THEN 1 ELSE 0 END"), 'primary')
 			->from('pg_class', 't0')
-			->join(DB_SQL_JoinType::_LEFT_, 'pg_index', 't1')
-			->on('t1.indrelid', DB_SQL_Operator::_EQUAL_TO_, 't0.oid')
-			->join(DB_SQL_JoinType::_LEFT_, 'pg_class', 't2')
-			->on('t2.oid', DB_SQL_Operator::_EQUAL_TO_, 't1.indexrelid')
-			->join(DB_SQL_JoinType::_LEFT_, 'pg_attribute', 't3')
-			->on('t3.attrelid', DB_SQL_Operator::_EQUAL_TO_, 't0.oid')
-			->on('t3.attnum', DB_SQL_Operator::_EQUAL_TO_, DB_SQL::expr('ANY("t1"."indkey")'))			
-			->join(DB_SQL_JoinType::_LEFT_, DB_SQL::expr('(SELECT "t5"."table_schema" AS "schname", "t5"."table_schema" AS "relname" FROM "information_schema"."tables" AS "t5" WHERE "t5"."table_type" = \'BASE TABLE\' AND "t5"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 't4')
-			->on('t4.relname', DB_SQL_Operator::_EQUAL_TO_, 't0.relname')
-			->where('t0.relkind', DB_SQL_Operator::_EQUAL_TO_, 'r')
-			->where('t0.relname', DB_SQL_Operator::_EQUAL_TO_, $table)
+			->join(DB\SQL\JoinType::_LEFT_, 'pg_index', 't1')
+			->on('t1.indrelid', DB\SQL\Operator::_EQUAL_TO_, 't0.oid')
+			->join(DB\SQL\JoinType::_LEFT_, 'pg_class', 't2')
+			->on('t2.oid', DB\SQL\Operator::_EQUAL_TO_, 't1.indexrelid')
+			->join(DB\SQL\JoinType::_LEFT_, 'pg_attribute', 't3')
+			->on('t3.attrelid', DB\SQL\Operator::_EQUAL_TO_, 't0.oid')
+			->on('t3.attnum', DB\SQL\Operator::_EQUAL_TO_, DB_SQL::expr('ANY("t1"."indkey")'))			
+			->join(DB\SQL\JoinType::_LEFT_, DB_SQL::expr('(SELECT "t5"."table_schema" AS "schname", "t5"."table_schema" AS "relname" FROM "information_schema"."tables" AS "t5" WHERE "t5"."table_type" = \'BASE TABLE\' AND "t5"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 't4')
+			->on('t4.relname', DB\SQL\Operator::_EQUAL_TO_, 't0.relname')
+			->where('t0.relkind', DB\SQL\Operator::_EQUAL_TO_, 'r')
+			->where('t0.relname', DB\SQL\Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER("t4"."schname")'))
 			->order_by(DB_SQL::expr('UPPER("t0"."relname")'))
 			->order_by(DB_SQL::expr('UPPER("t2"."relname")'))
 			->order_by('t3.attnum');
 
 		if ( ! empty($like)) {
-			$builder->where('t2.relname', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('t2.relname', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -231,13 +231,13 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->column('table_name', 'table')
 			->column(DB_SQL::expr("'BASE'"), 'type')
 			->from('information_schema.tables')
-			->where('table_type', DB_SQL_Operator::_EQUAL_TO_, 'BASE TABLE')
-			->where('table_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
+			->where('table_type', DB\SQL\Operator::_EQUAL_TO_, 'BASE TABLE')
+			->where('table_schema', DB\SQL\Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
 			->order_by(DB_SQL::expr('UPPER("table_schema")'))
 			->order_by(DB_SQL::expr('UPPER("table_name")'));
 
 		if ( ! empty($like)) {
-			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('table_name', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -281,16 +281,16 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->column('action_order', 'seq_index')
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('information_schema.triggers')
-			->where('event_object_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
+			->where('event_object_schema', DB\SQL\Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
 			->where('event_object_table', '!~', '^pg_')3
-			->where(DB_SQL::expr('UPPER("event_object_table")'), DB_SQL_Operator::_EQUAL_TO_, $table)
+			->where(DB_SQL::expr('UPPER("event_object_table")'), DB\SQL\Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER("event_object_schema")'))
 			->order_by(DB_SQL::expr('UPPER("event_object_table")'))
 			->order_by(DB_SQL::expr('UPPER("trigger_name")'))
 			->order_by('action_order');
 
 		if ( ! empty($like)) {
-			$builder->where('trigger_name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('trigger_name', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();
@@ -322,14 +322,14 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->column('table_name', 'table')
 			->column(DB_SQL::expr("'VIEW'"), 'type')
 			->from('information_schema.tables')
-			->where('table_type', DB_SQL_Operator::_EQUAL_TO_, 'VIEW')
-			->where('table_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
+			->where('table_type', DB\SQL\Operator::_EQUAL_TO_, 'VIEW')
+			->where('table_schema', DB\SQL\Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
 			->where('table_name', '!~', '^pg_')
 			->order_by(DB_SQL::expr('UPPER("table_schema")'))
 			->order_by(DB_SQL::expr('UPPER("table_name")'));
 
 		if ( ! empty($like)) {
-			$builder->where('table_name', DB_SQL_Operator::_LIKE_, $like);
+			$builder->where('table_name', DB\SQL\Operator::_LIKE_, $like);
 		}
 
 		return $builder->query();

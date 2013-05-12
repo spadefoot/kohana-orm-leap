@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Connection_Driver extends Core\Object {
+abstract class Base\DB\Connection\Driver extends Core\Object {
 
 	/**
 	 * This variable stores the connection configurations.
@@ -48,7 +48,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * This variable stores a reference to the lock builder.
 	 *
 	 * @access protected
-	 * @var DB_SQL_Lock_Builder
+	 * @var DB\SQL\Lock\Builder
 	 */
 	protected $lock;
 
@@ -77,7 +77,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	public function __construct(DB\DataSource $data_source) {
 		$this->cache_key = NULL;
 		$this->data_source = $data_source;
-		$this->lock = DB_SQL_Lock_Builder::factory($this);
+		$this->lock = DB\SQL\Lock\Builder::factory($this);
 		$this->resource = NULL;
 		$this->sql = '';
 	}
@@ -141,7 +141,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 				return $results;
 			}
 			else if ($this->data_source->cache->lifetime !== NULL) {
-				$this->cache_key = 'DB_Connection_Driver::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
+				$this->cache_key = 'Leap\\DB\\Connection\\Driver::query("' . $this->data_source->id . '", "' . $type . '", "' . $sql . '")';
 				$results = \Kohana::cache($this->cache_key, NULL, $this->data_source->cache->lifetime);
 				if (($results !== NULL) AND ! $this->data_source->cache->force) {
 					return $results;
@@ -244,7 +244,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 			$this->sql = $sql;
 			return $result_set;
 		}
-		$reader = DB_SQL_DataReader::factory($this, $sql);
+		$reader = DB\SQL\DataReader::factory($this, $sql);
 		$result_set = $this->cache($sql, $type, new DB\ResultSet($reader, $type));
 		$this->sql = $sql;
 		return $result_set;
@@ -294,14 +294,14 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 *
 	 * @access public
 	 * @param string $sql                           the SQL statement
-	 * @return DB_SQL_DataReader                    the SQL data reader
+	 * @return DB\SQL\DataReader                    the SQL data reader
 	 * @throws Throwable\SQL\Exception              indicates that the query failed
 	 */
 	public function reader($sql) {
 		if ( ! $this->is_connected()) {
 			throw new Throwable\SQL\Exception('Message: Failed to create SQL data reader. Reason: Unable to find connection.');
 		}
-		$reader = DB_SQL_DataReader::factory($this, $sql);
+		$reader = DB\SQL\DataReader::factory($this, $sql);
 		$this->sql = $sql;
 		return $reader;
 	}
@@ -325,7 +325,7 @@ abstract class Base_DB_Connection_Driver extends Core\Object {
 	 * @access public
 	 * @static
 	 * @param mixed $config                         the data source configurations
-	 * @return DB_Connection_Driver                 the database connection
+	 * @return DB\Connection\Driver                 the database connection
 	 */
 	public static function factory($config = 'default') {
 		$data_source = DB\DataSource::instance($config);
