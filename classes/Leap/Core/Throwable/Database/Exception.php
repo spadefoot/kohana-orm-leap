@@ -18,7 +18,7 @@
  */
 
 /**
- * This class indicates there is an SQL problem.
+ * This class indicates there is a problem associated with the database.
  *
  * @package Leap
  * @category Throwable
