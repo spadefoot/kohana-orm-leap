@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2013-01-22
  */
-class DB_MsSQL_Connection_Improved extends Base_DB_MsSQL_Connection_Improved {}
+class DB\MsSQL\Connection\Improved extends Base\DB\MsSQL\Connection\Improved {}

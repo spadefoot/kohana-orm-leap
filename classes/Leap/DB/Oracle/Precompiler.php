@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2013-01-06
  */
-class DB_Oracle_Precompiler extends Base_DB_Oracle_Precompiler {}
+class DB\Oracle\Precompiler extends Base\DB\Oracle\Precompiler {}

@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2011-12-06
  */
-class DB_MySQL_Insert_Builder extends Base_DB_MySQL_Insert_Builder {}
+class DB\MySQL\Insert\Builder extends Base\DB\MySQL\Insert\Builder {}

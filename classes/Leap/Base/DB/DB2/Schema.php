@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_DB2_Schema extends DB\Schema {
+abstract class Base\DB\DB2\Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array which describes the properties
@@ -220,24 +220,24 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 	 * @see http://www.tek-tips.com/viewthread.cfm?qid=128876&page=108
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('t1.TABSCHEMA', 'schema')
 			->column('t1.TABNAME', 'table')
 			->column('t1.INDNAME', 'index')
 			->column('t0.COLNAME', 'column')
 			->column('t0.COLSEQ', 'seq_index')
-			->column(DB_SQL::expr("CASE \"t0\".\"COLORDER\" WHEN 'A' THEN 'ASC' WHEN 'D' THEN 'DESC' ELSE NULL END"), 'ordering')
-			->column(DB_SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'D' THEN 0 ELSE 1 END"), 'unique')
-			->column(DB_SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
+			->column(DB\SQL::expr("CASE \"t0\".\"COLORDER\" WHEN 'A' THEN 'ASC' WHEN 'D' THEN 'DESC' ELSE NULL END"), 'ordering')
+			->column(DB\SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'D' THEN 0 ELSE 1 END"), 'unique')
+			->column(DB\SQL::expr("CASE \"t1\".\"UNIQUERULE\" WHEN 'P' THEN 1 ELSE 0 END"), 'primary')
 			->from('SYSCAT.INDEXCOLUSE', 't0')
 			->join(DB\SQL\JoinType::_LEFT_, 'SYSCAT.INDEXES', 't1')
 			->on('t1.INDSCHEMA', DB\SQL\Operator::_EQUAL_TO_, 't0.INDSCHEMA')
 			->on('t1.INDNAME', DB\SQL\Operator::_EQUAL_TO_, 't0.INDNAME')
 			->where('t1.TABSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
 			->where('t1.TABNAME', DB\SQL\Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER("t1"."TABSCHEMA")'))
-			->order_by(DB_SQL::expr('UPPER("t1"."TABNAME")'))
-			->order_by(DB_SQL::expr('UPPER("t1"."INDNAME")'))
+			->order_by(DB\SQL::expr('UPPER("t1"."TABSCHEMA")'))
+			->order_by(DB\SQL::expr('UPPER("t1"."TABNAME")'))
+			->order_by(DB\SQL::expr('UPPER("t1"."INDNAME")'))
 			->order_by('t0.COLSEQ');
 
 		if ( ! empty($like)) {
@@ -269,15 +269,15 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 	 * @see http://www.selectorweb.com/db2.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('TABSCHEMA', 'schema')
 			->column('TABNAME', 'table')
-			->column(DB_SQL::expr("'BASE'"), 'type')
+			->column(DB\SQL::expr("'BASE'"), 'type')
 			->from('SYSCAT.TABLES')
 			->where('TABSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
 			->where('TYPE', DB\SQL\Operator::_EQUAL_TO_, 'T')
-			->order_by(DB_SQL::expr('UPPER("TABSCHEMA")'))
-			->order_by(DB_SQL::expr('UPPER("TABNAME")'));
+			->order_by(DB\SQL::expr('UPPER("TABSCHEMA")'))
+			->order_by(DB\SQL::expr('UPPER("TABNAME")'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABNAME', DB\SQL\Operator::_LIKE_, $like);
@@ -314,23 +314,23 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001066.htm
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('TABSCHEMA', 'schema')
 			->column('TABNAME', 'table')
 			->column('TRIGNAME', 'trigger')
 			->column('TRIGEVENT', 'event')
 			->column('TRIGTIME', 'timing')
-			->column(DB_SQL::expr("CASE GRANULARITY WHEN 'S' THEN 'STATEMENT' ELSE 'ROW' END"), 'per')
+			->column(DB\SQL::expr("CASE GRANULARITY WHEN 'S' THEN 'STATEMENT' ELSE 'ROW' END"), 'per')
 			->column('TEXT', 'action')
-			->column(DB_SQL::expr('0'), 'seq_index')
+			->column(DB\SQL::expr('0'), 'seq_index')
 			->column('CREATE_TIME', 'created')
 			->from('SYSCAT.TRIGGERS')
 			->where('TABSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
 			->where('TABNAME', DB\SQL\Operator::_EQUAL_TO_, $table)
 			->where('VALID', DB\SQL\Operator::_NOT_EQUIVALENT_, 'Y')
-			->order_by(DB_SQL::expr('UPPER("TABSCHEMA")'))
-			->order_by(DB_SQL::expr('UPPER("TABNAME")'))
-			->order_by(DB_SQL::expr('UPPER("TRIGNAME")'));
+			->order_by(DB\SQL::expr('UPPER("TABSCHEMA")'))
+			->order_by(DB\SQL::expr('UPPER("TABNAME")'))
+			->order_by(DB\SQL::expr('UPPER("TRIGNAME")'));
 
 		if ( ! empty($like)) {
 			$builder->where('TRIGNAME', DB\SQL\Operator::_LIKE_, $like);
@@ -360,15 +360,15 @@ abstract class Base_DB_DB2_Schema extends DB\Schema {
 	 * @see http://www.ibm.com/developerworks/data/library/techarticle/dm-0411melnyk/
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('VIEWSCHEMA', 'schema')
 			->column('VIEWNAME', 'table')
-			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->column(DB\SQL::expr("'VIEW'"), 'type')
 			->from('SYSCAT.VIEWS')
 			->where('VIEWSCHEMA', DB\SQL\Operator::_NOT_LIKE_, 'SYS%')
 			->where('VALID', DB\SQL\Operator::_NOT_EQUIVALENT_, 'Y')
-			->order_by(DB_SQL::expr('UPPER("VIEWSCHEMA")'))
-			->order_by(DB_SQL::expr('UPPER("VIEWNAME")'));
+			->order_by(DB\SQL::expr('UPPER("VIEWSCHEMA")'))
+			->order_by(DB\SQL::expr('UPPER("VIEWNAME")'));
 
 		if ( ! empty($like)) {
 			$builder->where('VIEWNAME', DB\SQL\Operator::_LIKE_, $like);

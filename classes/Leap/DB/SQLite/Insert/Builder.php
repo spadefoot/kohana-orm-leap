@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2012-12-30
  */
-class DB_SQLite_Insert_Builder extends Base_DB_SQLite_Insert_Builder {}
+class DB\SQLite\Insert\Builder extends Base\DB\SQLite\Insert\Builder {}

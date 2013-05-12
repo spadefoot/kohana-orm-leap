@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Schema extends DB\Schema {
+abstract class Base\DB\Drizzle\Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array of default properties for the specified
@@ -246,15 +246,15 @@ abstract class Base_DB_Drizzle_Schema extends DB\Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('TABLE_SCHEMA', 'schema')
 			->column('TABLE_NAME', 'table')
-			->column(DB_SQL::expr("'BASE'"), 'type')
+			->column(DB\SQL::expr("'BASE'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
 			//->where('TABLE_SCHEMA', DB\SQL\Operator::_EQUAL_TO_, $this->data_source->database)
-			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB\SQL\Operator::_EQUAL_TO_, 'BASE_TABLE')
-			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
-			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
+			->where(DB\SQL::expr('UPPER(`TABLE_TYPE`)'), DB\SQL\Operator::_EQUAL_TO_, 'BASE_TABLE')
+			->order_by(DB\SQL::expr('UPPER(`TABLE_SCHEMA`)'))
+			->order_by(DB\SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', DB\SQL\Operator::_LIKE_, $like);
@@ -291,7 +291,7 @@ abstract class Base_DB_Drizzle_Schema extends DB\Schema {
 	 * @see http://dev.mysql.com/doc/refman/5.6/en/show-triggers.html
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('EVENT_OBJECT_SCHEMA', 'schema')
 			->column('EVENT_OBJECT_TABLE', 'table')
 			->column('TRIGGER_NAME', 'trigger')
@@ -303,10 +303,10 @@ abstract class Base_DB_Drizzle_Schema extends DB\Schema {
 			->column('CREATED', 'created')
 			->from('INFORMATION_SCHEMA.TRIGGERS')
 			//->where('EVENT_OBJECT_SCHEMA', DB\SQL\Operator::_EQUAL_TO_, $this->data_source->database)
-			->where(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB\SQL\Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_SCHEMA`)'))
-			->order_by(DB_SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'))
-			->order_by(DB_SQL::expr('UPPER(`TRIGGER_NAME`)'))
+			->where(DB\SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'), DB\SQL\Operator::_EQUAL_TO_, $table)
+			->order_by(DB\SQL::expr('UPPER(`EVENT_OBJECT_SCHEMA`)'))
+			->order_by(DB\SQL::expr('UPPER(`EVENT_OBJECT_TABLE`)'))
+			->order_by(DB\SQL::expr('UPPER(`TRIGGER_NAME`)'))
 			->order_by('ACTION_ORDER');
 
 		if ( ! empty($like)) {
@@ -335,15 +335,15 @@ abstract class Base_DB_Drizzle_Schema extends DB\Schema {
 	 * @see http://www.geeksww.com/tutorials/database_management_systems/mysql/tips_and_tricks/mysql_query_to_find_all_views_in_a_database.php
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('TABLE_SCHEMA', 'schema')
 			->column('TABLE_NAME', 'table')
-			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->column(DB\SQL::expr("'VIEW'"), 'type')
 			->from('INFORMATION_SCHEMA.TABLES')
 			//->where('TABLE_SCHEMA', DB\SQL\Operator::_EQUAL_TO_, $this->data_source->database)
-			->where(DB_SQL::expr('UPPER(`TABLE_TYPE`)'), DB\SQL\Operator::_EQUAL_TO_, 'VIEW')
-			->order_by(DB_SQL::expr('UPPER(`TABLE_SCHEMA`)'))
-			->order_by(DB_SQL::expr('UPPER(`TABLE_NAME`)'));
+			->where(DB\SQL::expr('UPPER(`TABLE_TYPE`)'), DB\SQL\Operator::_EQUAL_TO_, 'VIEW')
+			->order_by(DB\SQL::expr('UPPER(`TABLE_SCHEMA`)'))
+			->order_by(DB\SQL::expr('UPPER(`TABLE_NAME`)'));
 
 		if ( ! empty($like)) {
 			$builder->where('TABLE_NAME', DB\SQL\Operator::_LIKE_, $like);

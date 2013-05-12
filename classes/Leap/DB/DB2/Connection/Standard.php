@@ -24,4 +24,4 @@
  * @category DB2
  * @version 2011-12-11
  */
-class DB_DB2_Connection_Standard extends Base_DB_DB2_Connection_Standard {}
+class DB\DB2\Connection\Standard extends Base\DB\DB2\Connection\Standard {}

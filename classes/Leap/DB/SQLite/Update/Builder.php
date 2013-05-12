@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2012-12-30
  */
-class DB_SQLite_Update_Builder extends Base_DB_SQLite_Update_Builder {}
+class DB\SQLite\Update\Builder extends Base\DB\SQLite\Update\Builder {}

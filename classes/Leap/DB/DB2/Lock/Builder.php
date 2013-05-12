@@ -24,4 +24,4 @@
  * @category DB2
  * @version 2013-01-11
  */
-class DB_DB2_Lock_Builder extends Base_DB_DB2_Lock_Builder {}
+class DB\DB2\Lock\Builder extends Base\DB\DB2\Lock\Builder {}

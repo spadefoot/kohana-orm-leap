@@ -24,4 +24,4 @@
  * @category Firebird
  * @version 2011-12-06
  */
-class DB_Firebird_Update_Builder extends Base_DB_Firebird_Update_Builder {}
+class DB\Firebird\Update\Builder extends Base\DB\Firebird\Update\Builder {}

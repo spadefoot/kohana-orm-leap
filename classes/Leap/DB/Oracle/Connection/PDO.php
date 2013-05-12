@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2011-12-06
  */
-class DB_Oracle_Connection_PDO extends Base_DB_Oracle_Connection_PDO {}
+class DB\Oracle\Connection\PDO extends Base\DB\Oracle\Connection\PDO {}

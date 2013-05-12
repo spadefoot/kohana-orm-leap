@@ -95,7 +95,7 @@ abstract class Base\DB\ORM\Relation\HasMany extends DB\ORM\Relation {
 			$through_source = $through_model::data_source(DB\DataSource::SLAVE_INSTANCE);
 
 			if ($through_source != $child_source) {
-				$builder = DB_SQL::select($through_source)
+				$builder = DB\SQL::select($through_source)
 					->from($through_table);
 
 				$field_count = count($through_keys[1]);
@@ -110,7 +110,7 @@ abstract class Base\DB\ORM\Relation\HasMany extends DB\ORM\Relation {
 
 				$records = $builder->query('array');
 
-				$builder = DB_SQL::select($child_source)
+				$builder = DB\SQL::select($child_source)
 					->all("{$child_table}.*")
 					->from($child_table);
 
@@ -130,7 +130,7 @@ abstract class Base\DB\ORM\Relation\HasMany extends DB\ORM\Relation {
 				$result = $builder->query($child_model);
 			}
 			else {
-				$builder = DB_SQL::select($child_source)
+				$builder = DB\SQL::select($child_source)
 					->all("{$child_table}.*")
 					->from($through_table)
 					->join(DB\SQL\JoinType::_INNER_, $child_table);
@@ -153,7 +153,7 @@ abstract class Base\DB\ORM\Relation\HasMany extends DB\ORM\Relation {
 			}
 		}
 		else {
-			$builder = DB_SQL::select($child_source)
+			$builder = DB\SQL::select($child_source)
 				->all("{$child_table}.*")
 				->from($child_table);
 

@@ -52,7 +52,7 @@ abstract class Base\DB\SQL\Delete\Proxy extends Core\Object implements DB\SQL\St
 	 */
 	public function __construct($config) {
 		$this->data_source = DB\DataSource::instance($config);
-		$builder = 'DB_' . $this->data_source->dialect . '_Delete_Builder';
+		$builder = '\\Leap\\DB\\' . $this->data_source->dialect . '\\Delete\\Builder';
 		$this->builder = new $builder($this->data_source);
 	}
 

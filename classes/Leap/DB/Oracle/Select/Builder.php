@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2011-06-15
  */
-class DB_Oracle_Select_Builder extends Base_DB_Oracle_Select_Builder {}
+class DB\Oracle\Select\Builder extends Base\DB\Oracle\Select\Builder {}

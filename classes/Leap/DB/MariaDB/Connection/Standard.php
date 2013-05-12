@@ -24,4 +24,4 @@
  * @category MariaDB
  * @version 2011-12-11
  */
-class DB_MariaDB_Connection_Standard extends Base_DB_MariaDB_Connection_Standard {}
+class DB\MariaDB\Connection\Standard extends Base\DB\MariaDB\Connection\Standard {}

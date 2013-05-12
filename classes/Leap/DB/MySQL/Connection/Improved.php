@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2013-01-06
  */
-class DB_MySQL_Connection_Improved extends Base_DB_MySQL_Connection_Improved {}
+class DB\MySQL\Connection\Improved extends Base\DB\MySQL\Connection\Improved {}

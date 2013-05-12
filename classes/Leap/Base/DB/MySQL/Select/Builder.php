@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MySQL_Select_Builder extends DB\SQL\Select\Builder {
+abstract class Base\DB\MySQL\Select\Builder extends DB\SQL\Select\Builder {
 
 	/**
 	 * This function returns the SQL statement.

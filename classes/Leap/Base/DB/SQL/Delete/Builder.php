@@ -36,7 +36,7 @@ abstract class Base\DB\SQL\Delete\Builder extends DB\SQL\Builder {
 	 */
 	public function __construct(DB\DataSource $data_source) {
 		$this->dialect = $data_source->dialect;
-		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
+		$precompiler = '\\Leap\\DB\\' . $this->dialect . '\\Precompiler';
 		$this->precompiler = new $precompiler($data_source);
 		$this->reset();
 	}

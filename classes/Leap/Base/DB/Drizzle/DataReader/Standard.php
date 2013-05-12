@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_DataReader_Standard extends DB\SQL\DataReader\Standard {
+abstract class Base\DB\Drizzle\DataReader\Standard extends DB\SQL\DataReader\Standard {
 
 	/**
 	 * This function initializes the class.

@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_DataReader_Standard extends DB\SQL\DataReader\Standard {
+abstract class Base\DB\PostgreSQL\DataReader\Standard extends DB\SQL\DataReader\Standard {
 
 	/**
 	 * This function initializes the class.

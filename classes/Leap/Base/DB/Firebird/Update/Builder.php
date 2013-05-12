@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_Update_Builder extends DB\SQL\Update\Builder {
+abstract class Base\DB\Firebird\Update\Builder extends DB\SQL\Update\Builder {
 
    /**
 	 * This constructor instantiates this class.

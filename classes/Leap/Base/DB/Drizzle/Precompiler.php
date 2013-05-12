@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Precompiler extends DB\SQL\Precompiler {
+abstract class Base\DB\Drizzle\Precompiler extends DB\SQL\Precompiler {
 
 	/**
 	 * This constant represents a closing identifier quote character.
@@ -73,13 +73,13 @@ abstract class Base_DB_Drizzle_Precompiler extends DB\SQL\Precompiler {
 	 * @see http://www.ispirer.com/wiki/sqlways/mysql/identifiers
 	 */
 	public function prepare_identifier($expr) {
-		if ($expr instanceof DB_Drizzle_Select_Builder) {
+		if ($expr instanceof DB\Drizzle\Select\Builder) {
 			return DB\SQL\Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if ($expr instanceof DB\SQL\Expression) {
 			return $expr->value($this);
 		}
-		else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
+		else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
@@ -238,13 +238,13 @@ abstract class Base_DB_Drizzle_Precompiler extends DB\SQL\Precompiler {
 			return DB\SQL\Builder::_OPENING_PARENTHESIS_ . implode(', ', $buffer) . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 		}
 		else if (is_object($expr)) {
-			if ($expr instanceof DB_Drizzle_Select_Builder) {
+			if ($expr instanceof DB\Drizzle\Select\Builder) {
 				return DB\SQL\Builder::_OPENING_PARENTHESIS_ . $expr->statement(FALSE) . DB\SQL\Builder::_CLOSING_PARENTHESIS_;
 			}
 			else if ($expr instanceof DB\SQL\Expression) {
 				return $expr->value($this);
 			}
-			else if (class_exists('Database_Expression') AND ($expr instanceof Database_Expression)) {
+			else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
 				return $expr->value();
 			}
 			else if ($expr instanceof Core\Data) {

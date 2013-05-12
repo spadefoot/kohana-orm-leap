@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2013-01-06
  */
-class DB_Drizzle_Connection_PDO extends Base_DB_Drizzle_Connection_PDO {}
+class DB\Drizzle\Connection\PDO extends Base\DB\Drizzle\Connection\PDO {}

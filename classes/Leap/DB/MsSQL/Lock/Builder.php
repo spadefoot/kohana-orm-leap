@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2013-01-11
  */
-class DB_MsSQL_Lock_Builder extends Base_DB_MsSQL_Lock_Builder {}
+class DB\MsSQL\Lock\Builder extends Base\DB\MsSQL\Lock\Builder {}

@@ -29,7 +29,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_DB2_DataReader_Standard extends DB\SQL\DataReader\Standard {
+abstract class Base\DB\DB2\DataReader\Standard extends DB\SQL\DataReader\Standard {
 
 	/**
 	 * This function initializes the class.

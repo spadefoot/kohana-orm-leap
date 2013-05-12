@@ -60,7 +60,7 @@ abstract class Base\DB\SQL\Lock\Builder extends Core\Object {
 	 */
 	public function __construct(DB\Connection\Driver $connection) {
 		$this->connection = $connection;
-		$this->precompiler = DB_SQL::precompiler($connection->data_source);
+		$this->precompiler = DB\SQL::precompiler($connection->data_source);
 		$this->reset();
 	}
 
@@ -118,7 +118,7 @@ abstract class Base\DB\SQL\Lock\Builder extends Core\Object {
 	 *                                                 SQL lock builder
 	 */
 	public static function factory(DB\Connection\Driver $connection) {
-		$class = 'DB_' . $connection->data_source->dialect . '_Lock_Builder';
+		$class = '\\Leap\\DB\\' . $connection->data_source->dialect . '\\Lock\\Builder';
 		$builder = new $class($connection);
 		return $builder;
 	}

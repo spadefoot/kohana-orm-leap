@@ -24,4 +24,4 @@
  * @category PostgreSQL
  * @version 2013-01-06
  */
-class DB_PostgreSQL_Precompiler extends Base_DB_PostgreSQL_Precompiler {}
+class DB\PostgreSQL\Precompiler extends Base\DB\PostgreSQL\Precompiler {}

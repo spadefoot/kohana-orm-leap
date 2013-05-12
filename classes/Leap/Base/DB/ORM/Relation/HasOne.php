@@ -73,7 +73,7 @@ abstract class Base\DB\ORM\Relation\HasOne extends DB\ORM\Relation {
 		$child_key = $this->metadata['child_key'];
 		$child_source = $child_model::data_source(DB\DataSource::SLAVE_INSTANCE);
 
-		$builder = DB_SQL::select($child_source)
+		$builder = DB\SQL::select($child_source)
 			->all("{$child_table}.*")
 			->from($child_table);
 

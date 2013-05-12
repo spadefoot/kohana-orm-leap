@@ -152,7 +152,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		$connection = DB\Connection\Pool::instance()->get_connection($data_source);
 		$connection->lock->add($table)->acquire();
 
-		$update = DB_SQL::update($data_source)
+		$update = DB\SQL::update($data_source)
 			->set('rgt', DB\ORM::expr('rgt + 2'))
 			->table($table)
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -161,7 +161,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 
 		$connection->execute($update);
 
-		$update = DB_SQL::update($data_source)
+		$update = DB\SQL::update($data_source)
 			->set('lft', DB\ORM::expr('lft + 2'))
 			->table($table)
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -173,7 +173,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		$lft = $this->fields['lft']->value + 1;
 		$rgt = $this->fields['lft']->value + 2;
 
-		$builder = DB_SQL::insert($data_source)
+		$builder = DB\SQL::insert($data_source)
 			->into($table)
 			->column('scope', $this->fields['scope']->value)
 			->column('name', $name)
@@ -192,16 +192,16 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		$connection->execute($insert);
 		$id = $connection->get_last_insert_id();
 
-		$select = DB_SQL::select($data_source)
+		$select = DB\SQL::select($data_source)
 			->column('t1.parent_id')
 			->from($table, 't1')
 			->where('t1.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
-			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
-			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
-			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
+			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, DB\SQL::expr('t0.lft'))
+			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, DB\SQL::expr('t0.rgt'))
+			->order_by(DB\SQL::expr('t1.rgt - t0.rgt'))
 			->limit(1);
 
-		$update = DB_SQL::update($data_source)
+		$update = DB\SQL::update($data_source)
 			->set('t0.parent_id', $select)
 			->table($table, 't0')
 			->where('t0.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -245,7 +245,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 	public function ancestors($ordering = 'ASC', $limit = 0, $root = TRUE) {
 		$data_source = static::data_source(DB\DataSource::SLAVE_INSTANCE);
 
-		$builder = DB_SQL::select($data_source)
+		$builder = DB\SQL::select($data_source)
 			->all('t1.*')
 			->from(static::table(), 't1')
 			->where('t1.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
@@ -260,7 +260,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		}
 
 		if ($ordering == 'ASC') {
-			$builder = DB_SQL::select($data_source)
+			$builder = DB\SQL::select($data_source)
 				->all('t0.*')
 				->from($builder, 't0')
 				->order_by('t0.lft', 'ASC');
@@ -307,17 +307,17 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		$connection = DB\Connection\Pool::instance()->get_connection($data_source);
 		$connection->lock->add($table)->acquire();
 
-		$select = DB_SQL::select($data_source)
+		$select = DB\SQL::select($data_source)
 			->column('t1.parent_id')
 			->from($table, 't1')
 			->where('t1.scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('t1.id', DB\SQL\Operator::_NOT_EQUIVALENT_, $this->fields['id']->value)
-			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, DB_SQL::expr('t0.lft'))
-			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, DB_SQL::expr('t0.rgt'))
-			->order_by(DB_SQL::expr('t1.rgt - t0.rgt'))
+			->where('t1.lft', DB\SQL\Operator::_LESS_THAN_, DB\SQL::expr('t0.lft'))
+			->where('t1.rgt', DB\SQL\Operator::_GREATER_THAN_, DB\SQL::expr('t0.rgt'))
+			->order_by(DB\SQL::expr('t1.rgt - t0.rgt'))
 			->limit(1);
 
-		$update = DB_SQL::update($data_source)
+		$update = DB\SQL::update($data_source)
 			->set('t0.parent_id', $select)
 			->set('t0.lft', DB\ORM::expr('t0.lft - 2'))
 			->set('t0.rgt', DB\ORM::expr('t0.rgt - 2'))
@@ -328,7 +328,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 
 		$connection->execute($update);
 
-		$delete = DB_SQL::delete($data_source)
+		$delete = DB\SQL::delete($data_source)
 			->from($table)
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['id']->value)
@@ -371,7 +371,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		}
 
 		if ($leaves_only) {
-			$builder->where('rgt', DB\SQL\Operator::_EQUAL_TO_, DB_SQL::expr('lft + 1'));
+			$builder->where('rgt', DB\SQL\Operator::_EQUAL_TO_, DB\SQL::expr('lft + 1'));
 		}
 
 		return $builder->query();
@@ -496,8 +496,8 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 	 * @see http://stackoverflow.com/questions/7661913/modified-preorder-tree-traversal-selecting-nodes-1-level-deep
 	 */
 	public function level() {
-		$record = DB_SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))
-			->column(DB_SQL::expr('COUNT(parent_id) - 1'), 'level')
+		$record = DB\SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))
+			->column(DB\SQL::expr('COUNT(parent_id) - 1'), 'level')
 			->from(static::table())
 			->where('scope', DB\SQL\Operator::_EQUAL_TO_, $this->fields['scope']->value)
 			->where('parent_id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['parent_id']->value)
@@ -576,7 +576,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		$columns = array_keys($this->fields);
 
 		if ( ! empty($columns)) {
-			$builder = DB_SQL::update(static::data_source(DB\DataSource::MASTER_INSTANCE))
+			$builder = DB\SQL::update(static::data_source(DB\DataSource::MASTER_INSTANCE))
 				->table(static::table())
 				->where('id', DB\SQL\Operator::_EQUAL_TO_, $this->fields['id']->value);
 
@@ -689,7 +689,7 @@ abstract class Base\DB\ORM\MPTT extends DB\ORM\Model {
 		$connection = DB\Connection\Pool::instance()->get_connection($data_source);
 		$connection->lock->add($table)->acquire();
 
-		$builder = DB_SQL::insert($data_source)
+		$builder = DB\SQL::insert($data_source)
 			->into($table)
 			->column('scope', $scope)
 			->column('name', $name)

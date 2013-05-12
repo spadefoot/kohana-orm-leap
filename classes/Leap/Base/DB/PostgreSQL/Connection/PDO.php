@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Connection_PDO extends DB\SQL\Connection\PDO {
+abstract class Base\DB\PostgreSQL\Connection\PDO extends DB\SQL\Connection\PDO {
 
 	/**
 	 * This function returns the last insert id.
@@ -49,7 +49,7 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB\SQL\Connection\PDO {
 		try {
 			if (is_string($table)) {
 				$sql = $this->sql;
-				$precompiler = DB_SQL::precompiler($this->data_source);
+				$precompiler = DB\SQL::precompiler($this->data_source);
 				$table = $precompiler->prepare_identifier($table);
 				$column = $precompiler->prepare_identifier($column);
 				$alias = $precompiler->prepare_alias('id');
@@ -88,7 +88,7 @@ abstract class Base_DB_PostgreSQL_Connection_PDO extends DB\SQL\Connection\PDO {
 				if ($this->data_source->is_persistent()) {
 					$attributes[\PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->resource = new PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
+				$this->resource = new \PDO($connection_string, $this->data_source->username, $this->data_source->password, $attributes);
 			}
 			catch (\PDOException $ex) {
 				$this->resource = NULL;

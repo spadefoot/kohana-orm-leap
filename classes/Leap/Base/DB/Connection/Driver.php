@@ -329,7 +329,7 @@ abstract class Base\DB\Connection\Driver extends Core\Object {
 	 */
 	public static function factory($config = 'default') {
 		$data_source = DB\DataSource::instance($config);
-		$driver = 'DB_' . $data_source->dialect . '_Connection_' . $data_source->driver;
+		$driver = '\\Leap\\DB\\' . $data_source->dialect . '\\Connection\\' . $data_source->driver;
 		$connection = new $driver($data_source);
 		return $connection;
 	}

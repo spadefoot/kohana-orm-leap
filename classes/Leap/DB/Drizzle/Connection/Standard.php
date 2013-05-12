@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2013-01-06
  */
-class DB_Drizzle_Connection_Standard extends Base_DB_Drizzle_Connection_Standard {}
+class DB\Drizzle\Connection\Standard extends Base\DB\Drizzle\Connection\Standard {}

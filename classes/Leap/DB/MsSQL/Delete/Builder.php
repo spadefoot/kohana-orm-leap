@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2011-12-06
  */
-class DB_MsSQL_Delete_Builder extends Base_DB_MsSQL_Delete_Builder {}
+class DB\MsSQL\Delete\Builder extends Base\DB\MsSQL\Delete\Builder {}

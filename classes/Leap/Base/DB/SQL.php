@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQL extends Core\Object {
+abstract class Base\DB\SQL extends Core\Object {
 
 	/**
 	 * This function returns an instance of the DB\SQL\Delete\Proxy.
@@ -81,7 +81,7 @@ abstract class Base_DB_SQL extends Core\Object {
 	 */
 	public static function precompiler($config = 'default') {
 		$data_source = DB\DataSource::instance($config);
-		$precompiler = 'DB_' . $data_source->dialect . '_Precompiler';
+		$precompiler = '\\Leap\\DB\\' . $data_source->dialect . '\\Precompiler';
 		$object = new $precompiler($data_source);
 		return $object;
 	}

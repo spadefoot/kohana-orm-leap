@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2011-12-11
  */
-class DB_Oracle_Connection_Standard extends Base_DB_Oracle_Connection_Standard {}
+class DB\Oracle\Connection\Standard extends Base\DB\Oracle\Connection\Standard {}

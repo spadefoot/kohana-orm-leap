@@ -24,4 +24,4 @@
  * @category SQL
  * @version 2012-05-20
  */
-class DB_SQL extends Base_DB_SQL {}
+class DB\SQL extends Base\DB\SQL {}

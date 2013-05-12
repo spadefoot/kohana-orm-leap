@@ -25,4 +25,4 @@
  * @category MariaDB
  * @version 2012-12-04
  */
-class DB_MariaDB_DataReader_PDO extends Base_DB_MariaDB_DataReader_PDO {}
+class DB\MariaDB\DataReader\PDO extends Base\DB\MariaDB\DataReader\PDO {}

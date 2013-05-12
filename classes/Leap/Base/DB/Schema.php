@@ -53,7 +53,7 @@ abstract class Base\DB\Schema extends Core\Object {
 	 */
 	public function __construct($config) {
 		$this->data_source = DB\DataSource::instance($config);
-		$precompiler = 'DB_' . $this->data_source->dialect . '_Precompiler';
+		$precompiler = '\\Leap\\DB\\' . $this->data_source->dialect . '\\Precompiler';
 		$this->precompiler = new $precompiler();
 	}
 

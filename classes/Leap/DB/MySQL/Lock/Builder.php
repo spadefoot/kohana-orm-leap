@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2013-01-11
  */
-class DB_MySQL_Lock_Builder extends Base_DB_MySQL_Lock_Builder {}
+class DB\MySQL\Lock\Builder extends Base\DB\MySQL\Lock\Builder {}

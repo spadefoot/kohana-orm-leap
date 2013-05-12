@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2011-12-31
  */
-class DB_Drizzle_Select_Builder extends Base_DB_Drizzle_Select_Builder {}
+class DB\Drizzle\Select\Builder extends Base\DB\Drizzle\Select\Builder {}

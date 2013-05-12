@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQLite_Schema extends DB\Schema {
+abstract class Base\DB\SQLite\Schema extends DB\Schema {
 
 	/**
 	 * This function returns a result set of fields for the specified table.
@@ -212,14 +212,14 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 		$path_info = pathinfo($this->data_source->database);
 		$schema = $path_info['filename'];
 
-		$builder = DB_SQL::select($this->data_source)
-			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+		$builder = DB\SQL::select($this->data_source)
+			->column(DB\SQL::expr("'{$schema}'"), 'schema')
 			->column('name', 'table')
-			->column(DB_SQL::expr("'BASE'"), 'type')
-			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
+			->column(DB\SQL::expr("'BASE'"), 'type')
+			->from(DB\SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
 			->where('type', DB\SQL\Operator::_EQUAL_TO_, 'table')
 			->where('name', DB\SQL\Operator::_NOT_LIKE_, 'sqlite_%')
-			->order_by(DB_SQL::expr('UPPER([name])'));
+			->order_by(DB\SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
 			$builder->where('name', DB\SQL\Operator::_LIKE_, $like);
@@ -259,21 +259,21 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 		$path_info = pathinfo($this->data_source->database);
 		$schema = $path_info['filename'];
 
-		$builder = DB_SQL::select($this->data_source)
-			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+		$builder = DB\SQL::select($this->data_source)
+			->column(DB\SQL::expr("'{$schema}'"), 'schema')
 			->column('tbl_name', 'table')
 			->column('name', 'trigger')
-			->column(DB_SQL::expr('NULL'), 'event')
-			->column(DB_SQL::expr('NULL'), 'timing')
-			->column(DB_SQL::expr("'ROW'"), 'per')
+			->column(DB\SQL::expr('NULL'), 'event')
+			->column(DB\SQL::expr('NULL'), 'timing')
+			->column(DB\SQL::expr("'ROW'"), 'per')
 			->column('sql', 'action')
-			->column(DB_SQL::expr('0'), 'seq_index')
-			->column(DB_SQL::expr('NULL'), 'created')
-			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
+			->column(DB\SQL::expr('0'), 'seq_index')
+			->column(DB\SQL::expr('NULL'), 'created')
+			->from(DB\SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
 			->where('type', DB\SQL\Operator::_EQUAL_TO_, 'trigger')
 			->where('tbl_name', DB\SQL\Operator::_NOT_LIKE_, 'sqlite_%')
-			->order_by(DB_SQL::expr('UPPER([tbl_name])'))
-			->order_by(DB_SQL::expr('UPPER([name])'));
+			->order_by(DB\SQL::expr('UPPER([tbl_name])'))
+			->order_by(DB\SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
 			$builder->where('[name]', DB\SQL\Operator::_LIKE_, $like);
@@ -344,14 +344,14 @@ abstract class Base_DB_SQLite_Schema extends DB\Schema {
 		$path_info = pathinfo($this->data_source->database);
 		$schema = $path_info['filename'];
 
-		$builder = DB_SQL::select($this->data_source)
-			->column(DB_SQL::expr("'{$schema}'"), 'schema')
+		$builder = DB\SQL::select($this->data_source)
+			->column(DB\SQL::expr("'{$schema}'"), 'schema')
 			->column('name', 'table')
-			->column(DB_SQL::expr("'VIEW'"), 'type')
-			->from(DB_SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
+			->column(DB\SQL::expr("'VIEW'"), 'type')
+			->from(DB\SQL::expr('(SELECT * FROM [sqlite_master] UNION ALL SELECT * FROM [sqlite_temp_master])'))
 			->where('type', DB\SQL\Operator::_EQUAL_TO_, 'view')
 			->where('name', DB\SQL\Operator::_NOT_LIKE_, 'sqlite_%')
-			->order_by(DB_SQL::expr('UPPER([name])'));
+			->order_by(DB\SQL::expr('UPPER([name])'));
 
 		if ( ! empty($like)) {
 			$builder->where('name', DB\SQL\Operator::_LIKE_, $like);

@@ -24,4 +24,4 @@
  * @category MariaDB
  * @version 2013-01-06
  */
-class DB_MariaDB_Connection_Improved extends Base_DB_MariaDB_Connection_Improved {}
+class DB\MariaDB\Connection\Improved extends Base\DB\MariaDB\Connection\Improved {}

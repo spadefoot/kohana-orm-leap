@@ -25,4 +25,4 @@
  * @category Oracle
  * @version 2012-12-04
  */
-class DB_Oracle_DataReader_Standard extends Base_DB_Oracle_DataReader_Standard {}
+class DB\Oracle\DataReader\Standard extends Base\DB\Oracle\DataReader\Standard {}

@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_DB2_Update_Builder extends DB\SQL\Update\Builder {
+abstract class Base\DB\DB2\Update\Builder extends DB\SQL\Update\Builder {
 
 	/**
 	 * This function returns the SQL statement.

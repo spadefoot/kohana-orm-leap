@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2011-12-06
  */
-class DB_SQLite_Connection_PDO extends Base_DB_SQLite_Connection_PDO {}
+class DB\SQLite\Connection\PDO extends Base\DB\SQLite\Connection\PDO {}

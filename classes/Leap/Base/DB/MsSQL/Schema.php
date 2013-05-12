@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Schema extends DB\Schema {
+abstract class Base\DB\MsSQL\Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array of default properties for the specified
@@ -151,7 +151,7 @@ abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 	 * @see http://stackoverflow.com/questions/765867/list-of-all-index-index-columns-in-sql-server-db
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('t1.NAME', 'schema')
 			->column('t0.NAME', 'table')
 			->column('t2.NAME', 'index')
@@ -172,9 +172,9 @@ abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 			->on('t4.COLUMN_ID', DB\SQL\Operator::_EQUAL_TO_, 't3.COLUMN_ID')
 			->where('t0.NAME', DB\SQL\Operator::_EQUAL_TO_, $table)
 			->where('t2.IS_DISABLED', DB\SQL\Operator::_EQUAL_TO_, 0)
-			->order_by(DB_SQL::expr('UPPER([t1].[NAME])'))
-			->order_by(DB_SQL::expr('UPPER([t0].[NAME])'))
-			->order_by(DB_SQL::expr('UPPER([t2].[NAME])'))
+			->order_by(DB\SQL::expr('UPPER([t1].[NAME])'))
+			->order_by(DB\SQL::expr('UPPER([t0].[NAME])'))
+			->order_by(DB\SQL::expr('UPPER([t2].[NAME])'))
 			->order_by('t3.KEY_ORDINAL');
 
 		if ( ! empty($like)) {
@@ -203,15 +203,15 @@ abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('[TABLE_SCHEMA]', 'schema')
 			->column('[TABLE_NAME]', 'table')
-			->column(DB_SQL::expr("'BASE'"), 'type')
+			->column(DB\SQL::expr("'BASE'"), 'type')
 			->from('[INFORMATION_SCHEMA].[TABLES]')
 			->where('[TABLE_TYPE]', DB\SQL\Operator::_EQUAL_TO_, 'BASE_TABLE')
-			->where(DB_SQL::expr("OBJECTPROPERTY(OBJECT_ID([TABLE_NAME]), 'IsMsShipped')"), DB\SQL\Operator::_EQUAL_TO_, 0)
-			->order_by(DB_SQL::expr('UPPER([TABLE_SCHEMA])'))
-			->order_by(DB_SQL::expr('UPPER([TABLE_NAME])'));
+			->where(DB\SQL::expr("OBJECTPROPERTY(OBJECT_ID([TABLE_NAME]), 'IsMsShipped')"), DB\SQL\Operator::_EQUAL_TO_, 0)
+			->order_by(DB\SQL::expr('UPPER([TABLE_SCHEMA])'))
+			->order_by(DB\SQL::expr('UPPER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
 			$builder->where('[TABLE_NAME]', DB\SQL\Operator::_LIKE_, $like);
@@ -249,16 +249,16 @@ abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 	 * @see http://stackoverflow.com/questions/4305691/need-to-list-all-triggers-in-sql-server-database-with-table-name-and-tables-sch
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('[t4].[NAME]', 'schema')
 			->column('[t1].[NAME]', 'table')
 			->column('[t0].[NAME]', 'trigger')
-			->column(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsInsertTrigger') = 1 THEN 'INSERT' WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsUpdateTrigger') = 1 THEN 'UPDATE' WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsDeleteTrigger') = 1 THEN 'DELETE' END"), 'event')
-			->column(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsInsteadOfTrigger') = 1 THEN 'INSTEAD OF' ELSE 'AFTER' END"), 'timing')
-			->column(DB_SQL::expr("'ROW'"), 'per')
+			->column(DB\SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsInsertTrigger') = 1 THEN 'INSERT' WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsUpdateTrigger') = 1 THEN 'UPDATE' WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsDeleteTrigger') = 1 THEN 'DELETE' END"), 'event')
+			->column(DB\SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsInsteadOfTrigger') = 1 THEN 'INSTEAD OF' ELSE 'AFTER' END"), 'timing')
+			->column(DB\SQL::expr("'ROW'"), 'per')
 			->column('[t2].[TEXT]', 'action')
-			->column(DB_SQL::expr('0'), 'seq_index')
-			->column(DB_SQL::expr('NULL'), 'created')
+			->column(DB\SQL::expr('0'), 'seq_index')
+			->column(DB\SQL::expr('NULL'), 'created')
 			->from('[SYSOBJECTS]', '[t0]')
 			->join(NULL, '[SYSOBJECTS]', '[t1]')
 			->on('[t1].[ID]', DB\SQL\Operator::_EQUAL_TO_, '[t0].[PARENT_OBJ]')
@@ -270,10 +270,10 @@ abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 			->on('[t4].[SCHEMA_ID]', DB\SQL\Operator::_EQUAL_TO_, '[t3].[SCHEMA_ID]')
 			->where('[t0].[XTYPE]', DB\SQL\Operator::_EQUAL_TO_, 'TR')
 			->where('[t1].[NAME]', DB\SQL\Operator::_EQUAL_TO_, $table)
-			->where(DB_SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsTriggerDisabled') = 1 THEN 0 ELSE 1 END"), DB\SQL\Operator::_EQUAL_TO_, 1)
-			->order_by(DB_SQL::expr('UPPER([t4].[NAME])'))
-			->order_by(DB_SQL::expr('UPPER([t1].[NAME])'))
-			->order_by(DB_SQL::expr('UPPER([t0].[NAME])'));
+			->where(DB\SQL::expr("CASE WHEN OBJECTPROPERTY([t0].[ID], 'ExecIsTriggerDisabled') = 1 THEN 0 ELSE 1 END"), DB\SQL\Operator::_EQUAL_TO_, 1)
+			->order_by(DB\SQL::expr('UPPER([t4].[NAME])'))
+			->order_by(DB\SQL::expr('UPPER([t1].[NAME])'))
+			->order_by(DB\SQL::expr('UPPER([t0].[NAME])'));
 
 		if ( ! empty($like)) {
 			$builder->where('[t0].[NAME]', DB\SQL\Operator::_LIKE_, $like);
@@ -301,15 +301,15 @@ abstract class Base_DB_MsSQL_Schema extends DB\Schema {
 	 * @see http://www.alberton.info/sql_server_meta_info.html
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('[TABLE_SCHEMA]', 'schema')
 			->column('[TABLE_NAME]', 'table')
-			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->column(DB\SQL::expr("'VIEW'"), 'type')
 			->from('[INFORMATION_SCHEMA].[TABLES]')
 			->where('[TABLE_TYPE]', DB\SQL\Operator::_EQUAL_TO_, 'VIEW')
-			->where(DB_SQL::expr("OBJECTPROPERTY(OBJECT_ID([TABLE_NAME]), 'IsMsShipped')"), DB\SQL\Operator::_EQUAL_TO_, 0)
-			->order_by(DB_SQL::expr('UPPER([TABLE_SCHEMA])'))
-			->order_by(DB_SQL::expr('UPPER([TABLE_NAME])'));
+			->where(DB\SQL::expr("OBJECTPROPERTY(OBJECT_ID([TABLE_NAME]), 'IsMsShipped')"), DB\SQL\Operator::_EQUAL_TO_, 0)
+			->order_by(DB\SQL::expr('UPPER([TABLE_SCHEMA])'))
+			->order_by(DB\SQL::expr('UPPER([TABLE_NAME])'));
 
 		if ( ! empty($like)) {
 			$builder->where('[TABLE_NAME]', DB\SQL\Operator::_LIKE_, $like);

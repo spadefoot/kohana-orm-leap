@@ -171,31 +171,31 @@ abstract class Base\DB\ORM\Field extends Core\Object {
 		switch ($this->metadata['control']) {
 			case 'auto':
 				if (isset($this->metadata['enum'])) {
-					return Form::select($name, $this->metadata['enum'], $this->value, $attributes);
+					return \Form::select($name, $this->metadata['enum'], $this->value, $attributes);
 				}
-				return Form::input($name, $this->value, $attributes);
+				return \Form::input($name, $this->value, $attributes);
 			case 'button':
-				return Form::button($name, $this->value, $attributes);
+				return \Form::button($name, $this->value, $attributes);
 			case 'checkbox':
-				return Form::checkbox($name, 1, $this->value, $attributes);
+				return \Form::checkbox($name, 1, $this->value, $attributes);
 			case 'file':
-				return Form::file($name, $attributes);
+				return \Form::file($name, $attributes);
 			case 'hidden':
-				return Form::hidden($name, $this->value, $attributes);
+				return \Form::hidden($name, $this->value, $attributes);
 			case 'image':
-				return Form::image($name, $this->value, $attributes);
+				return \Form::image($name, $this->value, $attributes);
 			case 'label':
-				return Form::label($name, $this->value, $attributes);
+				return \Form::label($name, $this->value, $attributes);
 			case 'password':
-				return Form::password($name, '', $attributes); // Note: Don't set password for security reasons
+				return \Form::password($name, '', $attributes); // Note: Don't set password for security reasons
 			case 'select':
-				return Form::select($name, $this->metadata['enum'], $this->value, $attributes);
+				return \Form::select($name, $this->metadata['enum'], $this->value, $attributes);
 			case 'submit':
-				return Form::submit($name, $this->value, $attributes);
+				return \Form::submit($name, $this->value, $attributes);
 			case 'textarea':
-				return Form::textarea($name, $this->value, $attributes);
+				return \Form::textarea($name, $this->value, $attributes);
 			case 'text':
-				return Form::input($name, $this->value, $attributes);
+				return \Form::input($name, $this->value, $attributes);
 			default:
 				throw new Throwable\Runtime\Exception('Message: Unable to create HTML form control. Reason: Invalid type of HTML form control.', array(':control' => $this->metadata['control'], ':field' => $name));
 			break;
@@ -214,7 +214,7 @@ abstract class Base\DB\ORM\Field extends Core\Object {
 		$text = (isset($this->metadata['label']))
 			? $this->metadata['label']
 			: $name;
-		return Form::label($name, $text, $attributes);
+		return \Form::label($name, $text, $attributes);
 	}
 
 	/**

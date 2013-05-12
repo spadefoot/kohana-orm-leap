@@ -25,4 +25,4 @@
  * @category MariaDB
  * @version 2012-12-04
  */
-class DB_MariaDB_DataReader_Standard extends Base_DB_MariaDB_DataReader_Standard {}
+class DB\MariaDB\DataReader\Standard extends Base\DB\MariaDB\DataReader\Standard {}

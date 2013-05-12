@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Lock_Builder extends DB\SQL\Lock\Builder {
+abstract class Base\DB\Drizzle\Lock\Builder extends DB\SQL\Lock\Builder {
 
 	/**
 	 * This function acquires the required locks.

@@ -25,4 +25,4 @@
  * @category Drizzle
  * @version 2013-01-06
  */
-class DB_Drizzle_DataReader_Improved extends Base_DB_Drizzle_DataReader_Improved {}
+class DB\Drizzle\DataReader\Improved extends Base\DB\Drizzle\DataReader\Improved {}

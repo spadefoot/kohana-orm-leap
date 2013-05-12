@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MySQL_Delete_Builder extends DB\SQL\Delete\Builder {
+abstract class Base\DB\MySQL\Delete\Builder extends DB\SQL\Delete\Builder {
 
 	/**
 	 * This function returns the SQL statement.

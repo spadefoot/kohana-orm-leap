@@ -24,4 +24,4 @@
  * @category Firebird
  * @version 2011-12-06
  */
-class DB_Firebird_Delete_Builder extends Base_DB_Firebird_Delete_Builder {}
+class DB\Firebird\Delete\Builder extends Base\DB\Firebird\Delete\Builder {}

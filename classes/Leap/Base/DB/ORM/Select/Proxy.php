@@ -104,7 +104,7 @@ abstract class Base\DB\ORM\Select\Proxy  extends Core\Object implements DB\SQL\S
 		$name = $model;
 		$model = DB\ORM\Model::model_name($name);
 		$this->data_source = DB\DataSource::instance($model::data_source(DB\DataSource::SLAVE_INSTANCE));
-		$builder = 'DB_' . $this->data_source->dialect . '_Select_Builder';
+		$builder = '\\Leap\\DB\\' . $this->data_source->dialect . '\\Select\\Builder';
 		$this->table = $model::table();
 		$this->builder = new $builder($this->data_source, $columns);
 		if (empty($columns)) {

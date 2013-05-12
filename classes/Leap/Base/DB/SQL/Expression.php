@@ -118,7 +118,7 @@ abstract class Base\DB\SQL\Expression extends Core\Object {
 	 */
 	public function value($object = NULL) {
 		if (is_string($object) OR is_array($object) OR ($object instanceof DB\DataSource)) {
-			$object = DB_SQL::precompiler($object);
+			$object = DB\SQL::precompiler($object);
 		}
 		$expr = $this->expr;
 		if (($object instanceof DB\SQL\Precompiler) AND ! empty($this->params)) {

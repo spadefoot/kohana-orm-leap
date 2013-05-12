@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_Select_Builder extends DB\SQL\Select\Builder {
+abstract class Base\DB\Firebird\Select\Builder extends DB\SQL\Select\Builder {
 
 	/**
 	 * This function returns the SQL statement.

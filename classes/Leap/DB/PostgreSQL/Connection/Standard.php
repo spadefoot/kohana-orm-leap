@@ -24,4 +24,4 @@
  * @category PostgreSQL
  * @version 2011-12-11
  */
-class DB_PostgreSQL_Connection_Standard extends Base_DB_PostgreSQL_Connection_Standard {}
+class DB\PostgreSQL\Connection\Standard extends Base\DB\PostgreSQL\Connection\Standard {}

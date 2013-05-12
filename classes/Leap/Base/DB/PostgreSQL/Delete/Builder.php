@@ -31,7 +31,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Delete_Builder extends DB\SQL\Delete\Builder {
+abstract class Base\DB\PostgreSQL\Delete\Builder extends DB\SQL\Delete\Builder {
 
 	/**
 	 * This function returns the SQL statement.

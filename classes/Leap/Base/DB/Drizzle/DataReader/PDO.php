@@ -27,4 +27,4 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_DataReader_PDO extends DB\SQL\DataReader\PDO {}
+abstract class Base\DB\Drizzle\DataReader\PDO extends DB\SQL\DataReader\PDO {}

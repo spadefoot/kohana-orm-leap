@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_SQLite_Insert_Builder extends DB\SQL\Insert\Builder {
+abstract class Base\DB\SQLite\Insert\Builder extends DB\SQL\Insert\Builder {
 
 	/**
 	 * This function returns the SQL statement.

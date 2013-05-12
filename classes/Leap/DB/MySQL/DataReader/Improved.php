@@ -25,4 +25,4 @@
  * @category MySQL
  * @version 2012-12-04
  */
-class DB_MySQL_DataReader_Improved extends Base_DB_MySQL_DataReader_Improved {}
+class DB\MySQL\DataReader\Improved extends Base\DB\MySQL\DataReader\Improved {}

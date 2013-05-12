@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2013-01-11
  */
-class DB_Oracle_Lock_Builder extends Base_DB_Oracle_Lock_Builder {}
+class DB\Oracle\Lock\Builder extends Base\DB\Oracle\Lock\Builder {}

@@ -30,7 +30,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Connection_Standard extends DB\SQL\Connection\Standard {
+abstract class Base\DB\MsSQL\Connection\Standard extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This destructor ensures that the connection is closed.
@@ -127,7 +127,7 @@ abstract class Base_DB_MsSQL_Connection_Standard extends DB\SQL\Connection\Stand
 		try {
 			if (is_string($table)) {
 				$sql = $this->sql;
-				$precompiler = DB_SQL::precompiler($this->data_source);
+				$precompiler = DB\SQL::precompiler($this->data_source);
 				$table = $precompiler->prepare_identifier($table);
 				$column = $precompiler->prepare_identifier($column);
 				$id = (int) $this->query("SELECT MAX({$column}) AS [id] FROM {$table};")->get('id', 0);

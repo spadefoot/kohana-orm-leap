@@ -25,4 +25,4 @@
  * @category PostgreSQL
  * @version 2012-12-04
  */
-class DB_PostgreSQL_DataReader_PDO extends Base_DB_PostgreSQL_DataReader_PDO {}
+class DB\PostgreSQL\DataReader\PDO extends Base\DB\PostgreSQL\DataReader\PDO {}

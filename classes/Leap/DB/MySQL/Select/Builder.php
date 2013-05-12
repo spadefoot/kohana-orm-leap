@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2011-12-06
  */
-class DB_MySQL_Select_Builder extends Base_DB_MySQL_Select_Builder {}
+class DB\MySQL\Select\Builder extends Base\DB\MySQL\Select\Builder {}

@@ -37,7 +37,7 @@ abstract class Base\DB\SQL\Select\Builder extends DB\SQL\Builder {
 	 */
 	public function __construct(DB\DataSource $data_source, Array $columns = array()) {
 		$this->dialect = $data_source->dialect;
-		$precompiler = 'DB_' . $this->dialect . '_Precompiler';
+		$precompiler = '\\Leap\\DB\\' . $this->dialect . '\\Precompiler';
 		$this->precompiler = new $precompiler($data_source);
 		$this->reset();
 		foreach ($columns as $column) {
@@ -87,7 +87,7 @@ abstract class Base\DB\SQL\Select\Builder extends DB\SQL\Builder {
 	 * @throws Throwable\SQL\Exception              indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
-		$builder = 'DB_' . $this->dialect . '_Select_Builder';
+		$builder = '\\Leap\\DB\\' . $this->dialect . '\\Select\\Builder';
 		if (is_object($statement) AND ($statement instanceof $builder)) {
 			$statement = $statement->statement(FALSE);
 		}
@@ -112,7 +112,7 @@ abstract class Base\DB\SQL\Select\Builder extends DB\SQL\Builder {
 		$column = ( ! empty($column) AND (substr_compare($column, '*', -1, 1) === 0))
 			? $this->precompiler->prepare_wildcard($column)
 			: $this->precompiler->prepare_identifier($column);
-		return $this->column(DB_SQL::expr("COUNT({$column})"), $alias);
+		return $this->column(DB\SQL::expr("COUNT({$column})"), $alias);
 	}
 
 	/**

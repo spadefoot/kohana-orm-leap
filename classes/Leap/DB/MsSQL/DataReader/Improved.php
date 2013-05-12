@@ -25,4 +25,4 @@
  * @category MS SQL
  * @version 2013-01-22
  */
-class DB_MsSQL_DataReader_Improved extends Base_DB_MsSQL_DataReader_Improved {}
+class DB\MsSQL\DataReader\Improved extends Base\DB\MsSQL\DataReader\Improved {}

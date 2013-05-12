@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2011-06-15
  */
-class DB_Oracle_Update_Builder extends Base_DB_Oracle_Update_Builder {}
+class DB\Oracle\Update\Builder extends Base\DB\Oracle\Update\Builder {}

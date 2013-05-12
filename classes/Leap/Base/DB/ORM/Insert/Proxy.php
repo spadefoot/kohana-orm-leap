@@ -70,7 +70,7 @@ abstract class Base\DB\ORM\Insert\Proxy extends Core\Object implements DB\SQL\St
 		$name = $model;
 		$model = DB\ORM\Model::model_name($name);
 		$this->data_source = DB\DataSource::instance($model::data_source(DB\DataSource::MASTER_INSTANCE));
-		$builder = 'DB_' . $this->data_source->dialect . '_Insert_Builder';
+		$builder = '\\Leap\\DB\\' . $this->data_source->dialect . '\\Insert\\Builder';
 		$this->builder = new $builder($this->data_source);
 		$extension = DB\ORM\Model::builder_name($name);
 		if (class_exists($extension)) {

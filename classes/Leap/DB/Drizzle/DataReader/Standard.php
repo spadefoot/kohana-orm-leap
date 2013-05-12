@@ -25,4 +25,4 @@
  * @category Drizzle
  * @version 2013-01-06
  */
-class DB_Drizzle_DataReader_Standard extends Base_DB_Drizzle_DataReader_Standard {}
+class DB\Drizzle\DataReader\Standard extends Base\DB\Drizzle\DataReader\Standard {}

@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2013-01-11
  */
-class DB_SQLite_Lock_Builder extends Base_DB_SQLite_Lock_Builder {}
+class DB\SQLite\Lock\Builder extends Base\DB\SQLite\Lock\Builder {}

@@ -24,4 +24,4 @@
  * @category MariaDB
  * @version 2013-01-11
  */
-class DB_MariaDB_Lock_Builder extends Base_DB_MariaDB_Lock_Builder {}
+class DB\MariaDB\Lock\Builder extends Base\DB\MariaDB\Lock\Builder {}

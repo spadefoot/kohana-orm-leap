@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2011-12-11
  */
-class DB_MsSQL_Connection_Standard extends Base_DB_MsSQL_Connection_Standard {}
+class DB\MsSQL\Connection\Standard extends Base\DB\MsSQL\Connection\Standard {}

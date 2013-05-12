@@ -33,7 +33,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Lock_Builder extends DB\SQL\Lock\Builder {
+abstract class Base\DB\MsSQL\Lock\Builder extends DB\SQL\Lock\Builder {
 
 	/**
 	 * This function acquires the required locks.
@@ -69,7 +69,7 @@ abstract class Base_DB_MsSQL_Lock_Builder extends DB\SQL\Lock\Builder {
 					$modes[] = strtoupper($hint);
 				}
 				else if (preg_match('/^(INDEX|FORCESEEK).+$/i', $hint)) {
-					$modes[] = DB_SQL::expr($hint);
+					$modes[] = DB\SQL::expr($hint);
 				}
 			}
 		}

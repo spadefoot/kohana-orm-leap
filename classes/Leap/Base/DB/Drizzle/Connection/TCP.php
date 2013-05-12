@@ -31,7 +31,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Drizzle_Connection_TCP extends DB\SQL\Connection\Standard {
+abstract class Base\DB\Drizzle\Connection\TCP extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This variable stores the last insert id.
@@ -138,7 +138,7 @@ abstract class Base_DB_Drizzle_Connection_TCP extends DB\SQL\Connection\Standard
 		}
 		if (is_string($table)) {
 			$sql = $this->sql;
-			$precompiler = DB_SQL::precompiler($this->data_source);
+			$precompiler = DB\SQL::precompiler($this->data_source);
 			$table = $precompiler->prepare_identifier($table);
 			$column = $precompiler->prepare_identifier($column);
 			$id = (int) $this->query("SELECT MAX({$column}) AS `id` FROM {$table};")->get('id', 0);

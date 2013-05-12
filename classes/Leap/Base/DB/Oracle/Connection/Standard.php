@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Connection_Standard extends DB\SQL\Connection\Standard {
+abstract class Base\DB\Oracle\Connection\Standard extends DB\SQL\Connection\Standard {
 
 	/**
 	 * This variable stores the execution mode, which is used to handle transactions.
@@ -171,7 +171,7 @@ abstract class Base_DB_Oracle_Connection_Standard extends DB\SQL\Connection\Stan
 		try {
 			if (is_string($table)) {
 				$sql = $this->sql;
-				$precompiler = DB_SQL::precompiler($this->data_source);
+				$precompiler = DB\SQL::precompiler($this->data_source);
 				$table = $precompiler->prepare_identifier($table);
 				$column = $precompiler->prepare_identifier($column);
 				$id = (int) $this->query("SELECT MAX({$column}) AS \"id\" FROM {$table};")->get('id', 0);

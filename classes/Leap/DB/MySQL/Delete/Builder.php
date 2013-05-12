@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2011-12-06
  */
-class DB_MySQL_Delete_Builder extends Base_DB_MySQL_Delete_Builder {}
+class DB\MySQL\Delete\Builder extends Base\DB\MySQL\Delete\Builder {}

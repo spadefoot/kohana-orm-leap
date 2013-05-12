@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2013-01-06
  */
-class DB_SQLite_Precompiler extends Base_DB_SQLite_Precompiler {}
+class DB\SQLite\Precompiler extends Base\DB\SQLite\Precompiler {}

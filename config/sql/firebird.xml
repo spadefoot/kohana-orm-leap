@@ -118,7 +118,7 @@
       <keyword>PRECISION</keyword>
       <keyword>PRIMARY</keyword>
       <keyword>PROCEDURE</keyword>
-      <keyword>RDB$DB_KEY</keyword>
+      <keyword>RDB$DB\KEY</keyword>
       <keyword>REAL</keyword>
       <keyword>RECORD_VERSION</keyword>
       <keyword>RECREATE</keyword>

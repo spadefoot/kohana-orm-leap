@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MySQL_Connection_PDO extends DB\SQL\Connection\PDO {
+abstract class Base\DB\MySQL\Connection\PDO extends DB\SQL\Connection\PDO {
 
 	/**
 	 * This function opens a connection using the data source provided.
@@ -56,7 +56,7 @@ abstract class Base_DB_MySQL_Connection_PDO extends DB\SQL\Connection\PDO {
 				if ($this->data_source->is_persistent()) {
 					$attributes[\PDO::ATTR_PERSISTENT] = TRUE;
 				}
-				$this->resource = new PDO($connection_string, $username, $password, $attributes);
+				$this->resource = new \PDO($connection_string, $username, $password, $attributes);
 			}
 			catch (\PDOException $ex) {
 				$this->resource = NULL;

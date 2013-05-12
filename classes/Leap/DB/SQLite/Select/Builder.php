@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2012-12-30
  */
-class DB_SQLite_Select_Builder extends Base_DB_SQLite_Select_Builder {}
+class DB\SQLite\Select\Builder extends Base\DB\SQLite\Select\Builder {}

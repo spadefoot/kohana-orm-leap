@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Oracle_Select_Builder extends DB\SQL\Select\Builder {
+abstract class Base\DB\Oracle\Select\Builder extends DB\SQL\Select\Builder {
 
 	/**
 	 * This function combines another SQL statement using the specified operator.
@@ -42,7 +42,7 @@ abstract class Base_DB_Oracle_Select_Builder extends DB\SQL\Select\Builder {
 	 * @throws Throwable\SQL\Exception          indicates an invalid SQL build instruction
 	 */
 	public function combine($operator, $statement) {
-		if (is_object($statement) AND ($statement instanceof DB_Oracle_Select_Builder)) {
+		if (is_object($statement) AND ($statement instanceof DB\Oracle\Select\Builder)) {
 			$statement = $statement->statement(FALSE);
 		}
 		else if ( ! preg_match('/^SELECT.*$/i', $statement)) {

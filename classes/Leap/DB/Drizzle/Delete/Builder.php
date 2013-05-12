@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2011-12-31
  */
-class DB_Drizzle_Delete_Builder extends Base_DB_Drizzle_Delete_Builder {}
+class DB\Drizzle\Delete\Builder extends Base\DB\Drizzle\Delete\Builder {}

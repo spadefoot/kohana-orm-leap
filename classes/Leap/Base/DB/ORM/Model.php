@@ -229,7 +229,7 @@ abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable
 		if (empty($primary_key) OR ! is_array($primary_key)) {
 			throw new Throwable\Marshalling\Exception('Message: Failed to delete record from database. Reason: No primary key has been declared.');
 		}
-		$builder = DB_SQL::delete(static::data_source(DB\DataSource::MASTER_INSTANCE))->from(static::table());
+		$builder = DB\SQL::delete(static::data_source(DB\DataSource::MASTER_INSTANCE))->from(static::table());
 		foreach ($primary_key as $column) {
 			$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 		}
@@ -369,7 +369,7 @@ abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable
 	 *                                              table
 	 */
 	public function is_saved() {
-		$builder = DB_SQL::select(static::data_source(DB\DataSource::MASTER_INSTANCE)) // done on master instead of slave
+		$builder = DB\SQL::select(static::data_source(DB\DataSource::MASTER_INSTANCE)) // done on master instead of slave
 			->from(static::table())
 			->limit(1);
 		foreach (static::primary_key() as $column) {
@@ -408,7 +408,7 @@ abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable
 			if (empty($primary_key) OR ! is_array($primary_key)) {
 				throw new Throwable\Marshalling\Exception('Message: Failed to load record from database. Reason: No primary key has been declared.');
 			}
-			$builder = DB_SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))->from(static::table())->limit(1);
+			$builder = DB\SQL::select(static::data_source(DB\DataSource::SLAVE_INSTANCE))->from(static::table())->limit(1);
 			foreach ($primary_key as $column) {
 				$builder->where($column, DB\SQL\Operator::_EQUAL_TO_, $this->fields[$column]->value);
 			}
@@ -509,8 +509,8 @@ abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable
 
 				// Check if the record exists in database
 				if ($do_insert) {
-					$builder = DB_SQL::select($data_source)
-							->column(DB_SQL::expr(1), 'IsFound')
+					$builder = DB\SQL::select($data_source)
+							->column(DB\SQL::expr(1), 'IsFound')
 							->from($table);
 
 					foreach ($primary_key as $column) {
@@ -523,7 +523,7 @@ abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable
 
 			if ( ! $do_insert) {
 				if ( ! empty($columns)) {
-					$builder = DB_SQL::update($data_source)
+					$builder = DB\SQL::update($data_source)
 						->table($table);
 
 					// Is there any data to save and it's worth to execute the query?
@@ -563,7 +563,7 @@ abstract class Base\DB\ORM\Model extends Core\Object implements Core_IDisposable
 
 		if ($do_insert) {
 			if ( ! empty($columns)) {
-				$builder = DB_SQL::insert($data_source)
+				$builder = DB\SQL::insert($data_source)
 					->into($table);
 
 				// Is any data to save and it's worth to execute the query?

@@ -24,4 +24,4 @@
  * @category Firebird
  * @version 2011-12-06
  */
-class DB_Firebird_Insert_Builder extends Base_DB_Firebird_Insert_Builder {}
+class DB\Firebird\Insert\Builder extends Base\DB\Firebird\Insert\Builder {}

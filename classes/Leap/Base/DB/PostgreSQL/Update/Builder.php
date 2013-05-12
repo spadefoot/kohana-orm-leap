@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Update_Builder extends DB\SQL\Update\Builder {
+abstract class Base\DB\PostgreSQL\Update\Builder extends DB\SQL\Update\Builder {
 
 	/**
 	 * This function returns the SQL statement.

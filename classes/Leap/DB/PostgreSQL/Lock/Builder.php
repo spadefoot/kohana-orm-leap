@@ -24,4 +24,4 @@
  * @category PostgreSQL
  * @version 2013-01-11
  */
-class DB_PostgreSQL_Lock_Builder extends Base_DB_PostgreSQL_Lock_Builder {}
+class DB\PostgreSQL\Lock\Builder extends Base\DB\PostgreSQL\Lock\Builder {}

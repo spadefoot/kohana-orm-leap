@@ -24,4 +24,4 @@
  * @category Oracle
  * @version 2011-06-15
  */
-class DB_Oracle_Delete_Builder extends Base_DB_Oracle_Delete_Builder {}
+class DB\Oracle\Delete\Builder extends Base\DB\Oracle\Delete\Builder {}

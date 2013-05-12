@@ -30,7 +30,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_Firebird_Lock_Builder extends DB\SQL\Lock\Builder {
+abstract class Base\DB\Firebird\Lock\Builder extends DB\SQL\Lock\Builder {
 
 	/**
 	 * This function acquires the required locks.

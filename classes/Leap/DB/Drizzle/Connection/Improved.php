@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2013-01-06
  */
-class DB_Drizzle_Connection_Improved extends Base_DB_Drizzle_Connection_Improved {}
+class DB\Drizzle\Connection\Improved extends Base\DB\Drizzle\Connection\Improved {}

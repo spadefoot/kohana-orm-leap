@@ -28,7 +28,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MsSQL_Select_Builder extends DB\SQL\Select\Builder {
+abstract class Base\DB\MsSQL\Select\Builder extends DB\SQL\Select\Builder {
 
 	/**
 	 * This function returns the SQL statement.

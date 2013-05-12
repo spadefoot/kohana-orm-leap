@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2011-12-31
  */
-class DB_Drizzle_Schema extends Base_DB_Drizzle_Schema {}
+class DB\Drizzle\Schema extends Base\DB\Drizzle\Schema {}

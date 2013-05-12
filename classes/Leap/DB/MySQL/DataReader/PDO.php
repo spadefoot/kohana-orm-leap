@@ -25,4 +25,4 @@
  * @category MySQL
  * @version 2012-12-04
  */
-class DB_MySQL_DataReader_PDO extends Base_DB_MySQL_DataReader_PDO {}
+class DB\MySQL\DataReader\PDO extends Base\DB\MySQL\DataReader\PDO {}

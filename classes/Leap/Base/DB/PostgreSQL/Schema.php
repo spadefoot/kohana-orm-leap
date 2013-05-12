@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
+abstract class Base\DB\PostgreSQL\Schema extends DB\Schema {
 
 	/**
 	 * This function returns an associated array of default properties for the specified
@@ -121,16 +121,16 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 	 * @see http://www.linuxscrew.com/2009/07/03/postgresql-show-tables-show-databases-show-columns/
 	 */
 	public function fields($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('table_schema', 'schema')
 			->column('table_name', 'table')
 			->column('column_name', 'column')
 			->column('data_type', 'type')
-			->column(DB_SQL::expr('GREATEST(character_maximum_length, numeric_precision, datetime_precision)'), 'max_length')
-			->column(DB_SQL::expr('COALESCE(numeric_scale, 0)'), 'max_decimals')
-			->column(DB_SQL::expr("''"), 'attributes')
+			->column(DB\SQL::expr('GREATEST(character_maximum_length, numeric_precision, datetime_precision)'), 'max_length')
+			->column(DB\SQL::expr('COALESCE(numeric_scale, 0)'), 'max_decimals')
+			->column(DB\SQL::expr("''"), 'attributes')
 			->column('max_length', 'seq_index')
-			->column(DB_SQL::expr("CASE WHEN is_nullable = 'YES' THEN 1 ELSE 0 END"), 'nullable')
+			->column(DB\SQL::expr("CASE WHEN is_nullable = 'YES' THEN 1 ELSE 0 END"), 'nullable')
 			->column('column_default', 'default')
 			->from('information_schema.columns')
 			->where('table_name', DB\SQL\Operator::_EQUAL_TO_, $table)
@@ -172,15 +172,15 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 	 * @see http://www.postgresql.org/docs/current/static/catalog-pg-index.html
 	 */
 	public function indexes($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('t4.schname', 'schema')
 			->column('t0.relname', 'table')
 			->column('t2.relname', 'index')
 			->column('t3.attname', 'column')
 			->column('t3.attnum', 'seq_index')
-			->column(DB_SQL::expr('NULL'), 'ordering')
-			->column(DB_SQL::expr("CASE \"t1\".\"indisunique\" WHEN 't' THEN 1 ELSE 0 END"), 'unique')
-			->column(DB_SQL::expr("CASE \"t1\".\"indisprimary\" WHEN 't' THEN 1 ELSE 0 END"), 'primary')
+			->column(DB\SQL::expr('NULL'), 'ordering')
+			->column(DB\SQL::expr("CASE \"t1\".\"indisunique\" WHEN 't' THEN 1 ELSE 0 END"), 'unique')
+			->column(DB\SQL::expr("CASE \"t1\".\"indisprimary\" WHEN 't' THEN 1 ELSE 0 END"), 'primary')
 			->from('pg_class', 't0')
 			->join(DB\SQL\JoinType::_LEFT_, 'pg_index', 't1')
 			->on('t1.indrelid', DB\SQL\Operator::_EQUAL_TO_, 't0.oid')
@@ -188,14 +188,14 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->on('t2.oid', DB\SQL\Operator::_EQUAL_TO_, 't1.indexrelid')
 			->join(DB\SQL\JoinType::_LEFT_, 'pg_attribute', 't3')
 			->on('t3.attrelid', DB\SQL\Operator::_EQUAL_TO_, 't0.oid')
-			->on('t3.attnum', DB\SQL\Operator::_EQUAL_TO_, DB_SQL::expr('ANY("t1"."indkey")'))			
-			->join(DB\SQL\JoinType::_LEFT_, DB_SQL::expr('(SELECT "t5"."table_schema" AS "schname", "t5"."table_schema" AS "relname" FROM "information_schema"."tables" AS "t5" WHERE "t5"."table_type" = \'BASE TABLE\' AND "t5"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 't4')
+			->on('t3.attnum', DB\SQL\Operator::_EQUAL_TO_, DB\SQL::expr('ANY("t1"."indkey")'))			
+			->join(DB\SQL\JoinType::_LEFT_, DB\SQL::expr('(SELECT "t5"."table_schema" AS "schname", "t5"."table_schema" AS "relname" FROM "information_schema"."tables" AS "t5" WHERE "t5"."table_type" = \'BASE TABLE\' AND "t5"."table_schema" NOT IN (\'pg_catalog\', \'information_schema\'))'), 't4')
 			->on('t4.relname', DB\SQL\Operator::_EQUAL_TO_, 't0.relname')
 			->where('t0.relkind', DB\SQL\Operator::_EQUAL_TO_, 'r')
 			->where('t0.relname', DB\SQL\Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER("t4"."schname")'))
-			->order_by(DB_SQL::expr('UPPER("t0"."relname")'))
-			->order_by(DB_SQL::expr('UPPER("t2"."relname")'))
+			->order_by(DB\SQL::expr('UPPER("t4"."schname")'))
+			->order_by(DB\SQL::expr('UPPER("t0"."relname")'))
+			->order_by(DB\SQL::expr('UPPER("t2"."relname")'))
 			->order_by('t3.attnum');
 
 		if ( ! empty($like)) {
@@ -226,15 +226,15 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function tables($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('table_schema', 'schema')
 			->column('table_name', 'table')
-			->column(DB_SQL::expr("'BASE'"), 'type')
+			->column(DB\SQL::expr("'BASE'"), 'type')
 			->from('information_schema.tables')
 			->where('table_type', DB\SQL\Operator::_EQUAL_TO_, 'BASE TABLE')
 			->where('table_schema', DB\SQL\Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
-			->order_by(DB_SQL::expr('UPPER("table_schema")'))
-			->order_by(DB_SQL::expr('UPPER("table_name")'));
+			->order_by(DB\SQL::expr('UPPER("table_schema")'))
+			->order_by(DB\SQL::expr('UPPER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', DB\SQL\Operator::_LIKE_, $like);
@@ -270,7 +270,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 	 * @see http://www.postgresql.org/docs/8.1/static/infoschema-triggers.html
 	 */
 	public function triggers($table, $like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('event_object_schema', 'schema')
 			->column('event_object_table', 'table')
 			->column('trigger_name', 'trigger')
@@ -279,14 +279,14 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 			->column('action_orientation', 'per')
 			->column('action_statement', 'action')
 			->column('action_order', 'seq_index')
-			->column(DB_SQL::expr('NULL'), 'created')
+			->column(DB\SQL::expr('NULL'), 'created')
 			->from('information_schema.triggers')
 			->where('event_object_schema', DB\SQL\Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
 			->where('event_object_table', '!~', '^pg_')3
-			->where(DB_SQL::expr('UPPER("event_object_table")'), DB\SQL\Operator::_EQUAL_TO_, $table)
-			->order_by(DB_SQL::expr('UPPER("event_object_schema")'))
-			->order_by(DB_SQL::expr('UPPER("event_object_table")'))
-			->order_by(DB_SQL::expr('UPPER("trigger_name")'))
+			->where(DB\SQL::expr('UPPER("event_object_table")'), DB\SQL\Operator::_EQUAL_TO_, $table)
+			->order_by(DB\SQL::expr('UPPER("event_object_schema")'))
+			->order_by(DB\SQL::expr('UPPER("event_object_table")'))
+			->order_by(DB\SQL::expr('UPPER("trigger_name")'))
 			->order_by('action_order');
 
 		if ( ! empty($like)) {
@@ -317,16 +317,16 @@ abstract class Base_DB_PostgreSQL_Schema extends DB\Schema {
 	 * @see http://www.polak.ro/postgresql-select-tables-names.html
 	 */
 	public function views($like = '') {
-		$builder = DB_SQL::select($this->data_source)
+		$builder = DB\SQL::select($this->data_source)
 			->column('table_schema', 'schema')
 			->column('table_name', 'table')
-			->column(DB_SQL::expr("'VIEW'"), 'type')
+			->column(DB\SQL::expr("'VIEW'"), 'type')
 			->from('information_schema.tables')
 			->where('table_type', DB\SQL\Operator::_EQUAL_TO_, 'VIEW')
 			->where('table_schema', DB\SQL\Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
 			->where('table_name', '!~', '^pg_')
-			->order_by(DB_SQL::expr('UPPER("table_schema")'))
-			->order_by(DB_SQL::expr('UPPER("table_name")'));
+			->order_by(DB\SQL::expr('UPPER("table_schema")'))
+			->order_by(DB\SQL::expr('UPPER("table_name")'));
 
 		if ( ! empty($like)) {
 			$builder->where('table_name', DB\SQL\Operator::_LIKE_, $like);

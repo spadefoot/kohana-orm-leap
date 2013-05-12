@@ -24,4 +24,4 @@
  * @category Firebird
  * @version 2013-01-11
  */
-class DB_Firebird_Lock_Builder extends Base_DB_Firebird_Lock_Builder {}
+class DB\Firebird\Lock\Builder extends Base\DB\Firebird\Lock\Builder {}

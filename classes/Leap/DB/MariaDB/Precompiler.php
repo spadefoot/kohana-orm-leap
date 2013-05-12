@@ -24,4 +24,4 @@
  * @category MariaDB
  * @version 2013-01-06
  */
-class DB_MariaDB_Precompiler extends Base_DB_MariaDB_Precompiler {}
+class DB\MariaDB\Precompiler extends Base\DB\MariaDB\Precompiler {}

@@ -25,4 +25,4 @@
  * @category SQLite
  * @version 2012-12-04
  */
-class DB_SQLite_DataReader_PDO extends Base_DB_SQLite_DataReader_PDO {}
+class DB\SQLite\DataReader\PDO extends Base\DB\SQLite\DataReader\PDO {}

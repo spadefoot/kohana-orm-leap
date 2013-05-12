@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2012-12-30
  */
-class DB_SQLite_Schema extends Base_DB_SQLite_Schema {}
+class DB\SQLite\Schema extends Base\DB\SQLite\Schema {}

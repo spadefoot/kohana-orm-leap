@@ -136,7 +136,7 @@ abstract class Base\DB\SQL\Connection\PDO extends DB\Connection\Driver {
 		try {
 			if (is_string($table)) {
 				$sql = $this->sql;
-				$precompiler = DB_SQL::precompiler($this->data_source);
+				$precompiler = DB\SQL::precompiler($this->data_source);
 				$table = $precompiler->prepare_identifier($table);
 				$column = $precompiler->prepare_identifier($column);
 				$alias = $precompiler->prepare_alias('id');

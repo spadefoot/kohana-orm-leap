@@ -25,4 +25,4 @@
  * @category SQLite
  * @version 2012-12-04
  */
-class DB_SQLite_DataReader_Standard extends Base_DB_SQLite_DataReader_Standard {}
+class DB\SQLite\DataReader\Standard extends Base\DB\SQLite\DataReader\Standard {}

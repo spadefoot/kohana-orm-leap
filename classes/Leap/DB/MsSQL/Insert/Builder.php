@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2011-12-06
  */
-class DB_MsSQL_Insert_Builder extends Base_DB_MsSQL_Insert_Builder {}
+class DB\MsSQL\Insert\Builder extends Base\DB\MsSQL\Insert\Builder {}

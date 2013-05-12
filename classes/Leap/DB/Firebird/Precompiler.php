@@ -24,4 +24,4 @@
  * @category Firebird
  * @version 2013-01-06
  */
-class DB_Firebird_Precompiler extends Base_DB_Firebird_Precompiler {}
+class DB\Firebird\Precompiler extends Base\DB\Firebird\Precompiler {}

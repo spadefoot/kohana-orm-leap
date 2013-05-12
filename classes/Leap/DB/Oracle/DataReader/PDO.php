@@ -25,4 +25,4 @@
  * @category Oracle
  * @version 2012-12-04
  */
-class DB_Oracle_DataReader_PDO extends Base_DB_Oracle_DataReader_PDO {}
+class DB\Oracle\DataReader\PDO extends Base\DB\Oracle\DataReader\PDO {}

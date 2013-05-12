@@ -676,7 +676,7 @@ abstract class Base\DB\SQL\Tokenizer extends Core\Object implements \ArrayAccess
 	 * @see http://drupal.org/node/141051
 	 */
 	public static function is_keyword($token, $dialect) {
-		$precompiler = 'DB_' . $dialect . '_Precompiler';
+		$precompiler = '\\Leap\\DB\\' . $dialect . '\\Precompiler';
 		$result = $precompiler::is_keyword($token);
 		return $result;
 	}

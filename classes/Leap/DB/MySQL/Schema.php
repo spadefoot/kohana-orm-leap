@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2011-06-21
  */
-class DB_MySQL_Schema extends Base_DB_MySQL_Schema {}
+class DB\MySQL\Schema extends Base\DB\MySQL\Schema {}

@@ -26,7 +26,7 @@
  *
  * @see http://msdn.microsoft.com/en-us/library/aa933206%28v=sql.80%29.aspx
  */
-abstract class Base_DB_MsSQL_Insert_Builder extends DB\SQL\Insert\Builder {
+abstract class Base\DB\MsSQL\Insert\Builder extends DB\SQL\Insert\Builder {
 
 	/**
 	 * This function returns the SQL statement.

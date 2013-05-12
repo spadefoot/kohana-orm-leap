@@ -73,7 +73,7 @@ abstract class Base\DB\ORM\Relation\BelongsTo extends DB\ORM\Relation {
 
 		$child_key = $this->metadata['child_key'];
 
-		$builder = DB_SQL::select($parent_source)
+		$builder = DB\SQL::select($parent_source)
 			->all("{$parent_table}.*")
 			->from($parent_table);
 

@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2011-12-31
  */
-class DB_MsSQL_Update_Builder extends Base_DB_MsSQL_Update_Builder {}
+class DB\MsSQL\Update\Builder extends Base\DB\MsSQL\Update\Builder {}

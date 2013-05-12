@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2013-01-06
  */
-class DB_MySQL_Precompiler extends Base_DB_MySQL_Precompiler {}
+class DB\MySQL\Precompiler extends Base\DB\MySQL\Precompiler {}

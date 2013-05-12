@@ -25,4 +25,4 @@
  * @category Drizzle
  * @version 2013-01-06
  */
-class DB_Drizzle_DataReader_TCP extends Base_DB_Drizzle_DataReader_TCP {}
+class DB\Drizzle\DataReader\TCP extends Base\DB\Drizzle\DataReader\TCP {}

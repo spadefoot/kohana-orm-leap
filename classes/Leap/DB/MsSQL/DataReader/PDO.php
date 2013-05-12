@@ -25,4 +25,4 @@
  * @category MS SQL
  * @version 2012-12-04
  */
-class DB_MsSQL_DataReader_PDO extends Base_DB_MsSQL_DataReader_PDO {}
+class DB\MsSQL\DataReader\PDO extends Base\DB\MsSQL\DataReader\PDO {}

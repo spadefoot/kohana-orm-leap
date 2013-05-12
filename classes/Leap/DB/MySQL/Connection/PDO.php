@@ -24,4 +24,4 @@
  * @category MySQL
  * @version 2011-12-06
  */
-class DB_MySQL_Connection_PDO extends Base_DB_MySQL_Connection_PDO {}
+class DB\MySQL\Connection\PDO extends Base\DB\MySQL\Connection\PDO {}

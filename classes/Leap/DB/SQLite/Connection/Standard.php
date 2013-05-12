@@ -24,4 +24,4 @@
  * @category SQLite
  * @version 2011-12-11
  */
-class DB_SQLite_Connection_Standard extends Base_DB_SQLite_Connection_Standard {}
+class DB\SQLite\Connection\Standard extends Base\DB\SQLite\Connection\Standard {}

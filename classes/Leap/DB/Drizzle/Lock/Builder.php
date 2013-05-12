@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2013-01-11
  */
-class DB_Drizzle_Lock_Builder extends Base_DB_Drizzle_Lock_Builder {}
+class DB\Drizzle\Lock\Builder extends Base\DB\Drizzle\Lock\Builder {}

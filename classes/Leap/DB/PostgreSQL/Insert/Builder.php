@@ -24,4 +24,4 @@
  * @category PostgreSQL
  * @version 2011-06-10
  */
-class DB_PostgreSQL_Insert_Builder extends Base_DB_PostgreSQL_Insert_Builder {}
+class DB\PostgreSQL\Insert\Builder extends Base\DB\PostgreSQL\Insert\Builder {}

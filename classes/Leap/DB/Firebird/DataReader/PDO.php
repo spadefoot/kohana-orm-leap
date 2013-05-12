@@ -25,4 +25,4 @@
  * @category Firebird
  * @version 2012-12-04
  */
-class DB_Firebird_DataReader_PDO extends Base_DB_Firebird_DataReader_PDO {}
+class DB\Firebird\DataReader\PDO extends Base\DB\Firebird\DataReader\PDO {}

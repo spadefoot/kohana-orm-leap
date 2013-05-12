@@ -24,4 +24,4 @@
  * @category MS SQL
  * @version 2013-01-06
  */
-class DB_MsSQL_Precompiler extends Base_DB_MsSQL_Precompiler {}
+class DB\MsSQL\Precompiler extends Base\DB\MsSQL\Precompiler {}

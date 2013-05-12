@@ -24,4 +24,4 @@
  * @category DB2
  * @version 2013-01-06
  */
-class DB_DB2_Precompiler extends Base_DB_DB2_Precompiler {}
+class DB\DB2\Precompiler extends Base\DB\DB2\Precompiler {}

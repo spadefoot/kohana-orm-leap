@@ -25,4 +25,4 @@
  * @category PostgreSQL
  * @version 2012-12-04
  */
-class DB_PostgreSQL_DataReader_Standard extends Base_DB_PostgreSQL_DataReader_Standard {}
+class DB\PostgreSQL\DataReader\Standard extends Base\DB\PostgreSQL\DataReader\Standard {}

@@ -24,4 +24,4 @@
  * @category PostgreSQL
  * @version 2011-06-10
  */
-class DB_PostgreSQL_Delete_Builder extends Base_DB_PostgreSQL_Delete_Builder {}
+class DB\PostgreSQL\Delete\Builder extends Base\DB\PostgreSQL\Delete\Builder {}

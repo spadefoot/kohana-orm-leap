@@ -24,4 +24,4 @@
  * @category Firebird
  * @version 2011-12-06
  */
-class DB_Firebird_Select_Builder extends Base_DB_Firebird_Select_Builder {}
+class DB\Firebird\Select\Builder extends Base\DB\Firebird\Select\Builder {}

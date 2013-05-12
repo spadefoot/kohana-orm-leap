@@ -25,4 +25,4 @@
  * @category Firebird
  * @version 2012-12-04
  */
-class DB_Firebird_DataReader_Standard extends Base_DB_Firebird_DataReader_Standard {}
+class DB\Firebird\DataReader\Standard extends Base\DB\Firebird\DataReader\Standard {}

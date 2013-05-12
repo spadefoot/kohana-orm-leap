@@ -24,4 +24,4 @@
  * @category Drizzle
  * @version 2011-12-31
  */
-class DB_Drizzle_Insert_Builder extends Base_DB_Drizzle_Insert_Builder {}
+class DB\Drizzle\Insert\Builder extends Base\DB\Drizzle\Insert\Builder {}

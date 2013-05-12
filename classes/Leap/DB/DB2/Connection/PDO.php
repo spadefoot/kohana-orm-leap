@@ -24,4 +24,4 @@
  * @category DB2
  * @version 2011-12-11
  */
-class DB_DB2_Connection_PDO extends Base_DB_DB2_Connection_PDO {}
+class DB\DB2\Connection\PDO extends Base\DB\DB2\Connection\PDO {}
