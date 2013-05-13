@@ -131,7 +131,7 @@ abstract class Base\DB\Auth extends \Auth {
 				->fetch(0);
 			$token_model = DB\ORM\Model::model_name($this->models['token']);
 			if (($token instanceof $token_model) AND $token->is_loaded() AND $token->user->is_loaded()) {
-				if ($token->user_agent === sha1(Request::$user_agent)) {
+				if ($token->user_agent === sha1(\Request::$user_agent)) {
 					// Save the token to create a new unique token
 					$token->save();
 
@@ -373,7 +373,7 @@ abstract class Base\DB\Auth extends \Auth {
 						$token = DB\ORM::model($this->models['token']);
 						$token->user_id = $user->id;
 						$token->expires = time() + $this->_config['lifetime'];
-						$token->user_agent = sha1(Request::$user_agent);
+						$token->user_agent = sha1(\Request::$user_agent);
 						$token->save();
 
 						\Cookie::set('authautologin', $token->token, $this->_config['lifetime']);

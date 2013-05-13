@@ -36,7 +36,7 @@ abstract class Base\Core\Object {
 	 *                                              to the called object
 	 */
 	public function __equals($object) {
-		return (($object !== NULL) && ($object instanceOf Core\Object) && ($object->__hashCode() == $this->__haseCode()));
+		return (($object !== NULL) && ($object instanceof Core\Object) && ($object->__hashCode() == $this->__haseCode()));
 	}
 
 	/**
