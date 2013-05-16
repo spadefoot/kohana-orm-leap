@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category Data Type
- * @version 2013-03-19
+ * @version 2013-05-15
  *
  * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
  *
@@ -132,7 +132,10 @@ abstract class Base\Core\Data extends Core\Object implements \Countable {
 	 */
 	public function as_string($format = '%s', $pack = TRUE) {
 		$string = ($pack) ? static::pack($this->hexcode) : $this->hexcode;
-		return sprintf($format, $string);
+		if ($format != '%s') {
+			return sprintf($format, $string); // this is done for efficiency
+		}
+		return $string;
 	}
 
 	/**

@@ -253,7 +253,7 @@ abstract class Base\DB\Connection\Pool extends Core\Object implements \Countable
 	 */
 	public static function instance() {
 		if (static::$instance === NULL) {
-			register_shutdown_function(array('DB\Connection\Pool', 'autorelease'));
+			register_shutdown_function(array('\\Leap\\DB\\Connection\\Pool', 'autorelease'));
 			static::$instance = new DB\Connection\Pool();
 		}
 		return static::$instance;

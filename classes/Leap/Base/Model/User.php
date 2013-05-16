@@ -18,181 +18,187 @@
  * limitations under the License.
  */
 
-/**
- * This class represents a record in the "users" table.
- *
- * @package Leap
- * @category Model
- * @version 2013-01-28
- *
- * @abstract
- */
-abstract class Base\Model\User extends DB\ORM\Model {
+namespace Leap\Base\Model {
+
+	use \Leap\DB;
 
 	/**
-	 * This constructor instantiates this class.
+	 * This class represents a record in the "users" table.
 	 *
-	 * @access public
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		$this->fields = array(
-			'id' => new DB\ORM\Field\Integer($this, array(
-				'max_length' => 11,
-				'nullable' => FALSE,
-				'unsigned' => TRUE,
-			)),
-			'email' => new DB\ORM\Field\String($this, array(
-				'max_length' => 254,
-				'nullable' => FALSE,
-			)),
-			'username' => new DB\ORM\Field\String($this, array(
-				'default' => '',
-				'max_length' => 32,
-				'nullable' => FALSE,
-			)),
-			'password' => new DB\ORM\Field\String($this, array(
-				'max_length' => 64,
-				'nullable' => FALSE,
-			)),
-			// Personal Details
-			'firstname' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 35,
-				'nullable' => TRUE,
-			)),
-			'lastname' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 50,
-				'nullable' => TRUE,
-			)),
-			// Account Status Details
-			'activated' => new DB\ORM\Field\Boolean($this, array(
-				'default' => TRUE,
-				'nullable' => FALSE,
-			)),
-			'banned' => new DB\ORM\Field\Boolean($this, array(
-				'default' => FALSE,
-				'nullable' => FALSE,
-			)),
-			'ban_reason' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 255,
-				'nullable' => TRUE,
-			)),
-			// Account Utility Details
-			'new_password_key' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 64,
-				'nullable' => TRUE,
-			)),
-			'new_password_requested' => new DB\ORM\Field\Integer($this, array(
-				'default' => NULL,
-				'max_length' => 11,
-				'nullable' => TRUE,
-			)),
-			'new_email' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 254,
-				'nullable' => TRUE,
-			)),
-			'new_email_key' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 64,
-				'nullable' => TRUE,
-			)),
-			// Account Metrics Details
-			'logins' => new DB\ORM\Field\Integer($this, array(
-				'default' => 0,
-				'max_length' => 10,
-				'nullable' => FALSE,
-				'unsigned' => TRUE,
-			)),
-			'last_login' => new DB\ORM\Field\Integer($this, array(
-				'default' => NULL,
-				'max_length' => 10,
-				'nullable' => TRUE,
-				'unsigned' => TRUE,
-			)),
-			'last_ip' => new DB\ORM\Field\String($this, array(
-				'default' => NULL,
-				'max_length' => 39,
-				'nullable' => TRUE,
-			)),
-		);
-
-		$this->adaptors = array(
-			'last_login_formatted' => new DB\ORM\Field\Adaptor\DateTime($this, array(
-				'field' => 'last_login',
-			)),
-			'new_password_requested_formatted' => new DB\ORM\Field\Adaptor\DateTime($this, array(
-				'field' => 'new_password_requested',
-			)),
-		);
-
-		$this->relations = array(
-			'user_roles' => new DB\ORM\Relation\HasMany($this, array(
-				'child_key' => array('user_id'),
-				'child_model' => 'User_Role',
-				'parent_key' => array('id'),
-			)),
-			'user_token' => new DB\ORM\Relation\HasMany($this, array(
-				'child_key' => array('user_id'),
-				'child_model' => 'User_Token',
-				'parent_key' => array('id'),
-			)),
-		);
-	}
-
-	/**
-	 * This function completes the user's login.
+	 * @package Leap
+	 * @category Model
+	 * @version 2013-01-28
 	 *
-	 * @access public
+	 * @abstract
 	 */
-	public function complete_login() {
-		$this->logins++;
-		$this->last_login = time();
-		$this->last_ip = \Request::$client_ip;
-		$this->save();
-	}
+	abstract class User extends DB\ORM\Model {
 
-	/**
-	 * This function returns the data source name.
-	 *
-	 * @access public
-	 * @override
-	 * @static
-	 * @param integer $instance                     the data source instance to be used (e.g.
-	 *                                              0 = master, 1 = slave, 2 = slave, etc.)
-	 * @return string                               the data source name
-	 */
-	public static function data_source($instance = 0) {
-		return 'default';	
-	}
+		/**
+		 * This constructor instantiates this class.
+		 *
+		 * @access public
+		 */
+		public function __construct() {
+			parent::__construct();
 
-	/**
-	 * This function returns the primary key for the database table.
-	 *
-	 * @access public
-	 * @override
-	 * @static
-	 * @return array                                the primary key
-	 */
-	public static function primary_key() {
-		return array('id');	
-	}
+			$this->fields = array(
+				'id' => new DB\ORM\Field\Integer($this, array(
+					'max_length' => 11,
+					'nullable' => FALSE,
+					'unsigned' => TRUE,
+				)),
+				'email' => new DB\ORM\Field\String($this, array(
+					'max_length' => 254,
+					'nullable' => FALSE,
+				)),
+				'username' => new DB\ORM\Field\String($this, array(
+					'default' => '',
+					'max_length' => 32,
+					'nullable' => FALSE,
+				)),
+				'password' => new DB\ORM\Field\String($this, array(
+					'max_length' => 64,
+					'nullable' => FALSE,
+				)),
+				// Personal Details
+				'firstname' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 35,
+					'nullable' => TRUE,
+				)),
+				'lastname' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 50,
+					'nullable' => TRUE,
+				)),
+				// Account Status Details
+				'activated' => new DB\ORM\Field\Boolean($this, array(
+					'default' => TRUE,
+					'nullable' => FALSE,
+				)),
+				'banned' => new DB\ORM\Field\Boolean($this, array(
+					'default' => FALSE,
+					'nullable' => FALSE,
+				)),
+				'ban_reason' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 255,
+					'nullable' => TRUE,
+				)),
+				// Account Utility Details
+				'new_password_key' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 64,
+					'nullable' => TRUE,
+				)),
+				'new_password_requested' => new DB\ORM\Field\Integer($this, array(
+					'default' => NULL,
+					'max_length' => 11,
+					'nullable' => TRUE,
+				)),
+				'new_email' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 254,
+					'nullable' => TRUE,
+				)),
+				'new_email_key' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 64,
+					'nullable' => TRUE,
+				)),
+				// Account Metrics Details
+				'logins' => new DB\ORM\Field\Integer($this, array(
+					'default' => 0,
+					'max_length' => 10,
+					'nullable' => FALSE,
+					'unsigned' => TRUE,
+				)),
+				'last_login' => new DB\ORM\Field\Integer($this, array(
+					'default' => NULL,
+					'max_length' => 10,
+					'nullable' => TRUE,
+					'unsigned' => TRUE,
+				)),
+				'last_ip' => new DB\ORM\Field\String($this, array(
+					'default' => NULL,
+					'max_length' => 39,
+					'nullable' => TRUE,
+				)),
+			);
 
-	/**
-	 * This function returns the database table's name.
-	 *
-	 * @access public
-	 * @override
-	 * @static
-	 * @return string                               the database table's name
-	 */
-	public static function table() {
-		return 'users';	
+			$this->adaptors = array(
+				'last_login_formatted' => new DB\ORM\Field\Adaptor\DateTime($this, array(
+					'field' => 'last_login',
+				)),
+				'new_password_requested_formatted' => new DB\ORM\Field\Adaptor\DateTime($this, array(
+					'field' => 'new_password_requested',
+				)),
+			);
+
+			$this->relations = array(
+				'user_roles' => new DB\ORM\Relation\HasMany($this, array(
+					'child_key' => array('user_id'),
+					'child_model' => 'User_Role',
+					'parent_key' => array('id'),
+				)),
+				'user_token' => new DB\ORM\Relation\HasMany($this, array(
+					'child_key' => array('user_id'),
+					'child_model' => 'User_Token',
+					'parent_key' => array('id'),
+				)),
+			);
+		}
+
+		/**
+		 * This function completes the user's login.
+		 *
+		 * @access public
+		 */
+		public function complete_login() {
+			$this->logins++;
+			$this->last_login = time();
+			$this->last_ip = \Request::$client_ip;
+			$this->save();
+		}
+
+		/**
+		 * This function returns the data source name.
+		 *
+		 * @access public
+		 * @override
+		 * @static
+		 * @param integer $instance                     the data source instance to be used (e.g.
+		 *                                              0 = master, 1 = slave, 2 = slave, etc.)
+		 * @return string                               the data source name
+		 */
+		public static function data_source($instance = 0) {
+			return 'default';	
+		}
+
+		/**
+		 * This function returns the primary key for the database table.
+		 *
+		 * @access public
+		 * @override
+		 * @static
+		 * @return array                                the primary key
+		 */
+		public static function primary_key() {
+			return array('id');	
+		}
+
+		/**
+		 * This function returns the database table's name.
+		 *
+		 * @access public
+		 * @override
+		 * @static
+		 * @return string                               the database table's name
+		 */
+		public static function table() {
+			return 'users';	
+		}
+
 	}
 
 }

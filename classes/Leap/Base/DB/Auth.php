@@ -259,7 +259,7 @@ abstract class Base\DB\Auth extends \Auth {
 		else {
 			$builder->where($this->columns['user_username'], DB\SQL\Operator::_EQUAL_TO_, $user);
 		}
-		$user = $builder->query()->fetch(0);
+		$user = $builder->limit(1)->query()->fetch(0);
 		return $user;
 	}
 

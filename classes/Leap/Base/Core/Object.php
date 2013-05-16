@@ -17,46 +17,50 @@
  * limitations under the License.
  */
 
-/**
- * This class acts as the base class for any object.
- *
- * @package Leap
- * @category Core
- * @version 2013-05-12
- *
- * @abstract
- */
-abstract class Base\Core\Object {
+namespace Leap\Base\Core {
 
 	/**
-	 * This function returns whether the specified object is equal to the called object.
+	 * This class acts as the base class for any object.
 	 *
-	 * @access public
-	 * @return boolean                              whether the specified object is equal
-	 *                                              to the called object
+	 * @package Leap
+	 * @category Core
+	 * @version 2013-05-12
+	 *
+	 * @abstract
 	 */
-	public function __equals($object) {
-		return (($object !== NULL) && ($object instanceof Core\Object) && ($object->__hashCode() == $this->__haseCode()));
-	}
+	abstract class Object {
 
-	/**
-	 * This function returns the hash code for the object.
-	 *
-	 * @access public
-	 * @return string                               the hash code for the object
-	 */
-	public function __hashCode() {
-		return spl_object_hash($this);
-	}
+		/**
+		 * This function returns whether the specified object is equal to the called object.
+		 *
+		 * @access public
+		 * @return boolean                              whether the specified object is equal
+		 *                                              to the called object
+		 */
+		public function __equals($object) {
+			return (($object !== NULL) && ($object instanceof Core\Object) && ($object->__hashCode() == $this->__haseCode()));
+		}
 
-	/**
-	 * This function returns a string that represents the object.
-	 *
-	 * @access public
-	 * @return string                               a string that represents the object
-	 */
-	public function __toString() {
-		return (string) serialize($this);
+		/**
+		 * This function returns the hash code for the object.
+		 *
+		 * @access public
+		 * @return string                               the hash code for the object
+		 */
+		public function __hashCode() {
+			return spl_object_hash($this);
+		}
+
+		/**
+		 * This function returns a string that represents the object.
+		 *
+		 * @access public
+		 * @return string                               a string that represents the object
+		 */
+		public function __toString() {
+			return (string) serialize($this);
+		}
+
 	}
 
 }
