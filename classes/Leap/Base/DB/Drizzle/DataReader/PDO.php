@@ -17,14 +17,18 @@
  * limitations under the License.
  */
 
-/**
- * This class is used to read data from a Drizzle database using the PDO
- * driver.
- *
- * @package Leap
- * @category Drizzle
- * @version 2013-01-06
- *
- * @abstract
- */
-abstract class Base\DB\Drizzle\DataReader\PDO extends DB\SQL\DataReader\PDO {}
+namespace Leap\Base\DB\Drizzle\DataReader {
+
+	/**
+	 * This class is used to read data from a Drizzle database using the PDO
+	 * driver.
+	 *
+	 * @package Leap
+	 * @category Drizzle
+	 * @version 2013-01-06
+	 *
+	 * @abstract
+	 */
+	abstract class PDO extends DB\SQL\DataReader\PDO {}
+
+}

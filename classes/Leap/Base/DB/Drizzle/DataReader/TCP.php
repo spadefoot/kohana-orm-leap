@@ -17,61 +17,65 @@
  * limitations under the License.
  */
 
-/**
- * This class is used to read data from a Drizzle database using the TCP
- * driver.
- *
- * @package Leap
- * @category Drizzle
- * @version 2013-01-22
- *
- * @abstract
- */
-abstract class Base\DB\Drizzle\DataReader\TCP extends DB\SQL\DataReader\Standard {
+namespace Leap\Base\DB\Drizzle\DataReader {
 
 	/**
-	 * This function initializes the class.
+	 * This class is used to read data from a Drizzle database using the TCP
+	 * driver.
 	 *
-	 * @access public
-	 * @override
-	 * @param DB\Connection\Driver $connection  the connection to be used
-	 * @param string $sql                       the SQL statement to be queried
-	 * @param integer $mode                     the execution mode to be used
+	 * @package Leap
+	 * @category Drizzle
+	 * @version 2013-01-22
+	 *
+	 * @abstract
 	 */
-	public function __construct(DB\Connection\Driver $connection, $sql, $mode = NULL) {
-		$resource = $connection->get_resource();
-		$command = @drizzle_query($resource, $sql);
-		if (($command === FALSE) OR ! @drizzle_result_buffer($command)) {
-			throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($resource)));
-		}
-		$this->command = $command;
-		$this->record = FALSE;
-	}
+	abstract class TCP extends DB\SQL\DataReader\Standard {
 
-	/**
-	 * This function frees the command reference.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function free() {
-		if ($this->command !== NULL) {
-			@drizzle_result_free($this->command);
-			$this->command = NULL;
+		/**
+		 * This function initializes the class.
+		 *
+		 * @access public
+		 * @override
+		 * @param DB\Connection\Driver $connection  the connection to be used
+		 * @param string $sql                       the SQL statement to be queried
+		 * @param integer $mode                     the execution mode to be used
+		 */
+		public function __construct(DB\Connection\Driver $connection, $sql, $mode = NULL) {
+			$resource = $connection->get_resource();
+			$command = @drizzle_query($resource, $sql);
+			if (($command === FALSE) OR ! @drizzle_result_buffer($command)) {
+				throw new Throwable\SQL\Exception('Message: Failed to query SQL statement. Reason: :reason', array(':reason' => @drizzle_con_error($resource)));
+			}
+			$this->command = $command;
 			$this->record = FALSE;
 		}
-	}
 
-	/**
-	 * This function advances the reader to the next record.
-	 *
-	 * @access public
-	 * @override
-	 * @return boolean                          whether another record was fetched
-	 */
-	public function read() {
-		$this->record = @drizzle_row_next($this->command);
-		return ($this->record !== FALSE);
+		/**
+		 * This function frees the command reference.
+		 *
+		 * @access public
+		 * @override
+		 */
+		public function free() {
+			if ($this->command !== NULL) {
+				@drizzle_result_free($this->command);
+				$this->command = NULL;
+				$this->record = FALSE;
+			}
+		}
+
+		/**
+		 * This function advances the reader to the next record.
+		 *
+		 * @access public
+		 * @override
+		 * @return boolean                          whether another record was fetched
+		 */
+		public function read() {
+			$this->record = @drizzle_row_next($this->command);
+			return ($this->record !== FALSE);
+		}
+
 	}
 
 }

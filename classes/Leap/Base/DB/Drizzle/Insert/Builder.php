@@ -17,60 +17,64 @@
  * limitations under the License.
  */
 
-/**
- * This class builds a Drizzle insert statement.
- *
- * @package Leap
- * @category Drizzle
- * @version 2012-12-04
- *
- * @see http://dev.mysql.com/doc/refman/5.5/en/insert.html
- *
- * @abstract
- */
-abstract class Base\DB\Drizzle\Insert\Builder extends DB\SQL\Insert\Builder {
+namespace Leap\Base\DB\Drizzle\Insert {
 
 	/**
-	 * This function returns the SQL statement.
+	 * This class builds a Drizzle insert statement.
 	 *
-	 * @access public
-	 * @override
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @package Leap
+	 * @category Drizzle
+	 * @version 2012-12-04
+	 *
+	 * @see http://dev.mysql.com/doc/refman/5.5/en/insert.html
+	 *
+	 * @abstract
 	 */
-	public function statement($terminated = TRUE) {
-		$sql = "INSERT INTO {$this->data['into']}";
+	abstract class Builder extends DB\SQL\Insert\Builder {
 
-		if ( ! empty($this->data['columns'])) {
-			$rows = array_values($this->data['rows']);
-			$rowCt = 1;
-			$columns = array_keys($this->data['columns']);
-			$columnCt = count($columns);
-			$sql .= ' (' . implode(', ', $columns) . ') VALUES';
-			for ($r = 0; $r < $rowCt; $r++) {
-				if ($r > 0) {
-					$sql .= ',';
-				}
-				$sql .= ' (';
-				for ($c = 0; $c < $columnCt; $c++) {
-					if ($c > 0) {
-						$sql .= ', ';
+		/**
+		 * This function returns the SQL statement.
+		 *
+		 * @access public
+		 * @override
+		 * @param boolean $terminated           whether to add a semi-colon to the end
+		 *                                      of the statement
+		 * @return string                       the SQL statement
+		 */
+		public function statement($terminated = TRUE) {
+			$sql = "INSERT INTO {$this->data['into']}";
+
+			if ( ! empty($this->data['columns'])) {
+				$rows = array_values($this->data['rows']);
+				$rowCt = 1;
+				$columns = array_keys($this->data['columns']);
+				$columnCt = count($columns);
+				$sql .= ' (' . implode(', ', $columns) . ') VALUES';
+				for ($r = 0; $r < $rowCt; $r++) {
+					if ($r > 0) {
+						$sql .= ',';
 					}
-					$column = $columns[$c];
-					$sql .= (isset($rows[$r][$column]))
-						? $rows[$r][$column]
-						: 'NULL';
+					$sql .= ' (';
+					for ($c = 0; $c < $columnCt; $c++) {
+						if ($c > 0) {
+							$sql .= ', ';
+						}
+						$column = $columns[$c];
+						$sql .= (isset($rows[$r][$column]))
+							? $rows[$r][$column]
+							: 'NULL';
+					}
+					$sql .= ')';
 				}
-				$sql .= ')';
 			}
+
+			if ($terminated) {
+				$sql .= ';';
+			}
+
+			return $sql;
 		}
 
-		if ($terminated) {
-			$sql .= ';';
-		}
-
-		return $sql;
 	}
 
 }

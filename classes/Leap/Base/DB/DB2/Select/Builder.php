@@ -17,103 +17,107 @@
  * limitations under the License.
  */
 
-/**
- * This class builds a DB2 select statement.
- *
- * @package Leap
- * @category DB2
- * @version 2013-02-27
- *
- * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
- * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
- *
- * @abstract
- */
-abstract class Base\DB\DB2\Select\Builder extends DB\SQL\Select\Builder {
+namespace Leap\Base\DB\DB2\Select {
 
 	/**
-	 * This function returns the SQL statement.
+	 * This class builds a DB2 select statement.
 	 *
-	 * @access public
-	 * @override
-	 * @param boolean $terminated           whether to add a semi-colon to the end
-	 *                                      of the statement
-	 * @return string                       the SQL statement
+	 * @package Leap
+	 * @category DB2
+	 * @version 2013-02-27
+	 *
+	 * @see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/admin/r0000879.htm
+	 * @see http://publib.boulder.ibm.com/infocenter/iseries/v5r4/topic/sqlp/rbafytexas.htm
+	 *
+	 * @abstract
 	 */
-	public function statement($terminated = TRUE) {
-		$sql = 'SELECT ';
+	abstract class Builder extends DB\SQL\Select\Builder {
 
-		if ($this->data['distinct']) {
-			$sql .= 'DISTINCT ';
-		}
+		/**
+		 * This function returns the SQL statement.
+		 *
+		 * @access public
+		 * @override
+		 * @param boolean $terminated           whether to add a semi-colon to the end
+		 *                                      of the statement
+		 * @return string                       the SQL statement
+		 */
+		public function statement($terminated = TRUE) {
+			$sql = 'SELECT ';
 
-		$sql .= ( ! empty($this->data['column']))
-			? implode(', ', $this->data['column'])
-			: $this->data['wildcard'];
-
-		if ($this->data['from'] !== NULL) {
-			$sql .= " FROM {$this->data['from']}";
-		}
-
-		foreach ($this->data['join'] as $join) {
-			$sql .= " {$join[0]}";
-			if ( ! empty($join[1])) {
-				$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
+			if ($this->data['distinct']) {
+				$sql .= 'DISTINCT ';
 			}
-			else if ( ! empty($join[2])) {
-				$sql .= ' USING (' . implode(', ', $join[2]) . ')';
-			}
-		}
 
-		if ( ! empty($this->data['where'])) {
-			$append = FALSE;
-			$sql .= ' WHERE ';
-			foreach ($this->data['where'] as $where) {
-				if ($append AND ($where[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
-					$sql .= " {$where[0]} ";
+			$sql .= ( ! empty($this->data['column']))
+				? implode(', ', $this->data['column'])
+				: $this->data['wildcard'];
+
+			if ($this->data['from'] !== NULL) {
+				$sql .= " FROM {$this->data['from']}";
+			}
+
+			foreach ($this->data['join'] as $join) {
+				$sql .= " {$join[0]}";
+				if ( ! empty($join[1])) {
+					$sql .= ' ON (' . implode(' AND ', $join[1]) . ')';
 				}
-				$sql .= $where[1];
-				$append = ($where[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
-			}
-		}
-
-		if ( ! empty($this->data['group_by'])) {
-			$sql .= ' GROUP BY ' . implode(', ', $this->data['group_by']);
-		}
-
-		if ( ! empty($this->data['having'])) {
-			$append = FALSE;
-			$sql .= ' HAVING ';
-			foreach ($this->data['having'] as $having) {
-				if ($append AND ($having[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
-					$sql .= " {$having[0]} ";
+				else if ( ! empty($join[2])) {
+					$sql .= ' USING (' . implode(', ', $join[2]) . ')';
 				}
-				$sql .= $having[1];
-				$append = ($having[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
 			}
+
+			if ( ! empty($this->data['where'])) {
+				$append = FALSE;
+				$sql .= ' WHERE ';
+				foreach ($this->data['where'] as $where) {
+					if ($append AND ($where[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
+						$sql .= " {$where[0]} ";
+					}
+					$sql .= $where[1];
+					$append = ($where[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
+				}
+			}
+
+			if ( ! empty($this->data['group_by'])) {
+				$sql .= ' GROUP BY ' . implode(', ', $this->data['group_by']);
+			}
+
+			if ( ! empty($this->data['having'])) {
+				$append = FALSE;
+				$sql .= ' HAVING ';
+				foreach ($this->data['having'] as $having) {
+					if ($append AND ($having[1] != DB\SQL\Builder::_CLOSING_PARENTHESIS_)) {
+						$sql .= " {$having[0]} ";
+					}
+					$sql .= $having[1];
+					$append = ($having[1] != DB\SQL\Builder::_OPENING_PARENTHESIS_);
+				}
+			}
+
+			if ( ! empty($this->data['order_by'])) {
+				$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
+			}
+
+			//if ($this->data['limit'] > 0) {
+			//    $sql .= " LIMIT {$this->data['limit']}";
+			//}
+
+			//if ($this->data['offset'] > 0) {
+			//    $sql .= " OFFSET {$this->data['offset']}";
+			//}
+
+			foreach ($this->data['combine'] as $combine) {
+				$sql .= " {$combine}";
+			}
+
+			if ($terminated) {
+				$sql .= ';';
+			}
+
+			return $sql;
 		}
 
-		if ( ! empty($this->data['order_by'])) {
-			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
-		}
-
-		//if ($this->data['limit'] > 0) {
-		//    $sql .= " LIMIT {$this->data['limit']}";
-		//}
-
-		//if ($this->data['offset'] > 0) {
-		//    $sql .= " OFFSET {$this->data['offset']}";
-		//}
-
-		foreach ($this->data['combine'] as $combine) {
-			$sql .= " {$combine}";
-		}
-
-		if ($terminated) {
-			$sql .= ';';
-		}
-
-		return $sql;
 	}
 
 }

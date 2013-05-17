@@ -17,14 +17,18 @@
  * limitations under the License.
  */
 
-/**
- * This class is used to read data from a DB2 database using the PDO
- * driver.
- *
- * @package Leap
- * @category DB2
- * @version 2012-12-04
- *
- * @abstract
- */
-abstract class Base\DB\DB2\DataReader\PDO extends DB\SQL\DataReader\PDO {}
+namespace Leap\Base\DB\DB2\DataReader {
+
+	/**
+	 * This class is used to read data from a DB2 database using the PDO
+	 * driver.
+	 *
+	 * @package Leap
+	 * @category DB2
+	 * @version 2012-12-04
+	 *
+	 * @abstract
+	 */
+	abstract class PDO extends DB\SQL\DataReader\PDO {}
+
+}
