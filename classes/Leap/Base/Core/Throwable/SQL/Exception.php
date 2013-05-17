@@ -17,13 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class indicates there is an SQL problem.
- *
- * @package Leap
- * @category Throwable
- * @version 2013-05-06
- *
- * @abstract
- */
-abstract class Base\Throwable\SQL\Exception extends Throwable\Runtime\Exception {}
+namespace Leap\Base\Core\Throwable\SQL {
+
+	/**
+	 * This class indicates there is an SQL problem.
+	 *
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2013-05-06
+	 *
+	 * @abstract
+	 */
+	abstract class Exception extends Throwable\Runtime\Exception {}
+
+}

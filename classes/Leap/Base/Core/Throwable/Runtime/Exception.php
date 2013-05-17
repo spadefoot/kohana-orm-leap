@@ -17,13 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class acts as the base class for all throwable runtime exceptions.
- *
- * @package Leap
- * @category Throwable
- * @version 2013-05-06
- *
- * @abstract
- */
-abstract class Base\Throwable\Runtime\Exception extends \Kohana\Exception {}
+namespace Leap\Base\Core\Throwable\Runtime {
+
+	/**
+	 * This class acts as the base class for all throwable runtime exceptions.
+	 *
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2013-05-06
+	 *
+	 * @abstract
+	 */
+	abstract class Exception extends \Kohana\Exception {}
+
+}

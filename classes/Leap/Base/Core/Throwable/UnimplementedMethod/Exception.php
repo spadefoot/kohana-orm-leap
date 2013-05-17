@@ -17,13 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class indicates that a collection contains no elements.
- *
- * @package Leap
- * @category Throwable
- * @version 2013-05-06
- *
- * @abstract
- */
-abstract class Base\Throwable\UnimplementedMethod\Exception extends Throwable\Runtime\Exception {}
+namespace Leap\Base\Core\Throwable\UnimplementedMethod {
+
+	/**
+	 * This class indicates that a collection contains no elements.
+	 *
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2013-05-06
+	 *
+	 * @abstract
+	 */
+	abstract class Exception extends Throwable\Runtime\Exception {}
+
+}

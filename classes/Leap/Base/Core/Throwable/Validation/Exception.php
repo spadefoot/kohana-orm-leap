@@ -17,13 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class indicates that bad data was discovered.
- *
- * @package Leap
- * @category Throwable
- * @version 2013-05-06
- *
- * @abstract
- */
-abstract class Base\Throwable\Validation\Exception extends Throwable\Runtime\Exception {}
+namespace Leap\Base\Core\Throwable\Validation {
+
+	/**
+	 * This class indicates that bad data was discovered.
+	 *
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2013-05-06
+	 *
+	 * @abstract
+	 */
+	abstract class Exception extends Throwable\Runtime\Exception {}
+
+}

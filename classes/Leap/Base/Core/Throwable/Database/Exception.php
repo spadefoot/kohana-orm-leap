@@ -17,13 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class indicates there is a problem associated with the database.
- *
- * @package Leap
- * @category Throwable
- * @version 2013-05-12
- *
- * @abstract
- */
-abstract class Base\Throwable\Database\Exception extends Throwable\Runtime\Exception {}
+namespace Leap\Base\Core\Throwable\Database {
+
+	/**
+	 * This class indicates there is a problem associated with the database.
+	 *
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2013-05-12
+	 *
+	 * @abstract
+	 */
+	abstract class Exception extends Throwable\Runtime\Exception {}
+
+}

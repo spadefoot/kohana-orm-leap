@@ -17,190 +17,194 @@
  * limitations under the License.
  */
 
-/**
- * This class represents a data buffer.
- *
- * @package Leap
- * @category Data Type
- * @version 2013-05-15
- *
- * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
- *
- * @abstract
- */
-abstract class Base\Core\Data extends Core\Object implements \Countable {
+namespace Leap\Base\Core {
 
 	/**
-	 * This constant represents binary data.
+	 * This class represents a data buffer.
 	 *
-	 * @access public
-	 * @const integer
+	 * @package Leap
+	 * @category Data Type
+	 * @version 2013-05-15
+	 *
+	 * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
+	 *
+	 * @abstract
 	 */
-	const BINARY_DATA = 0;
+	abstract class Data extends Core\Object implements \Countable {
 
-	/**
-	 * This constant represents hexadecimal data.
-	 *
-	 * @access public
-	 * @const integer
-	 */
-	const HEXADECIMAL_DATA = 1;
+		/**
+		 * This constant represents binary data.
+		 *
+		 * @access public
+		 * @const integer
+		 */
+		const BINARY_DATA = 0;
 
-	/**
-	 * This constant represents string data.
-	 *
-	 * @access public
-	 * @const integer
-	 */
-	const STRING_DATA = 2;
+		/**
+		 * This constant represents hexadecimal data.
+		 *
+		 * @access public
+		 * @const integer
+		 */
+		const HEXADECIMAL_DATA = 1;
 
-	/**
-	 * This variable stores the data as a hexadecimal.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $hexcode;
+		/**
+		 * This constant represents string data.
+		 *
+		 * @access public
+		 * @const integer
+		 */
+		const STRING_DATA = 2;
 
-	/**
-	 * This variable stores the length of the data as a byte string.
-	 *
-	 * @access protected
-	 * @var integer
-	 */
-	protected $length;
+		/**
+		 * This variable stores the data as a hexadecimal.
+		 *
+		 * @access protected
+		 * @var string
+		 */
+		protected $hexcode;
 
-	/**
-	 * This constructor initializes the class.
-	 *
-	 * @access public
-	 * @param string $data                          the data
-	 * @param integer $type                         the current type of data
-	 */
-	public function __construct($data, $type = 1) {
-		$this->hexcode = static::unpack($data, $type);
-		$this->length = -1;
-	}
+		/**
+		 * This variable stores the length of the data as a byte string.
+		 *
+		 * @access protected
+		 * @var integer
+		 */
+		protected $length;
 
-	/**
-	 * This function returns the data as a hexadecimal.
-	 *
-	 * @access public
-	 * @override
-	 * @return string                               the data as a hexadecimal
-	 */
-	public function __toString() {
-		return $this->hexcode;
-	}
-
-	/**
-	 * This function returns the data as a binary string.
-	 *
-	 * @access public
-	 * @param string $format                        the string formatting to be used
-	 * @return string                               the data as a binary string
-	 */
-	public function as_binary($format = '%s') {
-		$binary = base_convert($this->hexcode, 16, 2);
-		if ($format != '%s') { // this is done for efficiency
-			return sprintf($format, $binary);
+		/**
+		 * This constructor initializes the class.
+		 *
+		 * @access public
+		 * @param string $data                          the data
+		 * @param integer $type                         the current type of data
+		 */
+		public function __construct($data, $type = 1) {
+			$this->hexcode = static::unpack($data, $type);
+			$this->length = -1;
 		}
-		return $binary;
-	}
 
-	/**
-	 * This function returns the data as a hexadecimal.
-	 *
-	 * @access public
-	 * @param string $format                        the string formatting to be used
-	 * @return string                               the data as a hexadecimal
-	 */
-	public function as_hexcode($format = '%s') {
-		if ($format != '%s') {
-			return sprintf($format, $this->hexcode); // this is done for efficiency
+		/**
+		 * This function returns the data as a hexadecimal.
+		 *
+		 * @access public
+		 * @override
+		 * @return string                               the data as a hexadecimal
+		 */
+		public function __toString() {
+			return $this->hexcode;
 		}
-		return $this->hexcode;
-	}
 
-	/**
-	 * This function returns the data as a string.
-	 *
-	 * @access public
-	 * @param string $format                        the string formatting to be used
-	 * @param boolean $pack                         whether to pack the hexcode as a string
-	 * @return string                               the data as a string
-	 */
-	public function as_string($format = '%s', $pack = TRUE) {
-		$string = ($pack) ? static::pack($this->hexcode) : $this->hexcode;
-		if ($format != '%s') {
-			return sprintf($format, $string); // this is done for efficiency
-		}
-		return $string;
-	}
-
-	/**
-	 * This function return the length of the data as a byte string.
-	 *
-	 * @access public
-	 * @override
-	 * @return integer                              the length of the data as a byte
-	 *                                              string
-	 */
-	public function count() {
-		if ($this->length < 0) {
-			$this->length = strlen($this->hexcode) * 2;
-		}
-		return $this->length;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * This function converts a hexadecimal to a string.
-	 *
-	 * @access protected
-	 * @static
-	 * @param string $hexcode                       the data to be converted
-	 * @return string                               a string
-	 */
-	protected static function pack($hexcode) {
-		if (is_string($hexcode)) {
-			return pack('H*', $hexcode);
-		}
-		return '';
-	}
-
-	/**
-	 * This function converts string to a hexadecimal.
-	 *
-	 * @access protected
-	 * @static
-	 * @param string $data                          the data to be converted
-	 * @param integer $type                         the type of data to be converted
-	 * @return string                               a hexadecimal string
-	 */
-	protected static function unpack($data, $type) {
-		if (is_string($data)) {
-			switch ($type) {
-				case Core\Data::BINARY_DATA:
-					$binary = (preg_match("/^b'.*'$/i", $data))
-						? substr($data, 2, strlen($data) - 3)
-						: $data;
-					return base_convert($binary, 2, 16);
-				break;
-				case Core\Data::STRING_DATA:
-					$hexcode = unpack('H*hex', $data);
-					return $hexcode['hex'];
-				break;
-				case Core\Data::HEXADECIMAL_DATA:
-					return $data;
-				break;
+		/**
+		 * This function returns the data as a binary string.
+		 *
+		 * @access public
+		 * @param string $format                        the string formatting to be used
+		 * @return string                               the data as a binary string
+		 */
+		public function as_binary($format = '%s') {
+			$binary = base_convert($this->hexcode, 16, 2);
+			if ($format != '%s') { // this is done for efficiency
+				return sprintf($format, $binary);
 			}
+			return $binary;
 		}
-		else if (is_object($data) AND ($data instanceof Core\Data)) {
-			return $data->as_hexcode();
+
+		/**
+		 * This function returns the data as a hexadecimal.
+		 *
+		 * @access public
+		 * @param string $format                        the string formatting to be used
+		 * @return string                               the data as a hexadecimal
+		 */
+		public function as_hexcode($format = '%s') {
+			if ($format != '%s') {
+				return sprintf($format, $this->hexcode); // this is done for efficiency
+			}
+			return $this->hexcode;
 		}
-		return '';
+
+		/**
+		 * This function returns the data as a string.
+		 *
+		 * @access public
+		 * @param string $format                        the string formatting to be used
+		 * @param boolean $pack                         whether to pack the hexcode as a string
+		 * @return string                               the data as a string
+		 */
+		public function as_string($format = '%s', $pack = TRUE) {
+			$string = ($pack) ? static::pack($this->hexcode) : $this->hexcode;
+			if ($format != '%s') {
+				return sprintf($format, $string); // this is done for efficiency
+			}
+			return $string;
+		}
+
+		/**
+		 * This function return the length of the data as a byte string.
+		 *
+		 * @access public
+		 * @override
+		 * @return integer                              the length of the data as a byte
+		 *                                              string
+		 */
+		public function count() {
+			if ($this->length < 0) {
+				$this->length = strlen($this->hexcode) * 2;
+			}
+			return $this->length;
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		/**
+		 * This function converts a hexadecimal to a string.
+		 *
+		 * @access protected
+		 * @static
+		 * @param string $hexcode                       the data to be converted
+		 * @return string                               a string
+		 */
+		protected static function pack($hexcode) {
+			if (is_string($hexcode)) {
+				return pack('H*', $hexcode);
+			}
+			return '';
+		}
+
+		/**
+		 * This function converts string to a hexadecimal.
+		 *
+		 * @access protected
+		 * @static
+		 * @param string $data                          the data to be converted
+		 * @param integer $type                         the type of data to be converted
+		 * @return string                               a hexadecimal string
+		 */
+		protected static function unpack($data, $type) {
+			if (is_string($data)) {
+				switch ($type) {
+					case Core\Data::BINARY_DATA:
+						$binary = (preg_match("/^b'.*'$/i", $data))
+							? substr($data, 2, strlen($data) - 3)
+							: $data;
+						return base_convert($binary, 2, 16);
+					break;
+					case Core\Data::STRING_DATA:
+						$hexcode = unpack('H*hex', $data);
+						return $hexcode['hex'];
+					break;
+					case Core\Data::HEXADECIMAL_DATA:
+						return $data;
+					break;
+				}
+			}
+			else if (is_object($data) AND ($data instanceof Core\Data)) {
+				return $data->as_hexcode();
+			}
+			return '';
+		}
+
 	}
 
 }

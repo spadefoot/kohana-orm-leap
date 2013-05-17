@@ -17,44 +17,48 @@
  * limitations under the License.
  */
 
-/**
- * This class indicates that a value is not a valid key.
- *
- * @package Leap
- * @category Throwable
- * @version 2012-12-05
- *
- * @abstract
- */
-abstract class Base\Throwable\OutOfBounds\Exception extends \OutOfBoundsException {
+namespace Leap\Base\Core\Throwable\OutOfBounds {
 
 	/**
-	* This function instantiates the exception with the specified message,
-	* variables, and code.
-	*
-	* @access public
-	* @param string $message                    the message
-	* @param array $variables                   the variables
-	* @param integer $code                      the code
-	* @return Throwable\OutOfBounds\Exception   the exception
-	*/
-	public function __construct($message, Array $variables = NULL, $code = 0) {
-		// Set the message
-		$message = __($message, $variables);
-
-		// Pass the message to the parent
-		parent::__construct($message, $code);
-	}
-
-	/**
-	 * This function returns a string for this object.
+	 * This class indicates that a value is not a valid key.
 	 *
-	 * @access public
-	 * @override
-	 * @return string                           the string for this object
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2012-12-05
+	 *
+	 * @abstract
 	 */
-	public function __toString() {
-		return \Kohana::exception_text($this);
+	abstract class Exception extends \OutOfBoundsException {
+
+		/**
+		* This function instantiates the exception with the specified message,
+		* variables, and code.
+		*
+		* @access public
+		* @param string $message                    the message
+		* @param array $variables                   the variables
+		* @param integer $code                      the code
+		* @return Throwable\OutOfBounds\Exception   the exception
+		*/
+		public function __construct($message, Array $variables = NULL, $code = 0) {
+			// Set the message
+			$message = __($message, $variables);
+
+			// Pass the message to the parent
+			parent::__construct($message, $code);
+		}
+
+		/**
+		 * This function returns a string for this object.
+		 *
+		 * @access public
+		 * @override
+		 * @return string                           the string for this object
+		 */
+		public function __toString() {
+			return \Kohana::exception_text($this);
+		}
+
 	}
 
 }

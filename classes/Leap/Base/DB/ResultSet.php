@@ -17,346 +17,350 @@
  * limitations under the License.
  */
 
-/**
- * This class represents a result set.
- *
- * @package Leap
- * @category Connection
- * @version 2013-01-27
- *
- * @abstract
- */
-abstract class Base\DB\ResultSet extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
+namespace Leap\Base\DB {
 
 	/**
-	 * This variable stores the current position in the records array.
+	 * This class represents a result set.
 	 *
-	 * @access protected
-	 * @var integer
+	 * @package Leap
+	 * @category Connection
+	 * @version 2013-01-27
+	 *
+	 * @abstract
 	 */
-	protected $position;
+	abstract class ResultSet extends Core\Object implements \ArrayAccess, \Countable, \Iterator, \SeekableIterator {
 
-	/**
-	 * This variable stores the records.
-	 *
-	 * @access protected
-	 * @var array
-	 */
-	protected $records;
+		/**
+		 * This variable stores the current position in the records array.
+		 *
+		 * @access protected
+		 * @var integer
+		 */
+		protected $position;
 
-	/**
-	 * This variable stores the length of the records array.
-	 *
-	 * @access protected
-	 * @var integer
-	 */
-	protected $size;
+		/**
+		 * This variable stores the records.
+		 *
+		 * @access protected
+		 * @var array
+		 */
+		protected $records;
 
-	/**
-	 * This variable stores the return type being used.
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $type;
+		/**
+		 * This variable stores the length of the records array.
+		 *
+		 * @access protected
+		 * @var integer
+		 */
+		protected $size;
 
-	/**
-	 * This function initializes the class by wrapping the result set so that all database
-	 * result sets are accessible alike.
-	 *
-	 * @access public
-	 * @param mixed $buffer                             either an array of records or a data reader
-	 * @param string $type                              the return type being used
-	 */
-	public function __construct($buffer, $type = 'array') {
-		if (is_array($buffer)) {
-			$this->records = $buffer;
-			$this->size = count($buffer);
-		}
-		else {
-			$this->records = array();
-			$this->size = 0;
-			if (is_object($buffer) AND ($buffer instanceof DB\SQL\DataReader)) {
-				while ($buffer->read()) {
-					$this->records[] = $buffer->row($type);
-					$this->size++;
+		/**
+		 * This variable stores the return type being used.
+		 *
+		 * @access protected
+		 * @var string
+		 */
+		protected $type;
+
+		/**
+		 * This function initializes the class by wrapping the result set so that all database
+		 * result sets are accessible alike.
+		 *
+		 * @access public
+		 * @param mixed $buffer                             either an array of records or a data reader
+		 * @param string $type                              the return type being used
+		 */
+		public function __construct($buffer, $type = 'array') {
+			if (is_array($buffer)) {
+				$this->records = $buffer;
+				$this->size = count($buffer);
+			}
+			else {
+				$this->records = array();
+				$this->size = 0;
+				if (is_object($buffer) AND ($buffer instanceof DB\SQL\DataReader)) {
+					while ($buffer->read()) {
+						$this->records[] = $buffer->row($type);
+						$this->size++;
+					}
+					$buffer->free();
 				}
-				$buffer->free();
 			}
+			$this->position = 0;
+			$this->type = $type;
 		}
-		$this->position = 0;
-		$this->type = $type;
-	}
 
-	/**
-	 * This function returns an array of records of the desired object type.
-	 *
-	 * @access public
-	 * @return array                                    an array of records
-	 */
-	public function as_array() {
-		return $this->records;
-	}
+		/**
+		 * This function returns an array of records of the desired object type.
+		 *
+		 * @access public
+		 * @return array                                    an array of records
+		 */
+		public function as_array() {
+			return $this->records;
+		}
 
-	/**
-	 * This function will create an instance of the CSV class using the data contained
-	 * in the result set.
-	 *
-	 * @access public
-	 * @param array $config                             the configuration array
-	 * @return Core\Data\CSV                                      an instance of the CSV class
-	 */
-	public function as_csv(Array $config = array()) {
-		$csv = new Core\Data\CSV($config);
-		if ($this->is_loaded()) {
-			switch ($this->type) {
-				case 'array':
-				case 'object':
-					foreach ($this->records as $record) {
-						$csv->add_row( (array) $record);
-					}
-				break;
-				default:
-					if (class_exists($this->type)) {
-						if (($this->records[0] instanceof DB\ORM\Model) OR method_exists($this->records[0], 'as_array')) {
-							foreach ($this->records as $record) {
-								$csv->add_row($record->as_array());
-							}
+		/**
+		 * This function will create an instance of the CSV class using the data contained
+		 * in the result set.
+		 *
+		 * @access public
+		 * @param array $config                             the configuration array
+		 * @return Core\Data\CSV                                      an instance of the CSV class
+		 */
+		public function as_csv(Array $config = array()) {
+			$csv = new Core\Data\CSV($config);
+			if ($this->is_loaded()) {
+				switch ($this->type) {
+					case 'array':
+					case 'object':
+						foreach ($this->records as $record) {
+							$csv->add_row( (array) $record);
 						}
-						else if ($this->records[0] instanceof \Iterator) {
-							foreach ($this->records as $record) {
-								$row = array();
-								foreach ($record as $column) {
-									$row[] = $column;
+					break;
+					default:
+						if (class_exists($this->type)) {
+							if (($this->records[0] instanceof DB\ORM\Model) OR method_exists($this->records[0], 'as_array')) {
+								foreach ($this->records as $record) {
+									$csv->add_row($record->as_array());
 								}
-								$csv->add_row($row);
+							}
+							else if ($this->records[0] instanceof \Iterator) {
+								foreach ($this->records as $record) {
+									$row = array();
+									foreach ($record as $column) {
+										$row[] = $column;
+									}
+									$csv->add_row($row);
+								}
+							}
+							else {
+								foreach ($this->records as $record) {
+									$csv->add_row(get_object_vars($record));
+								}
 							}
 						}
-						else {
-							foreach ($this->records as $record) {
-								$csv->add_row(get_object_vars($record));
-							}
-						}
-					}
-				break;
+					break;
+				}
 			}
+			return $csv;
 		}
-		return $csv;
-	}
 
-	/**
-	 * This function returns the total number of records contained in result set.
-	 *
-	 * @access public
-	 * @override
-	 * @return integer                                  the total number of records
-	 */
-	public function count() {
-		return $this->size;
-	}
+		/**
+		 * This function returns the total number of records contained in result set.
+		 *
+		 * @access public
+		 * @override
+		 * @return integer                                  the total number of records
+		 */
+		public function count() {
+			return $this->size;
+		}
 
-	/**
-	 * This function returns the current record.
-	 *
-	 * @access public
-	 * @override
-	 * @return mixed                                    the current record
-	 */
-	public function current() {
-		return $this->records[$this->position];
-	}
+		/**
+		 * This function returns the current record.
+		 *
+		 * @access public
+		 * @override
+		 * @return mixed                                    the current record
+		 */
+		public function current() {
+			return $this->records[$this->position];
+		}
 
-	/**
-	 * This function returns a record either at the current position or
-	 * the specified position.
-	 *
-	 * @access public
-	 * @param integer $index                            the record's index
-	 * @return mixed                                    the record
-	 */
-	public function fetch($index = -1) {
-		settype($index, 'integer');
-		if ($index < 0) {
-			$index = $this->position;
+		/**
+		 * This function returns a record either at the current position or
+		 * the specified position.
+		 *
+		 * @access public
+		 * @param integer $index                            the record's index
+		 * @return mixed                                    the record
+		 */
+		public function fetch($index = -1) {
+			settype($index, 'integer');
+			if ($index < 0) {
+				$index = $this->position;
+				$this->position++;
+			}
+
+			if (isset($this->records[$index])) {
+				return $this->records[$index];
+			}
+
+			return FALSE;
+		}
+
+		/**
+		 * This function frees all data stored in the result set.
+		 *
+		 * @access public
+		 */
+		public function free() {
+			$this->records = array();
+			$this->position = 0;
+			$this->size = 0;
+		}
+
+		/**
+		 * This function returns the value for the named column from the current record.
+		 *
+		 *     // Gets the value of "id" from the current record
+		 *     $id = $results->get('id');
+		 *
+		 * @access public
+		 * @param string $name                              the name of the column
+		 * @param mixed $default                            the default value should the column
+		 *                                                  does not exist
+		 * @return mixed                                    the value for the named column
+		 */
+		public function get($name, $default = NULL) {
+			$record = $this->current();
+
+			if (is_object($record)) {
+				try {
+					$value = $record->{$name};
+					if ($value !== NULL) {
+						return $value;
+					}
+				}
+				catch (\Exception $ex) {}
+			}
+			else if (is_array($record) AND isset($record[$name])) {
+				return $record[$name];
+			}
+
+			return $default;
+		}
+
+		/**
+		 * This function returns whether any records were loaded.
+		 *
+		 * @access public
+		 * @return boolean                                  whether any records were loaded
+		 */
+		public function is_loaded() {
+			return ($this->size > 0);
+		}
+
+		/**
+		 * This function returns the position to the current record.
+		 *
+		 * @access public
+		 * @override
+		 * @return integer                                  the position of the current record
+		 */
+		public function key() {
+			return $this->position;
+		}
+
+		/**
+		 * This function moves forward the position to the next record, lazy loading only
+		 * when necessary.
+		 *
+		 * @access public
+		 * @override
+		 */
+		public function next() {
 			$this->position++;
 		}
 
-		if (isset($this->records[$index])) {
-			return $this->records[$index];
+		/**
+		 * This function determines whether an offset exists.
+		 *
+		 * @access public
+		 * @override
+		 * @param integer $offset                           the offset to be evaluated
+		 * @return boolean                                  whether the requested offset exists
+		 */
+		public function offsetExists($offset) {
+			return isset($this->records[$offset]);
 		}
 
-		return FALSE;
-	}
+		/**
+		 * This functions gets value at the specified offset.
+		 *
+		 * @access public
+		 * @override
+		 * @param integer $offset                           the offset to be fetched
+		 * @return mixed                                    the value at the specified offset
+		 */
+		public function offsetGet($offset) {
+			return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
+		}
 
-	/**
-	 * This function frees all data stored in the result set.
-	 *
-	 * @access public
-	 */
-	public function free() {
-		$this->records = array();
-		$this->position = 0;
-		$this->size = 0;
-	}
+		/**
+		 * This functions sets the specified value at the specified offset.
+		 *
+		 * @access public
+		 * @override
+		 * @param integer $offset                           the offset to be set
+		 * @param mixed $value                              the value to be set
+		 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
+		 */
+		public function offsetSet($offset, $value) {
+			throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset, ':value' => $value));
+		}
 
-	/**
-	 * This function returns the value for the named column from the current record.
-	 *
-	 *     // Gets the value of "id" from the current record
-	 *     $id = $results->get('id');
-	 *
-	 * @access public
-	 * @param string $name                              the name of the column
-	 * @param mixed $default                            the default value should the column
-	 *                                                  does not exist
-	 * @return mixed                                    the value for the named column
-	 */
-	public function get($name, $default = NULL) {
-		$record = $this->current();
+		/**
+		 * This functions allows for the specified offset to be unset.
+		 *
+		 * @access public
+		 * @override
+		 * @param integer $offset                           the offset to be unset
+		 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
+		 */
+		public function offsetUnset($offset) {
+			throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset));
+		}
 
-		if (is_object($record)) {
-			try {
-				$value = $record->{$name};
-				if ($value !== NULL) {
-					return $value;
-				}
+		/**
+		 * This function returns the current iterator position.
+		 *
+		 * @access public
+		 * @override
+		 * @return integer                                  the current iterator position
+		 */
+		public function position() {
+			return $this->position;
+		}
+
+		/**
+		 * This function rewinds the iterator back to starting position.
+		 *
+		 * @access public
+		 * @override
+		 */
+		public function rewind() {
+			$this->position = 0;
+		}
+
+		/**
+		 * This function sets the position pointer to the seeked position.
+		 *
+		 * @access public
+		 * @override
+		 * @param integer $position                         the seeked position
+		 * @throws Throwable\OutOfBounds\Exception          indicates that the seeked position
+		 *                                                  is out of bounds
+		 */
+		public function seek($position) {
+			if ( ! isset($this->records[$position])) {
+				throw new Throwable\OutOfBounds\Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
 			}
-			catch (\Exception $ex) {}
-		}
-		else if (is_array($record) AND isset($record[$name])) {
-			return $record[$name];
+			$this->position = $position;
 		}
 
-		return $default;
-	}
-
-	/**
-	 * This function returns whether any records were loaded.
-	 *
-	 * @access public
-	 * @return boolean                                  whether any records were loaded
-	 */
-	public function is_loaded() {
-		return ($this->size > 0);
-	}
-
-	/**
-	 * This function returns the position to the current record.
-	 *
-	 * @access public
-	 * @override
-	 * @return integer                                  the position of the current record
-	 */
-	public function key() {
-		return $this->position;
-	}
-
-	/**
-	 * This function moves forward the position to the next record, lazy loading only
-	 * when necessary.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function next() {
-		$this->position++;
-	}
-
-	/**
-	 * This function determines whether an offset exists.
-	 *
-	 * @access public
-	 * @override
-	 * @param integer $offset                           the offset to be evaluated
-	 * @return boolean                                  whether the requested offset exists
-	 */
-	public function offsetExists($offset) {
-		return isset($this->records[$offset]);
-	}
-
-	/**
-	 * This functions gets value at the specified offset.
-	 *
-	 * @access public
-	 * @override
-	 * @param integer $offset                           the offset to be fetched
-	 * @return mixed                                    the value at the specified offset
-	 */
-	public function offsetGet($offset) {
-		return isset($this->records[$offset]) ? $this->records[$offset] : NULL;
-	}
-
-	/**
-	 * This functions sets the specified value at the specified offset.
-	 *
-	 * @access public
-	 * @override
-	 * @param integer $offset                           the offset to be set
-	 * @param mixed $value                              the value to be set
-	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
-	 */
-	public function offsetSet($offset, $value) {
-		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset, ':value' => $value));
-	}
-
-	/**
-	 * This functions allows for the specified offset to be unset.
-	 *
-	 * @access public
-	 * @override
-	 * @param integer $offset                           the offset to be unset
-	 * @throws Throwable\UnimplementedMethod\Exception  indicates the result cannot be modified
-	 */
-	public function offsetUnset($offset) {
-		throw new Throwable\UnimplementedMethod\Exception('Message: Invalid call to member function. Reason: Result set cannot be modified.', array(':offset' => $offset));
-	}
-
-	/**
-	 * This function returns the current iterator position.
-	 *
-	 * @access public
-	 * @override
-	 * @return integer                                  the current iterator position
-	 */
-	public function position() {
-		return $this->position;
-	}
-
-	/**
-	 * This function rewinds the iterator back to starting position.
-	 *
-	 * @access public
-	 * @override
-	 */
-	public function rewind() {
-		$this->position = 0;
-	}
-
-	/**
-	 * This function sets the position pointer to the seeked position.
-	 *
-	 * @access public
-	 * @override
-	 * @param integer $position                         the seeked position
-	 * @throws Throwable\OutOfBounds\Exception          indicates that the seeked position
-	 *                                                  is out of bounds
-	 */
-	public function seek($position) {
-		if ( ! isset($this->records[$position])) {
-			throw new Throwable\OutOfBounds\Exception('Message: Invalid array position. Reason: The specified position is out of bounds.', array(':position' => $position, ':count' => $this->size));
+		/**
+		 * This function checks if the current iterator position is valid.
+		 *
+		 * @access public
+		 * @override
+		 * @return boolean                                  whether the current iterator position is valid
+		 */
+		public function valid() {
+			return isset($this->records[$this->position]);
 		}
-		$this->position = $position;
-	}
 
-	/**
-	 * This function checks if the current iterator position is valid.
-	 *
-	 * @access public
-	 * @override
-	 * @return boolean                                  whether the current iterator position is valid
-	 */
-	public function valid() {
-		return isset($this->records[$this->position]);
 	}
 
 }

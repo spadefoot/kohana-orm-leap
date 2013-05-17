@@ -17,44 +17,48 @@
  * limitations under the License.
  */
 
-/**
- * This class indicates that an argument does not match with the expected value.
- *
- * @package Leap
- * @category Throwable
- * @version 2012-12-05
- *
- * @abstract
- */
-abstract class Base\Throwable\InvalidArgument\Exception extends \InvalidArgumentException {
+namespace Leap\Base\Core\Throwable\InvalidArgument {
 
 	/**
-	 * This function instantiates the exception with the specified message,
-	 * variables, and code.
+	 * This class indicates that an argument does not match with the expected value.
 	 *
-	 * @access public
-	 * @param string $message                        the message
-	 * @param array $variables                       the variables
-	 * @param integer $code                          the code
-	 * @return Throwable\InvalidArgument\Exception   the exception
-	 */
-	public function __construct($message, Array $variables = NULL, $code = 0) {
-		// Set the message
-		$message = __($message, $variables);
-
-		// Pass the message to the parent
-		parent::__construct($message, $code);
-	}
-
-	/**
-	 * This function returns a string for this object.
+	 * @package Leap
+	 * @category Throwable
+	 * @version 2012-12-05
 	 *
-	 * @access public
-	 * @override
-	 * @return string                                the string for this object
+	 * @abstract
 	 */
-	public function __toString() {
-		return \Kohana::exception_text($this);
+	abstract class Exception extends \InvalidArgumentException {
+
+		/**
+		 * This function instantiates the exception with the specified message,
+		 * variables, and code.
+		 *
+		 * @access public
+		 * @param string $message                        the message
+		 * @param array $variables                       the variables
+		 * @param integer $code                          the code
+		 * @return Throwable\InvalidArgument\Exception   the exception
+		 */
+		public function __construct($message, Array $variables = NULL, $code = 0) {
+			// Set the message
+			$message = __($message, $variables);
+
+			// Pass the message to the parent
+			parent::__construct($message, $code);
+		}
+
+		/**
+		 * This function returns a string for this object.
+		 *
+		 * @access public
+		 * @override
+		 * @return string                                the string for this object
+		 */
+		public function __toString() {
+			return \Kohana::exception_text($this);
+		}
+
 	}
 
 }
