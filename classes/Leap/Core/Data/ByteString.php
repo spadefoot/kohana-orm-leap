@@ -17,11 +17,15 @@
  * limitations under the License.
  */
 
-/**
- * This class represents a bit-field value.
- *
- * @package Leap
- * @category Data Type
- * @version 2012-10-15
- */
-class Core\BitField extends Base\Core\BitField {}
+namespace Leap\Core\Data {
+
+	/**
+	 * This class represents a data buffer.
+	 *
+	 * @package Leap
+	 * @category Data Type
+	 * @version 2013-05-17
+	 */
+	class ByteString extends \Leap\Base\Core\Data\ByteString {}
+
+}

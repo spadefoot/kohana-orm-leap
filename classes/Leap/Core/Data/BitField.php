@@ -17,12 +17,15 @@
  * limitations under the License.
  */
 
-/**
- * This class adds additional functionality to the underlying SimpleXMLElement
- * class.
- *
- * @package Leap
- * @category XML
- * @version 2012-05-31
- */
-class Core\Data\XML extends Base\Core\Data\XML {}
+namespace Leap\Core\Data {
+
+	/**
+	 * This class represents a bit-field value.
+	 *
+	 * @package Leap
+	 * @category Data Type
+	 * @version 2012-10-15
+	 */
+	class Core\Data\BitField extends \Leap\Base\Core\Data\BitField {}
+
+}

@@ -249,10 +249,10 @@ namespace Leap\Base\DB\Drizzle {
 				else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
 					return $expr->value();
 				}
-				else if ($expr instanceof Core\Data) {
+				else if ($expr instanceof Core\Data\ByteString) {
 					return $expr->as_hexcode("x'%s'");
 				}
-				else if ($expr instanceof Core\BitField) {
+				else if ($expr instanceof Core\Data\BitField) {
 					return $expr->as_binary("b'%s'");
 				}
 				else {
@@ -310,7 +310,7 @@ namespace Leap\Base\DB\Drizzle {
 		 *
 		 * @access protected
 		 * @static
-		 * @var Core\Data\XML
+		 * @var Core\Data\Serialization\XML
 		 */
 		protected static $xml = NULL;
 
@@ -324,7 +324,7 @@ namespace Leap\Base\DB\Drizzle {
 		 */
 		public static function is_keyword($token) {
 			if (static::$xml === NULL) {
-				static::$xml = Core\Data\XML::load('config/sql/mysql.xml');
+				static::$xml = Core\Data\Serialization\XML::load('config/sql/mysql.xml');
 			}
 			$token = strtoupper($token);
 			$nodes = static::$xml->xpath("/sql/dialect[@name='mysql' and @version='5.6']/keywords[keyword = '{$token}']");

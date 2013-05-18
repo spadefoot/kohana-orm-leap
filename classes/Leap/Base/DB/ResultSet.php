@@ -106,10 +106,10 @@ namespace Leap\Base\DB {
 		 *
 		 * @access public
 		 * @param array $config                             the configuration array
-		 * @return Core\Data\CSV                                      an instance of the CSV class
+		 * @return Core\Data\Serialization\CSV                                      an instance of the CSV class
 		 */
 		public function as_csv(Array $config = array()) {
-			$csv = new Core\Data\CSV($config);
+			$csv = new Core\Data\Serialization\CSV($config);
 			if ($this->is_loaded()) {
 				switch ($this->type) {
 					case 'array':

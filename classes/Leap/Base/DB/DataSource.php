@@ -131,7 +131,7 @@ namespace Leap\Base\DB {
 			if (isset($this->settings[$name]) AND ($name != 'persistent')) {
 				return (FALSE === empty($this->settings[$name]));
 			}
-			return NULL;
+			return FALSE;
 		}
 
 		/**

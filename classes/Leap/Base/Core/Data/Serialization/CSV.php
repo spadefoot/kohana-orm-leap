@@ -17,14 +17,14 @@
  * limitations under the License.
  */
 
-namespace Leap\Base\Core\Data {
+namespace Leap\Base\Core\Data\Serialization {
 
 	/**
 	 * This class creates and parses CSV documents.
 	 *
 	 * @package Leap
 	 * @category CSV
-	 * @version 2013-01-27
+	 * @version 2013-05-17
 	 *
 	 * @abstract
 	 */
@@ -198,7 +198,7 @@ namespace Leap\Base\Core\Data {
 		}
 
 		/**
-		 * This function is an alias for Core\Data\CSV::render() and will renders the data as a string when
+		 * This function is an alias for Core\Data\Serialization\CSV::render() and will renders the data as a string when
 		 * the object is treated like a string, e.g. with PHP's echo and print commands.
 		 *
 		 * @access public
@@ -502,10 +502,10 @@ namespace Leap\Base\Core\Data {
 		 * @access public
 		 * @static
 		 * @param array $config                             the configuration array
-		 * @return Core\Data\CSV                                      an instance of the CSV class
+		 * @return Core\Data\Serialization\CSV                                      an instance of the CSV class
 		 */
 		public static function factory(Array $config = array()) {
-			return new Core\Data\CSV($config);
+			return new Core\Data\Serialization\CSV($config);
 		}
 
 		/**
@@ -514,13 +514,13 @@ namespace Leap\Base\Core\Data {
 		 * @access public
 		 * @static
 		 * @param array $config                             the configuration array
-		 * @return Core\Data\CSV                                      an instance of the CSV class containing
+		 * @return Core\Data\Serialization\CSV                                      an instance of the CSV class containing
 		 *                                                  the contents of the file.
 		 *
 		 * @see http://www.php.net/manual/en/function.fgetcsv.php
 		 */
 		public static function load($config = array()) {
-			$csv = new Core\Data\CSV($config);
+			$csv = new Core\Data\Serialization\CSV($config);
 			if (file_exists($csv->file_name)) {
 			   if (($fp = fopen($csv->file_name, 'r')) !== FALSE) {
 					$eol = ($csv->eol == "\r\n") ? array(13, 10) : array(ord($csv->eol)); // 13 => cr, 10 => lf

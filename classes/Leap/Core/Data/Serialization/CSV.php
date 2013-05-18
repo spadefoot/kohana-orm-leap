@@ -18,10 +18,10 @@
  */
 
 /**
- * This class represents a data buffer.
+ * This class creates and parses CSV documents.
  *
  * @package Leap
- * @category Data Type
- * @version 2012-05-10
+ * @category CSV
+ * @version 2012-05-31
  */
-class Core\Data extends Base\Core\Data {}
+class Core\Data\Serialization\CSV extends Base\Core\Data\Serialization\CSV {}

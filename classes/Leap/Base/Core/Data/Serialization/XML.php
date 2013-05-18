@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-namespace Leap\Base\Core\Data {
+namespace Leap\Base\Core\Data\Serialization {
 
 	/**
 	 * This class adds additional functionality to the underlying \SimpleXMLElement
@@ -94,7 +94,7 @@ namespace Leap\Base\Core\Data {
 			if ($as_string) {
 				return $contents;
 			}
-			$XML = new Core\Data\XML($contents);
+			$XML = new Core\Data\Serialization\XML($contents);
 			return $XML;
 		}
 
@@ -147,7 +147,7 @@ namespace Leap\Base\Core\Data {
 		 * @access public
 		 * @static
 		 * @param string $file                          the file name
-		 * @return Core\Data\XML                        an instance of this class
+		 * @return Core\Data\Serialization\XML                        an instance of this class
 		 * @throws Throwable\InvalidArgument\Exception  indicates a data type mismatch
 		 * @throws Throwable\FileNotFound\Exception     indicates that the file does not exist
 		 */
@@ -160,7 +160,7 @@ namespace Leap\Base\Core\Data {
 
 			$contents = file_get_contents($uri);
 
-			$XML = new Core\Data\XML($contents);
+			$XML = new Core\Data\Serialization\XML($contents);
 			return $XML;
 		}
 

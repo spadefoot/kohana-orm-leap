@@ -18,10 +18,11 @@
  */
 
 /**
- * This class creates and parses CSV documents.
+ * This class adds additional functionality to the underlying SimpleXMLElement
+ * class.
  *
  * @package Leap
- * @category CSV
+ * @category XML
  * @version 2012-05-31
  */
-class Core\Data\CSV extends Base\Core\Data\CSV {}
+class Core\Data\Serialization\XML extends Base\Core\Data\Serialization\XML {}

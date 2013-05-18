@@ -66,7 +66,7 @@ abstract class Base\DB\ORM\Field\Blob extends DB\ORM\Field {
 			$default = $metadata['default'];
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = new Core\Data('', Core\Data::HEXADECIMAL_DATA);
+			$default = new Core\Data\ByteString('', Core\Data\ByteString::HEXADECIMAL_DATA);
 		}
 		else {
 			$default = NULL;
@@ -100,7 +100,7 @@ abstract class Base\DB\ORM\Field\Blob extends DB\ORM\Field {
 				if ( ! ($value instanceof DB\SQL\Expression)) {
 					if ($value !== NULL) {
 						if (is_string($value)) {
-							$value = new Core\Data($value, Core\Data::HEXADECIMAL_DATA);
+							$value = new Core\Data\ByteString($value, Core\Data\ByteString::HEXADECIMAL_DATA);
 						}
 						if ( ! $this->validate($value)) {
 							throw new Throwable\Validation\Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));

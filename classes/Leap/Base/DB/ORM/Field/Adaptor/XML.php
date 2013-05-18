@@ -57,7 +57,7 @@ abstract class Base\DB\ORM\Field\Adaptor\XML extends DB\ORM\Field\Adaptor {
 			case 'value':
 				$value = $this->model->{$this->metadata['field']};
 				if (($value !== NULL) AND ! ($value instanceof DB\SQL\Expression)) {
-					$value = new Core\Data\XML($value);
+					$value = new Core\Data\Serialization\XML($value);
 				}
 				return $value;
 			break;
@@ -85,7 +85,7 @@ abstract class Base\DB\ORM\Field\Adaptor\XML extends DB\ORM\Field\Adaptor {
 					$value = $value->asXML();
 				}
 				else if (is_array($value)) {
-					$value = Core\Data\XML::encode($value, TRUE);
+					$value = Core\Data\Serialization\XML::encode($value, TRUE);
 				}
 				$this->model->{$this->metadata['field']} = $value;
 			break;

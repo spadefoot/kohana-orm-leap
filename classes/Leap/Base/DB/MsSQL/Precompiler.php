@@ -253,10 +253,10 @@ abstract class Base\DB\MsSQL\Precompiler extends DB\SQL\Precompiler {
 			else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
 				return $expr->value();
 			}
-			else if ($expr instanceof Core\Data) {
+			else if ($expr instanceof Core\Data\ByteString) {
 				return $expr->as_hexcode("x'%s'");
 			}
-			else if ($expr instanceof Core\BitField) {
+			else if ($expr instanceof Core\Data\BitField) {
 				return $expr->as_binary("b'%s'");
 			}
 			else {
@@ -314,7 +314,7 @@ abstract class Base\DB\MsSQL\Precompiler extends DB\SQL\Precompiler {
 	 *
 	 * @access protected
 	 * @static
-	 * @var Core\Data\XML
+	 * @var Core\Data\Serialization\XML
 	 */
 	protected static $xml = NULL;
 
@@ -330,7 +330,7 @@ abstract class Base\DB\MsSQL\Precompiler extends DB\SQL\Precompiler {
 	 */
 	public static function is_keyword($token) {
 		if (static::$xml === NULL) {
-			static::$xml = Core\Data\XML::load('config/sql/mssql.xml');
+			static::$xml = Core\Data\Serialization\XML::load('config/sql/mssql.xml');
 		}
 		$token = strtoupper($token);
 		$nodes = static::$xml->xpath("/sql/dialect[@name='mssql' and @version='2008.R2']/keywords[keyword = '{$token}']");

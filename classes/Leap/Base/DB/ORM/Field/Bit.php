@@ -68,11 +68,11 @@ abstract class Base\DB\ORM\Field\Bit extends DB\ORM\Field {
 
 		if (isset($metadata['default'])) {
 			$default = ($metadata['default'] !== NULL)
-				? new Core\BitField($this->metadata['pattern'], $metadata['default'])
+				? new Core\Data\BitField($this->metadata['pattern'], $metadata['default'])
 				: NULL;
 		}
 		else if ( ! $this->metadata['nullable']) {
-			$default = new Core\BitField($this->metadata['pattern'], 0);
+			$default = new Core\Data\BitField($this->metadata['pattern'], 0);
 		}
 		else {
 			$default = NULL;
@@ -105,8 +105,8 @@ abstract class Base\DB\ORM\Field\Bit extends DB\ORM\Field {
 			case 'value':
 				if ( ! ($value instanceof DB\SQL\Expression)) {
 					if ($value !== NULL) {
-						if ( ! ($value instanceof Core\BitField)) {
-							$value = new Core\BitField($this->metadata['pattern'], $value);
+						if ( ! ($value instanceof Core\Data\BitField)) {
+							$value = new Core\Data\BitField($this->metadata['pattern'], $value);
 						}
 						if ( ! $this->validate($value)) {
 							throw new Throwable\Validation\Exception('Message: Unable to set the specified property. Reason: Value :value failed to pass validation constraints.', array(':value' => $value));

@@ -17,14 +17,16 @@
  * limitations under the License.
  */
 
-namespace Leap\Base\Core {
+namespace Leap\Base\Core\Data {
+
+	use \Leap\Core;
 
 	/**
 	 * This class represents a bit-field value.
 	 *
 	 * @package Leap
 	 * @category Data Type
-	 * @version 2013-05-06
+	 * @version 2013-05-17
 	 *
 	 * @abstract
 	 */
@@ -283,7 +285,7 @@ namespace Leap\Base\Core {
 					return $binary;
 				}
 			}
-			else if (is_object($value) AND ($value instanceof Core\BitField)) {
+			else if (is_object($value) AND ($value instanceof Core\Data\BitField)) {
 				return $value->as_binary();
 			}
 			return str_pad('0', $boundary, '0', STR_PAD_LEFT);

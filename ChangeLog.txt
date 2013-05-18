@@ -28,10 +28,10 @@ Change Log for LEAP ORM
 * Moved and renamed object class.
 
 2012-10-15
-* Adding new Core\BitField class.
+* Adding new Core\Data\BitField class.
 * Redid the Base\DB\ORM\Field\Bit class.
-* Changing Core\Data::BYTE_DATA back to Core\Data::BINARY_DATA.
-* Added the ability to format strings in Base\Core\Data.
+* Changing Core\Data\ByteString::BYTE_DATA back to Core\Data\ByteString::BINARY_DATA.
+* Added the ability to format strings in Base\Core\Data\ByteString.
 * Minor inline documentation changes.
 
 2012-08-24
@@ -56,7 +56,7 @@ Change Log for LEAP ORM
 * Reworked validation in field classes (Issues #50, #59, #60).
 
 2012-06-14
-* Changing Core\Data::BINARY_DATA to Core\Data::BYTE_DATA.
+* Changing Core\Data\ByteString::BINARY_DATA to Core\Data\ByteString::BYTE_DATA.
 
 2012-06-06
 * Merging pull request #41 as per nyunyu95's request.
@@ -79,7 +79,7 @@ Change Log for LEAP ORM
 2012-05-15
 * Fixed bug in Base\DB\ORM\Field\Decimal::validate().
 * Cleaned-up and improved Base\DB\ORM\Model::hash_code() (Issue #25 & #26).
-* Minor improvements to Base\Core\Data class.
+* Minor improvements to Base\Core\Data\ByteString class.
 * Updated inline documentation.
 
 2012-05-11
@@ -157,8 +157,8 @@ Change Log for LEAP ORM
 * Renamed Base\DB\Connection\Driver::escape_string($string) to Base\DB\Connection\Driver::quote($string, $like = FALSE).
 * Commented out code in schema.php files so that API guide can be generated per nyunyu95's request (Issue #21).
 * Cleaned-up close function in connection classes.
-* Implemented \ArrayAccess and \SeekableIterator interfaces in Base\Core\Data\CSV.
-* Added Base\Core\Data\CSV::as_array().
+* Implemented \ArrayAccess and \SeekableIterator interfaces in Base\Core\Data\Serialization\CSV.
+* Added Base\Core\Data\Serialization\CSV::as_array().
 * Made the Double field's metadata 'max_digits' and 'max_decimals' optional.
 * Fixed some minor styling.
 * Updated some inline documentation.
@@ -195,7 +195,7 @@ Change Log for LEAP ORM
 * Changed how semicolons are removed in the expression classes.
 
 2012-01-12
-* Fixed some styling in Base\Core\Data\CSV.
+* Fixed some styling in Base\Core\Data\Serialization\CSV.
 
 2012-01-11
 * Adding the ability to export a result set as a CSV.

@@ -17,20 +17,20 @@
  * limitations under the License.
  */
 
-namespace Leap\Base\Core {
+namespace Leap\Base\Core\Data {
 
 	/**
 	 * This class represents a data buffer.
 	 *
 	 * @package Leap
 	 * @category Data Type
-	 * @version 2013-05-15
+	 * @version 2013-05-17
 	 *
 	 * @see https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSData_Class/Reference/Reference.html
 	 *
 	 * @abstract
 	 */
-	abstract class Data extends Core\Object implements \Countable {
+	abstract class ByteString extends Core\Object implements \Countable {
 
 		/**
 		 * This constant represents binary data.
@@ -184,22 +184,22 @@ namespace Leap\Base\Core {
 		protected static function unpack($data, $type) {
 			if (is_string($data)) {
 				switch ($type) {
-					case Core\Data::BINARY_DATA:
+					case Core\Data\ByteString::BINARY_DATA:
 						$binary = (preg_match("/^b'.*'$/i", $data))
 							? substr($data, 2, strlen($data) - 3)
 							: $data;
 						return base_convert($binary, 2, 16);
 					break;
-					case Core\Data::STRING_DATA:
+					case Core\Data\ByteString::STRING_DATA:
 						$hexcode = unpack('H*hex', $data);
 						return $hexcode['hex'];
 					break;
-					case Core\Data::HEXADECIMAL_DATA:
+					case Core\Data\ByteString::HEXADECIMAL_DATA:
 						return $data;
 					break;
 				}
 			}
-			else if (is_object($data) AND ($data instanceof Core\Data)) {
+			else if (is_object($data) AND ($data instanceof Core\Data\ByteString)) {
 				return $data->as_hexcode();
 			}
 			return '';
