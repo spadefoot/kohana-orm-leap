@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category PostgreSQL
- * @version 2013-03-12
+ * @version 2013-06-18
  *
  * @see http://php.net/manual/en/ref.pgsql.php
  *
@@ -197,7 +197,7 @@ abstract class Base_DB_PostgreSQL_Connection_Standard extends DB_SQL_Connection_
 			if ($this->resource === FALSE) {
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @pg_last_error()));
 			}
-			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
+			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->resource, strtoupper($this->data_source->charset)))) {
 				throw new Throwable_Database_Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 			}
 		}
