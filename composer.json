@@ -1,0 +1,35 @@
+{
+        "name":        "spadefoot/kohana-orm-leap",
+        "type":        "kohana-module",
+        "description": "An ORM module for the Kohana PHP framework that is designed to work with all major databases.",
+        "homepage":    "http://orm.spadefootcode.com/",
+        "license":     "Apache-2.0",
+        "keywords":    ["kohana", "framework", "database", "leap", "ORM"],
+        "authors": [
+                {
+                        "name":     "Spadefoot Team",
+                        "email":    "spadefoot.oss@gmail.com",
+                        "role":     "developer"
+                }
+        ],
+        "support": {
+                "issues":   "https://github.com/spadefoot/kohana-orm-leap/issues",
+                "source":   "https://github.com/spadefoot/kohana-orm-leap"
+        },
+        "require": {
+                "composer/installers": "~1.0",
+                "kohana/core":         ">=3.3",
+                "php":                 ">=5.3.3"
+        },
+        "suggest": {
+                "ext-mysql":   "*",
+                "ext-pdo":     "*",
+                "kohana/database": ">=3.3"
+        },
+        "extra": {
+                "branch-alias": {
+                        "dev-3.3/develop": "3.3.x-dev",
+                        "dev-3.4/develop": "3.4.x-dev"
+                }
+        }
+}
