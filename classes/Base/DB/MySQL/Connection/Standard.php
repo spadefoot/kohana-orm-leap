@@ -155,6 +155,8 @@ abstract class Base_DB_MySQL_Connection_Standard extends DB_SQL_Connection_Stand
 			$host = $this->data_source->host;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
+			$port = $this->data_source->port;
+			$host = ($port ? "$host:$port" : $host);
 			$this->resource = ($this->data_source->is_persistent())
 				? @mysql_pconnect($host, $username, $password)
 				: @mysql_connect($host, $username, $password, TRUE);
