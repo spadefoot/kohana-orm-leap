@@ -22,9 +22,9 @@ LEAP provides a number of features, such as:
 
 * Plugins for DB2, Drizzle, Firebird, MariaDB, MS SQL, MySQL, Oracle, PostgreSQL, and SQLite.
 * Designed to work in conjunction with other database tools for Kohana.
-* [Config file for designating the database driver (e.g. PDO) and connection strings](http://orm.spadefootcode.com/tutorials/setting-up-a-database-connection/).
+* [Config file for designating the database driver (e.g. PDO) and connection strings](http://spadefoot.github.io/kohana-orm-leap/tutorials/setting-up-a-database-connection/).
 * Classes are easily extensible.
-* A [database connection pool](http://orm.spadefootcode.com/tutorials/establishing-a-database-connection/) for managing resources.
+* A [database connection pool](http://spadefoot.github.io/kohana-orm-leap/tutorials/establishing-a-database-connection/) for managing resources.
 * A powerful [query builder for creating SQL statements](http://orm.spadefootcode.com/tutorials/building-sql-statements/).
 * Sanitizes data to help prevent SQL injection attacks.
 * Capable of handling non-integers primary keys.
@@ -35,7 +35,7 @@ LEAP provides a number of features, such as:
 * A set of Auth classes for authenticating user logins.
 * A toolkit of useful functions.
 * [Leap's API](http://orm.spadefootcode.com/api/annotated.html) that documents each class.
-* Lots of [tutorials](http://orm.spadefootcode.com/tutorials/index/).
+* Lots of [tutorials](http://spadefoot.github.io/kohana-orm-leap/tutorials/).
 
 ## Getting Started
 
@@ -48,7 +48,7 @@ To start using LEAP, follow these steps:
 5. Add "leap" as a module to application/bootstrap.php.
 6. Begin creating your models in the application/classes/model/leap/ folder.
 
-For more information, see the tutorial on [installing LEAP](http://orm.spadefootcode.com/tutorials/installing-leap/).
+For more information, see the tutorial on [installing LEAP](http://spadefoot.github.io/kohana-orm-leap/install/).
 
 ### About Branches
 
@@ -70,8 +70,8 @@ you are not using.  This is possible because each database plugin in LEAP is con
 
 ## Documentation
 
-This project is accompanied by [a companion Web site](http://orm.spadefootcode.com), which documents the [API for the LEAP ORM](http://orm.spadefootcode.com/api/annotated.html)
-and has a number of [examples and tutorials](http://orm.spadefootcode.com/tutorials/index/). You can also find other tutorials and examples
+This project is accompanied by ~~[old site](http://orm.spadefootcode.com)~~ [a companion Web site](http://spadefoot.github.io/kohana-orm-leap/), which documents the [API for the LEAP ORM](http://orm.spadefootcode.com/api/annotated.html)
+and has a number of [examples and tutorials](http://spadefoot.github.io/kohana-orm-leap/tutorials/). You can also find other tutorials and examples
 online (please let us know if you find one that we should highlight here).
 
 ## Further Assistance
