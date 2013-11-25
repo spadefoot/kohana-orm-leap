@@ -30,7 +30,7 @@ Kohana::modules(array(
 
 #### Step #4: Setup Database Connections
 
-The next step will be to [setup your database connections](http://orm.spadefootcode.com/tutorials/setting-up-a-database-connection/) in your [config/database.php](https://github.com/spadefoot/kohana-orm-leap/tree/3.2/master/config).  Once your database connections are setup, you should be able to use any [database connection classes](http://orm.spadefootcode.com/tutorials/establishing-a-database-connection/).
+The next step will be to [setup your database connections]({{ site.baseurl}}/tutorials/setting-up-a-database-connection) in your [config/database.php](https://github.com/spadefoot/kohana-orm-leap/tree/3.2/master/config).  Once your database connections are setup, you should be able to use any [database connection classes]({{ site.baseurl}}/tutorials/establishing-a-database-connection).
 
 #### Step #5: Start Writing ORM Models
 

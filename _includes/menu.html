@@ -8,14 +8,14 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/">LEAP</a>
+			<a class="navbar-brand" href="{{ site.baseurl}}/">LEAP</a>
 		</div>
 		<div class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<li class="{% if page.menu_item == 'home' %}active{% endif %}"><a href="/">Home</a></li>
-				<li class="{% if page.menu_item == 'install' %}active{% endif %}"><a href="/install">Install</a></li>
-				<li class="{% if page.menu_item == 'tutorials' %}active{% endif %}"><a href="/tutorials">Tutorials</a></li>
-				<li class="{% if page.menu_item == 'resources' %}active{% endif %}"><a href="/resources">Resources</a></li>
+				<li class="{% if page.menu_item == 'home' %}active{% endif %}"><a href="{{ site.baseurl}}/">Home</a></li>
+				<li class="{% if page.menu_item == 'install' %}active{% endif %}"><a href="{{ site.baseurl}}/install">Install</a></li>
+				<li class="{% if page.menu_item == 'tutorials' %}active{% endif %}"><a href="{{ site.baseurl}}/tutorials">Tutorials</a></li>
+				<li class="{% if page.menu_item == 'resources' %}active{% endif %}"><a href="{{ site.baseurl}}/resources">Resources</a></li>
 			</ul>
 		</div><!--/.nav-collapse -->
 	</div>

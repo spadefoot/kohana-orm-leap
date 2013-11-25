@@ -6,7 +6,7 @@ menu_item: tutorials
 
 ### Establishing a database connection
 
-LEAP offers a variety of ways to connect to a database. However, before you can connect to any database you will need to [configure your database configuration file](/tutorials/setting-up-a-database-connection) to set up your connection strings.
+LEAP offers a variety of ways to connect to a database. However, before you can connect to any database you will need to [configure your database configuration file]({{ site.baseurl}}/tutorials/setting-up-a-database-connection) to set up your connection strings.
 
 Once you have set up your connections in config/database.php, the next step is to begin with creating a database connection using LEAP.
 
