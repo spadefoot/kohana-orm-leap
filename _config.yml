@@ -1,0 +1,7 @@
+name: "Leap ORM for Kohana by spadefoot"
+description: "Object Relational Mapping module for Kohana 3"
+
+
+url: "http://spadefoot.github.io/kohana-orm-leap/"
+
+pygments: true
