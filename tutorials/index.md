@@ -11,9 +11,9 @@ Leap is more than just an ORM; it is a database connection manager and query bui
 * [Installing LEAP]({{ site.baseurl}}/install)
 * [Setting up a database connection]({{ site.baseurl}}/tutorials/setting-up-a-database-connection)
 * [Establishing a database connection]({{ site.baseurl}}/tutorials/establishing-a-database-connection)
-
-<!--
 * [Executing/Querying SQL statements]({{ site.baseurl}}/tutorials/executing-querying-sql-statements)
 * [Working with result sets]({{ site.baseurl}}/tutorials/working-with-result-sets)
+
+<!--
 * [Building SQL statements]({{ site.baseurl}}/tutorials/building-sql-statements)
 -->
