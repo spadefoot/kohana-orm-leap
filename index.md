@@ -31,7 +31,7 @@ Leap is NOT just another database ORM.  It is provides a number of features that
 		    </li>
 		    <li>
 		        <span class="feature">Well documented.</span><br>
-		        <span>Plenty of <a href="http://orm.spadefootcode.com/tutorials/index/">examples and tutorials</a>, and has an easy-to-read <a href="http://orm.spadefootcode.com/api/annotated.html">API</a>.</span>
+		        <span>Plenty of <a href="{{site.baseurl}}/tutorials/">examples and tutorials</a>, and has an easy-to-read <a href="http://orm.spadefootcode.com/api/annotated.html">API</a>.</span>
 		    </li>
 		</ul>
 
