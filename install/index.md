@@ -10,7 +10,7 @@ Since the LEAP ORM was written for the Kohana PHP Framework, it is ease to insta
 
 #### Step #1: Download Source Code
 
-All of the source code to the <a href="https://github.com/spadefoot/kohana-orm-leap">LEAP ORM module for Kohana</a> is available on github.
+All of the source code to the [LEAP ORM module for Kohana](https://github.com/spadefoot/kohana-orm-leap) is available on github.
 
 #### Step #2: Unarchive/Unzip Files
 
@@ -34,4 +34,4 @@ The next step will be to [setup your database connections]({{ site.baseurl}}/tut
 
 #### Step #5: Start Writing ORM Models
 
-However, before you can start using LEAP's ORM you will need to <a href="http://orm.spadefootcode.com/tutorials/defining-a-model/">create models</a> for each one of your database tables.  These models will then allow you to take full advantage of all of LEAP's functionality.
+However, before you can start using LEAP's ORM you will need to [create models]({{site.baseurl}}/tutorials/defining-a-model) for each one of your database tables.  These models will then allow you to take full advantage of all of LEAP's functionality.
