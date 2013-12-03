@@ -25,13 +25,13 @@ LEAP provides a number of features, such as:
 * [Config file for designating the database driver (e.g. PDO) and connection strings](http://spadefoot.github.io/kohana-orm-leap/tutorials/setting-up-a-database-connection/).
 * Classes are easily extensible.
 * A [database connection pool](http://spadefoot.github.io/kohana-orm-leap/tutorials/establishing-a-database-connection/) for managing resources.
-* A powerful [query builder for creating SQL statements](http://orm.spadefootcode.com/tutorials/building-sql-statements/).
+* A powerful [query builder for creating SQL statements](http://spadefoot.github.io/kohana-orm-leap/tutorials/building-sql-statements/).
 * Sanitizes data to help prevent SQL injection attacks.
 * Capable of handling non-integers primary keys.
 * Supports composite primary keys and composite foreign keys.
-* Enforces strong data types on [database fields](http://orm.spadefootcode.com/tutorials/mapping-a-model/#fields).
-* Allows [field aliases](http://orm.spadefootcode.com/tutorials/mapping-a-model/#aliases) to be declared.
-* Makes working with certain database fields easy with [field adaptors](http://orm.spadefootcode.com/tutorials/mapping-a-model/#adaptors).
+* Enforces strong data types on [database fields](http://spadefoot.github.io/kohana-orm-leap/tutorials/mapping-a-model/#fields).
+* Allows [field aliases](http://spadefoot.github.io/kohana-orm-leap/tutorials/mapping-a-model/#aliases) to be declared.
+* Makes working with certain database fields easy with [field adaptors](http://spadefoot.github.io/kohana-orm-leap/tutorials/mapping-a-model/#adaptors).
 * A set of Auth classes for authenticating user logins.
 * A toolkit of useful functions.
 * [Leap's API](http://orm.spadefootcode.com/api/annotated.html) that documents each class.
