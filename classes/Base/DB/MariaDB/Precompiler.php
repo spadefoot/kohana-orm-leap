@@ -26,7 +26,7 @@
  *
  * @abstract
  */
-abstract class Base_DB_MariaDB_Expression extends DB_SQL_Precompiler {
+abstract class Base_DB_MariaDB_Precompiler extends DB_SQL_Precompiler {
 
 	/**
 	 * This constant represents a closing identifier quote character.

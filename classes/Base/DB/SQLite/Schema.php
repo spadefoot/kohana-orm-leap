@@ -286,7 +286,7 @@ abstract class Base_DB_SQLite_Schema extends DB_Schema {
 		while ($reader->read()) {
 			$record = $reader->row('array');
 			if (isset($record['action'])) {
-				$sql = trim($record['action'], "; \t\n\r\0\x0B")
+				$sql = trim($record['action'], "; \t\n\r\0\x0B");
 
 				if (preg_match('/\s+INSERT\s+/i', $sql)) {
 					$record['event'] = 'INSERT';
