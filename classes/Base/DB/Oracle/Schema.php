@@ -32,7 +32,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 * This function returns an associated array which describes the properties
 	 * for the specified SQL data type.
 	 *
-	 * @access protected
+	 * @access public
 	 * @override
 	 * @param string $type                   the SQL data type
 	 * @return array                         an associated array which describes the properties
@@ -40,7 +40,7 @@ abstract class Base_DB_Oracle_Schema extends DB_Schema {
 	 *
 	 * @license http://kohanaframework.org/license
 	 */
-	protected function data_type($type) {
+	public function data_type($type) {
 		/*
 		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),

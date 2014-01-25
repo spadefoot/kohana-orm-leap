@@ -282,7 +282,7 @@ abstract class Base_DB_PostgreSQL_Schema extends DB_Schema {
 			->column(DB_SQL::expr('NULL'), 'created')
 			->from('information_schema.triggers')
 			->where('event_object_schema', DB_SQL_Operator::_NOT_IN_, array('pg_catalog', 'information_schema'))
-			->where('event_object_table', '!~', '^pg_')3
+			->where('event_object_table', '!~', '^pg_')
 			->where(DB_SQL::expr('UPPER("event_object_table")'), DB_SQL_Operator::_EQUAL_TO_, $table)
 			->order_by(DB_SQL::expr('UPPER("event_object_schema")'))
 			->order_by(DB_SQL::expr('UPPER("event_object_table")'))

@@ -32,7 +32,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 * This function returns an associated array which describes the properties
 	 * for the specified SQL data type.
 	 *
-	 * @access protected
+	 * @access public
 	 * @override
 	 * @param string $type                   the SQL data type
 	 * @return array                         an associated array which describes the properties
@@ -42,7 +42,7 @@ abstract class Base_DB_DB2_Schema extends DB_Schema {
 	 *
 	 * @see http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/topic/com.ibm.db2z10.doc.intro/src/tpc/db2z_datatypes.htm
 	 */
-	protected function data_type($type) {
+	public function data_type($type) {
 		/*
 		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
