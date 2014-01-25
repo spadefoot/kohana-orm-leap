@@ -17,12 +17,16 @@
  * limitations under the License.
  */
 
-/**
- * This class adds additional functionality to the underlying SimpleXMLElement
- * class.
- *
- * @package Leap
- * @category XML
- * @version 2012-05-31
- */
-class Core\Data\Serialization\XML extends Base\Core\Data\Serialization\XML {}
+namespace Leap\Core\Data\Serialization {
+
+	/**
+	 * This class adds additional functionality to the underlying SimpleXMLElement
+	 * class.
+	 *
+	 * @package Leap
+	 * @category XML
+	 * @version 2012-05-31
+	 */
+	class XML extends \Leap\Base\Core\Data\Serialization\XML {}
+
+}

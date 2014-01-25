@@ -81,7 +81,7 @@ namespace Leap\Base\DB\Drizzle {
 			else if ($expr instanceof DB\SQL\Expression) {
 				return $expr->value($this);
 			}
-			else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
+			else if (class_exists('\\Database\\Expression') AND ($expr instanceof \Database\Expression)) {
 				return $expr->value();
 			}
 			else if ( ! is_string($expr)) {
@@ -246,7 +246,7 @@ namespace Leap\Base\DB\Drizzle {
 				else if ($expr instanceof DB\SQL\Expression) {
 					return $expr->value($this);
 				}
-				else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
+				else if (class_exists('\\Database\\Expression') AND ($expr instanceof \Database\Expression)) {
 					return $expr->value();
 				}
 				else if ($expr instanceof Core\Data\ByteString) {

@@ -17,13 +17,17 @@
  * limitations under the License.
  */
 
-/**
- * This class acts as the base class for any object.
- *
- * @package Leap
- * @category Core
- * @version 2013-03-12
- *
- * @abstract
- */
-abstract class Core\Object extends Base\Core\Object {}
+namespace Leap\Core {
+
+	/**
+	 * This class acts as the base class for any object.
+	 *
+	 * @package Leap
+	 * @category Core
+	 * @version 2013-03-12
+	 *
+	 * @abstract
+	 */
+	abstract class Object extends \Leap\Base\Core\Object {}
+
+}

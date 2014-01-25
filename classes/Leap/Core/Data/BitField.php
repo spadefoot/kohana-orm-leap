@@ -26,6 +26,6 @@ namespace Leap\Core\Data {
 	 * @category Data Type
 	 * @version 2012-10-15
 	 */
-	class Core\Data\BitField extends \Leap\Base\Core\Data\BitField {}
+	class BitField extends \Leap\Base\Core\Data\BitField {}
 
 }

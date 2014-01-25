@@ -17,11 +17,15 @@
  * limitations under the License.
  */
 
-/**
- * This class creates and parses CSV documents.
- *
- * @package Leap
- * @category CSV
- * @version 2012-05-31
- */
-class Core\Data\Serialization\CSV extends Base\Core\Data\Serialization\CSV {}
+namespace Leap\Core\Data\Serialization {
+
+	/**
+	 * This class creates and parses CSV documents.
+	 *
+	 * @package Leap
+	 * @category CSV
+	 * @version 2012-05-31
+	 */
+	class CSV extends \Leap\Base\Core\Data\Serialization\CSV {}
+
+}

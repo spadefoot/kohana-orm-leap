@@ -158,6 +158,8 @@ abstract class Base\DB\MariaDB\Connection\Standard extends DB\SQL\Connection\Sta
 			$host = $this->data_source->host;
 			$username = $this->data_source->username;
 			$password = $this->data_source->password;
+			$port = $this->data_source->port;
+			$host = ($port ? "{$host}:{$port}" : $host);
 			$this->resource = ($this->data_source->is_persistent())
 				? @mysql_pconnect($host, $username, $password)
 				: @mysql_connect($host, $username, $password, TRUE);

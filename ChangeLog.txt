@@ -48,7 +48,7 @@ Change Log for LEAP ORM
 * Added adaptors and aliases to Base\DB\ORM\Model::as_array().
 * Added create and update methods to Base\DB\ORM\Model.
 * Replace spl_object_hash() with Core\Object::__hashCode().
-* Base\DB\ORM\Field\Blob now uses the Data class.
+* Base\DB\ORM\Field\Blob now uses the Core\Data\ByteString class.
 * Renamed DB\ORM\Field\Adaptor\Array to DB\ORM\Field\Adaptor\List.
 * Renamed some variables.
 

@@ -56,7 +56,7 @@ namespace Leap\Base\Core\Throwable\OutOfBounds {
 		 * @return string                           the string for this object
 		 */
 		public function __toString() {
-			return \Kohana::exception_text($this);
+			return \Kohana\Exception::text($this);
 		}
 
 	}

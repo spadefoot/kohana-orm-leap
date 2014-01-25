@@ -197,7 +197,7 @@ abstract class Base\DB\PostgreSQL\Connection\Standard extends DB\SQL\Connection\
 			if ($this->resource === FALSE) {
 				throw new Throwable\Database\Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => @pg_last_error()));
 			}
-			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->link, strtoupper($this->data_source->charset)))) {
+			if ( ! empty($this->data_source->charset) AND abs(pg_set_client_encoding($this->resource, strtoupper($this->data_source->charset)))) {
 				throw new Throwable\Database\Exception('Message: Failed to set character set. Reason: :reason', array(':reason' => @pg_last_error($this->resource)));
 			}
 		}

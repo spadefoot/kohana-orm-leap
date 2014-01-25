@@ -81,7 +81,7 @@ abstract class Base\DB\MariaDB\Precompiler extends DB\SQL\Precompiler {
 		else if ($expr instanceof DB\SQL\Expression) {
 			return $expr->value($this);
 		}
-		else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
+		else if (class_exists('\\Database\\Expression') AND ($expr instanceof \Database\Expression)) {
 			return $expr->value();
 		}
 		else if ( ! is_string($expr)) {
@@ -255,7 +255,7 @@ abstract class Base\DB\MariaDB\Precompiler extends DB\SQL\Precompiler {
 			else if ($expr instanceof DB\SQL\Expression) {
 				return $expr->value($this);
 			}
-			else if (class_exists('\\Database_Expression') AND ($expr instanceof \Database_Expression)) {
+			else if (class_exists('\\Database\\Expression') AND ($expr instanceof \Database\Expression)) {
 				return $expr->value();
 			}
 			else if ($expr instanceof Core\Data\ByteString) {

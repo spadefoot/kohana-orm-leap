@@ -65,7 +65,7 @@ For more information, see the tutorial on [installing LEAP](http://orm.spadefoot
 ## Required Files
 
 The LEAP ORM module is meant to be completely independent of other Kohana modules.  However, it is recommended that Kohana's database module be
-installed as well so that you can utilize the \Database_Expression class.  As for the files within LEAP, you can remove any database plugins that
+installed as well so that you can utilize the \Database\Expression class.  As for the files within LEAP, you can remove any database plugins that
 you are not using.  This is possible because each database plugin in LEAP is considered independent of the others.
 
 ## Documentation
