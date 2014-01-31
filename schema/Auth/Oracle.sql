@@ -1,7 +1,7 @@
 /*
  * The BSD License
  *
- * Copyright © 2011–2013 Spadefoot Team.
+ * Copyright © 2011–2014 Spadefoot Team.
  * Copyright © 2007–2012 Kohana Team.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -75,18 +75,18 @@ END;
 CREATE TABLE "users" (
 	"id" NUMBER(11) NOT NULL,
 	"email" VARCHAR2(254) NOT NULL,
-	"username" VARCHAR2(32) NOT NULL DEFAULT '',
+	"username" VARCHAR2(32) DEFAULT '',
 	"password" VARCHAR2(64) NOT NULL,
 	"firstname" VARCHAR2(35) DEFAULT NULL,
 	"lastname" VARCHAR2(50) DEFAULT NULL,
-	"activated" NUMBER(1) NOT NULL DEFAULT 1,
-	"banned" NUMBER(1) NOT NULL DEFAULT 0,
+	"activated" NUMBER(1) DEFAULT 1,
+	"banned" NUMBER(1) DEFAULT 0,
 	"ban_reason" VARCHAR2(255) DEFAULT NULL,
 	"new_password_key" VARCHAR2(64) DEFAULT NULL,
 	"new_password_requested" NUMBER(11) DEFAULT NULL,
 	"new_email" VARCHAR2(254) DEFAULT NULL,
 	"new_email_key" VARCHAR2(64) DEFAULT NULL,
-	"logins" NUMBER(10) NOT NULL DEFAULT 0,
+	"logins" NUMBER(10) DEFAULT 0,
 	"last_login" NUMBER(10),
 	"last_ip" VARCHAR2(39) DEFAULT NULL,
 	CONSTRAINT "users_id_pkey" PRIMARY KEY ("id"),
@@ -179,7 +179,8 @@ CREATE INDEX "user_id_idx" ON "user_roles" ("user_id");
 CREATE INDEX "role_id_idx" ON "user_roles" ("role_id");
 
 ALTER TABLE "user_roles"
-	ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE,
+	ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
+ALTER TABLE "user_roles"
 	ADD CONSTRAINT "user_roles_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles" ("id") ON DELETE CASCADE;
 
 /*

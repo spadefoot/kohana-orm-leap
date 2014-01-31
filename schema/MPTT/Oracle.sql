@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011–2013 Spadefoot Team.
+ * Copyright © 2011–2014 Spadefoot Team.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * Table structure for the "mptt" table
  */
 
-CREATE TABLE `mptt` (
+CREATE TABLE "mptt" (
 	"id" NUMBER(11) NOT NULL,
 	"scope" NUMBER(11) NOT NULL,
 	"name" VARCHAR(70) NOT NULL DEFAULT '',
