@@ -76,8 +76,26 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 
 		$sql .= ") UPDATE {$alias}";
 
+		$table = $this->data['table'];
+		$table = str_replace(DB_MsSQL_Precompiler::_OPENING_QUOTE_CHARACTER_, '', $table);
+		$table = str_replace(DB_MsSQL_Precompiler::_CLOSING_QUOTE_CHARACTER_, '', $table);
+
+		$identity_column = DB_SQL::select('default')
+							->from('INFORMATION_SCHEMA.COLUMNS')
+							->column('COLUMN_NAME')
+							->where('TABLE_SCHEMA', '=', 'dbo')
+							->where(DB_SQL::expr('COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, \'IsIdentity\')'), '=', 1)
+							->where('TABLE_NAME', '=', $table)
+							->query()->get('COLUMN_NAME');
+
 		if ( ! empty($this->data['column'])) {
-			$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
+			$column = $this->data['column'];
+
+			if ( ! empty($identity_column))
+				unset($column[DB_MsSQL_Precompiler::_OPENING_QUOTE_CHARACTER_.strtolower($identity_column).DB_MsSQL_Precompiler::_CLOSING_QUOTE_CHARACTER_]);
+
+			//$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
+			$sql .= ' SET ' . implode(', ', array_values($column));
 		}
 
 		if ($terminated) {
