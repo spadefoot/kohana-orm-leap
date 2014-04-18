@@ -77,15 +77,15 @@ abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	public function open() {
 		if ( ! $this->is_connected()) {
 			try {
-				$connection_string  = 'mssql:';
-				$connection_string .= 'host=' . $this->data_source->host;
+				$connection_string  = 'sqlsrv:';
+				$connection_string .= 'Server=' . $this->data_source->host;
 				$port = $this->data_source->port;
 				if ( ! empty($port)) {
 					$connection_string .= ':' . $port;
 					// $connection_string .= ',' . $port;
 				}
 				$connection_string .= ';';
-				$connection_string .= 'dbname=' . $this->data_source->database;
+				$connection_string .= 'Database=' . $this->data_source->database;
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
