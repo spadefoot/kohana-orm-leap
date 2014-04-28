@@ -163,7 +163,7 @@ abstract class Base_DB_ResultSet extends Core_Object implements ArrayAccess, Cou
 	 * @return mixed                                    the current record
 	 */
 	public function current() {
-		return $this->records[$this->position];
+		return isset($this->records[$this->position]) ? $this->records[$this->position] : NULL;
 	}
 
 	/**
