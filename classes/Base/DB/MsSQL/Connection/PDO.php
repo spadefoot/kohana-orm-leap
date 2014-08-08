@@ -77,15 +77,27 @@ abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 	public function open() {
 		if ( ! $this->is_connected()) {
 			try {
-				$connection_string  = 'sqlsrv:';
-				$connection_string .= 'Server=' . $this->data_source->host;
+				if (extension_loaded('sqlsrv'))
+				{
+					$connstr['extension']  = 'sqlsrv';
+					$connstr['host']  = 'Server';
+					$connstr['dbname']  = 'Database';
+				}
+				else
+				{
+					$connstr['extension']  = 'dblib';
+					$connstr['host']  = 'host';
+					$connstr['dbname']  = 'dbname';
+				}
+
+				$connection_string  = $connstr['extension'].':';
+				$connection_string .= $connstr['host'].'=' . $this->data_source->host;
 				$port = $this->data_source->port;
 				if ( ! empty($port)) {
 					$connection_string .= ':' . $port;
-					// $connection_string .= ',' . $port;
 				}
 				$connection_string .= ';';
-				$connection_string .= 'Database=' . $this->data_source->database;
+				$connection_string .= $connstr['dbname'].'=' . $this->data_source->database;
 				$attributes = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
 				if ($this->data_source->is_persistent()) {
 					$attributes[PDO::ATTR_PERSISTENT] = TRUE;
@@ -96,9 +108,6 @@ abstract class Base_DB_MsSQL_Connection_PDO extends DB_SQL_Connection_PDO {
 				$this->resource = NULL;
 				throw new Throwable_Database_Exception('Message: Failed to establish connection. Reason: :reason', array(':reason' => $ex->getMessage()));
 			}
-			//if ( ! empty($this->data_source->charset)) {
-			//    ini_set('mssql.charset', $this->data_source->charset);
-			//}
 		}
 	}
 
