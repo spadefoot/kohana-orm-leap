@@ -52,9 +52,11 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 			$sql .= "TOP {$this->data['limit']} ";
 		}
 
-		$sql .= ( ! empty($this->data['column']))
+		$columns_sql = ( ! empty($this->data['column']))
 			? implode(', ', $this->data['column'])
 			: $this->data['wildcard'];
+
+		$sql .= $columns_sql;
 
 		if ($this->data['from'] !== NULL) {
 			$sql .= " FROM {$this->data['from']}";
@@ -70,16 +72,20 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 			}
 		}
 
+		$where_sql = '';
+
 		if ( ! empty($this->data['where'])) {
 			$append = FALSE;
-			$sql .= ' WHERE ';
+			$where_sql = ' WHERE ';
 			foreach ($this->data['where'] as $where) {
 				if ($append AND ($where[1] != DB_SQL_Builder::_CLOSING_PARENTHESIS_)) {
-					$sql .= " {$where[0]} ";
+					$where_sql .= " {$where[0]} ";
 				}
-				$sql .= $where[1];
+				$where_sql .= $where[1];
 				$append = ($where[1] != DB_SQL_Builder::_OPENING_PARENTHESIS_);
 			}
+
+			$sql .= $where_sql;
 		}
 
 		if ( ! empty($this->data['group_by'])) {
@@ -105,6 +111,15 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 		//if ($this->data['offset'] > 0) {
 		//	$sql .= " OFFSET {$this->data['offset']}";
 		//}
+
+		if ($this->data['offset'] >= 0 AND $this->data['limit'] > 0 AND ! empty($this->data['order_by']))
+		{
+			$sql = 'SELECT [outer].* FROM (';
+			$sql .= 'SELECT ROW_NUMBER() OVER(ORDER BY ' . implode(', ', $this->data['order_by']) .') as ROW_NUMBER, '.$columns_sql.' FROM '.$this->data['from'].' '.$where_sql;
+			$sql .= ') AS [outer] ';
+			$sql .= 'WHERE [outer].[ROW_NUMBER] BETWEEN '.($this->data['offset'] + 1).' AND '.($this->data['offset'] + $this->data['limit']);
+			$sql .= ' ORDER BY [outer].[ROW_NUMBER]';
+		}
 
 		foreach ($this->data['combine'] as $combine) {
 			$sql .= " {$combine}";
