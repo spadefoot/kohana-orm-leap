@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-05
+ * @version 2015-08-23
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -69,11 +69,15 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
-
-		//if ($this->data['offset'] > 0) {
-		//    $sql .= " OFFSET {$this->data['offset']}";
-		//}
-
+		/*
+		if (($this->data['offset'] >= 0) AND ($this->data['limit'] > 0) AND ! empty($this->data['order_by'])) {
+			$sql = 'SELECT [outer].* FROM (';
+			$sql .= 'SELECT ROW_NUMBER() OVER(ORDER BY ' . implode(', ', $this->data['order_by']) . ') as ROW_NUMBER, ' . $columns_sql . ' FROM ' . $this->data['from'] . ' ' . $where_sql;
+			$sql .= ') AS [outer] ';
+			$sql .= 'WHERE [outer].[ROW_NUMBER] BETWEEN ' . ($this->data['offset'] + 1) . ' AND ' . ($this->data['offset'] + $this->data['limit']);
+			$sql .= ' ORDER BY [outer].[ROW_NUMBER]';
+		}
+		*/
 		$sql .= ") UPDATE {$alias}";
 
 		$table = $this->data['table'];
@@ -93,10 +97,9 @@ abstract class Base_DB_MsSQL_Update_Builder extends DB_SQL_Update_Builder {
 		if ( ! empty($this->data['column'])) {
 			$column = $this->data['column'];
 
-			if ( ! empty($identity_column))
-				unset($column[DB_MsSQL_Precompiler::_OPENING_QUOTE_CHARACTER_.strtolower($identity_column).DB_MsSQL_Precompiler::_CLOSING_QUOTE_CHARACTER_]);
-
-			//$sql .= ' SET ' . implode(', ', array_values($this->data['column']));
+			if ( ! empty($identity_column)) {
+				unset($column[DB_MsSQL_Precompiler::_OPENING_QUOTE_CHARACTER_ . strtolower($identity_column) . DB_MsSQL_Precompiler::_CLOSING_QUOTE_CHARACTER_]);
+			}
 			$sql .= ' SET ' . implode(', ', array_values($column));
 		}
 

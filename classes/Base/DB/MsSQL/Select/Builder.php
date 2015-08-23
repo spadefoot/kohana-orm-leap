@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2013-02-27
+ * @version 2015-08-23
  *
  * @see http://msdn.microsoft.com/en-us/library/aa260662%28v=sql.80%29.aspx
  *
@@ -108,16 +108,11 @@ abstract class Base_DB_MsSQL_Select_Builder extends DB_SQL_Select_Builder {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
 
-		//if ($this->data['offset'] > 0) {
-		//	$sql .= " OFFSET {$this->data['offset']}";
-		//}
-
-		if ($this->data['offset'] >= 0 AND $this->data['limit'] > 0 AND ! empty($this->data['order_by']))
-		{
+		if (($this->data['offset'] >= 0) AND ($this->data['limit'] > 0) AND ! empty($this->data['order_by'])) {
 			$sql = 'SELECT [outer].* FROM (';
-			$sql .= 'SELECT ROW_NUMBER() OVER(ORDER BY ' . implode(', ', $this->data['order_by']) .') as ROW_NUMBER, '.$columns_sql.' FROM '.$this->data['from'].' '.$where_sql;
+			$sql .= 'SELECT ROW_NUMBER() OVER(ORDER BY ' . implode(', ', $this->data['order_by']) . ') as ROW_NUMBER, ' . $columns_sql . ' FROM ' . $this->data['from'] . ' ' . $where_sql;
 			$sql .= ') AS [outer] ';
-			$sql .= 'WHERE [outer].[ROW_NUMBER] BETWEEN '.($this->data['offset'] + 1).' AND '.($this->data['offset'] + $this->data['limit']);
+			$sql .= 'WHERE [outer].[ROW_NUMBER] BETWEEN ' . ($this->data['offset'] + 1) . ' AND ' . ($this->data['offset'] + $this->data['limit']);
 			$sql .= ' ORDER BY [outer].[ROW_NUMBER]';
 		}
 

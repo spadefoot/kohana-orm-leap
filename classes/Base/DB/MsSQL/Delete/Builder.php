@@ -22,7 +22,7 @@
  *
  * @package Leap
  * @category MS SQL
- * @version 2012-12-05
+ * @version 2015-08-23
  *
  * @see http://msdn.microsoft.com/en-us/library/ms189835.aspx
  *
@@ -69,11 +69,15 @@ abstract class Base_DB_MsSQL_Delete_Builder extends DB_SQL_Delete_Builder {
 		if ( ! empty($this->data['order_by'])) {
 			$sql .= ' ORDER BY ' . implode(', ', $this->data['order_by']);
 		}
-
-		//if ($this->data['offset'] > 0) {
-		//    $sql .= " OFFSET {$this->data['offset']}";
-		//}
-
+		/*
+		if (($this->data['offset'] >= 0) AND ($this->data['limit'] > 0) AND ! empty($this->data['order_by'])) {
+			$sql = 'SELECT [outer].* FROM (';
+			$sql .= 'SELECT ROW_NUMBER() OVER(ORDER BY ' . implode(', ', $this->data['order_by']) . ') as ROW_NUMBER, ' . $columns_sql . ' FROM ' . $this->data['from'] . ' ' . $where_sql;
+			$sql .= ') AS [outer] ';
+			$sql .= 'WHERE [outer].[ROW_NUMBER] BETWEEN ' . ($this->data['offset'] + 1) . ' AND ' . ($this->data['offset'] + $this->data['limit']);
+			$sql .= ' ORDER BY [outer].[ROW_NUMBER]';
+		}
+		*/
 		$sql .= ") DELETE FROM {$alias}";
 
 		if ($terminated) {
